@@ -1,0 +1,17 @@
+{
+  "files.readonlyInclude": {
+    "**/shadcn/**": true,
+    "**/api/gen/**": true,
+    "**/routeTree.gen.ts": true
+  },
+  "files.watcherExclude": {
+    "**/shadcn/**": true,
+    "**/api/gen/**": true,
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/shadcn/**": true,
+    "**/api/gen/**": true,
+    "**/routeTree.gen.ts": true
+  }
+}

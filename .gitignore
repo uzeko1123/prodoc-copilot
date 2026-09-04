@@ -1,0 +1,13 @@
+.env.*
+!.env.*.example
+volumes/
+certs/
+
+_temp/
+.bin/
+.claude/
+_AI.md
+!docs/_AI/**/_AI.md
+
+VERSION
+!/VERSION

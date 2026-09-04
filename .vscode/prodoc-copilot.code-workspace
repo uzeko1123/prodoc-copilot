@@ -1,0 +1,135 @@
+{
+  "folders": [
+    {
+      "path": "..",
+    },
+    {
+      "path": "../backend",
+    },
+    {
+      "path": "../frontend",
+    },
+  ],
+  "settings": {
+    "files.associations": {
+      "*.css": "tailwindcss",
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "code-runner.runInTerminal": true,
+    "code-runner.respectShebang": false,
+    "code-runner.executorMap": {
+      "shellscript": "\"%ProgramFiles%\\Git\\bin\\bash.exe\"",
+    },
+    "tailwindCSS.files.exclude": [
+      "**/.git/**",
+      "**/node_modules/**",
+      "**/.hg/**",
+      "**/.svn/**",
+      "**/shadcn/**",
+    ],
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-azuretools.vscode-containers",
+      "ms-vscode-remote.remote-containers",
+      "ms-vscode-remote.remote-ssh",
+      "ms-python.python",
+      "ms-python.mypy-type-checker",
+      "charliermarsh.ruff",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "bradlc.vscode-tailwindcss",
+      "vitest.explorer",
+      "ms-playwright.playwright",
+      "formulahendry.code-runner",
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Django",
+        "type": "debugpy",
+        "request": "launch",
+        "cwd": "${workspaceFolder:backend}",
+        "python": ".venv/Scripts/python.exe",
+        "program": "manage.py",
+        "args": ["runserver"],
+        "django": true,
+        "consoleName": "Django",
+      },
+      {
+        "name": "Celery Worker",
+        "type": "debugpy",
+        "request": "launch",
+        "cwd": "${workspaceFolder:backend}",
+        "python": ".venv/Scripts/python.exe",
+        "module": "celery",
+        "args": ["-A", "backend", "worker", "-P", "solo"],
+        "consoleName": "Celery Worker",
+      },
+      {
+        "name": "Celery Beat",
+        "type": "debugpy",
+        "request": "launch",
+        "cwd": "${workspaceFolder:backend}",
+        "python": ".venv/Scripts/python.exe",
+        "module": "celery",
+        "args": [
+          "-A",
+          "backend",
+          "beat",
+          "-S",
+          "django_celery_beat.schedulers:DatabaseScheduler",
+        ],
+        "consoleName": "Celery Beat",
+      },
+      {
+        "name": "Celery Flower",
+        "type": "debugpy",
+        "request": "launch",
+        "cwd": "${workspaceFolder:backend}",
+        "python": ".venv/Scripts/python.exe",
+        "module": "celery",
+        "args": ["-A", "backend", "flower"],
+        "consoleName": "Celery Flower",
+      },
+      {
+        "name": "React",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder:frontend}",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": ["run", "dev"],
+        "console": "integratedTerminal",
+        "serverReadyAction": {
+          "action": "debugWithChrome",
+          "pattern": ".",
+          "uriFormat": "http://localhost:5173/",
+          "killOnServerStop": true,
+        },
+      },
+    ],
+    "compounds": [
+      {
+        "name": "Main",
+        "configurations": ["Django", "Celery Worker", "React"],
+        "stopAll": true,
+      },
+      {
+        "name": "Full",
+        "configurations": [
+          "Django",
+          "Celery Worker",
+          "Celery Beat",
+          "Celery Flower",
+          "React",
+        ],
+        "stopAll": true,
+      },
+    ],
+  },
+}

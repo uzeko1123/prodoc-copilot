@@ -1,0 +1,187 @@
+name: prodoc
+
+x-common-config: &common-config
+  env_file:
+    - path: ./.env.prod.example
+    - path: ./.env.prod
+      required: false
+
+services:
+  postgres:
+    <<: *common-config
+    build: ./deploy/postgres
+    environment:
+      - PGDATA=/data
+    entrypoint: /custom/entrypoint.sh
+    command: postgres -c config_file=/config/postgresql.conf
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - ./deploy/postgres/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/prod/postgres_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    <<: *common-config
+    build: ./deploy/redis
+    entrypoint: /custom/entrypoint.sh
+    command: redis-server /config/redis.conf --dir /data
+    ports:
+      - 127.0.0.1:6379:6379
+    volumes:
+      - ./deploy/redis/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/prod/redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: redis-cli --user $${REDIS_USER} --pass $${REDIS_PASSWORD} --no-auth-warning ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  seaweedfs:
+    <<: *common-config
+    build: ./deploy/seaweedfs
+    entrypoint: /custom/entrypoint.sh
+    command: mini -dir=/data -s3.config=/config/s3.json
+    ports:
+      - 127.0.0.1:9333:9333 # Master UI
+      - 127.0.0.1:8888:8888 # Filer UI
+      - 127.0.0.1:8333:8333 # S3 Endpoint
+      - 127.0.0.1:8181:8181 # Iceberg Catalog
+      - 127.0.0.1:7333:7333 # WebDAV
+      - 127.0.0.1:23646:23646 # Admin UI
+      - 127.0.0.1:9340:9340 # Volume Server
+    volumes:
+      - ./deploy/seaweedfs/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/prod/seaweedfs_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: wget -q --spider http://localhost:8333/healthz
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  django:
+    <<: *common-config
+    build:
+      context: ./backend
+      args:
+        - PIP_REQUIREMENTS=django.txt
+    entrypoint: ./entrypoint.sh
+    command: gunicorn backend.asgi:application -b 0.0.0.0:8000 -k uvicorn_worker.UvicornWorker -w 3
+    ports:
+      - 127.0.0.1:8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/healthz')"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    <<: *common-config
+    build:
+      context: ./backend
+      args:
+        - PIP_REQUIREMENTS=celery-worker.txt
+    command: celery -A backend worker -P gevent -c 100
+    depends_on:
+      django:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: celery -A backend inspect ping -d celery@$${HOSTNAME}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery-beat:
+    <<: *common-config
+    build:
+      context: ./backend
+      args:
+        - PIP_REQUIREMENTS=celery-beat.txt
+    command: celery -A backend beat -S django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      celery-worker:
+        condition: service_healthy
+    restart: unless-stopped
+
+  celery-flower:
+    <<: *common-config
+    build:
+      context: ./backend
+      args:
+        - PIP_REQUIREMENTS=celery-flower.txt
+    command: celery -A backend flower --persistent=True
+    ports:
+      - 127.0.0.1:5555:5555
+    depends_on:
+      celery-worker:
+        condition: service_healthy
+    restart: unless-stopped
+
+  react:
+    <<: *common-config
+    build: ./frontend
+    entrypoint: ./entrypoint.sh
+    command: npm run build
+    volumes:
+      - ./volumes/prod/react_dist:/app/dist
+    restart: no
+
+  nginx:
+    <<: *common-config
+    build: ./deploy/nginx
+    entrypoint: /custom/entrypoint.sh
+    command: nginx -g "daemon off;"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./deploy/nginx/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./deploy/nginx/certs:/config/certs:ro
+      - ./volumes/prod/react_dist:/app/dist
+    depends_on:
+      django:
+        condition: service_healthy
+      react:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    healthcheck:
+      test: wget -q --spider http://localhost/healthz
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backup:
+    <<: *common-config
+    build: ./deploy/backup
+    entrypoint: /custom/entrypoint.sh
+    command: crond -f -d 8
+    volumes:
+      - ./deploy/backup/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/prod/postgres_data:/app/postgres_data:ro
+      - ./volumes/prod/redis_data:/app/redis_data:ro
+      - ./volumes/prod/seaweedfs_data:/app/seaweedfs_data:ro
+      - ./volumes/prod/backup:/app/backup
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    restart: unless-stopped

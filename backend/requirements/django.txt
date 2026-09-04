@@ -1,0 +1,5 @@
+-r base.txt
+
+uvicorn[standard]~=0.52.0
+uvicorn-worker~=0.4.0
+gunicorn~=26.0.0

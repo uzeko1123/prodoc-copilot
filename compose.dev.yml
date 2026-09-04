@@ -1,0 +1,67 @@
+name: prodoc-dev
+
+x-common-config: &common-config
+  env_file:
+    - path: ./.env.dev.example
+    - path: ./.env.dev
+      required: false
+
+services:
+  postgres:
+    <<: *common-config
+    build: ./deploy/postgres
+    environment:
+      - PGDATA=/data
+    entrypoint: /custom/entrypoint.sh
+    command: postgres -c config_file=/config/postgresql.conf
+    ports:
+      - 5432:5432
+    volumes:
+      - ./deploy/postgres/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/dev/postgres_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    <<: *common-config
+    build: ./deploy/redis
+    entrypoint: /custom/entrypoint.sh
+    command: redis-server /config/redis.conf --dir /data
+    ports:
+      - 6379:6379
+    volumes:
+      - ./deploy/redis/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/dev/redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: redis-cli --user $${REDIS_USER} --pass $${REDIS_PASSWORD} --no-auth-warning ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  seaweedfs:
+    <<: *common-config
+    build: ./deploy/seaweedfs
+    entrypoint: /custom/entrypoint.sh
+    command: mini -dir=/data -s3.config=/config/s3.json
+    ports:
+      - 9333:9333 # Master UI
+      - 8888:8888 # Filer UI
+      - 8333:8333 # S3 Endpoint
+      - 8181:8181 # Iceberg Catalog
+      - 7333:7333 # WebDAV
+      - 23646:23646 # Admin UI
+      - 9340:9340 # Volume Server
+    volumes:
+      - ./deploy/seaweedfs/entrypoint.sh:/custom/entrypoint.sh:ro
+      - ./volumes/dev/seaweedfs_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: wget -q --spider http://localhost:8333/healthz
+      interval: 10s
+      timeout: 5s
+      retries: 5

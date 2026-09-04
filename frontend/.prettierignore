@@ -1,0 +1,4 @@
+**/dist/
+**/shadcn/
+**/api/gen/
+**/routeTree.gen.ts

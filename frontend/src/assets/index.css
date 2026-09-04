@@ -1,0 +1,4 @@
+@import './shadcn/index.css';
+@import './shadcn/typeset.css';
+@import './shadcn/tiptap/_keyframe-animations.scss';
+@import './shadcn/tiptap/_variables.scss';
