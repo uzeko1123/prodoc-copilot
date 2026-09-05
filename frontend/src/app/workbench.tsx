@@ -5,6 +5,7 @@ import {
 } from '@/components/shadcn/ui/resizable';
 import { Chat } from '@/features/chat/components/chat';
 import { Editor } from '@/features/editor/components/editor';
+import { TableOfContents } from '@/features/editor/components/table-of-contents';
 import { createFileRoute } from '@tanstack/react-router';
 
 function WorkbenchPage() {
@@ -15,23 +16,20 @@ function WorkbenchPage() {
       </header>
 
       <ResizablePanelGroup orientation="horizontal">
-        <ResizablePanel
-          collapsible
-          collapsedSize={10}
-          defaultSize="10%"
-          minSize="10%"
-        ></ResizablePanel>
+        <ResizablePanel collapsible defaultSize="10%" minSize="10%">
+          <TableOfContents />
+        </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="50%" minSize="40%">
           <Editor />
         </ResizablePanel>
+        <ResizableHandle withHandle />
         <ResizablePanel defaultSize="20%" minSize="15%">
           <Chat />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel
           collapsible
-          collapsedSize={10}
           defaultSize="20%"
           minSize="15%"
         ></ResizablePanel>

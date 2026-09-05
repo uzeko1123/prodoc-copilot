@@ -5,6 +5,8 @@ import content from './data/content.json';
 import './editor.scss';
 // --- Components ---
 import { ThemeToggle } from './theme-toggle';
+// --- Stores ---
+import { useTableOfContentsStore } from './table-of-contents-store';
 // --- Icons ---
 import { ArrowLeftIcon } from '@/components/shadcn/tiptap-icons/arrow-left-icon';
 import { HighlighterIcon } from '@/components/shadcn/tiptap-icons/highlighter-icon';
@@ -62,6 +64,7 @@ import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
+import { TableOfContents } from '@tiptap/extension-table-of-contents';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Typography } from '@tiptap/extension-typography';
 import { Selection } from '@tiptap/extensions';
@@ -233,6 +236,9 @@ export function Editor() {
       Superscript,
       Subscript,
       Selection,
+      TableOfContents.configure({
+        onUpdate: (data) => useTableOfContentsStore.getState().setItems(data),
+      }),
       FindAndReplace.configure({
         searchDebounceMs: 500,
         injectCSS: false,
