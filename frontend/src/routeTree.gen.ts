@@ -19,7 +19,9 @@ import { Route as featuresAuthPagesResetPasswordRouteImport } from './features/a
 import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './features/auth/pages/reset-password-confirm'
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
+import { Route as featuresChatPagesIndexRouteImport } from './features/chat/pages/index'
 import { Route as featuresEditorPagesIndexRouteImport } from './features/editor/pages/index'
+import { Route as appWorkbenchRouteImport } from './app/workbench'
 
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
@@ -76,15 +78,26 @@ const featuresAuthPagesVerifyEmailRoute =
     path: '/account/verify-email',
     getParentRoute: () => rootRouteImport,
   } as any)
+const featuresChatPagesIndexRoute = featuresChatPagesIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const featuresEditorPagesIndexRoute =
   featuresEditorPagesIndexRouteImport.update({
     id: '/editor/',
     path: '/editor/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const appWorkbenchRoute = appWorkbenchRouteImport.update({
+  id: '/workbench/',
+  path: '/workbench/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
+  '/workbench/': typeof appWorkbenchRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -94,10 +107,12 @@ export interface FileRoutesByFullPath {
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/account/': typeof featuresAuthPagesIndexRoute
+  '/chat/': typeof featuresChatPagesIndexRoute
   '/editor/': typeof featuresEditorPagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
+  '/workbench': typeof appWorkbenchRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -107,11 +122,13 @@ export interface FileRoutesByTo {
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/account': typeof featuresAuthPagesIndexRoute
+  '/chat': typeof featuresChatPagesIndexRoute
   '/editor': typeof featuresEditorPagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof appIndexRoute
+  '/workbench/': typeof appWorkbenchRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -121,12 +138,14 @@ export interface FileRoutesById {
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/account/': typeof featuresAuthPagesIndexRoute
+  '/chat/': typeof featuresChatPagesIndexRoute
   '/editor/': typeof featuresEditorPagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/workbench/'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -136,10 +155,12 @@ export interface FileRouteTypes {
     | '/account/signup'
     | '/account/verify-email'
     | '/account/'
+    | '/chat/'
     | '/editor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/workbench'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -149,10 +170,12 @@ export interface FileRouteTypes {
     | '/account/signup'
     | '/account/verify-email'
     | '/account'
+    | '/chat'
     | '/editor'
   id:
     | '__root__'
     | '/'
+    | '/workbench/'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -162,11 +185,13 @@ export interface FileRouteTypes {
     | '/account/signup'
     | '/account/verify-email'
     | '/account/'
+    | '/chat/'
     | '/editor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   appIndexRoute: typeof appIndexRoute
+  appWorkbenchRoute: typeof appWorkbenchRoute
   featuresAuthPagesChangePasswordRoute: typeof featuresAuthPagesChangePasswordRoute
   featuresAuthPagesLoginRoute: typeof featuresAuthPagesLoginRoute
   featuresAuthPagesLogoutRoute: typeof featuresAuthPagesLogoutRoute
@@ -176,6 +201,7 @@ export interface RootRouteChildren {
   featuresAuthPagesSignupRoute: typeof featuresAuthPagesSignupRoute
   featuresAuthPagesVerifyEmailRoute: typeof featuresAuthPagesVerifyEmailRoute
   featuresAuthPagesIndexRoute: typeof featuresAuthPagesIndexRoute
+  featuresChatPagesIndexRoute: typeof featuresChatPagesIndexRoute
   featuresEditorPagesIndexRoute: typeof featuresEditorPagesIndexRoute
 }
 
@@ -251,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof featuresAuthPagesVerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/': {
+      id: '/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof featuresChatPagesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/editor/': {
       id: '/editor/'
       path: '/editor'
@@ -258,11 +291,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof featuresEditorPagesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/workbench/': {
+      id: '/workbench/'
+      path: '/workbench'
+      fullPath: '/workbench/'
+      preLoaderRoute: typeof appWorkbenchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   appIndexRoute: appIndexRoute,
+  appWorkbenchRoute: appWorkbenchRoute,
   featuresAuthPagesChangePasswordRoute: featuresAuthPagesChangePasswordRoute,
   featuresAuthPagesLoginRoute: featuresAuthPagesLoginRoute,
   featuresAuthPagesLogoutRoute: featuresAuthPagesLogoutRoute,
@@ -273,6 +314,7 @@ const rootRouteChildren: RootRouteChildren = {
   featuresAuthPagesSignupRoute: featuresAuthPagesSignupRoute,
   featuresAuthPagesVerifyEmailRoute: featuresAuthPagesVerifyEmailRoute,
   featuresAuthPagesIndexRoute: featuresAuthPagesIndexRoute,
+  featuresChatPagesIndexRoute: featuresChatPagesIndexRoute,
   featuresEditorPagesIndexRoute: featuresEditorPagesIndexRoute,
 }
 export const routeTree = rootRouteImport
