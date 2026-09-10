@@ -133,13 +133,13 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  react:
+  vite:
     <<: *common-config
     build: ./frontend
     entrypoint: ./entrypoint.sh
     command: npm run build
     volumes:
-      - ./volumes/prod/react_dist:/app/dist
+      - ./volumes/prod/vite_dist:/app/dist
     restart: no
 
   nginx:
@@ -153,11 +153,11 @@ services:
     volumes:
       - ./deploy/nginx/entrypoint.sh:/custom/entrypoint.sh:ro
       - ./deploy/nginx/certs:/config/certs:ro
-      - ./volumes/prod/react_dist:/app/dist
+      - ./volumes/prod/vite_dist:/app/dist
     depends_on:
       django:
         condition: service_healthy
-      react:
+      vite:
         condition: service_completed_successfully
     restart: unless-stopped
     healthcheck:
