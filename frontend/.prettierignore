@@ -1,4 +1,5 @@
 **/dist/
 **/shadcn/
+**/tiptap/
 **/api/gen/
 **/routeTree.gen.ts
