@@ -2,7 +2,6 @@
 
 // --- Stores ---
 import { useTableOfContentsStore } from './table-of-contents-store';
-
 import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useEffect } from 'react';
@@ -17,7 +16,10 @@ function updateActiveScrollspy(container: HTMLElement) {
   const containerTop = container.getBoundingClientRect().top;
   let activeIndex = -1;
   items.forEach((item, index) => {
-    if (item.dom?.isConnected && item.dom.getBoundingClientRect().top <= containerTop) {
+    if (
+      item.dom?.isConnected &&
+      item.dom.getBoundingClientRect().top <= containerTop
+    ) {
       activeIndex = index;
     }
   });
@@ -36,7 +38,9 @@ export function TableOfContents() {
   const items = useTableOfContentsStore((state) => state.items);
 
   useEffect(() => {
-    const container = document.querySelector<HTMLElement>(SCROLL_CONTAINER_SELECTOR);
+    const container = document.querySelector<HTMLElement>(
+      SCROLL_CONTAINER_SELECTOR,
+    );
     if (!container) return;
 
     const onScroll = () => updateActiveScrollspy(container);
@@ -55,13 +59,22 @@ export function TableOfContents() {
     event.preventDefault();
     if (item.editor.isDestroyed || !item.dom) return;
     item.dom.scrollIntoView();
-    item.editor.chain().focus().setTextSelection(item.pos + 1).run();
+    item.editor
+      .chain()
+      .focus()
+      .setTextSelection(item.pos + 1)
+      .run();
   };
 
   return (
     <ul
       className="table-of-contents"
-      style={{ margin: 0, padding: '0.5rem 0.375rem', listStyle: 'none', fontSize: '0.8125rem' }}
+      style={{
+        margin: 0,
+        padding: '0.5rem 0.375rem',
+        listStyle: 'none',
+        fontSize: '0.8125rem',
+      }}
     >
       {items.map((item) => (
         <li key={item.id}>
@@ -73,7 +86,9 @@ export function TableOfContents() {
               padding: '0.25rem 0.375rem',
               paddingLeft: `${0.375 + (item.originalLevel - 1) * 0.75}rem`,
               color: 'inherit',
-              backgroundColor: item.isActive ? 'var(--tt-gray-light-a-200, rgba(0, 0, 0, 0.08))' : undefined,
+              backgroundColor: item.isActive
+                ? 'var(--tt-gray-light-a-200, rgba(0, 0, 0, 0.08))'
+                : undefined,
               fontWeight: item.isActive ? 600 : undefined,
               textDecoration: 'none',
             }}

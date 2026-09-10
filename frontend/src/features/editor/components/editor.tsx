@@ -3,10 +3,10 @@
 import content from './data/content.json';
 // --- Styles ---
 import './editor.scss';
-// --- Components ---
-import { ThemeToggle } from './theme-toggle';
 // --- Stores ---
 import { useTableOfContentsStore } from './table-of-contents-store';
+// --- Components ---
+import { ThemeToggle } from './theme-toggle';
 // --- Icons ---
 import { ArrowLeftIcon } from '@/components/tiptap/icons/arrow-left-icon';
 import { HighlighterIcon } from '@/components/tiptap/icons/highlighter-icon';

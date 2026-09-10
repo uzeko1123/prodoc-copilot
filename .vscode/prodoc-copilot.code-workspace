@@ -102,7 +102,7 @@
         "consoleName": "Celery Flower",
       },
       {
-        "name": "React",
+        "name": "Vite",
         "type": "node",
         "request": "launch",
         "cwd": "${workspaceFolder:frontend}",
@@ -120,7 +120,7 @@
     "compounds": [
       {
         "name": "Main",
-        "configurations": ["Django", "Celery Worker", "React"],
+        "configurations": ["Django", "Celery Worker", "Vite"],
         "stopAll": true,
       },
       {
@@ -130,7 +130,7 @@
           "Celery Worker",
           "Celery Beat",
           "Celery Flower",
-          "React",
+          "Vite",
         ],
         "stopAll": true,
       },

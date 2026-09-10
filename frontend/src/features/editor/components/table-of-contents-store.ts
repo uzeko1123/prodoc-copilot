@@ -6,7 +6,9 @@ type TableOfContentsStore = {
   setItems: (items: TableOfContentData) => void;
 };
 
-export const useTableOfContentsStore = create<TableOfContentsStore>()((set) => ({
-  items: [],
-  setItems: (items) => set({ items }),
-}));
+export const useTableOfContentsStore = create<TableOfContentsStore>()(
+  (set) => ({
+    items: [],
+    setItems: (items) => set({ items }),
+  }),
+);
