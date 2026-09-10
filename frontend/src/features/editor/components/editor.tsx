@@ -1,13 +1,10 @@
-'use client';
-
-import content from './data/content.json';
-// --- Styles ---
-import './editor.scss';
-// --- Stores ---
-import { useTableOfContentsStore } from './table-of-contents-store';
-// --- Components ---
-import { ThemeToggle } from './theme-toggle';
 // --- Icons ---
+// --- Shadcn UI ---
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from '@/components/shadcn/ui/resizable';
 import { ArrowLeftIcon } from '@/components/tiptap/icons/arrow-left-icon';
 import { HighlighterIcon } from '@/components/tiptap/icons/highlighter-icon';
 import { LinkIcon } from '@/components/tiptap/icons/link-icon';
@@ -21,6 +18,11 @@ import '@/components/tiptap/node/image-node/image-node.scss';
 import { ImageUploadNode } from '@/components/tiptap/node/image-upload-node/image-upload-node-extension';
 import '@/components/tiptap/node/list-node/list-node.scss';
 import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
+import content from '@/components/tiptap/templates/simple/data/content.json';
+// --- Styles ---
+// import '@/components/tiptap/templates/simple/simple-editor.scss';
+// --- Components ---
+import { ThemeToggle } from '@/components/tiptap/templates/simple/theme-toggle';
 // --- UI Primitives ---
 import { Button } from '@/components/tiptap/ui-primitive/button';
 import { Spacer } from '@/components/tiptap/ui-primitive/spacer';
@@ -56,7 +58,6 @@ import { useCursorVisibility } from '@/hooks/tiptap/use-cursor-visibility';
 // --- Hooks ---
 import { useIsBreakpoint } from '@/hooks/tiptap/use-is-breakpoint';
 import { useWindowSize } from '@/hooks/tiptap/use-window-size';
-// --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap/utils';
 import { FindAndReplace } from '@tiptap/extension-find-and-replace';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -64,13 +65,17 @@ import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
-import { TableOfContents } from '@tiptap/extension-table-of-contents';
+import {
+  TableOfContents,
+  getHierarchicalIndexes,
+} from '@tiptap/extension-table-of-contents';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Typography } from '@tiptap/extension-typography';
 import { Selection } from '@tiptap/extensions';
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
 // --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit';
+// --- Lib ---
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
@@ -94,6 +99,10 @@ const MainToolbarContent = ({
 }) => {
   return (
     <>
+      <ToolbarGroup>
+        <UndoRedoButton action="undo" />
+      </ToolbarGroup>
+
       <Spacer />
 
       <ToolbarGroup>
@@ -236,9 +245,6 @@ export function Editor() {
       Superscript,
       Subscript,
       Selection,
-      TableOfContents.configure({
-        onUpdate: (data) => useTableOfContentsStore.getState().setItems(data),
-      }),
       FindAndReplace.configure({
         searchDebounceMs: 500,
         injectCSS: false,
@@ -249,6 +255,10 @@ export function Editor() {
         limit: 3,
         upload: handleImageUpload,
         onError: (error) => console.error('Upload failed:', error),
+      }),
+      TableOfContents.configure({
+        getIndex: getHierarchicalIndexes,
+        onUpdate(content) {},
       }),
     ],
     content,
@@ -287,7 +297,7 @@ export function Editor() {
   }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace]);
 
   return (
-    <div className="simple-editor-wrapper">
+    <div className="flex flex-col h-full">
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
@@ -316,19 +326,27 @@ export function Editor() {
           )}
         </Toolbar>
 
-        <SearchAndReplace
-          className="simple-editor-search-and-replace"
-          open={isSearchAndReplaceOpen}
-          onOpen={openSearchAndReplace}
-          onClose={closeSearchAndReplace}
-          scrollIntoViewOptions={SEARCH_AND_REPLACE_SCROLL_OPTIONS}
-        />
-
-        <EditorContent
-          editor={editor}
-          role="presentation"
-          className="simple-editor-content"
-        />
+        <ResizablePanelGroup orientation="horizontal">
+          <ResizablePanel
+            collapsible
+            defaultSize="20%"
+            minSize="10%"
+          ></ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize="90%" minSize="80%" className="relative">
+            <div className="absolute top-2 right-2 z-10">
+              <SearchAndReplace
+                open={isSearchAndReplaceOpen}
+                onOpen={openSearchAndReplace}
+                onClose={closeSearchAndReplace}
+                scrollIntoViewOptions={SEARCH_AND_REPLACE_SCROLL_OPTIONS}
+              />
+            </div>
+            <div className="p-12 pb-[30vh]">
+              <EditorContent editor={editor} role="presentation" />
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </EditorContext.Provider>
     </div>
   );

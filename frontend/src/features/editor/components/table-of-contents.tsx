@@ -1,102 +1,126 @@
-'use client';
+import { useState } from 'react';
+import { EditorContent, useEditor, type Editor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { TextSelection } from '@tiptap/pm/state';
+import {
+  getHierarchicalIndexes,
+  TableOfContents as TableOfContentsExtension,
+  type TableOfContentDataItem,
+} from '@tiptap/extension-table-of-contents';
+import content from '../data/content.json';
 
-// --- Stores ---
-import { useTableOfContentsStore } from './table-of-contents-store';
-import type { TableOfContentDataItem } from '@tiptap/extension-table-of-contents';
-import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect } from 'react';
-
-const SCROLL_CONTAINER_SELECTOR = '.simple-editor-content';
-
-/** 重算当前视口内标题为 active（对齐容器顶部线），仅在有变化时写回 store。 */
-function updateActiveScrollspy(container: HTMLElement) {
-  const { items, setItems } = useTableOfContentsStore.getState();
-  if (items.length === 0) return;
-
-  const containerTop = container.getBoundingClientRect().top;
-  let activeIndex = -1;
-  items.forEach((item, index) => {
-    if (
-      item.dom?.isConnected &&
-      item.dom.getBoundingClientRect().top <= containerTop
-    ) {
-      activeIndex = index;
-    }
-  });
-
-  let changed = false;
-  const next = items.map((item, index) => {
-    const isActive = index === activeIndex;
-    if (item.isActive === isActive) return item;
-    changed = true;
-    return { ...item, isActive };
-  });
-  if (changed) setItems(next);
+function ToCItem({
+  item,
+  onItemClick,
+}: {
+  item: TableOfContentDataItem;
+  onItemClick: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
+}) {
+  return (
+    <div
+      className={`${item.isActive && !item.isScrolledOver ? 'is-active' : ''} ${
+        item.isScrolledOver ? 'is-scrolled-over' : ''
+      }`}
+      style={{ '--level': item.level } as React.CSSProperties}
+    >
+      <a
+        href={`#${item.id}`}
+        onClick={(e) => onItemClick(e, item.id)}
+        data-item-index={item.itemIndex}
+      >
+        {item.textContent}
+      </a>
+    </div>
+  );
 }
 
-export function TableOfContents() {
-  const items = useTableOfContentsStore((state) => state.items);
+function ToCEmptyState() {
+  return (
+    <div className="empty-state">
+      <p>Start editing your document to see the outline.</p>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const container = document.querySelector<HTMLElement>(
-      SCROLL_CONTAINER_SELECTOR,
+function ToCList({
+  items,
+  editor,
+}: {
+  items: TableOfContentDataItem[];
+  editor: Editor | null;
+}) {
+  if (items.length === 0) {
+    return <ToCEmptyState />;
+  }
+
+  const onItemClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+
+    if (!editor) return;
+
+    const element = editor.view.dom.querySelector<HTMLElement>(
+      `[data-toc-id="${id}"`,
     );
-    if (!container) return;
+    if (!element) return;
 
-    const onScroll = () => updateActiveScrollspy(container);
-    container.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    const pos = editor.view.posAtDOM(element, 0);
+    const tr = editor.view.state.tr;
 
-    return () => container.removeEventListener('scroll', onScroll);
-  }, [items]);
+    tr.setSelection(new TextSelection(tr.doc.resolve(pos)));
+    editor.view.dispatch(tr);
+    editor.view.focus();
 
-  if (items.length === 0) return null;
+    if (history.pushState) {
+      history.pushState(null, null, `#${id}`);
+    }
 
-  const handleItemClick = (
-    event: ReactMouseEvent<HTMLAnchorElement>,
-    item: TableOfContentDataItem,
-  ) => {
-    event.preventDefault();
-    if (item.editor.isDestroyed || !item.dom) return;
-    item.dom.scrollIntoView();
-    item.editor
-      .chain()
-      .focus()
-      .setTextSelection(item.pos + 1)
-      .run();
+    window.scrollTo({
+      top: element.getBoundingClientRect().top + window.scrollY,
+      behavior: 'smooth',
+    });
   };
 
   return (
-    <ul
-      className="table-of-contents"
-      style={{
-        margin: 0,
-        padding: '0.5rem 0.375rem',
-        listStyle: 'none',
-        fontSize: '0.8125rem',
-      }}
-    >
+    <>
       {items.map((item) => (
-        <li key={item.id}>
-          <a
-            href={`#${item.id}`}
-            onClick={(event) => handleItemClick(event, item)}
-            style={{
-              display: 'block',
-              padding: '0.25rem 0.375rem',
-              paddingLeft: `${0.375 + (item.originalLevel - 1) * 0.75}rem`,
-              color: 'inherit',
-              backgroundColor: item.isActive
-                ? 'var(--tt-gray-light-a-200, rgba(0, 0, 0, 0.08))'
-                : undefined,
-              fontWeight: item.isActive ? 600 : undefined,
-              textDecoration: 'none',
-            }}
-          >
-            {item.textContent}
-          </a>
-        </li>
+        <ToCItem key={item.id} item={item} onItemClick={onItemClick} />
       ))}
-    </ul>
+    </>
+  );
+}
+
+export function TableOfContents() {
+  const [items, setItems] = useState<TableOfContentDataItem[]>([]);
+
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [
+      StarterKit,
+      TableOfContentsExtension.configure({
+        getIndex: getHierarchicalIndexes,
+        onUpdate: (data) => setItems(data),
+      }),
+    ],
+    content,
+  });
+
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <div className="col-group">
+      <div className="main">
+        <EditorContent editor={editor} />
+      </div>
+      <div className="sidebar">
+        <div className="sidebar-options">
+          <div className="label-large">Table of contents</div>
+          <div className="table-of-contents">
+            <ToCList editor={editor} items={items} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

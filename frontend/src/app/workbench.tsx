@@ -3,9 +3,14 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/shadcn/ui/resizable';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/shadcn/ui/tabs';
 import { Chat } from '@/features/chat/components/chat';
 import { Editor } from '@/features/editor/components/editor';
-import { TableOfContents } from '@/features/editor/components/table-of-contents';
 import { createFileRoute } from '@tanstack/react-router';
 
 function WorkbenchPage() {
@@ -16,16 +21,21 @@ function WorkbenchPage() {
       </header>
 
       <ResizablePanelGroup orientation="horizontal">
-        <ResizablePanel collapsible defaultSize="10%" minSize="10%">
-          <TableOfContents />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize="50%" minSize="40%">
+        <ResizablePanel defaultSize="60%" minSize="50%">
           <Editor />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="20%" minSize="15%">
-          <Chat />
+          <Tabs defaultValue="chat" className="h-full gap-0">
+            <TabsList variant="line" className="w-full border-b">
+              <TabsTrigger value="chat">Chat</TabsTrigger>
+              <TabsTrigger value="review">Comment</TabsTrigger>
+            </TabsList>
+            <TabsContent value="chat">
+              <Chat />
+            </TabsContent>
+            <TabsContent value="review" />
+          </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel
