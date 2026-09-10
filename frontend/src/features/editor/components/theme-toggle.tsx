@@ -1,7 +1,7 @@
 // --- Icons ---
-import { MoonStarIcon } from '@/components/shadcn/tiptap-icons/moon-star-icon';
-import { SunIcon } from '@/components/shadcn/tiptap-icons/sun-icon';
-import { Button } from '@/components/shadcn/tiptap-ui-primitive/button';
+import { MoonStarIcon } from '@/components/tiptap/icons/moon-star-icon';
+import { SunIcon } from '@/components/tiptap/icons/sun-icon';
+import { Button } from '@/components/tiptap/ui-primitive/button';
 import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {

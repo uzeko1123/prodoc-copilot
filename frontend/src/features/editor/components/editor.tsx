@@ -8,56 +8,56 @@ import { ThemeToggle } from './theme-toggle';
 // --- Stores ---
 import { useTableOfContentsStore } from './table-of-contents-store';
 // --- Icons ---
-import { ArrowLeftIcon } from '@/components/shadcn/tiptap-icons/arrow-left-icon';
-import { HighlighterIcon } from '@/components/shadcn/tiptap-icons/highlighter-icon';
-import { LinkIcon } from '@/components/shadcn/tiptap-icons/link-icon';
-import '@/components/shadcn/tiptap-node/blockquote-node/blockquote-node.scss';
-import '@/components/shadcn/tiptap-node/code-block-node/code-block-node.scss';
-import '@/components/shadcn/tiptap-node/heading-node/heading-node.scss';
-import { HorizontalRule } from '@/components/shadcn/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension';
-import '@/components/shadcn/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss';
-import '@/components/shadcn/tiptap-node/image-node/image-node.scss';
+import { ArrowLeftIcon } from '@/components/tiptap/icons/arrow-left-icon';
+import { HighlighterIcon } from '@/components/tiptap/icons/highlighter-icon';
+import { LinkIcon } from '@/components/tiptap/icons/link-icon';
+import '@/components/tiptap/node/blockquote-node/blockquote-node.scss';
+import '@/components/tiptap/node/code-block-node/code-block-node.scss';
+import '@/components/tiptap/node/heading-node/heading-node.scss';
+import { HorizontalRule } from '@/components/tiptap/node/horizontal-rule-node/horizontal-rule-node-extension';
+import '@/components/tiptap/node/horizontal-rule-node/horizontal-rule-node.scss';
+import '@/components/tiptap/node/image-node/image-node.scss';
 // --- Tiptap Node ---
-import { ImageUploadNode } from '@/components/shadcn/tiptap-node/image-upload-node/image-upload-node-extension';
-import '@/components/shadcn/tiptap-node/list-node/list-node.scss';
-import '@/components/shadcn/tiptap-node/paragraph-node/paragraph-node.scss';
+import { ImageUploadNode } from '@/components/tiptap/node/image-upload-node/image-upload-node-extension';
+import '@/components/tiptap/node/list-node/list-node.scss';
+import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
 // --- UI Primitives ---
-import { Button } from '@/components/shadcn/tiptap-ui-primitive/button';
-import { Spacer } from '@/components/shadcn/tiptap-ui-primitive/spacer';
+import { Button } from '@/components/tiptap/ui-primitive/button';
+import { Spacer } from '@/components/shadcn/tiptap/ui/primitive/spacer';
 import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
-} from '@/components/shadcn/tiptap-ui-primitive/toolbar';
-import { BlockquoteButton } from '@/components/shadcn/tiptap-ui/blockquote-button';
-import { CodeBlockButton } from '@/components/shadcn/tiptap-ui/code-block-button';
+} from '@/components/shadcn/tiptap/ui/primitive/toolbar';
+import { BlockquoteButton } from '@/components/shadcn/tiptap/ui/blockquote-button';
+import { CodeBlockButton } from '@/components/shadcn/tiptap/ui/code-block-button';
 import {
   ColorHighlightPopover,
   ColorHighlightPopoverContent,
   ColorHighlightPopoverButton,
-} from '@/components/shadcn/tiptap-ui/color-highlight-popover';
+} from '@/components/shadcn/tiptap/ui/color-highlight-popover';
 // --- Tiptap UI ---
-import { HeadingDropdownMenu } from '@/components/shadcn/tiptap-ui/heading-dropdown-menu';
-import { ImageUploadButton } from '@/components/shadcn/tiptap-ui/image-upload-button';
+import { HeadingDropdownMenu } from '@/components/shadcn/tiptap/ui/heading-dropdown-menu';
+import { ImageUploadButton } from '@/components/shadcn/tiptap/ui/image-upload-button';
 import {
   LinkPopover,
   LinkContent,
   LinkButton,
-} from '@/components/shadcn/tiptap-ui/link-popover';
-import { ListDropdownMenu } from '@/components/shadcn/tiptap-ui/list-dropdown-menu';
-import { MarkButton } from '@/components/shadcn/tiptap-ui/mark-button';
+} from '@/components/shadcn/tiptap/ui/link-popover';
+import { ListDropdownMenu } from '@/components/shadcn/tiptap/ui/list-dropdown-menu';
+import { MarkButton } from '@/components/shadcn/tiptap/ui/mark-button';
 import {
   SearchAndReplace,
   SearchAndReplaceButton,
-} from '@/components/shadcn/tiptap-ui/search-and-replace';
-import { TextAlignButton } from '@/components/shadcn/tiptap-ui/text-align-button';
-import { UndoRedoButton } from '@/components/shadcn/tiptap-ui/undo-redo-button';
-import { useCursorVisibility } from '@/hooks/shadcn/use-cursor-visibility';
+} from '@/components/shadcn/tiptap/ui/search-and-replace';
+import { TextAlignButton } from '@/components/shadcn/tiptap/ui/text-align-button';
+import { UndoRedoButton } from '@/components/shadcn/tiptap/ui/undo-redo-button';
+import { useCursorVisibility } from '@/hooks/tiptap/use-cursor-visibility';
 // --- Hooks ---
-import { useIsBreakpoint } from '@/hooks/shadcn/use-is-breakpoint';
-import { useWindowSize } from '@/hooks/shadcn/use-window-size';
+import { useIsBreakpoint } from '@/hooks/tiptap/use-is-breakpoint';
+import { useWindowSize } from '@/hooks/tiptap/use-window-size';
 // --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/shadcn/tiptap-utils';
+import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap/utils';
 import { FindAndReplace } from '@tiptap/extension-find-and-replace';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';

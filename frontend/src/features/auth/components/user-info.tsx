@@ -5,7 +5,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/shadcn/ui/card';
-import { cn } from '@/lib/shadcn/utils';
+import { cn } from 'cn';
 
 export function UserInfo({ className, ...props }: React.ComponentProps<'div'>) {
   const { data } = useAuthUserRetrieve();

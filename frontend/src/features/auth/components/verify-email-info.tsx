@@ -7,7 +7,7 @@ import {
 } from '@/components/shadcn/ui/card';
 import { useCountdown } from '@/hooks/use-countdown';
 import { useMount } from '@/hooks/use-mount';
-import { cn } from '@/lib/shadcn/utils';
+import { cn } from 'cn';
 import { useNavigate } from '@tanstack/react-router';
 
 const VERIFY_EMAIL_COUNTDOWN = 3;

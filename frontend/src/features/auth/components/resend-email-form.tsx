@@ -18,7 +18,7 @@ import { useCountdown } from '@/hooks/use-countdown';
 import { useMount } from '@/hooks/use-mount';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
-import { cn } from '@/lib/shadcn/utils';
+import { cn } from 'cn';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';

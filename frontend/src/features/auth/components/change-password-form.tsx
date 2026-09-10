@@ -21,7 +21,7 @@ import { Input } from '@/components/shadcn/ui/input';
 import { useCountdown } from '@/hooks/use-countdown';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
-import { cn } from '@/lib/shadcn/utils';
+import { cn } from 'cn';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate, Link } from '@tanstack/react-router';
 import { useForm, Controller } from 'react-hook-form';
