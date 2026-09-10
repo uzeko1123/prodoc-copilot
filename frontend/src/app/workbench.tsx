@@ -26,7 +26,7 @@ function WorkbenchPage() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="20%" minSize="15%">
-          <Tabs defaultValue="chat" className="gap-0">
+          <Tabs defaultValue="chat" className="h-full gap-0">
             <TabsList variant="line" className="w-full border-b">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="review">Comment</TabsTrigger>
@@ -42,7 +42,9 @@ function WorkbenchPage() {
           collapsible
           defaultSize="20%"
           minSize="15%"
-        ></ResizablePanel>
+        >
+          <Chat />
+        </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );
