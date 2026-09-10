@@ -342,7 +342,7 @@ export function Editor() {
                 scrollIntoViewOptions={SEARCH_AND_REPLACE_SCROLL_OPTIONS}
               />
             </div>
-            <div className="p-12 pb-[30vh]">
+            <div className="h-full overflow-y-auto p-12 pb-[30vh]">
               <EditorContent editor={editor} role="presentation" />
             </div>
           </ResizablePanel>

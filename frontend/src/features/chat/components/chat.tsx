@@ -104,7 +104,7 @@ export function Chat() {
   return (
     <MessageScrollerProvider>
       <div className="flex flex-col h-full">
-        <Card className="flex-1 rounded-none">
+        <Card className="h-full gap-0 rounded-none">
           <CardHeader className="gap-1 border-b">
             <CardTitle>New Chat</CardTitle>
             <CardDescription>How can I help you today?</CardDescription>
