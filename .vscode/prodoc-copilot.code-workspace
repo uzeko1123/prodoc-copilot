@@ -11,12 +11,16 @@
     },
   ],
   "settings": {
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
     "files.associations": {
       "*.css": "tailwindcss",
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[python]": {
-      "editor.defaultFormatter": "charliermarsh.ruff"
+      "editor.defaultFormatter": "charliermarsh.ruff",
     },
     "code-runner.runInTerminal": true,
     "code-runner.respectShebang": false,
@@ -45,7 +49,7 @@
       "vitest.explorer",
       "ms-playwright.playwright",
       "formulahendry.code-runner",
-    ]
+    ],
   },
   "launch": {
     "version": "0.2.0",
