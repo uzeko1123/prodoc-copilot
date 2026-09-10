@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"
+import { cn } from "cn"
 
-import { cn } from "@/lib/shadcn/utils"
 import { Button } from "@/components/shadcn/ui/button"
 import {
   InputGroup,

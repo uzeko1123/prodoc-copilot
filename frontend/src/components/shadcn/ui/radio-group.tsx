@@ -1,7 +1,6 @@
 import * as React from "react"
+import { cn } from "cn"
 import { RadioGroup as RadioGroupPrimitive } from "radix-ui"
-
-import { cn } from "@/lib/shadcn/utils"
 
 function RadioGroup({
   className,

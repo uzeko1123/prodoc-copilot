@@ -1,4 +1,5 @@
-import { cn } from "@/lib/shadcn/utils"
+import { cn } from "cn"
+
 import { Button } from "@/components/shadcn/ui/button"
 import {
   Card,
