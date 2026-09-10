@@ -1,11 +1,10 @@
+import { TableOfContents } from './table-of-contents';
+import { Toolbar } from './toolbar';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/shadcn/ui/resizable';
-import { ArrowLeftIcon } from '@/components/tiptap/icons/arrow-left-icon';
-import { HighlighterIcon } from '@/components/tiptap/icons/highlighter-icon';
-import { LinkIcon } from '@/components/tiptap/icons/link-icon';
 import '@/components/tiptap/node/blockquote-node/blockquote-node.scss';
 import '@/components/tiptap/node/code-block-node/code-block-node.scss';
 import '@/components/tiptap/node/heading-node/heading-node.scss';
@@ -16,39 +15,7 @@ import { ImageUploadNode } from '@/components/tiptap/node/image-upload-node/imag
 import '@/components/tiptap/node/list-node/list-node.scss';
 import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
 import content from '@/components/tiptap/templates/simple/data/content.json';
-import { ThemeToggle } from '@/components/tiptap/templates/simple/theme-toggle';
-import { Button } from '@/components/tiptap/ui-primitive/button';
-import { Spacer } from '@/components/tiptap/ui-primitive/spacer';
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from '@/components/tiptap/ui-primitive/toolbar';
-import { BlockquoteButton } from '@/components/tiptap/ui/blockquote-button';
-import { CodeBlockButton } from '@/components/tiptap/ui/code-block-button';
-import {
-  ColorHighlightPopover,
-  ColorHighlightPopoverContent,
-  ColorHighlightPopoverButton,
-} from '@/components/tiptap/ui/color-highlight-popover';
-import { HeadingDropdownMenu } from '@/components/tiptap/ui/heading-dropdown-menu';
-import { ImageUploadButton } from '@/components/tiptap/ui/image-upload-button';
-import {
-  LinkPopover,
-  LinkContent,
-  LinkButton,
-} from '@/components/tiptap/ui/link-popover';
-import { ListDropdownMenu } from '@/components/tiptap/ui/list-dropdown-menu';
-import { MarkButton } from '@/components/tiptap/ui/mark-button';
-import {
-  SearchAndReplace,
-  SearchAndReplaceButton,
-} from '@/components/tiptap/ui/search-and-replace';
-import { TextAlignButton } from '@/components/tiptap/ui/text-align-button';
-import { UndoRedoButton } from '@/components/tiptap/ui/undo-redo-button';
-import { useCursorVisibility } from '@/hooks/tiptap/use-cursor-visibility';
-import { useIsBreakpoint } from '@/hooks/tiptap/use-is-breakpoint';
-import { useWindowSize } from '@/hooks/tiptap/use-window-size';
+import { SearchAndReplace } from '@/components/tiptap/ui/search-and-replace';
 import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap/utils';
 import { FindAndReplace } from '@tiptap/extension-find-and-replace';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -57,153 +24,29 @@ import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import {
-  TableOfContents,
+  TableOfContents as TableOfContentsExtension,
   getHierarchicalIndexes,
 } from '@tiptap/extension-table-of-contents';
+import type { TableOfContentData } from '@tiptap/extension-table-of-contents';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Typography } from '@tiptap/extension-typography';
 import { Selection } from '@tiptap/extensions';
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import type { PanelImperativeHandle } from 'react-resizable-panels';
 
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   block: 'center',
 };
 
-const MainToolbarContent = ({
-  onHighlighterClick,
-  onLinkClick,
-  onSearchAndReplaceClick,
-  isSearchAndReplaceOpen,
-  searchAndReplaceButtonRef,
-  isMobile,
-}: {
-  onHighlighterClick: () => void;
-  onLinkClick: () => void;
-  onSearchAndReplaceClick: () => void;
-  isSearchAndReplaceOpen: boolean;
-  searchAndReplaceButtonRef: React.RefObject<HTMLButtonElement | null>;
-  isMobile: boolean;
-}) => {
-  return (
-    <>
-      <ToolbarGroup>
-        <Button>ToC</Button>
-      </ToolbarGroup>
-
-      <Spacer />
-
-      <ToolbarGroup>
-        <UndoRedoButton action="undo" />
-        <UndoRedoButton action="redo" />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
-        <ListDropdownMenu
-          modal={false}
-          types={['bulletList', 'orderedList', 'taskList']}
-        />
-        <BlockquoteButton />
-        <CodeBlockButton />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <MarkButton type="bold" />
-        <MarkButton type="italic" />
-        <MarkButton type="strike" />
-        <MarkButton type="code" />
-        <MarkButton type="underline" />
-        {!isMobile ? (
-          <ColorHighlightPopover />
-        ) : (
-          <ColorHighlightPopoverButton onClick={onHighlighterClick} />
-        )}
-        {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <MarkButton type="superscript" />
-        <MarkButton type="subscript" />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <TextAlignButton align="left" />
-        <TextAlignButton align="center" />
-        <TextAlignButton align="right" />
-        <TextAlignButton align="justify" />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <ImageUploadButton text="Add" />
-      </ToolbarGroup>
-
-      <Spacer />
-
-      {isMobile && <ToolbarSeparator />}
-
-      <ToolbarGroup>
-        <SearchAndReplaceButton
-          ref={searchAndReplaceButtonRef}
-          aria-expanded={isSearchAndReplaceOpen}
-          data-active-state={isSearchAndReplaceOpen ? 'on' : 'off'}
-          onClick={onSearchAndReplaceClick}
-        />
-        <ThemeToggle />
-      </ToolbarGroup>
-    </>
-  );
-};
-
-const MobileToolbarContent = ({
-  type,
-  onBack,
-}: {
-  type: 'highlighter' | 'link';
-  onBack: () => void;
-}) => (
-  <>
-    <ToolbarGroup>
-      <Button variant="ghost" onClick={onBack}>
-        <ArrowLeftIcon className="tiptap-button-icon" />
-        {type === 'highlighter' ? (
-          <HighlighterIcon className="tiptap-button-icon" />
-        ) : (
-          <LinkIcon className="tiptap-button-icon" />
-        )}
-      </Button>
-    </ToolbarGroup>
-
-    <ToolbarSeparator />
-
-    {type === 'highlighter' ? (
-      <ColorHighlightPopoverContent />
-    ) : (
-      <LinkContent />
-    )}
-  </>
-);
-
 export function Editor() {
-  const isMobile = useIsBreakpoint();
-  const { height } = useWindowSize();
-  const [mobileView, setMobileView] = useState<'main' | 'highlighter' | 'link'>(
-    'main',
-  );
   const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
-  const toolbarRef = useRef<HTMLDivElement>(null);
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
+  const [isTocOpen, setIsTocOpen] = useState(true);
+  const [tocItems, setTocItems] = useState<TableOfContentData>([]);
+  const tocPanelRef = useRef<PanelImperativeHandle | null>(null);
+  const tocScrollContainerRef = useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -245,31 +88,19 @@ export function Editor() {
         upload: handleImageUpload,
         onError: (error) => console.error('Upload failed:', error),
       }),
-      TableOfContents.configure({
+      // eslint-disable-next-line react-hooks/refs
+      TableOfContentsExtension.configure({
         getIndex: getHierarchicalIndexes,
+        scrollParent: () => tocScrollContainerRef.current ?? window,
         onUpdate(content) {
-          // ToC
+          setTocItems(content);
         },
       }),
     ],
     content,
   });
 
-  const rect = useCursorVisibility({
-    editor,
-    // eslint-disable-next-line react-hooks/refs
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  });
-
-  useEffect(() => {
-    if (!isMobile && mobileView !== 'main') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setMobileView('main');
-    }
-  }, [isMobile, mobileView]);
-
   const openSearchAndReplace = useCallback(() => {
-    setMobileView('main');
     setIsSearchAndReplaceOpen(true);
   }, []);
 
@@ -287,56 +118,71 @@ export function Editor() {
     openSearchAndReplace();
   }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace]);
 
+  const openToc = useCallback(() => {
+    tocPanelRef.current?.expand();
+    setIsTocOpen(true);
+  }, []);
+
+  const closeToc = useCallback(() => {
+    tocPanelRef.current?.collapse();
+    setIsTocOpen(false);
+  }, []);
+
+  // Keep `isTocOpen` in sync with the panel's real state — the panel can
+  // also be collapsed/expanded by dragging the ResizableHandle.
+  const syncTocState = useCallback(() => {
+    const panel = tocPanelRef.current;
+    setIsTocOpen(panel ? !panel.isCollapsed() : false);
+  }, []);
+
+  const toggleToc = useCallback(() => {
+    if (isTocOpen) {
+      closeToc();
+      return;
+    }
+
+    openToc();
+  }, [closeToc, isTocOpen, openToc]);
+
   return (
     <div className="flex flex-col h-full">
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}
-        >
-          {mobileView === 'main' ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView('highlighter')}
-              onLinkClick={() => setMobileView('link')}
-              onSearchAndReplaceClick={toggleSearchAndReplace}
-              isSearchAndReplaceOpen={isSearchAndReplaceOpen}
-              searchAndReplaceButtonRef={searchAndReplaceButtonRef}
-              isMobile={isMobile}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === 'highlighter' ? 'highlighter' : 'link'}
-              onBack={() => setMobileView('main')}
-            />
-          )}
-        </Toolbar>
+          searchAndReplaceButtonRef={searchAndReplaceButtonRef}
+          isSearchAndReplaceOpen={isSearchAndReplaceOpen}
+          onSearchAndReplaceClick={toggleSearchAndReplace}
+          isTocOpen={isTocOpen}
+          onTocToggle={toggleToc}
+        />
 
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
             collapsible
             defaultSize="20%"
             minSize="10%"
+            panelRef={tocPanelRef}
+            onResize={syncTocState}
           >
-            {/* ToC */}
+            <TableOfContents
+              items={tocItems}
+              scrollContainerRef={tocScrollContainerRef}
+            />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="90%" minSize="80%" className="relative">
-            <div className="absolute top-2 right-2 z-10">
+            <div
+              ref={tocScrollContainerRef}
+              className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin"
+            >
+              <EditorContent editor={editor} role="presentation" />
+            </div>
+            <div className="absolute top-2 right-2">
               <SearchAndReplace
                 open={isSearchAndReplaceOpen}
                 onOpen={openSearchAndReplace}
                 onClose={closeSearchAndReplace}
                 scrollIntoViewOptions={SEARCH_AND_REPLACE_SCROLL_OPTIONS}
               />
-            </div>
-            <div className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin">
-              <EditorContent editor={editor} role="presentation" />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
