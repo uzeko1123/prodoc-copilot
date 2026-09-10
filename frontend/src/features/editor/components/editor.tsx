@@ -41,12 +41,12 @@ const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
 };
 
 export function Editor() {
-  const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
-  const [isTocOpen, setIsTocOpen] = useState(true);
-  const [tocItems, setTocItems] = useState<TableOfContentData>([]);
+  const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
   const tocPanelRef = useRef<PanelImperativeHandle | null>(null);
   const tocScrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isTocOpen, setIsTocOpen] = useState(true);
+  const [tocItems, setTocItems] = useState<TableOfContentData>([]);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -118,11 +118,13 @@ export function Editor() {
     openSearchAndReplace();
   }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const openToc = useCallback(() => {
     tocPanelRef.current?.expand();
     setIsTocOpen(true);
   }, []);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const closeToc = useCallback(() => {
     tocPanelRef.current?.collapse();
     setIsTocOpen(false);
@@ -130,6 +132,7 @@ export function Editor() {
 
   // Keep `isTocOpen` in sync with the panel's real state — the panel can
   // also be collapsed/expanded by dragging the ResizableHandle.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const syncTocState = useCallback(() => {
     const panel = tocPanelRef.current;
     setIsTocOpen(panel ? !panel.isCollapsed() : false);
@@ -158,8 +161,8 @@ export function Editor() {
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
             collapsible
-            defaultSize="20%"
-            minSize="10%"
+            defaultSize="25%"
+            minSize="15%"
             panelRef={tocPanelRef}
             onResize={syncTocState}
           >
@@ -169,7 +172,7 @@ export function Editor() {
             />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize="90%" minSize="80%" className="relative">
+          <ResizablePanel defaultSize="75%" minSize="70%" className="relative">
             <div
               ref={tocScrollContainerRef}
               className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin"
