@@ -31,7 +31,7 @@ function WorkbenchPage() {
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="review">Comment</TabsTrigger>
             </TabsList>
-            <TabsContent value="chat">
+            <TabsContent value="chat" className="min-h-0">
               <Chat />
             </TabsContent>
             <TabsContent value="review" />

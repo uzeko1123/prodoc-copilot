@@ -1,5 +1,3 @@
-// --- Icons ---
-// --- Shadcn UI ---
 import {
   ResizableHandle,
   ResizablePanel,
@@ -14,16 +12,11 @@ import '@/components/tiptap/node/heading-node/heading-node.scss';
 import { HorizontalRule } from '@/components/tiptap/node/horizontal-rule-node/horizontal-rule-node-extension';
 import '@/components/tiptap/node/horizontal-rule-node/horizontal-rule-node.scss';
 import '@/components/tiptap/node/image-node/image-node.scss';
-// --- Tiptap Node ---
 import { ImageUploadNode } from '@/components/tiptap/node/image-upload-node/image-upload-node-extension';
 import '@/components/tiptap/node/list-node/list-node.scss';
 import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
 import content from '@/components/tiptap/templates/simple/data/content.json';
-// --- Styles ---
-// import '@/components/tiptap/templates/simple/simple-editor.scss';
-// --- Components ---
 import { ThemeToggle } from '@/components/tiptap/templates/simple/theme-toggle';
-// --- UI Primitives ---
 import { Button } from '@/components/tiptap/ui-primitive/button';
 import { Spacer } from '@/components/tiptap/ui-primitive/spacer';
 import {
@@ -38,7 +31,6 @@ import {
   ColorHighlightPopoverContent,
   ColorHighlightPopoverButton,
 } from '@/components/tiptap/ui/color-highlight-popover';
-// --- Tiptap UI ---
 import { HeadingDropdownMenu } from '@/components/tiptap/ui/heading-dropdown-menu';
 import { ImageUploadButton } from '@/components/tiptap/ui/image-upload-button';
 import {
@@ -55,7 +47,6 @@ import {
 import { TextAlignButton } from '@/components/tiptap/ui/text-align-button';
 import { UndoRedoButton } from '@/components/tiptap/ui/undo-redo-button';
 import { useCursorVisibility } from '@/hooks/tiptap/use-cursor-visibility';
-// --- Hooks ---
 import { useIsBreakpoint } from '@/hooks/tiptap/use-is-breakpoint';
 import { useWindowSize } from '@/hooks/tiptap/use-window-size';
 import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap/utils';
@@ -73,9 +64,7 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { Typography } from '@tiptap/extension-typography';
 import { Selection } from '@tiptap/extensions';
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
-// --- Tiptap Core Extensions ---
 import { StarterKit } from '@tiptap/starter-kit';
-// --- Lib ---
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
@@ -100,7 +89,7 @@ const MainToolbarContent = ({
   return (
     <>
       <ToolbarGroup>
-        <UndoRedoButton action="undo" />
+        <Button>ToC</Button>
       </ToolbarGroup>
 
       <Spacer />
@@ -342,7 +331,7 @@ export function Editor() {
                 scrollIntoViewOptions={SEARCH_AND_REPLACE_SCROLL_OPTIONS}
               />
             </div>
-            <div className="h-full overflow-y-auto p-12 pb-[30vh]">
+            <div className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin">
               <EditorContent editor={editor} role="presentation" />
             </div>
           </ResizablePanel>
