@@ -247,7 +247,9 @@ export function Editor() {
       }),
       TableOfContents.configure({
         getIndex: getHierarchicalIndexes,
-        onUpdate(content) {},
+        onUpdate(content) {
+          // ToC
+        },
       }),
     ],
     content,
@@ -320,7 +322,9 @@ export function Editor() {
             collapsible
             defaultSize="20%"
             minSize="10%"
-          ></ResizablePanel>
+          >
+            {/* ToC */}
+          </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="90%" minSize="80%" className="relative">
             <div className="absolute top-2 right-2 z-10">
