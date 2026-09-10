@@ -23,35 +23,35 @@ import '@/components/tiptap/node/list-node/list-node.scss';
 import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
 // --- UI Primitives ---
 import { Button } from '@/components/tiptap/ui-primitive/button';
-import { Spacer } from '@/components/shadcn/tiptap/ui/primitive/spacer';
+import { Spacer } from '@/components/tiptap/ui-primitive/spacer';
 import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
-} from '@/components/shadcn/tiptap/ui/primitive/toolbar';
-import { BlockquoteButton } from '@/components/shadcn/tiptap/ui/blockquote-button';
-import { CodeBlockButton } from '@/components/shadcn/tiptap/ui/code-block-button';
+} from '@/components/tiptap/ui-primitive/toolbar';
+import { BlockquoteButton } from '@/components/tiptap/ui/blockquote-button';
+import { CodeBlockButton } from '@/components/tiptap/ui/code-block-button';
 import {
   ColorHighlightPopover,
   ColorHighlightPopoverContent,
   ColorHighlightPopoverButton,
-} from '@/components/shadcn/tiptap/ui/color-highlight-popover';
+} from '@/components/tiptap/ui/color-highlight-popover';
 // --- Tiptap UI ---
-import { HeadingDropdownMenu } from '@/components/shadcn/tiptap/ui/heading-dropdown-menu';
-import { ImageUploadButton } from '@/components/shadcn/tiptap/ui/image-upload-button';
+import { HeadingDropdownMenu } from '@/components/tiptap/ui/heading-dropdown-menu';
+import { ImageUploadButton } from '@/components/tiptap/ui/image-upload-button';
 import {
   LinkPopover,
   LinkContent,
   LinkButton,
-} from '@/components/shadcn/tiptap/ui/link-popover';
-import { ListDropdownMenu } from '@/components/shadcn/tiptap/ui/list-dropdown-menu';
-import { MarkButton } from '@/components/shadcn/tiptap/ui/mark-button';
+} from '@/components/tiptap/ui/link-popover';
+import { ListDropdownMenu } from '@/components/tiptap/ui/list-dropdown-menu';
+import { MarkButton } from '@/components/tiptap/ui/mark-button';
 import {
   SearchAndReplace,
   SearchAndReplaceButton,
-} from '@/components/shadcn/tiptap/ui/search-and-replace';
-import { TextAlignButton } from '@/components/shadcn/tiptap/ui/text-align-button';
-import { UndoRedoButton } from '@/components/shadcn/tiptap/ui/undo-redo-button';
+} from '@/components/tiptap/ui/search-and-replace';
+import { TextAlignButton } from '@/components/tiptap/ui/text-align-button';
+import { UndoRedoButton } from '@/components/tiptap/ui/undo-redo-button';
 import { useCursorVisibility } from '@/hooks/tiptap/use-cursor-visibility';
 // --- Hooks ---
 import { useIsBreakpoint } from '@/hooks/tiptap/use-is-breakpoint';
