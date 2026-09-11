@@ -29,12 +29,12 @@ function WorkbenchPage() {
           <Tabs defaultValue="chat" className="h-full gap-0">
             <TabsList variant="line" className="w-full border-b">
               <TabsTrigger value="chat">Chat</TabsTrigger>
-              <TabsTrigger value="review">Comment</TabsTrigger>
+              <TabsTrigger value="comment">Comment</TabsTrigger>
             </TabsList>
             <TabsContent value="chat" className="min-h-0">
               <Chat />
             </TabsContent>
-            <TabsContent value="review" />
+            <TabsContent value="comment"></TabsContent>
           </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />

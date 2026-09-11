@@ -6,7 +6,8 @@ export function BubbleMenu() {
   const editor = useEditorStore((state) => state.editor);
   const setContext = useContextStore((state) => state.setContext);
 
-  if (!editor) return null;
+  if (!editor) return;
+
   return (
     <BubbleMenu_>
       <Button
@@ -14,7 +15,7 @@ export function BubbleMenu() {
         variant="primary"
         onClick={() => {
           const { from, to } = editor.state.selection;
-          setContext('ai', { from, to });
+          setContext({ target: 'chat', range: { from, to } });
         }}
       >
         AI
@@ -24,7 +25,7 @@ export function BubbleMenu() {
         variant="secondary"
         onClick={() => {
           const { from, to } = editor.state.selection;
-          setContext('ai', { from, to });
+          setContext({ target: 'comment', range: { from, to } });
         }}
       >
         Comment

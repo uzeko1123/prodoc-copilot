@@ -13,14 +13,15 @@ const MAX_PREVIEW_CHARS = 160;
 
 export function ChatContextPreview() {
   const editor = useEditorStore((state) => state.editor);
-  const range = useContextStore((state) => state.range);
-  const setRange = useContextStore((state) => state.setRange);
+  const context = useContextStore((state) => state.context);
+  const setContext = useContextStore((state) => state.setContext);
 
-  if (!range || !editor) return null;
+  if (!editor || !context || context.target !== 'chat') return;
 
-  const { from, to } = range;
-  const selection = editor.state.doc.textBetween(from, to, '\n');
-  const hasSelection = selection.length > 0;
+  const selection = editor.state.doc.textBetween(context.range.from,  context.range.to, '\n');
+
+  if (!selection) return;
+
   const truncated =
     selection.length > MAX_PREVIEW_CHARS
       ? selection.slice(0, MAX_PREVIEW_CHARS) + '…'
@@ -34,24 +35,18 @@ export function ChatContextPreview() {
       />
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium text-muted-foreground">
-          {hasSelection ? 'Sending selection to AI' : 'No selection'}
+          Sending selection to AI
         </p>
-        {hasSelection ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <p className="line-clamp-2 whitespace-pre-wrap wrap-break-word text-sm">
-                {truncated}
-              </p>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-sm">
-              <p className="whitespace-pre-wrap wrap-break-word">{selection}</p>
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Select text in the editor and press AI.
-          </p>
-        )}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p className="line-clamp-2 whitespace-pre-wrap wrap-break-word text-sm">
+              {truncated}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-sm">
+            <p className="whitespace-pre-wrap wrap-break-word">{selection}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
       <Tooltip>
         <TooltipTrigger asChild>
@@ -61,7 +56,7 @@ export function ChatContextPreview() {
             size="icon"
             aria-label="Clear selection context"
             className="shrink-0"
-            onClick={() => setRange(null)}
+            onClick={() => setContext(null)}
           >
             <XIcon />
           </Button>

@@ -14,7 +14,7 @@ export const useEditorStore = create<EditorState>()((set) => ({
 }));
 
 type Context = {
-  target: 'ai' | 'comment';
+  target: 'chat' | 'comment';
   range: Range;
 };
 
