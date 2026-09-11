@@ -1,14 +1,8 @@
-import {
-  Button,
-  type ButtonProps,
-} from '@/components/tiptap/ui-primitive/button';
 import type {
   TableOfContentData,
   TableOfContentDataItem,
 } from '@tiptap/extension-table-of-contents';
 import { TextSelection } from '@tiptap/pm/state';
-import { PanelLeftIcon } from 'lucide-react';
-import type { Ref } from 'react';
 import { useEffect, useRef } from 'react';
 
 function TocItem({ tocItem }: { tocItem: TableOfContentDataItem }) {
@@ -54,28 +48,5 @@ export function TableOfContents({ tocData }: { tocData: TableOfContentData }) {
         <TocItem key={tocItem.id} tocItem={tocItem} />
       ))}
     </div>
-  );
-}
-
-export function TocButton({
-  className,
-  children,
-  ref,
-  ...props
-}: ButtonProps & { ref?: Ref<HTMLButtonElement> }) {
-  return (
-    <Button
-      type="button"
-      className={className}
-      variant="ghost"
-      role="button"
-      tabIndex={-1}
-      aria-label="Table of contents"
-      tooltip="Table of contents"
-      ref={ref}
-      {...props}
-    >
-      {children || <PanelLeftIcon className="tiptap-button-icon" />}
-    </Button>
   );
 }

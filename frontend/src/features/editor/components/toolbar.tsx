@@ -1,5 +1,4 @@
-import { TocButton } from './table-of-contents';
-import { ThemeToggle } from '@/components/tiptap/templates/simple/theme-toggle';
+import { Button } from '@/components/tiptap/ui-primitive/button';
 import { Spacer } from '@/components/tiptap/ui-primitive/spacer';
 import {
   Toolbar as Toolbar_,
@@ -17,6 +16,7 @@ import { MarkButton } from '@/components/tiptap/ui/mark-button';
 import { SearchAndReplaceButton } from '@/components/tiptap/ui/search-and-replace';
 import { TextAlignButton } from '@/components/tiptap/ui/text-align-button';
 import { UndoRedoButton } from '@/components/tiptap/ui/undo-redo-button';
+import { PanelLeftIcon } from 'lucide-react';
 
 export function Toolbar({
   searchAndReplaceButtonRef,
@@ -35,14 +35,27 @@ export function Toolbar({
 }) {
   return (
     <Toolbar_>
-      <ToolbarGroup>
-        <TocButton
-          ref={tocButtonRef}
-          aria-expanded={isTocPanelOpen}
-          data-active-state={isTocPanelOpen ? 'on' : 'off'}
-          onClick={onTocButtonClick}
-        />
-      </ToolbarGroup>
+      {!isTocPanelOpen && (
+        <>
+          <ToolbarGroup>
+            <Button
+              type="button"
+              variant="ghost"
+              role="button"
+              tabIndex={-1}
+              aria-label="Table of contents"
+              tooltip="Table of contents"
+              ref={tocButtonRef}
+              aria-expanded={isTocPanelOpen}
+              data-active-state={isTocPanelOpen ? 'on' : 'off'}
+              onClick={onTocButtonClick}
+            >
+              <PanelLeftIcon className="tiptap-button-icon" />
+            </Button>
+          </ToolbarGroup>
+          <ToolbarSeparator />
+        </>
+      )}
 
       <Spacer />
 
@@ -98,6 +111,7 @@ export function Toolbar({
       </ToolbarGroup>
 
       <Spacer />
+      <ToolbarSeparator />
 
       <ToolbarGroup>
         <SearchAndReplaceButton
@@ -106,7 +120,6 @@ export function Toolbar({
           data-active-state={isSearchAndReplaceOpen ? 'on' : 'off'}
           onClick={onSearchAndReplaceButtonClick}
         />
-        <ThemeToggle />
       </ToolbarGroup>
     </Toolbar_>
   );
