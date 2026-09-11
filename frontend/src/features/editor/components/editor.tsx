@@ -24,7 +24,7 @@ import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import {
-  TableOfContents as TableOfContentsExtension,
+  TableOfContents as TableOfContents_,
   getHierarchicalIndexes,
 } from '@tiptap/extension-table-of-contents';
 import type { TableOfContentData } from '@tiptap/extension-table-of-contents';
@@ -33,30 +33,25 @@ import { Typography } from '@tiptap/extension-typography';
 import { Selection } from '@tiptap/extensions';
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
-
-const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
-  block: 'center',
-};
 
 export function Editor() {
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
   const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
-  const tocPanelRef = useRef<PanelImperativeHandle | null>(null);
-  const tocScrollContainerRef = useRef<HTMLDivElement>(null);
+  const tocPanelRef = useRef<PanelImperativeHandle>(null);
+  const tocScrollParentRef = useRef<HTMLDivElement>(null);
+  const tocButtonRef = useRef<HTMLButtonElement>(null);
   const [isTocOpen, setIsTocOpen] = useState(true);
-  const [tocItems, setTocItems] = useState<TableOfContentData>([]);
+  const [tocData, setTocData] = useState<TableOfContentData>([]);
 
   const editor = useEditor({
-    immediatelyRender: false,
     editorProps: {
       attributes: {
         autocomplete: 'off',
         autocorrect: 'off',
         autocapitalize: 'off',
         'aria-label': 'Main content area, start typing to enter text.',
-        class: 'simple-editor',
       },
     },
     extensions: [
@@ -89,92 +84,76 @@ export function Editor() {
         onError: (error) => console.error('Upload failed:', error),
       }),
       // eslint-disable-next-line react-hooks/refs
-      TableOfContentsExtension.configure({
+      TableOfContents_.configure({
+        onUpdate: (data) => setTocData(data),
         getIndex: getHierarchicalIndexes,
-        scrollParent: () => tocScrollContainerRef.current ?? window,
-        onUpdate(content) {
-          setTocItems(content);
-        },
+        scrollParent: () => tocScrollParentRef.current ?? window,
       }),
     ],
     content,
   });
 
-  const openSearchAndReplace = useCallback(() => {
+  const openSearchAndReplace = () => {
     setIsSearchAndReplaceOpen(true);
-  }, []);
+  };
 
-  const closeSearchAndReplace = useCallback(() => {
+  const closeSearchAndReplace = () => {
     setIsSearchAndReplaceOpen(false);
     searchAndReplaceButtonRef.current?.focus();
-  }, []);
+  };
 
-  const toggleSearchAndReplace = useCallback(() => {
+  const toggleSearchAndReplace = () => {
     if (isSearchAndReplaceOpen) {
       closeSearchAndReplace();
-      return;
+    } else {
+      openSearchAndReplace();
     }
+  };
 
-    openSearchAndReplace();
-  }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace]);
-
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const openToc = useCallback(() => {
-    tocPanelRef.current?.expand();
-    setIsTocOpen(true);
-  }, []);
-
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const closeToc = useCallback(() => {
-    tocPanelRef.current?.collapse();
-    setIsTocOpen(false);
-  }, []);
-
-  // Keep `isTocOpen` in sync with the panel's real state — the panel can
-  // also be collapsed/expanded by dragging the ResizableHandle.
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const syncTocState = useCallback(() => {
-    const panel = tocPanelRef.current;
-    setIsTocOpen(panel ? !panel.isCollapsed() : false);
-  }, []);
-
-  const toggleToc = useCallback(() => {
+  const toggleToc = () => {
     if (isTocOpen) {
-      closeToc();
-      return;
+      tocPanelRef.current?.collapse();
+      setIsTocOpen(false);
+    } else {
+      tocPanelRef.current?.expand();
+      setIsTocOpen(true);
     }
+  };
 
-    openToc();
-  }, [closeToc, isTocOpen, openToc]);
+  const resizeToc = () => {
+    setIsTocOpen(!tocPanelRef.current?.isCollapsed());
+  };
 
   return (
     <div className="flex flex-col h-full">
       <EditorContext.Provider value={{ editor }}>
-        <Toolbar
-          searchAndReplaceButtonRef={searchAndReplaceButtonRef}
-          isSearchAndReplaceOpen={isSearchAndReplaceOpen}
-          onSearchAndReplaceClick={toggleSearchAndReplace}
-          isTocOpen={isTocOpen}
-          onTocToggle={toggleToc}
-        />
+        <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-thin">
+          <div className="min-w-max">
+            <Toolbar
+              searchAndReplaceButtonRef={searchAndReplaceButtonRef}
+              isSearchAndReplaceOpen={isSearchAndReplaceOpen}
+              onSearchAndReplaceClick={toggleSearchAndReplace}
+              tocButtonRef={tocButtonRef}
+              isTocOpen={isTocOpen}
+              onTocClick={toggleToc}
+            />
+          </div>
+        </div>
 
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
             collapsible
-            defaultSize="25%"
+            defaultSize="20%"
             minSize="15%"
             panelRef={tocPanelRef}
-            onResize={syncTocState}
+            onResize={resizeToc}
           >
-            <TableOfContents
-              items={tocItems}
-              scrollContainerRef={tocScrollContainerRef}
-            />
+            <TableOfContents tocData={tocData} />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize="75%" minSize="70%" className="relative">
+          <ResizablePanel defaultSize="80" minSize="70%" className="relative">
             <div
-              ref={tocScrollContainerRef}
+              ref={tocScrollParentRef}
               className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin"
             >
               <EditorContent editor={editor} role="presentation" />
@@ -184,7 +163,7 @@ export function Editor() {
                 open={isSearchAndReplaceOpen}
                 onOpen={openSearchAndReplace}
                 onClose={closeSearchAndReplace}
-                scrollIntoViewOptions={SEARCH_AND_REPLACE_SCROLL_OPTIONS}
+                scrollIntoViewOptions={{ block: 'center' }}
               />
             </div>
           </ResizablePanel>

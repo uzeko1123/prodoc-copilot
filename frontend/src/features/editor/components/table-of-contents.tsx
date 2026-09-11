@@ -2,82 +2,67 @@ import {
   Button,
   type ButtonProps,
 } from '@/components/tiptap/ui-primitive/button';
-import type { TableOfContentData } from '@tiptap/extension-table-of-contents';
+import type {
+  TableOfContentData,
+  TableOfContentDataItem,
+} from '@tiptap/extension-table-of-contents';
 import { TextSelection } from '@tiptap/pm/state';
 import { PanelLeftIcon } from 'lucide-react';
-import type { RefObject } from 'react';
-import { forwardRef, useEffect, useRef } from 'react';
+import type { Ref } from 'react';
+import { useEffect, useRef } from 'react';
 
-export function TableOfContents({
-  items,
-  scrollContainerRef,
-}: {
-  items: TableOfContentData;
-  scrollContainerRef: RefObject<HTMLDivElement | null>;
-}) {
-  const listRef = useRef<HTMLDivElement>(null);
+function TocItem({ tocItem }: { tocItem: TableOfContentDataItem }) {
+  const onTocItemClick = () => {
+    if (!tocItem.dom.isConnected) return;
 
-  useEffect(() => {
-    listRef.current
-      ?.querySelector<HTMLElement>('[data-active]')
-      ?.scrollIntoView({ block: 'nearest' });
-  }, [items]);
-
-  if (items.length === 0) {
-    return null;
-  }
+    const tr = tocItem.editor.state.tr;
+    tr.setSelection(TextSelection.near(tr.doc.resolve(tocItem.pos)));
+    tocItem.editor.view.dispatch(tr);
+    tocItem.editor.view.focus();
+    tocItem.dom.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
-    <div ref={listRef} className="h-full overflow-y-auto p-2 scrollbar-thin">
-      {items.map((item) => (
-        <div
-          key={item.id}
-          data-active={item.isActive || undefined}
-          onClick={() => {
-            const editor = item.editor;
-            const element = editor.view.dom.querySelector<HTMLElement>(
-              `[data-toc-id="${item.id}"]`,
-            );
+    <div
+      data-active={tocItem.isActive || undefined}
+      onClick={onTocItemClick}
+      className={`cursor-pointer truncate pr-2 py-1 text-sm ${tocItem.isActive ? 'bg-accent text-primary' : 'text-foreground'}`}
+      style={{ paddingLeft: `${0.5 + tocItem.level * 0.75}rem` }}
+    >
+      {tocItem.textContent}
+    </div>
+  );
+}
 
-            if (!element) {
-              return;
-            }
+export function TableOfContents({ tocData }: { tocData: TableOfContentData }) {
+  const tocContainerRef = useRef<HTMLDivElement>(null);
 
-            const transaction = editor.view.state.tr;
-            transaction.setSelection(
-              new TextSelection(
-                transaction.doc.resolve(editor.view.posAtDOM(element, 0)),
-              ),
-            );
-            editor.view.dispatch(transaction);
-            editor.view.focus();
+  useEffect(() => {
+    tocContainerRef.current
+      ?.querySelector<HTMLElement>('[data-active]')
+      ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [tocData]);
 
-            const container = scrollContainerRef.current;
+  if (tocData.length === 0) return null;
 
-            if (container) {
-              container.scrollTo({
-                top:
-                  container.scrollTop +
-                  element.getBoundingClientRect().top -
-                  container.getBoundingClientRect().top,
-                behavior: 'smooth',
-              });
-            }
-          }}
-          className={`cursor-pointer truncate pr-2 py-1 text-sm ${item.isActive ? 'bg-accent text-primary' : 'text-foreground'}`}
-          style={{ paddingLeft: `${0.5 + item.level * 0.75}rem` }}
-        >
-          {item.textContent}
-        </div>
+  return (
+    <div
+      ref={tocContainerRef}
+      className="h-full overflow-y-auto p-2 scrollbar-thin"
+    >
+      {tocData.map((tocItem) => (
+        <TocItem key={tocItem.id} tocItem={tocItem} />
       ))}
     </div>
   );
 }
 
-export const TocButton = forwardRef<
-  HTMLButtonElement,
-  ButtonProps & { isOpen: boolean; onToggle: () => void }
->(({ isOpen, onToggle, className, ...props }, ref) => {
+export function TocButton({
+  className,
+  children,
+  ref,
+  ...props
+}: ButtonProps & { ref?: Ref<HTMLButtonElement> }) {
   return (
     <Button
       type="button"
@@ -86,14 +71,11 @@ export const TocButton = forwardRef<
       role="button"
       tabIndex={-1}
       aria-label="Table of contents"
-      aria-expanded={isOpen}
       tooltip="Table of contents"
-      data-active-state={isOpen ? 'on' : 'off'}
-      onClick={onToggle}
       ref={ref}
       {...props}
     >
-      <PanelLeftIcon className="tiptap-button-icon" />
+      {children || <PanelLeftIcon className="tiptap-button-icon" />}
     </Button>
   );
-});
+}

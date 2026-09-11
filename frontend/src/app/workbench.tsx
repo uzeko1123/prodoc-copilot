@@ -42,9 +42,7 @@ function WorkbenchPage() {
           collapsible
           defaultSize="20%"
           minSize="15%"
-        >
-          <Chat />
-        </ResizablePanel>
+        ></ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );

@@ -2,7 +2,7 @@ import { TocButton } from './table-of-contents';
 import { ThemeToggle } from '@/components/tiptap/templates/simple/theme-toggle';
 import { Spacer } from '@/components/tiptap/ui-primitive/spacer';
 import {
-  Toolbar as ToolbarPrimitive,
+  Toolbar as Toolbar_,
   ToolbarGroup,
   ToolbarSeparator,
 } from '@/components/tiptap/ui-primitive/toolbar';
@@ -22,19 +22,26 @@ export function Toolbar({
   searchAndReplaceButtonRef,
   isSearchAndReplaceOpen,
   onSearchAndReplaceClick,
+  tocButtonRef,
   isTocOpen,
-  onTocToggle,
+  onTocClick,
 }: {
   searchAndReplaceButtonRef: React.RefObject<HTMLButtonElement | null>;
   isSearchAndReplaceOpen: boolean;
   onSearchAndReplaceClick: () => void;
+  tocButtonRef: React.RefObject<HTMLButtonElement | null>;
   isTocOpen: boolean;
-  onTocToggle: () => void;
+  onTocClick: () => void;
 }) {
   return (
-    <ToolbarPrimitive>
+    <Toolbar_>
       <ToolbarGroup>
-        <TocButton isOpen={isTocOpen} onToggle={onTocToggle} />
+        <TocButton
+          ref={tocButtonRef}
+          aria-expanded={isTocOpen}
+          data-active-state={isTocOpen ? 'on' : 'off'}
+          onClick={onTocClick}
+        />
       </ToolbarGroup>
 
       <Spacer />
@@ -101,6 +108,6 @@ export function Toolbar({
         />
         <ThemeToggle />
       </ToolbarGroup>
-    </ToolbarPrimitive>
+    </Toolbar_>
   );
 }
