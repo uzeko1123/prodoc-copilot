@@ -34,7 +34,7 @@ export function Toolbar({
   isTocPanelOpen: boolean;
 }) {
   return (
-    <Toolbar_>
+    <Toolbar_ className="[--tt-toolbar-height:2.5rem]">
       <ToolbarGroup>
         <Button
           type="button"

@@ -56,7 +56,10 @@ function WorkbenchPage() {
             onValueChange={(value) => setActiveTab(value as ActiveTab)}
             className="h-full gap-0"
           >
-            <TabsList variant="line" className="w-full border-b">
+            <TabsList
+              variant="line"
+              className="w-full min-h-10 max-h-10 border-b"
+            >
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="comment">Comment</TabsTrigger>
               <Button

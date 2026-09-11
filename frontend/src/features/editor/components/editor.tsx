@@ -148,7 +148,7 @@ export function Editor() {
   return (
     <div className="flex flex-col h-full">
       <EditorContext.Provider value={{ editor }}>
-        <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-thin border-b">
+        <div className="w-full min-h-10 max-h-10 overflow-x-auto overflow-y-hidden scrollbar-thin border-b">
           <div className="min-w-max">
             <Toolbar
               searchAndReplaceButtonRef={searchAndReplaceButtonRef}
