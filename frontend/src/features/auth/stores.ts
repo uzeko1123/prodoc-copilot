@@ -2,10 +2,12 @@ import type { UserDetails } from '@/api/gen/models';
 import { create } from 'zustand';
 import { createJSONStorage, persist, devtools } from 'zustand/middleware';
 
-export const useAuthStore = create<{
+type AuthState = {
   user: UserDetails | null;
   clear: () => void;
-}>()(
+};
+
+export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
       (set) => ({

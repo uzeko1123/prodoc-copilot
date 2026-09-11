@@ -1,3 +1,5 @@
+import { useEditorStore } from '../stores';
+import { BubbleMenu } from './bubble-menu';
 import { TableOfContents } from './table-of-contents';
 import { Toolbar } from './toolbar';
 import {
@@ -16,6 +18,7 @@ import '@/components/tiptap/node/list-node/list-node.scss';
 import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
 import content from '@/components/tiptap/templates/simple/data/content.json';
 import { SearchAndReplace } from '@/components/tiptap/ui/search-and-replace';
+import { useMount } from '@/hooks/use-mount';
 import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap/utils';
 import { FindAndReplace } from '@tiptap/extension-find-and-replace';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -37,6 +40,7 @@ import { useRef, useState } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 
 export function Editor() {
+  const setEditor = useEditorStore((state) => state.setEditor);
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
   const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
   const tocPanelRef = useRef<PanelImperativeHandle>(null);
@@ -92,6 +96,8 @@ export function Editor() {
     ],
     content,
   });
+
+  useMount(() => setEditor(editor));
 
   const openSearchAndReplace = () => {
     setIsSearchAndReplaceOpen(true);
@@ -157,6 +163,7 @@ export function Editor() {
               className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin"
             >
               <EditorContent editor={editor} role="presentation" />
+              <BubbleMenu />
             </div>
             <div className="absolute top-2 right-2">
               <SearchAndReplace
