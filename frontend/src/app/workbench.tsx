@@ -59,21 +59,18 @@ function WorkbenchPage() {
             <TabsList variant="line" className="w-full border-b">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="comment">Comment</TabsTrigger>
-              {!isSidePanelOpen && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  role="button"
-                  tabIndex={-1}
-                  aria-label="Side Panel"
-                  tooltip="Side Panel"
-                  aria-expanded={isSidePanelOpen}
-                  data-active-state={isSidePanelOpen ? 'on' : 'off'}
-                  onClick={toggleSidePanel}
-                >
-                  <PanelRightIcon className="tiptap-button-icon" />
-                </Button>
-              )}
+              <Button
+                type="button"
+                variant="ghost"
+                role="button"
+                tabIndex={-1}
+                aria-label="Side Panel"
+                tooltip="Side Panel"
+                aria-expanded={isSidePanelOpen}
+                onClick={toggleSidePanel}
+              >
+                <PanelRightIcon className="tiptap-button-icon" />
+              </Button>
             </TabsList>
             <TabsContent value="chat" className="min-h-0">
               <Chat />

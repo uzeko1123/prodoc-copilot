@@ -35,27 +35,21 @@ export function Toolbar({
 }) {
   return (
     <Toolbar_>
-      {!isTocPanelOpen && (
-        <>
-          <ToolbarGroup>
-            <Button
-              type="button"
-              variant="ghost"
-              role="button"
-              tabIndex={-1}
-              aria-label="Table of contents"
-              tooltip="Table of contents"
-              ref={tocButtonRef}
-              aria-expanded={isTocPanelOpen}
-              data-active-state={isTocPanelOpen ? 'on' : 'off'}
-              onClick={onTocButtonClick}
-            >
-              <PanelLeftIcon className="tiptap-button-icon" />
-            </Button>
-          </ToolbarGroup>
-          <ToolbarSeparator />
-        </>
-      )}
+      <ToolbarGroup>
+        <Button
+          type="button"
+          variant="ghost"
+          role="button"
+          tabIndex={-1}
+          aria-label="Table of contents"
+          tooltip="Table of contents"
+          ref={tocButtonRef}
+          aria-expanded={isTocPanelOpen}
+          onClick={onTocButtonClick}
+        >
+          <PanelLeftIcon className="tiptap-button-icon" />
+        </Button>
+      </ToolbarGroup>
 
       <Spacer />
 
@@ -111,7 +105,6 @@ export function Toolbar({
       </ToolbarGroup>
 
       <Spacer />
-      <ToolbarSeparator />
 
       <ToolbarGroup>
         <SearchAndReplaceButton
