@@ -1,4 +1,4 @@
-import { useEditorStore } from '../stores';
+import { useEditorStore, useContextStore } from '../stores';
 import { BubbleMenu } from './bubble-menu';
 import { TableOfContents } from './table-of-contents';
 import { Toolbar } from './toolbar';
@@ -41,13 +41,18 @@ import type { PanelImperativeHandle } from 'react-resizable-panels';
 
 export function Editor() {
   const setEditor = useEditorStore((state) => state.setEditor);
+  const setSelection = useContextStore((state) => state.setSelection);
+
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
   const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
+
   const tocPanelRef = useRef<PanelImperativeHandle>(null);
-  const tocScrollParentRef = useRef<HTMLDivElement>(null);
   const tocButtonRef = useRef<HTMLButtonElement>(null);
   const [isTocOpen, setIsTocOpen] = useState(true);
   const [tocData, setTocData] = useState<TableOfContentData>([]);
+
+  const editorScrollRef = useRef<HTMLDivElement>(null);
+  const [editorScroll, setEditorScroll] = useState<HTMLElement | null>(null);
 
   const editor = useEditor({
     editorProps: {
@@ -91,13 +96,23 @@ export function Editor() {
       TableOfContents_.configure({
         onUpdate: (data) => setTocData(data),
         getIndex: getHierarchicalIndexes,
-        scrollParent: () => tocScrollParentRef.current ?? window,
+        scrollParent: () => editorScrollRef.current ?? window,
       }),
     ],
     content,
   });
 
-  useMount(() => setEditor(editor));
+  useMount(() => {
+    if (!editor) return;
+    setEditor(editor);
+    setEditorScroll(editorScrollRef.current);
+    const syncSelection = () => {
+      const { from, to } = editor.state.selection;
+      setSelection(from === to ? null : { from, to });
+    };
+    syncSelection();
+    editor.on('transaction', syncSelection);
+  });
 
   const openSearchAndReplace = () => {
     setIsSearchAndReplaceOpen(true);
@@ -133,7 +148,7 @@ export function Editor() {
   return (
     <div className="flex flex-col h-full">
       <EditorContext.Provider value={{ editor }}>
-        <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-thin">
+        <div className="w-full overflow-x-auto overflow-y-hidden scrollbar-thin border-b">
           <div className="min-w-max">
             <Toolbar
               searchAndReplaceButtonRef={searchAndReplaceButtonRef}
@@ -159,11 +174,11 @@ export function Editor() {
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="80" minSize="70%" className="relative">
             <div
-              ref={tocScrollParentRef}
+              ref={editorScrollRef}
               className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin"
             >
               <EditorContent editor={editor} role="presentation" />
-              <BubbleMenu />
+              <BubbleMenu scrollTarget={editorScroll} />
             </div>
             <div className="absolute top-2 right-2">
               <SearchAndReplace

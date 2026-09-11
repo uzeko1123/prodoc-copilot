@@ -11,9 +11,13 @@ import {
 } from '@/components/shadcn/ui/tabs';
 import { Chat } from '@/features/chat/components/chat';
 import { Editor } from '@/features/editor/components/editor';
+import { type ActiveTab, useWorkbenchStore } from '@/stores/workbench';
 import { createFileRoute } from '@tanstack/react-router';
 
 function WorkbenchPage() {
+  const activeTab = useWorkbenchStore((state) => state.activeTab);
+  const setActiveTab = useWorkbenchStore((state) => state.setActiveTab);
+
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex h-12 shrink-0 items-center border-b px-4">
@@ -26,7 +30,11 @@ function WorkbenchPage() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="20%" minSize="15%">
-          <Tabs defaultValue="chat" className="h-full gap-0">
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as ActiveTab)}
+            className="h-full gap-0"
+          >
             <TabsList variant="line" className="w-full border-b">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="comment">Comment</TabsTrigger>

@@ -43,8 +43,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
+import { ContextPreview } from '@/features/chat/components/context-preview';
 import { getMessageText } from '@/lib/shadcn/ai';
-import { ChatContextPreview } from '@/features/chat/components/chat-context-preview';
 import { useChat } from '@ai-sdk/react';
 import { createChat } from '@shadcn/helpers/ai-sdk';
 import {
@@ -164,7 +164,7 @@ export function Chat() {
             )}
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <ChatContextPreview />
+            <ContextPreview />
             <form
               onSubmit={(e) => {
                 e.preventDefault();

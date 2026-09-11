@@ -12,10 +12,7 @@ export const useAuthStore = create<AuthState>()(
     persist(
       (set) => ({
         user: null,
-        clear: () =>
-          set({
-            user: null,
-          }),
+        clear: () => set({ user: null }),
       }),
       {
         name: 'auth-storage',
