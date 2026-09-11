@@ -20,27 +20,27 @@ import { UndoRedoButton } from '@/components/tiptap/ui/undo-redo-button';
 
 export function Toolbar({
   searchAndReplaceButtonRef,
+  onSearchAndReplaceButtonClick,
   isSearchAndReplaceOpen,
-  onSearchAndReplaceClick,
   tocButtonRef,
-  isTocOpen,
-  onTocClick,
+  onTocButtonClick,
+  isTocPanelOpen,
 }: {
   searchAndReplaceButtonRef: React.RefObject<HTMLButtonElement | null>;
+  onSearchAndReplaceButtonClick: () => void;
   isSearchAndReplaceOpen: boolean;
-  onSearchAndReplaceClick: () => void;
   tocButtonRef: React.RefObject<HTMLButtonElement | null>;
-  isTocOpen: boolean;
-  onTocClick: () => void;
+  onTocButtonClick: () => void;
+  isTocPanelOpen: boolean;
 }) {
   return (
     <Toolbar_>
       <ToolbarGroup>
         <TocButton
           ref={tocButtonRef}
-          aria-expanded={isTocOpen}
-          data-active-state={isTocOpen ? 'on' : 'off'}
-          onClick={onTocClick}
+          aria-expanded={isTocPanelOpen}
+          data-active-state={isTocPanelOpen ? 'on' : 'off'}
+          onClick={onTocButtonClick}
         />
       </ToolbarGroup>
 
@@ -104,7 +104,7 @@ export function Toolbar({
           ref={searchAndReplaceButtonRef}
           aria-expanded={isSearchAndReplaceOpen}
           data-active-state={isSearchAndReplaceOpen ? 'on' : 'off'}
-          onClick={onSearchAndReplaceClick}
+          onClick={onSearchAndReplaceButtonClick}
         />
         <ThemeToggle />
       </ToolbarGroup>

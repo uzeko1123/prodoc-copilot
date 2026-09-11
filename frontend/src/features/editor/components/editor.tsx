@@ -46,9 +46,9 @@ export function Editor() {
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
   const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
 
-  const tocPanelRef = useRef<PanelImperativeHandle>(null);
   const tocButtonRef = useRef<HTMLButtonElement>(null);
-  const [isTocOpen, setIsTocOpen] = useState(true);
+  const tocPanelRef = useRef<PanelImperativeHandle>(null);
+  const [isTocPanelOpen, setIsTocPanelOpen] = useState(true);
   const [tocData, setTocData] = useState<TableOfContentData>([]);
 
   const editorScrollRef = useRef<HTMLDivElement>(null);
@@ -131,18 +131,18 @@ export function Editor() {
     }
   };
 
-  const toggleToc = () => {
-    if (isTocOpen) {
+  const toggleTocPanel = () => {
+    if (isTocPanelOpen) {
       tocPanelRef.current?.collapse();
-      setIsTocOpen(false);
+      setIsTocPanelOpen(false);
     } else {
       tocPanelRef.current?.expand();
-      setIsTocOpen(true);
+      setIsTocPanelOpen(true);
     }
   };
 
-  const resizeToc = () => {
-    setIsTocOpen(!tocPanelRef.current?.isCollapsed());
+  const handleTocPanelResize = () => {
+    setIsTocPanelOpen(!tocPanelRef.current?.isCollapsed());
   };
 
   return (
@@ -152,11 +152,11 @@ export function Editor() {
           <div className="min-w-max">
             <Toolbar
               searchAndReplaceButtonRef={searchAndReplaceButtonRef}
+              onSearchAndReplaceButtonClick={toggleSearchAndReplace}
               isSearchAndReplaceOpen={isSearchAndReplaceOpen}
-              onSearchAndReplaceClick={toggleSearchAndReplace}
               tocButtonRef={tocButtonRef}
-              isTocOpen={isTocOpen}
-              onTocClick={toggleToc}
+              onTocButtonClick={toggleTocPanel}
+              isTocPanelOpen={isTocPanelOpen}
             />
           </div>
         </div>
@@ -167,7 +167,7 @@ export function Editor() {
             defaultSize="20%"
             minSize="15%"
             panelRef={tocPanelRef}
-            onResize={resizeToc}
+            onResize={handleTocPanelResize}
           >
             <TableOfContents tocData={tocData} />
           </ResizablePanel>
