@@ -1,0 +1,25 @@
+.tiptap.ProseMirror {
+  mark[data-comment-id] {
+    cursor: pointer;
+    background-color: var(--tt-color-highlight-orange);
+    border-radius: 2px;
+    padding: 0.1em 0.05em;
+
+    &:hover {
+      box-shadow: 0 0 0 2px var(--tt-color-highlight-orange-contrast);
+    }
+
+    // Overlapping ranges cannot coexist as marks, so "ABC"[A] + "BC"[B]
+    // renders as adjacent `<mark>` elements. Flatten the touching corners so
+    // the joint reads as one continuous highlight instead of a thin seam.
+    + mark[data-comment-id] {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    &:has(+ mark[data-comment-id]) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}

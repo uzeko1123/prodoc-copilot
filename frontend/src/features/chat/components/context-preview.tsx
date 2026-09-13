@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import { useEditorStore, useContextStore } from '@/features/editor/stores';
+import { useEditorStore, useContextStore } from '@/features/editor-tiptap/stores';
 import { QuoteIcon } from 'lucide-react';
 
 export function ContextPreview() {

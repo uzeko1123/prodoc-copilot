@@ -1,196 +1,103 @@
-import { useEditorStore, useContextStore } from '../stores';
-import { BubbleMenu } from './bubble-menu';
-import { TableOfContents } from './table-of-contents';
-import { Toolbar } from './toolbar';
+import { BlockquoteElement } from '@/components/shadcn/ui/blockquote-node';
 import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/shadcn/ui/resizable';
-import '@/components/tiptap/node/blockquote-node/blockquote-node.scss';
-import '@/components/tiptap/node/code-block-node/code-block-node.scss';
-import '@/components/tiptap/node/heading-node/heading-node.scss';
-import { HorizontalRule } from '@/components/tiptap/node/horizontal-rule-node/horizontal-rule-node-extension';
-import '@/components/tiptap/node/horizontal-rule-node/horizontal-rule-node.scss';
-import '@/components/tiptap/node/image-node/image-node.scss';
-import { ImageUploadNode } from '@/components/tiptap/node/image-upload-node/image-upload-node-extension';
-import '@/components/tiptap/node/list-node/list-node.scss';
-import '@/components/tiptap/node/paragraph-node/paragraph-node.scss';
-import content from '@/components/tiptap/templates/simple/data/content.json';
-import { SearchAndReplace } from '@/components/tiptap/ui/search-and-replace';
-import { useMount } from '@/hooks/use-mount';
-import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap/utils';
-import { FindAndReplace } from '@tiptap/extension-find-and-replace';
-import { Highlight } from '@tiptap/extension-highlight';
-import { Image } from '@tiptap/extension-image';
-import { TaskItem, TaskList } from '@tiptap/extension-list';
-import { Subscript } from '@tiptap/extension-subscript';
-import { Superscript } from '@tiptap/extension-superscript';
+  Editor as Editor_,
+  EditorContainer,
+} from '@/components/shadcn/ui/editor';
+import { FixedToolbar } from '@/components/shadcn/ui/fixed-toolbar';
 import {
-  TableOfContents as TableOfContents_,
-  getHierarchicalIndexes,
-} from '@tiptap/extension-table-of-contents';
-import type { TableOfContentData } from '@tiptap/extension-table-of-contents';
-import { TextAlign } from '@tiptap/extension-text-align';
-import { Typography } from '@tiptap/extension-typography';
-import { Selection } from '@tiptap/extensions';
-import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
-import { StarterKit } from '@tiptap/starter-kit';
-import { useRef, useState } from 'react';
-import type { PanelImperativeHandle } from 'react-resizable-panels';
+  H1Element,
+  H2Element,
+  H3Element,
+} from '@/components/shadcn/ui/heading-node';
+import { MarkToolbarButton } from '@/components/shadcn/ui/mark-toolbar-button';
+import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
+import {
+  BlockquotePlugin,
+  BoldPlugin,
+  H1Plugin,
+  H2Plugin,
+  H3Plugin,
+  ItalicPlugin,
+  UnderlinePlugin,
+} from '@platejs/basic-nodes/react';
+import type { Value } from 'platejs';
+import { Plate, usePlateEditor } from 'platejs/react';
+
+const initialValue: Value = [
+  {
+    children: [{ text: 'Title' }],
+    type: 'h3',
+  },
+  {
+    children: [
+      {
+        children: [{ text: 'This is a quote.' }],
+        type: 'p',
+      },
+    ],
+    type: 'blockquote',
+  },
+  {
+    children: [
+      { text: 'With some ' },
+      { bold: true, text: 'bold' },
+      { text: ' text for emphasis!' },
+    ],
+    type: 'p',
+  },
+];
 
 export function Editor() {
-  const setEditor = useEditorStore((state) => state.setEditor);
-  const setSelection = useContextStore((state) => state.setSelection);
-
-  const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
-  const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
-
-  const tocButtonRef = useRef<HTMLButtonElement>(null);
-  const tocPanelRef = useRef<PanelImperativeHandle>(null);
-  const [isTocPanelOpen, setIsTocPanelOpen] = useState(true);
-  const [tocData, setTocData] = useState<TableOfContentData>([]);
-
-  const editorScrollRef = useRef<HTMLDivElement>(null);
-  const [editorScroll, setEditorScroll] = useState<HTMLElement | null>(null);
-
-  const editor = useEditor({
-    editorProps: {
-      attributes: {
-        autocomplete: 'off',
-        autocorrect: 'off',
-        autocapitalize: 'off',
-        'aria-label': 'Main content area, start typing to enter text.',
-      },
-    },
-    extensions: [
-      StarterKit.configure({
-        horizontalRule: false,
-        link: {
-          openOnClick: false,
-          enableClickSelection: true,
-        },
-      }),
-      HorizontalRule,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      TaskList,
-      TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
-      Image,
-      Typography,
-      Superscript,
-      Subscript,
-      Selection,
-      FindAndReplace.configure({
-        searchDebounceMs: 500,
-        injectCSS: false,
-      }),
-      ImageUploadNode.configure({
-        accept: 'image/*',
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-        onError: (error) => console.error('Upload failed:', error),
-      }),
-      // eslint-disable-next-line react-hooks/refs
-      TableOfContents_.configure({
-        onUpdate: (data) => setTocData(data),
-        getIndex: getHierarchicalIndexes,
-        scrollParent: () => editorScrollRef.current ?? window,
-      }),
+  const editor = usePlateEditor({
+    plugins: [
+      BoldPlugin,
+      ItalicPlugin,
+      UnderlinePlugin,
+      H1Plugin.withComponent(H1Element),
+      H2Plugin.withComponent(H2Element),
+      H3Plugin.withComponent(H3Element),
+      BlockquotePlugin.withComponent(BlockquoteElement),
     ],
-    content,
+    value: () => {
+      const savedValue = localStorage.getItem('installation-react-demo');
+      return savedValue ? JSON.parse(savedValue) : initialValue;
+    },
   });
-
-  useMount(() => {
-    if (!editor) return;
-    setEditor(editor);
-    setEditorScroll(editorScrollRef.current);
-    const syncSelection = () => {
-      const { from, to } = editor.state.selection;
-      setSelection(from === to ? null : { from, to });
-    };
-    syncSelection();
-    editor.on('transaction', syncSelection);
-  });
-
-  const openSearchAndReplace = () => {
-    setIsSearchAndReplaceOpen(true);
-  };
-
-  const closeSearchAndReplace = () => {
-    setIsSearchAndReplaceOpen(false);
-    searchAndReplaceButtonRef.current?.focus();
-  };
-
-  const toggleSearchAndReplace = () => {
-    if (isSearchAndReplaceOpen) {
-      closeSearchAndReplace();
-    } else {
-      openSearchAndReplace();
-    }
-  };
-
-  const toggleTocPanel = () => {
-    if (isTocPanelOpen) {
-      tocPanelRef.current?.collapse();
-      setIsTocPanelOpen(false);
-    } else {
-      tocPanelRef.current?.expand();
-      setIsTocPanelOpen(true);
-    }
-  };
-
-  const handleTocPanelResize = () => {
-    setIsTocPanelOpen(!tocPanelRef.current?.isCollapsed());
-  };
 
   return (
-    <div className="flex flex-col h-full">
-      <EditorContext.Provider value={{ editor }}>
-        <div className="w-full min-h-10 max-h-10 overflow-x-auto overflow-y-hidden scrollbar-thin border-b">
-          <div className="min-w-max">
-            <Toolbar
-              searchAndReplaceButtonRef={searchAndReplaceButtonRef}
-              onSearchAndReplaceButtonClick={toggleSearchAndReplace}
-              isSearchAndReplaceOpen={isSearchAndReplaceOpen}
-              tocButtonRef={tocButtonRef}
-              onTocButtonClick={toggleTocPanel}
-              isTocPanelOpen={isTocPanelOpen}
-            />
-          </div>
-        </div>
-
-        <ResizablePanelGroup orientation="horizontal">
-          <ResizablePanel
-            collapsible
-            defaultSize="20%"
-            minSize="15%"
-            panelRef={tocPanelRef}
-            onResize={handleTocPanelResize}
-          >
-            <TableOfContents tocData={tocData} />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize="80" minSize="70%" className="relative">
-            <div
-              ref={editorScrollRef}
-              className="h-full overflow-y-auto p-12 pb-[30vh] scrollbar-thin"
-            >
-              <EditorContent editor={editor} role="presentation" />
-              <BubbleMenu scrollTarget={editorScroll} />
-            </div>
-            <div className="absolute top-2 right-2">
-              <SearchAndReplace
-                open={isSearchAndReplaceOpen}
-                onOpen={openSearchAndReplace}
-                onClose={closeSearchAndReplace}
-                scrollIntoViewOptions={{ block: 'center' }}
-              />
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </EditorContext.Provider>
-    </div>
+    <Plate
+      editor={editor}
+      onChange={({ value }) => {
+        localStorage.setItem('installation-react-demo', JSON.stringify(value));
+      }}
+    >
+      <FixedToolbar className="flex justify-start gap-1 rounded-t-lg">
+        <ToolbarButton onClick={() => editor.tf.h1.toggle()}>H1</ToolbarButton>
+        <ToolbarButton onClick={() => editor.tf.h2.toggle()}>H2</ToolbarButton>
+        <ToolbarButton onClick={() => editor.tf.h3.toggle()}>H3</ToolbarButton>
+        <ToolbarButton onClick={() => editor.tf.blockquote.toggle()}>
+          Quote
+        </ToolbarButton>
+        <MarkToolbarButton nodeType="bold" tooltip="Bold (⌘+B)">
+          B
+        </MarkToolbarButton>
+        <MarkToolbarButton nodeType="italic" tooltip="Italic (⌘+I)">
+          I
+        </MarkToolbarButton>
+        <MarkToolbarButton nodeType="underline" tooltip="Underline (⌘+U)">
+          U
+        </MarkToolbarButton>
+        <div className="flex-1" />
+        <ToolbarButton
+          className="px-2"
+          onClick={() => editor.tf.setValue(initialValue)}
+        >
+          Reset
+        </ToolbarButton>
+      </FixedToolbar>
+      <EditorContainer>
+        <Editor_ placeholder="Type your amazing content here..." />
+      </EditorContainer>
+    </Plate>
   );
 }

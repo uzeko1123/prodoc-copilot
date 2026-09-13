@@ -11,7 +11,8 @@ import {
 } from '@/components/shadcn/ui/tabs';
 import { Button } from '@/components/tiptap/ui-primitive/button';
 import { Chat } from '@/features/chat/components/chat';
-import { Editor } from '@/features/editor/components/editor';
+import { CommentPanel } from '@/features/comment/components/comment-panel';
+import { Editor } from '@/features/editor-tiptap/components/editor';
 import { type ActiveTab, useWorkbenchStore } from '@/stores/workbench';
 import { createFileRoute } from '@tanstack/react-router';
 import { PanelRightIcon } from 'lucide-react';
@@ -78,7 +79,9 @@ function WorkbenchPage() {
             <TabsContent value="chat" className="min-h-0">
               <Chat />
             </TabsContent>
-            <TabsContent value="comment"></TabsContent>
+            <TabsContent value="comment" className="min-h-0">
+              <CommentPanel />
+            </TabsContent>
           </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />

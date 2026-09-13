@@ -19,6 +19,7 @@ import { Route as featuresAuthPagesResetPasswordRouteImport } from './features/a
 import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './features/auth/pages/reset-password-confirm'
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
+import { Route as featuresEditorPagesIndexRouteImport } from './features/editor/pages/index'
 import { Route as appWorkbenchRouteImport } from './app/workbench'
 
 const appIndexRoute = appIndexRouteImport.update({
@@ -76,6 +77,12 @@ const featuresAuthPagesVerifyEmailRoute =
     path: '/account/verify-email',
     getParentRoute: () => rootRouteImport,
   } as any)
+const featuresEditorPagesIndexRoute =
+  featuresEditorPagesIndexRouteImport.update({
+    id: '/editor/',
+    path: '/editor/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const appWorkbenchRoute = appWorkbenchRouteImport.update({
   id: '/workbench/',
   path: '/workbench/',
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/account/': typeof featuresAuthPagesIndexRoute
+  '/editor/': typeof featuresEditorPagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
@@ -107,6 +115,7 @@ export interface FileRoutesByTo {
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/account': typeof featuresAuthPagesIndexRoute
+  '/editor': typeof featuresEditorPagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -121,6 +130,7 @@ export interface FileRoutesById {
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/account/': typeof featuresAuthPagesIndexRoute
+  '/editor/': typeof featuresEditorPagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/account/signup'
     | '/account/verify-email'
     | '/account/'
+    | '/editor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/account/signup'
     | '/account/verify-email'
     | '/account'
+    | '/editor'
   id:
     | '__root__'
     | '/'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
     | '/account/signup'
     | '/account/verify-email'
     | '/account/'
+    | '/editor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,6 +189,7 @@ export interface RootRouteChildren {
   featuresAuthPagesSignupRoute: typeof featuresAuthPagesSignupRoute
   featuresAuthPagesVerifyEmailRoute: typeof featuresAuthPagesVerifyEmailRoute
   featuresAuthPagesIndexRoute: typeof featuresAuthPagesIndexRoute
+  featuresEditorPagesIndexRoute: typeof featuresEditorPagesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -250,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof featuresAuthPagesVerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/editor/': {
+      id: '/editor/'
+      path: '/editor'
+      fullPath: '/editor/'
+      preLoaderRoute: typeof featuresEditorPagesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/workbench/': {
       id: '/workbench/'
       path: '/workbench'
@@ -273,6 +294,7 @@ const rootRouteChildren: RootRouteChildren = {
   featuresAuthPagesSignupRoute: featuresAuthPagesSignupRoute,
   featuresAuthPagesVerifyEmailRoute: featuresAuthPagesVerifyEmailRoute,
   featuresAuthPagesIndexRoute: featuresAuthPagesIndexRoute,
+  featuresEditorPagesIndexRoute: featuresEditorPagesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
