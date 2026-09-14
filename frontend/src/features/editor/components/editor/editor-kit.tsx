@@ -10,7 +10,6 @@ import { BlockPlaceholderKit } from '@/components/shadcn/editor/plugins/block-pl
 import { CalloutKit } from '@/components/shadcn/editor/plugins/callout-kit';
 import { CodeBlockKit } from '@/components/shadcn/editor/plugins/code-block-kit';
 import { ColumnKit } from '@/components/shadcn/editor/plugins/column-kit';
-import { CommentKit } from '@/components/shadcn/editor/plugins/comment-kit';
 import { CopilotKit } from '@/components/shadcn/editor/plugins/copilot-kit';
 import { CursorOverlayKit } from '@/components/shadcn/editor/plugins/cursor-overlay-kit';
 import { DateKit } from '@/components/shadcn/editor/plugins/date-kit';
@@ -29,13 +28,14 @@ import { MathKit } from '@/components/shadcn/editor/plugins/math-kit';
 import { MediaKit } from '@/components/shadcn/editor/plugins/media-kit';
 import { MentionKit } from '@/components/shadcn/editor/plugins/mention-kit';
 import { SlashKit } from '@/components/shadcn/editor/plugins/slash-kit';
-import { SuggestionKit } from '@/components/shadcn/editor/plugins/suggestion-kit';
 import { TableKit } from '@/components/shadcn/editor/plugins/table-kit';
 import { TocKit } from '@/components/shadcn/editor/plugins/toc-kit';
 import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
 import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
+import { CommentKit } from './plugins/comment-kit';
 import { FixedToolbarKit } from './plugins/fixed-toolbar-kit';
+import { SuggestionKit } from './plugins/suggestion-kit';
 
 export const EditorKit = [
   ...CopilotKit,
