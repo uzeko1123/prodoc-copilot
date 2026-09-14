@@ -4,8 +4,8 @@
 import { SettingsDialog } from '@/components/shadcn/editor/settings-dialog';
 import { normalizeStaticValue } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
-import { Editor as Editor_, EditorContainer } from '../components/editor_';
-import { EditorKit } from '../components/editor-kit';
+import { EditorKit } from './editor/editor-kit';
+import { Editor as Editor_, EditorContainer } from './ui/editor';
 
 export function Editor() {
   const editor = usePlateEditor({
@@ -16,7 +16,7 @@ export function Editor() {
   return (
     <Plate editor={editor}>
       <EditorContainer>
-        <Editor_ variant="demo" />
+        <Editor_ className="scrollbar-thin" />
       </EditorContainer>
 
       <SettingsDialog />

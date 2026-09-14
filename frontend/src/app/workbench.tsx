@@ -42,12 +42,14 @@ function WorkbenchPage() {
 
   return (
     <div className="flex h-dvh flex-col">
-      <header className="h-12 shrink-0 items-center border-b px-4">
+      <header className="flex h-12 shrink-0 items-center border-b px-4">
         <h1 className="text-sm font-semibold">Workbench</h1>
       </header>
 
       <ResizablePanelGroup orientation="horizontal">
-        <ResizablePanel defaultSize="60%" minSize="50%">
+        <ResizablePanel defaultSize="10%" minSize="10%"></ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize="50%" minSize="40%">
           <Editor />
         </ResizablePanel>
         <ResizableHandle withHandle />
@@ -57,10 +59,7 @@ function WorkbenchPage() {
             onValueChange={(value) => setActiveTab(value as ActiveTab)}
             className="h-full gap-0"
           >
-            <TabsList
-              variant="line"
-              className="max-h-10 min-h-10 w-full border-b"
-            >
+            <TabsList variant="line" className="w-full border-b">
               <TabsTrigger value="chat">Chat</TabsTrigger>
               <TabsTrigger value="comment">Comment</TabsTrigger>
               <Button
@@ -72,7 +71,7 @@ function WorkbenchPage() {
                 aria-expanded={isSidePanelOpen}
                 onClick={toggleSidePanel}
               >
-                <PanelRightIcon className="tiptap-button-icon" />
+                <PanelRightIcon />
               </Button>
             </TabsList>
             <TabsContent value="chat" className="min-h-0">

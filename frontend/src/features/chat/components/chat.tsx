@@ -103,164 +103,134 @@ export function Chat() {
 
   return (
     <MessageScrollerProvider>
-      <div className="relative flex flex-col gap-4">
-        <Card className="mx-auto h-140 w-full max-w-sm gap-0">
-          <CardHeader className="gap-1 border-b">
-            <CardTitle>New Chat</CardTitle>
-            <CardDescription>How can I help you today?</CardDescription>
-            <CardAction>
-              <Tooltip>
-                {/* <TooltipTrigger
-                  render={
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      aria-label="Reset conversation"
-                      onClick={() => setMessages(initialMessages)}
-                      disabled={isBusy}
-                    />
-                  }
+      <Card className="flex h-full flex-col gap-0 rounded-none">
+        <CardHeader className="gap-1 border-b">
+          <CardTitle>New Chat</CardTitle>
+          <CardDescription>How can I help you today?</CardDescription>
+          <CardAction>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Reset conversation"
+                  onClick={() => setMessages(initialMessages)}
+                  disabled={isBusy}
                 >
                   <RotateCwIcon />
-                </TooltipTrigger> */}
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Reset conversation"
-                    onClick={() => setMessages(initialMessages)}
-                    disabled={isBusy}
-                  >
-                    <RotateCwIcon />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Reset</p>
-                </TooltipContent>
-              </Tooltip>
-            </CardAction>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-hidden p-0">
-            {messages.length === 0 ? (
-              <Empty className="h-full">
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <MessageCircleDashedIcon />
-                  </EmptyMedia>
-                  <EmptyTitle>Morning, shadcn!</EmptyTitle>
-                  <EmptyDescription>
-                    What are we working on today? Press send to start a new
-                    conversation
-                  </EmptyDescription>
-                </EmptyHeader>
-              </Empty>
-            ) : (
-              <MessageScroller>
-                <MessageScrollerViewport>
-                  <MessageScrollerContent
-                    aria-busy={isBusy}
-                    className="p-(--card-spacing)"
-                  >
-                    {messages.map((message) => (
-                      <MessageAnimated
-                        key={message.id}
-                        message={message}
-                        scrollAnchor={message.role === 'user'}
-                      />
-                    ))}
-                  </MessageScrollerContent>
-                </MessageScrollerViewport>
-                <MessageScrollerButton />
-              </MessageScroller>
-            )}
-          </CardContent>
-          <CardFooter className="flex-col gap-2">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!nextMessage || isBusy) {
-                  return;
-                }
-                void sendMessage(nextMessage);
-              }}
-              className="w-full"
-            >
-              <InputGroup>
-                <InputGroupTextarea
-                  aria-label="Next predefined message"
-                  className="h-14 min-h-14 overflow-hidden px-3 py-2.5 opacity-60 data-[status=ready]:opacity-100"
-                  data-status={status}
-                  placeholder="No messages queued. Reset the conversation."
-                  value={nextMessage ? getMessageText(nextMessage) : ''}
-                  readOnly
-                />
-                <InputGroupAddon align="block-end" className="pt-1">
-                  <DropdownMenu>
-                    {/* <DropdownMenuTrigger
-                      render={
-                        <InputGroupButton
-                          aria-label="Add files"
-                          type="button"
-                          size="icon-sm"
-                          variant="outline"
-                        />
-                      }
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Reset</p>
+              </TooltipContent>
+            </Tooltip>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex-1 overflow-hidden p-0">
+          {messages.length === 0 ? (
+            <Empty className="h-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <MessageCircleDashedIcon />
+                </EmptyMedia>
+                <EmptyTitle>Morning, shadcn!</EmptyTitle>
+                <EmptyDescription>
+                  What are we working on today? Press send to start a new
+                  conversation
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          ) : (
+            <MessageScroller>
+              <MessageScrollerViewport>
+                <MessageScrollerContent
+                  aria-busy={isBusy}
+                  className="p-(--card-spacing)"
+                >
+                  {messages.map((message) => (
+                    <MessageAnimated
+                      key={message.id}
+                      message={message}
+                      scrollAnchor={message.role === 'user'}
+                    />
+                  ))}
+                </MessageScrollerContent>
+              </MessageScrollerViewport>
+              <MessageScrollerButton />
+            </MessageScroller>
+          )}
+        </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!nextMessage || isBusy) {
+                return;
+              }
+              void sendMessage(nextMessage);
+            }}
+            className="w-full"
+          >
+            <InputGroup>
+              <InputGroupTextarea
+                aria-label="Next predefined message"
+                className="h-14 min-h-14 overflow-hidden px-3 py-2.5 opacity-60 data-[status=ready]:opacity-100"
+                data-status={status}
+                placeholder="No messages queued. Reset the conversation."
+                value={nextMessage ? getMessageText(nextMessage) : ''}
+                readOnly
+              />
+              <InputGroupAddon align="block-end" className="pt-1">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <InputGroupButton
+                      aria-label="Add files"
+                      type="button"
+                      size="icon-sm"
+                      variant="outline"
                     >
                       <PlusIcon />
-                    </DropdownMenuTrigger> */}
-                    <DropdownMenuTrigger asChild>
-                      <InputGroupButton
-                        aria-label="Add files"
-                        type="button"
-                        size="icon-sm"
-                        variant="outline"
-                      >
-                        <PlusIcon />
-                      </InputGroupButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="start"
-                      side="top"
-                      className="w-44"
-                    >
-                      <DropdownMenuItem>
-                        <PaperclipIcon />
-                        Add Photos & Files
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <ImageIcon />
-                        Create Image
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <TelescopeIcon />
-                        Deep Research
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <GlobeIcon />
-                        Web Search
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <InputGroupButton
-                    type="submit"
-                    variant="default"
-                    size="icon-sm"
-                    disabled={!nextMessage || isBusy}
-                    className="ml-auto"
+                    </InputGroupButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    side="top"
+                    className="w-44"
                   >
-                    <ArrowUpIcon />
-                    <span className="sr-only">Send</span>
-                  </InputGroupButton>
-                </InputGroupAddon>
-              </InputGroup>
-            </form>
-          </CardFooter>
-        </Card>
-        <div className="text-muted-foreground px-0.5 text-center text-xs">
-          Demo is read only. Press send to send messages.
-        </div>
-      </div>
+                    <DropdownMenuItem>
+                      <PaperclipIcon />
+                      Add Photos & Files
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <ImageIcon />
+                      Create Image
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <TelescopeIcon />
+                      Deep Research
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <GlobeIcon />
+                      Web Search
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <InputGroupButton
+                  type="submit"
+                  variant="default"
+                  size="icon-sm"
+                  disabled={!nextMessage || isBusy}
+                  className="ml-auto"
+                >
+                  <ArrowUpIcon />
+                  <span className="sr-only">Send</span>
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </form>
+        </CardFooter>
+      </Card>
     </MessageScrollerProvider>
   );
 }
