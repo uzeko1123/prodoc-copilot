@@ -1,4 +1,4 @@
-
+// import * as React from 'react';
 
 import type { TColumnElement } from 'platejs';
 import type { SlateElementProps } from 'platejs/static';

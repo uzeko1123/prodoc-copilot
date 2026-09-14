@@ -1,6 +1,6 @@
 'use client';
 
-
+import * as React from 'react';
 
 import type { TResolvedSuggestion } from '@platejs/suggestion';
 import type { PlateEditor } from 'platejs/react';

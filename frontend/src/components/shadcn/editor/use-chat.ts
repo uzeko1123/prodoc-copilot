@@ -2,7 +2,7 @@
 
 /* eslint-disable react-hooks/refs -- Fake stream abort control is imperative transport state. */
 
-
+import * as React from 'react';
 
 import { type UseChatHelpers, useChat as useBaseChat } from '@ai-sdk/react';
 import { faker } from '@faker-js/faker';

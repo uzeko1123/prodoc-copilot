@@ -1,6 +1,6 @@
 'use client';
 
-
+// import * as React from 'react';
 
 import {
   formatDateValue,
@@ -68,7 +68,8 @@ export function DateElement(props: PlateElementProps<TDateElement>) {
                 );
               }}
               mode="single"
-              initialFocus
+              // initialFocus
+              autoFocus
             />
           </PopoverContent>
         </Popover>

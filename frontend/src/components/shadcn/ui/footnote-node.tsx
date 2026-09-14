@@ -1,6 +1,6 @@
 'use client';
 
-
+import * as React from 'react';
 
 import type { TFootnoteElement } from '@platejs/footnote';
 import { PathApi, type Path } from 'platejs';

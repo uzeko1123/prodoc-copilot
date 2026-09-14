@@ -1,3 +1,4 @@
+import { Button } from '@/components/shadcn/ui/button';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -9,10 +10,9 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/tabs';
-import { Button } from '@/components/tiptap/ui-primitive/button';
-import { Chat } from '@/features/chat/components/chat';
-import { CommentPanel } from '@/features/comment/components/comment-panel';
-import { Editor } from '@/features/editor-tiptap/components/editor';
+// import { Chat } from '@/features/chat/components/chat';
+// import { Comment } from '@/features/comment/components/comment';
+// import { Editor } from '@/features/editor/components/editor';
 import { type ActiveTab, useWorkbenchStore } from '@/stores/workbench';
 import { createFileRoute } from '@tanstack/react-router';
 import { PanelRightIcon } from 'lucide-react';
@@ -48,7 +48,7 @@ function WorkbenchPage() {
 
       <ResizablePanelGroup orientation="horizontal">
         <ResizablePanel defaultSize="60%" minSize="50%">
-          <Editor />
+          {/* <Editor /> */}
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize="20%" minSize="15%">
@@ -69,7 +69,6 @@ function WorkbenchPage() {
                 role="button"
                 tabIndex={-1}
                 aria-label="Side Panel"
-                tooltip="Side Panel"
                 aria-expanded={isSidePanelOpen}
                 onClick={toggleSidePanel}
               >
@@ -77,10 +76,10 @@ function WorkbenchPage() {
               </Button>
             </TabsList>
             <TabsContent value="chat" className="min-h-0">
-              <Chat />
+              {/* <Chat /> */}
             </TabsContent>
             <TabsContent value="comment" className="min-h-0">
-              <CommentPanel />
+              {/* <Comment /> */}
             </TabsContent>
           </Tabs>
         </ResizablePanel>

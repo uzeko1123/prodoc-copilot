@@ -2,7 +2,7 @@
 
 /* DEMO ONLY, DO NOT USE IN PRODUCTION */
 
-
+import * as React from 'react';
 
 import { CopilotPlugin } from '@platejs/ai/react';
 import {

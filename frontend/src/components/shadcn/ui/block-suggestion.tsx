@@ -1,6 +1,6 @@
 'use client';
 
-
+import * as React from 'react';
 
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';

@@ -111,8 +111,29 @@ export function AiSdkHelperDemo() {
             <CardDescription>How can I help you today?</CardDescription>
             <CardAction>
               <Tooltip>
+                {/* <TooltipTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      aria-label="Reset conversation"
+                      onClick={() => setMessages(initialMessages)}
+                      disabled={isBusy}
+                    />
+                  }
+                >
+                  <RotateCwIcon />
+                </TooltipTrigger> */}
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" aria-label="Reset conversation" onClick={() => setMessages(initialMessages)} disabled={isBusy}><RotateCwIcon /></Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    aria-label="Reset conversation"
+                    onClick={() => setMessages(initialMessages)}
+                    disabled={isBusy}
+                  >
+                    <RotateCwIcon />
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Reset</p>
@@ -176,8 +197,27 @@ export function AiSdkHelperDemo() {
                 />
                 <InputGroupAddon align="block-end" className="pt-1">
                   <DropdownMenu>
+                    {/* <DropdownMenuTrigger
+                      render={
+                        <InputGroupButton
+                          aria-label="Add files"
+                          type="button"
+                          size="icon-sm"
+                          variant="outline"
+                        />
+                      }
+                    >
+                      <PlusIcon />
+                    </DropdownMenuTrigger> */}
                     <DropdownMenuTrigger asChild>
-                      <InputGroupButton aria-label="Add files" type="button" size="icon-sm" variant="outline"><PlusIcon /></InputGroupButton>
+                      <InputGroupButton
+                        aria-label="Add files"
+                        type="button"
+                        size="icon-sm"
+                        variant="outline"
+                      >
+                        <PlusIcon />
+                      </InputGroupButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                       align="start"
