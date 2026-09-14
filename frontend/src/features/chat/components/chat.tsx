@@ -56,6 +56,7 @@ import {
   RotateCwIcon,
   TelescopeIcon,
 } from 'lucide-react';
+import { Context } from './context';
 
 const chat = createChat()
   .user(
@@ -161,6 +162,7 @@ export function Chat() {
           )}
         </CardContent>
         <CardFooter className="flex-col gap-2 rounded-none">
+          <Context />
           <form
             onSubmit={(e) => {
               e.preventDefault();

@@ -40,7 +40,7 @@ export function LoginForm({
         setValue('altcha', '');
       },
       onSuccess: (data) => {
-        useAuthStore.setState({ user: data.user });
+        setUser(data.user);
         navigate({ to: '/account', replace: true });
       },
       onError: (error) => {
@@ -59,6 +59,8 @@ export function LoginForm({
       },
     },
   });
+
+  const setUser = useAuthStore((state) => state.setUser);
 
   const navigate = useNavigate();
 

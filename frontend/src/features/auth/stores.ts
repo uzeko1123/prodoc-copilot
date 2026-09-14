@@ -4,6 +4,7 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 type AuthState = {
   user: UserDetails | null;
+  setUser: (user: UserDetails | null) => void;
   clear: () => void;
 };
 
@@ -12,6 +13,7 @@ export const useAuthStore = create<AuthState>()(
     persist(
       (set) => ({
         user: null,
+        setUser: (user) => set({ user }),
         clear: () => set({ user: null }),
       }),
       {
