@@ -9,7 +9,7 @@ export const FixedToolbarKit = [
     key: 'fixed-toolbar',
     render: {
       beforeEditable: () => (
-        <FixedToolbar>
+        <FixedToolbar className='h-10 min-h-10 max-h-10'>
           <FixedToolbarButtons />
         </FixedToolbar>
       ),
