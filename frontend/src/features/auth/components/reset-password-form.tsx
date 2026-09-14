@@ -1,4 +1,3 @@
-import { Altcha } from './altcha-field';
 import { useAuthPasswordResetCreate } from '@/api/gen/endpoints/auth/auth';
 import { AuthPasswordResetCreateBody } from '@/api/gen/zod/auth/auth';
 import { Button } from '@/components/shadcn/ui/button';
@@ -23,8 +22,9 @@ import { setFormErrors } from '@/lib/form-errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Altcha } from './altcha-field';
 
 const RESET_PASSWORD_COOLDOWN = 60;
 

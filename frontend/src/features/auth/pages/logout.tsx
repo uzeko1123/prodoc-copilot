@@ -1,6 +1,6 @@
+import { createFileRoute } from '@tanstack/react-router';
 import { FormPageTemplate } from '../components/form-page-template';
 import { LogoutInfo } from '../components/logout-info';
-import { createFileRoute } from '@tanstack/react-router';
 
 function LogoutPage() {
   return (

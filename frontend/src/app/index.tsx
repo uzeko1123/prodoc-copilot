@@ -1,4 +1,3 @@
-import data from './dashboard/data.json';
 import { AppSidebar } from '@/components/shadcn/app-sidebar';
 import { ChartAreaInteractive } from '@/components/shadcn/chart-area-interactive';
 import { DataTable } from '@/components/shadcn/data-table';
@@ -6,6 +5,7 @@ import { SectionCards } from '@/components/shadcn/section-cards';
 import { SiteHeader } from '@/components/shadcn/site-header';
 import { SidebarInset, SidebarProvider } from '@/components/shadcn/ui/sidebar';
 import { createFileRoute } from '@tanstack/react-router';
+import data from './dashboard/data.json';
 
 export default function IndexPage() {
   return (

@@ -1,10 +1,9 @@
 import type { ChatMessage } from '@/components/shadcn/editor/use-chat';
-import type { UIMessage } from 'ai';
-
 import { getMarkdown } from '@platejs/ai';
 import { serializeMd } from '@platejs/markdown';
+import type { UIMessage } from 'ai';
 import dedent from 'dedent';
-import { type SlateEditor, KEYS, RangeApi } from 'platejs';
+import { KEYS, RangeApi, type SlateEditor } from 'platejs';
 
 /**
  * Tag content split by newlines
@@ -166,7 +165,7 @@ export function getTextFromMessage(message: UIMessage): string {
  */
 export function formatTextFromMessages(
   messages: ChatMessage[],
-  options?: { limit?: number }
+  options?: { limit?: number },
 ): string {
   // No history needed if no messages or only one message
   if (!messages || messages.length <= 1) return '';
@@ -286,7 +285,7 @@ export const isSingleCellSelection = (editor: SlateEditor): boolean => {
     editor.api.nodes({
       at: editor.selection,
       match: { type: KEYS.td },
-    })
+    }),
   );
 
   return cells.length === 1;

@@ -1,5 +1,5 @@
-import { Editor } from '../components/editor';
 import { createFileRoute } from '@tanstack/react-router';
+import { Editor } from '../components/editor';
 
 function IndexPage() {
   return (

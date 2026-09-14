@@ -1,4 +1,3 @@
-import { clearAuth } from '../lib/clear-auth';
 import { useAuthLogoutCreate } from '@/api/gen/endpoints/auth/auth';
 import {
   Card,
@@ -10,6 +9,7 @@ import { useCountdown } from '@/hooks/use-countdown';
 import { useMount } from '@/hooks/use-mount';
 import { useNavigate } from '@tanstack/react-router';
 import { cn } from 'cn';
+import { clearAuth } from '../lib/clear-auth';
 
 const LOGOUT_COUNTDOWN = 3;
 

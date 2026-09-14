@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios';
-import type { UseFormSetError, Path } from 'react-hook-form';
+import type { Path, UseFormSetError } from 'react-hook-form';
 import { z } from 'zod';
 
 const FormFieldErrorSchema = z.record(

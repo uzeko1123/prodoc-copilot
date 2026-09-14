@@ -1,5 +1,5 @@
-import { Chat } from '../components/chat';
 import { createFileRoute } from '@tanstack/react-router';
+import { Chat } from '../components/chat';
 
 function IndexPage() {
   return <Chat />;

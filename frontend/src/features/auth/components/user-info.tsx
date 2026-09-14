@@ -1,9 +1,9 @@
 import { useAuthUserRetrieve } from '@/api/gen/endpoints/auth/auth';
 import {
   Card,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@/components/shadcn/ui/card';
 import { cn } from 'cn';
 

@@ -1,11 +1,11 @@
 'use client';
 
 // import * as React from 'react';
-import { EditorKit } from '../components/editor-kit';
 import { SettingsDialog } from '@/components/shadcn/editor/settings-dialog';
-import { Editor as Editor_, EditorContainer } from '../components/editor_';
 import { normalizeStaticValue } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
+import { Editor as Editor_, EditorContainer } from '../components/editor_';
+import { EditorKit } from '../components/editor-kit';
 
 export function Editor() {
   const editor = usePlateEditor({

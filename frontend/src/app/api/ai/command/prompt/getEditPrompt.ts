@@ -1,8 +1,6 @@
 import type { ChatMessage } from '@/components/shadcn/editor/use-chat';
-import type { SlateEditor } from 'platejs';
-
 import dedent from 'dedent';
-
+import type { SlateEditor } from 'platejs';
 import {
   addSelection,
   buildStructuredPrompt,
@@ -13,12 +11,12 @@ import {
   isSelectionInTable,
   isSingleCellSelection,
 } from '../utils';
-
-import { buildEditTableMultiCellPrompt } from './getEditTablePrompt';
 import { commonEditRules } from './common';
+import { buildEditTableMultiCellPrompt } from './getEditTablePrompt';
+
 function buildEditMultiBlockPrompt(
   editor: SlateEditor,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
 ) {
   const selectingMarkdown = getMarkdownWithSelection(editor);
 
@@ -86,7 +84,7 @@ function buildEditMultiBlockPrompt(
 
 function buildEditSelectionPrompt(
   editor: SlateEditor,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
 ) {
   addSelection(editor);
 
@@ -221,7 +219,7 @@ function buildEditSelectionPrompt(
 
 export function getEditPrompt(
   editor: SlateEditor,
-  { isSelecting, messages }: { isSelecting: boolean; messages: ChatMessage[] }
+  { isSelecting, messages }: { isSelecting: boolean; messages: ChatMessage[] },
 ): [string, 'table' | 'multi-block' | 'selection'] {
   if (!isSelecting)
     throw new Error('Edit tool is only available when selecting');

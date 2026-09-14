@@ -1,5 +1,5 @@
 import { authTokenRefreshCreate } from '@/api/gen/endpoints/auth/auth';
-import Axios, { type AxiosRequestConfig, type AxiosError } from 'axios';
+import Axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: '',

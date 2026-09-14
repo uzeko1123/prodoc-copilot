@@ -1,9 +1,7 @@
 import type { ChatMessage } from '@/components/shadcn/editor/use-chat';
-import type { SlateEditor } from 'platejs';
-
 import { getMarkdown } from '@platejs/ai';
 import dedent from 'dedent';
-
+import type { SlateEditor } from 'platejs';
 import {
   buildStructuredPrompt,
   formatTextFromMessages,
@@ -16,7 +14,7 @@ export function getCommentPrompt(
     messages,
   }: {
     messages: ChatMessage[];
-  }
+  },
 ) {
   const selectingMarkdown = getMarkdown(editor, {
     type: 'blockWithBlockId',

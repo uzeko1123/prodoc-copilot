@@ -1,7 +1,7 @@
 import { clearAuth } from '@/features/auth/lib/clear-auth';
 import { toastErrorMessage } from '@/lib/error-message';
 import { router } from '@/lib/router';
-import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 export const queryClient = new QueryClient({

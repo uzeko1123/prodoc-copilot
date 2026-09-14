@@ -1,5 +1,5 @@
-import { useAuthStore } from '../stores';
 import { queryClient } from '@/lib/query-client';
+import { useAuthStore } from '../stores';
 
 export function clearAuth() {
   queryClient.clear();

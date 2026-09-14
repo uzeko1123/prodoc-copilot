@@ -1,7 +1,7 @@
-import { FormPageTemplate } from '../components/form-page-template';
-import { ResendEmailForm } from '../components/resend-email-form';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
+import { FormPageTemplate } from '../components/form-page-template';
+import { ResendEmailForm } from '../components/resend-email-form';
 
 function ResendEmailPage() {
   const { email, resend } = Route.useSearch();

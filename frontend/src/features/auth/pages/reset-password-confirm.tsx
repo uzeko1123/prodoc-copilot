@@ -1,7 +1,7 @@
-import { FormPageTemplate } from '../components/form-page-template';
-import { ResetPasswordConfirmForm } from '../components/reset-password-confirm-form';
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
+import { FormPageTemplate } from '../components/form-page-template';
+import { ResetPasswordConfirmForm } from '../components/reset-password-confirm-form';
 
 function ResetPasswordConfirmPage() {
   const { uid, token } = Route.useSearch();

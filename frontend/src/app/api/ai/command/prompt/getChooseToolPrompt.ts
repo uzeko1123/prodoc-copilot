@@ -1,7 +1,5 @@
 import type { ChatMessage } from '@/components/shadcn/editor/use-chat';
-
 import dedent from 'dedent';
-
 import {
   buildStructuredPrompt,
   formatTextFromMessages,

@@ -1,9 +1,7 @@
 import type { ChatMessage } from '@/components/shadcn/editor/use-chat';
-import type { SlateEditor } from 'platejs';
-
 import { getMarkdown } from '@platejs/ai';
 import dedent from 'dedent';
-
+import type { SlateEditor } from 'platejs';
 import {
   buildStructuredPrompt,
   formatTextFromMessages,
@@ -12,7 +10,7 @@ import {
 
 export function buildEditTableMultiCellPrompt(
   editor: SlateEditor,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
 ): string {
   const tableCellMarkdown = getMarkdown(editor, {
     type: 'tableCellWithId',

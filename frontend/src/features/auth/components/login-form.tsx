@@ -1,5 +1,3 @@
-import { useAuthStore } from '../stores';
-import { Altcha } from './altcha-field';
 import { useAuthLoginCreate } from '@/api/gen/endpoints/auth/auth';
 import { AuthLoginCreateBody } from '@/api/gen/zod/auth/auth';
 import { Button } from '@/components/shadcn/ui/button';
@@ -20,10 +18,12 @@ import { Input } from '@/components/shadcn/ui/input';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate, Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { cn } from 'cn';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useAuthStore } from '../stores';
+import { Altcha } from './altcha-field';
 
 export function LoginForm({
   className,

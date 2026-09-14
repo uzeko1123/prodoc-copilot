@@ -1,8 +1,6 @@
 import type { ChatMessage } from '@/components/shadcn/editor/use-chat';
-import type { SlateEditor } from 'platejs';
-
 import dedent from 'dedent';
-
+import type { SlateEditor } from 'platejs';
 import {
   addSelection,
   buildStructuredPrompt,
@@ -59,7 +57,7 @@ function buildGenerateFreeformPrompt(messages: ChatMessage[]) {
 
 function buildGenerateContextPrompt(
   editor: SlateEditor,
-  messages: ChatMessage[]
+  messages: ChatMessage[],
 ) {
   if (!isMultiBlocks(editor)) {
     addSelection(editor);
@@ -148,7 +146,7 @@ function buildGenerateContextPrompt(
 
 export function getGeneratePrompt(
   editor: SlateEditor,
-  { isSelecting, messages }: { isSelecting: boolean; messages: ChatMessage[] }
+  { isSelecting, messages }: { isSelecting: boolean; messages: ChatMessage[] },
 ) {
   // Freeform generation: open-ended creation without context
   if (!isSelecting) {

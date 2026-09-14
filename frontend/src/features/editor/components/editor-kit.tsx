@@ -1,8 +1,5 @@
 'use client';
 
-import { type Value, TrailingBlockPlugin } from 'platejs';
-import { type TPlateEditor, useEditorRef } from 'platejs/react';
-
 import { AIKit } from '@/components/shadcn/editor/plugins/ai-kit';
 import { AlignKit } from '@/components/shadcn/editor/plugins/align-kit';
 import { AutoformatKit } from '@/components/shadcn/editor/plugins/autoformat-kit';
@@ -37,6 +34,8 @@ import { SuggestionKit } from '@/components/shadcn/editor/plugins/suggestion-kit
 import { TableKit } from '@/components/shadcn/editor/plugins/table-kit';
 import { TocKit } from '@/components/shadcn/editor/plugins/toc-kit';
 import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
+import { TrailingBlockPlugin, type Value } from 'platejs';
+import { useEditorRef, type TPlateEditor } from 'platejs/react';
 
 export const EditorKit = [
   ...CopilotKit,

@@ -1,7 +1,51 @@
-"use client"
+'use client';
 
-import { useChat } from "@ai-sdk/react"
-import { createChat } from "@shadcn/helpers/ai-sdk"
+import { MessageAnimated } from '@/components/shadcn/message-animated';
+import { Button } from '@/components/shadcn/ui/button';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/shadcn/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/shadcn/ui/dropdown-menu';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/shadcn/ui/empty';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from '@/components/shadcn/ui/input-group';
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from '@/components/shadcn/ui/message-scroller';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
+import { getMessageText } from '@/lib/shadcn/ai';
+import { useChat } from '@ai-sdk/react';
+import { createChat } from '@shadcn/helpers/ai-sdk';
 import {
   ArrowUpIcon,
   GlobeIcon,
@@ -11,96 +55,51 @@ import {
   PlusIcon,
   RotateCwIcon,
   TelescopeIcon,
-} from "lucide-react"
-
-import { getMessageText } from "@/lib/shadcn/ai"
-import { MessageAnimated } from "@/components/shadcn/message-animated"
-import { Button } from "@/components/shadcn/ui/button"
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/shadcn/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/shadcn/ui/dropdown-menu"
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/shadcn/ui/empty"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupTextarea,
-} from "@/components/shadcn/ui/input-group"
-import {
-  MessageScroller,
-  MessageScrollerButton,
-  MessageScrollerContent,
-  MessageScrollerProvider,
-  MessageScrollerViewport,
-} from "@/components/shadcn/ui/message-scroller"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/shadcn/ui/tooltip"
+} from 'lucide-react';
 
 const chat = createChat()
   .user(
-    "I'm building a chat for our app and the scroll behavior is driving me nuts. Every time the AI streams a reply, the whole thread jumps around."
+    "I'm building a chat for our app and the scroll behavior is driving me nuts. Every time the AI streams a reply, the whole thread jumps around.",
   )
   .sleep(1000)
   .assistant(({ writer }) => {
     writer.reasoning(
-      "They are describing a streaming transcript that keeps taking control of the viewport. I should explain when auto-scroll follows and when it stops."
-    )
-    writer.sleep(1000)
+      'They are describing a streaming transcript that keeps taking control of the viewport. I should explain when auto-scroll follows and when it stops.',
+    );
+    writer.sleep(1000);
     writer.text(
-      "That's the classic streaming scroll problem. Wrap your message list in `MessageScroller` and turn on `autoScroll` — the viewport pins to the bottom as tokens arrive, so users always see the latest text land in place.\n\nThe important part: it only auto-scrolls while the reader is already at the bottom. The moment they scroll up to read something earlier, auto-scroll backs off and their position is preserved. You get smooth streaming without fighting the user's intent."
-    )
+      "That's the classic streaming scroll problem. Wrap your message list in `MessageScroller` and turn on `autoScroll` — the viewport pins to the bottom as tokens arrive, so users always see the latest text land in place.\n\nThe important part: it only auto-scrolls while the reader is already at the bottom. The moment they scroll up to read something earlier, auto-scroll backs off and their position is preserved. You get smooth streaming without fighting the user's intent.",
+    );
   })
   .user(
-    "Okay, but when someone sends a new message the view still feels jarring — like the whole conversation reloads from the top."
+    'Okay, but when someone sends a new message the view still feels jarring — like the whole conversation reloads from the top.',
   )
   .sleep(1000)
   .assistant(
-    "MessageScrollerItem fixes that with turn anchoring. Set `scrollAnchor` on the turn that should settle near the top instead of blindly snapping to the document bottom.\n\nIt also leaves a small peek of the previous exchange visible above the anchor, so context isn't lost. The reply starts in view without that disorienting jump you get from a plain overflow container."
+    "MessageScrollerItem fixes that with turn anchoring. Set `scrollAnchor` on the turn that should settle near the top instead of blindly snapping to the document bottom.\n\nIt also leaves a small peek of the previous exchange visible above the anchor, so context isn't lost. The reply starts in view without that disorienting jump you get from a plain overflow container.",
   )
   .user(
-    "And if they've scrolled up to re-read an older answer? I don't want to yank them back down."
+    "And if they've scrolled up to re-read an older answer? I don't want to yank them back down.",
   )
   .sleep(1000)
   .assistant(
-    "You won't. Auto-scroll only runs when the viewport is already pinned to the bottom, so scrolling up is a deliberate opt-out — their place in the thread stays put even as new tokens keep arriving below.\n\nWhen there is content they haven't seen yet, `MessageScrollerButton` appears at the bottom of the viewport. One tap jumps them back to the newest message and re-engages auto-scroll. Same pattern as Slack or iMessage: quiet when you're caught up, helpful when you're not."
+    "You won't. Auto-scroll only runs when the viewport is already pinned to the bottom, so scrolling up is a deliberate opt-out — their place in the thread stays put even as new tokens keep arriving below.\n\nWhen there is content they haven't seen yet, `MessageScrollerButton` appears at the bottom of the viewport. One tap jumps them back to the newest message and re-engages auto-scroll. Same pattern as Slack or iMessage: quiet when you're caught up, helpful when you're not.",
   )
-  .user("Last one — does this work with assistive tech?")
+  .user('Last one — does this work with assistive tech?')
   .sleep(1000)
   .assistant(
-    '`MessageScrollerContent` sets `role="log"` and `aria-relevant="additions"` by default, so screen readers announce new messages as they stream in.\n\nThe scroll button is a real `<button>` with an sr-only label, and it\'s removed from the tab order when you\'re already at the bottom — no ghost focus stops.'
-  )
-const initialMessages = chat.get(0)
-const transport = chat.transport({ delayMs: 20 })
+    '`MessageScrollerContent` sets `role="log"` and `aria-relevant="additions"` by default, so screen readers announce new messages as they stream in.\n\nThe scroll button is a real `<button>` with an sr-only label, and it\'s removed from the tab order when you\'re already at the bottom — no ghost focus stops.',
+  );
+const initialMessages = chat.get(0);
+const transport = chat.transport({ delayMs: 20 });
 
 export function Chat() {
   const { messages, sendMessage, status, setMessages } = useChat({
     messages: initialMessages,
     transport,
-  })
-  const nextMessage = chat.next(messages)
-  const isBusy = status === "submitted" || status === "streaming"
+  });
+  const nextMessage = chat.next(messages);
+  const isBusy = status === 'submitted' || status === 'streaming';
 
   return (
     <MessageScrollerProvider>
@@ -166,7 +165,7 @@ export function Chat() {
                       <MessageAnimated
                         key={message.id}
                         message={message}
-                        scrollAnchor={message.role === "user"}
+                        scrollAnchor={message.role === 'user'}
                       />
                     ))}
                   </MessageScrollerContent>
@@ -178,11 +177,11 @@ export function Chat() {
           <CardFooter className="flex-col gap-2">
             <form
               onSubmit={(e) => {
-                e.preventDefault()
+                e.preventDefault();
                 if (!nextMessage || isBusy) {
-                  return
+                  return;
                 }
-                void sendMessage(nextMessage)
+                void sendMessage(nextMessage);
               }}
               className="w-full"
             >
@@ -192,7 +191,7 @@ export function Chat() {
                   className="h-14 min-h-14 overflow-hidden px-3 py-2.5 opacity-60 data-[status=ready]:opacity-100"
                   data-status={status}
                   placeholder="No messages queued. Reset the conversation."
-                  value={nextMessage ? getMessageText(nextMessage) : ""}
+                  value={nextMessage ? getMessageText(nextMessage) : ''}
                   readOnly
                 />
                 <InputGroupAddon align="block-end" className="pt-1">
@@ -258,10 +257,10 @@ export function Chat() {
             </form>
           </CardFooter>
         </Card>
-        <div className="px-0.5 text-center text-xs text-muted-foreground">
+        <div className="text-muted-foreground px-0.5 text-center text-xs">
           Demo is read only. Press send to send messages.
         </div>
       </div>
     </MessageScrollerProvider>
-  )
+  );
 }

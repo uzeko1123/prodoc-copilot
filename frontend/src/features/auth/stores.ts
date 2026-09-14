@@ -1,6 +1,6 @@
 import type { UserDetails } from '@/api/gen/models';
 import { create } from 'zustand';
-import { createJSONStorage, persist, devtools } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 type AuthState = {
   user: UserDetails | null;
