@@ -90,7 +90,7 @@ function CommentStaticContent({ value }: { value: Value }) {
     <PlateStatic
       editor={editor}
       value={value}
-      className="text-sm break-words whitespace-break-spaces"
+      className="text-sm wrap-break-word whitespace-break-spaces"
     />
   );
 }
@@ -149,7 +149,7 @@ function CommentComposer({
           <EditorContainer variant="comment">
             <PlateEditor
               variant="comment"
-              className="min-h-[25px] grow pt-0.5 pr-8"
+              className="min-h-6.25 grow pt-0.5 pr-8"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -235,10 +235,7 @@ function CommentEditor({
           editor={composerEditor}
         >
           <EditorContainer variant="comment">
-            <PlateEditor
-              variant="comment"
-              className="min-h-[25px] grow pt-0.5"
-            />
+            <PlateEditor variant="comment" className="min-h-6.25 grow pt-0.5" />
 
             <div className="ml-auto flex shrink-0 gap-1">
               <Button

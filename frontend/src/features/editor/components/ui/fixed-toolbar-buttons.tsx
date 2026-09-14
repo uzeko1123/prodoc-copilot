@@ -33,6 +33,7 @@ import { TableToolbarButton } from '@/components/shadcn/ui/table-toolbar-button'
 import { ToggleToolbarButton } from '@/components/shadcn/ui/toggle-toolbar-button';
 import { ToolbarGroup } from '@/components/shadcn/ui/toolbar';
 import { TurnIntoToolbarButton } from '@/components/shadcn/ui/turn-into-toolbar-button';
+import { useWorkbenchStore } from '@/stores/workbench';
 import {
   ArrowUpToLineIcon,
   BaselineIcon,
@@ -52,10 +53,17 @@ import { useEditorReadOnly } from 'platejs/react';
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
 
+  const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
+  const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
+
   return (
     <div className="flex w-full">
       <ToolbarGroup>
-        <Button variant="ghost">
+        <Button
+          variant="ghost"
+          aria-expanded={isLeftPanelOpen}
+          onClick={toggleLeftPanel}
+        >
           <PanelLeftIcon />
         </Button>
       </ToolbarGroup>

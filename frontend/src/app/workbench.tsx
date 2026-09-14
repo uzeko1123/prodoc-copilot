@@ -14,39 +14,56 @@ import { Chat } from '@/features/chat/components/chat';
 import { Comment } from '@/features/comment/components/comment';
 import { Editor } from '@/features/editor/components/editor';
 import { EditorKit } from '@/features/editor/components/editor/editor-kit';
-import { useWorkbenchStore, type ActiveTab } from '@/stores/workbench';
+import { useWorkbenchStore } from '@/stores/workbench';
 import { createFileRoute } from '@tanstack/react-router';
 import { PanelRightIcon } from 'lucide-react';
 import { normalizeStaticValue } from 'platejs';
 import { Plate, usePlateEditor } from 'platejs/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 
 function WorkbenchPage() {
+  const leftPanelRef = useRef<PanelImperativeHandle>(null);
+  const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
+  const setIsLeftPanelOpen = useWorkbenchStore(
+    (state) => state.setLeftPanelOpen,
+  );
+
+  useEffect(() => {
+    if (isLeftPanelOpen) {
+      leftPanelRef.current?.expand();
+    } else {
+      leftPanelRef.current?.collapse();
+    }
+  }, [isLeftPanelOpen]);
+
+  const handleLeftPanelResize = () => {
+    setIsLeftPanelOpen(!leftPanelRef.current?.isCollapsed());
+  };
+
+  const rightPanelRef = useRef<PanelImperativeHandle>(null);
+  const isRightPanelOpen = useWorkbenchStore((state) => state.isRightPanelOpen);
+  const setRightPanelOpen = useWorkbenchStore(
+    (state) => state.setRightPanelOpen,
+  );
+  const toggleRightPanel = useWorkbenchStore((state) => state.toggleRightPanel);
+
+  useEffect(() => {
+    if (isRightPanelOpen) {
+      rightPanelRef.current?.expand();
+    } else {
+      rightPanelRef.current?.collapse();
+    }
+  }, [isRightPanelOpen]);
+
+  const handleRightPanelResize = () => {
+    setRightPanelOpen(!rightPanelRef.current?.isCollapsed());
+  };
+
   const activeTab = useWorkbenchStore((state) => state.activeTab);
   const setActiveTab = useWorkbenchStore((state) => state.setActiveTab);
 
-  const sidePanelRef = useRef<PanelImperativeHandle>(null);
-  const [isSidePanelOpen, setIsSidePanelOpen] = useState(true);
-
-  const toggleSidePanel = () => {
-    if (isSidePanelOpen) {
-      sidePanelRef.current?.collapse();
-      setIsSidePanelOpen(false);
-    } else {
-      sidePanelRef.current?.expand();
-      setIsSidePanelOpen(true);
-    }
-  };
-
-  const handleSidePanelResize = () => {
-    setIsSidePanelOpen(!sidePanelRef.current?.isCollapsed());
-  };
-
-  const editor = usePlateEditor({
-    plugins: EditorKit,
-    value,
-  });
+  const editor = usePlateEditor({ plugins: EditorKit, value });
 
   return (
     <div className="flex h-dvh flex-col">
@@ -56,7 +73,13 @@ function WorkbenchPage() {
 
       <Plate editor={editor}>
         <ResizablePanelGroup orientation="horizontal">
-          <ResizablePanel defaultSize="10%" minSize="10%"></ResizablePanel>
+          <ResizablePanel
+            collapsible
+            defaultSize="10%"
+            minSize="10%"
+            panelRef={leftPanelRef}
+            onResize={handleLeftPanelResize}
+          ></ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="50%" minSize="40%">
             <Editor />
@@ -65,7 +88,7 @@ function WorkbenchPage() {
           <ResizablePanel defaultSize="20%" minSize="15%">
             <Tabs
               value={activeTab}
-              onValueChange={(value) => setActiveTab(value as ActiveTab)}
+              onValueChange={(value) => setActiveTab(value)}
               className="h-full gap-0"
             >
               <TabsList
@@ -76,8 +99,8 @@ function WorkbenchPage() {
                 <TabsTrigger value="comment">Comment</TabsTrigger>
                 <Button
                   variant="ghost"
-                  aria-expanded={isSidePanelOpen}
-                  onClick={toggleSidePanel}
+                  aria-expanded={isRightPanelOpen}
+                  onClick={toggleRightPanel}
                 >
                   <PanelRightIcon />
                 </Button>
@@ -95,8 +118,8 @@ function WorkbenchPage() {
             collapsible
             defaultSize="20%"
             minSize="15%"
-            panelRef={sidePanelRef}
-            onResize={handleSidePanelResize}
+            panelRef={rightPanelRef}
+            onResize={handleRightPanelResize}
           ></ResizablePanel>
         </ResizablePanelGroup>
       </Plate>
