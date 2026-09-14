@@ -1,10 +1,9 @@
 'use client';
 
-// import * as React from 'react';
 import { AIToolbarButton } from '@/components/shadcn/ui/ai-toolbar-button';
 import { AlignToolbarButton } from '@/components/shadcn/ui/align-toolbar-button';
 import { CommentToolbarButton } from '@/components/shadcn/ui/comment-toolbar-button';
-import { EmojiToolbarButton } from '@/components/shadcn/ui/emoji-toolbar-button';
+// import { EmojiToolbarButton } from '@/components/shadcn/ui/emoji-toolbar-button';
 import { ExportToolbarButton } from '@/components/shadcn/ui/export-toolbar-button';
 import { FontColorToolbarButton } from '@/components/shadcn/ui/font-color-toolbar-button';
 import { FontSizeToolbarButton } from '@/components/shadcn/ui/font-size-toolbar-button';
@@ -131,7 +130,7 @@ export function FixedToolbarButtons() {
           <ToolbarGroup>
             <LinkToolbarButton />
             <TableToolbarButton />
-            <EmojiToolbarButton />
+            {/* <EmojiToolbarButton /> */}
           </ToolbarGroup>
 
           <ToolbarGroup>
