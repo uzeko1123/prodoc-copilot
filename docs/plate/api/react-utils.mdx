@@ -91,7 +91,7 @@ Use primitive factories when a component needs `asChild`, composed refs, hook-pr
 | `useIsomorphicLayoutEffect` | `React.useLayoutEffect \| React.useEffect` | Uses layout effect in the browser and effect during SSR. |
 
 ```tsx title="Compose refs"
-
+import * as React from 'react';
 import { useComposedRef } from '@udecode/react-utils';
 
 export const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'>>(

@@ -13,7 +13,6 @@ export default defineConfig([
   globalIgnores([
     'dist',
     '**/shadcn/**',
-    '**/tiptap/**',
     '**/api/gen/**',
     '**/routeTree.gen.ts',
   ]),

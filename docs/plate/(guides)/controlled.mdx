@@ -187,7 +187,7 @@ Use `skipInitialization` when another system owns the startup moment, such as
 collaboration or a multi-step loader.
 
 ```tsx title="components/manual-init-editor.tsx" showLineNumbers {8,13-18}
-
+import * as React from 'react';
 import { Plate, usePlateEditor } from 'platejs/react';
 
 import { Editor, EditorContainer } from '@/components/ui/editor';
