@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 'use client';
 
 import { voidRemoveSuggestionOverlayVariants } from '@/components/shadcn/ui/suggestion-node-static';
@@ -141,7 +142,7 @@ function SuggestionLineBreakElementAnchor({
   className,
 }: {
   badgeProps?: React.ComponentProps<'span'>;
-  children: React.ReactElement<any>;
+  children: React.ReactElement;
   className?: string;
 }) {
   if (!React.isValidElement(children)) return children;
@@ -171,7 +172,7 @@ function SuggestionLineBreakElementAnchor({
     }
 
     const nextLastChild = React.cloneElement(
-      lastChild as React.ReactElement<any>,
+      lastChild as React.ReactElement<{ children?: React.ReactNode }>,
       {
         children: (
           <>
@@ -182,9 +183,12 @@ function SuggestionLineBreakElementAnchor({
       },
     );
 
-    return React.cloneElement(children as React.ReactElement<any>, {
-      children: [...childNodes.slice(0, lastIndex), nextLastChild],
-    });
+    return React.cloneElement(
+      children as React.ReactElement<{ children?: React.ReactNode }>,
+      {
+        children: [...childNodes.slice(0, lastIndex), nextLastChild],
+      },
+    );
   }
 
   if (typeof children.type === 'string') {
@@ -196,9 +200,12 @@ function SuggestionLineBreakElementAnchor({
     );
   }
 
-  return React.cloneElement(children as React.ReactElement<any>, {
-    lineBreakBadge: badge,
-  });
+  return React.cloneElement(
+    children as React.ReactElement<{ lineBreakBadge?: React.ReactNode }>,
+    {
+      lineBreakBadge: badge,
+    },
+  );
 }
 
 export function SuggestionLeaf(props: PlateLeafProps<TSuggestionText>) {
