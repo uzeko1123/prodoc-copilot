@@ -2,8 +2,9 @@
 
 import { AIToolbarButton } from '@/components/shadcn/ui/ai-toolbar-button';
 import { AlignToolbarButton } from '@/components/shadcn/ui/align-toolbar-button';
+import { Button } from '@/components/shadcn/ui/button';
 import { CommentToolbarButton } from '@/components/shadcn/ui/comment-toolbar-button';
-// import { EmojiToolbarButton } from '@/components/shadcn/ui/emoji-toolbar-button';
+import { EmojiToolbarButton } from '@/components/shadcn/ui/emoji-toolbar-button';
 import { ExportToolbarButton } from '@/components/shadcn/ui/export-toolbar-button';
 import { FontColorToolbarButton } from '@/components/shadcn/ui/font-color-toolbar-button';
 import { FontSizeToolbarButton } from '@/components/shadcn/ui/font-size-toolbar-button';
@@ -40,6 +41,7 @@ import {
   HighlighterIcon,
   ItalicIcon,
   PaintBucketIcon,
+  PanelLeftIcon,
   StrikethroughIcon,
   UnderlineIcon,
   WandSparklesIcon,
@@ -52,105 +54,119 @@ export function FixedToolbarButtons() {
 
   return (
     <div className="flex w-full">
-      {!readOnly && (
-        <>
-          <ToolbarGroup>
-            <UndoToolbarButton />
-            <RedoToolbarButton />
-          </ToolbarGroup>
+      <ToolbarGroup>
+        <Button variant="ghost">
+          <PanelLeftIcon />
+        </Button>
+      </ToolbarGroup>
 
-          <ToolbarGroup>
-            <AIToolbarButton tooltip="AI commands">
-              <WandSparklesIcon />
-            </AIToolbarButton>
-          </ToolbarGroup>
+      <div className="grow" />
 
-          <ToolbarGroup>
-            <ExportToolbarButton>
-              <ArrowUpToLineIcon />
-            </ExportToolbarButton>
+      {
+        // eslint-disable-next-line no-constant-binary-expression
+        false && !readOnly && (
+          <>
+            <ToolbarGroup>
+              <UndoToolbarButton />
+              <RedoToolbarButton />
+            </ToolbarGroup>
 
-            <ImportToolbarButton />
-          </ToolbarGroup>
+            <ToolbarGroup>
+              <AIToolbarButton tooltip="AI commands">
+                <WandSparklesIcon />
+              </AIToolbarButton>
+            </ToolbarGroup>
 
-          <ToolbarGroup>
-            <InsertToolbarButton />
-            <TurnIntoToolbarButton />
-            <FontSizeToolbarButton />
-          </ToolbarGroup>
+            <ToolbarGroup>
+              <ExportToolbarButton>
+                <ArrowUpToLineIcon />
+              </ExportToolbarButton>
 
-          <ToolbarGroup>
-            <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
-              <BoldIcon />
-            </MarkToolbarButton>
+              <ImportToolbarButton />
+            </ToolbarGroup>
 
-            <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
-              <ItalicIcon />
-            </MarkToolbarButton>
+            <ToolbarGroup>
+              <InsertToolbarButton />
+              <TurnIntoToolbarButton />
+              <FontSizeToolbarButton />
+            </ToolbarGroup>
 
-            <MarkToolbarButton
-              nodeType={KEYS.underline}
-              tooltip="Underline (⌘+U)"
-            >
-              <UnderlineIcon />
-            </MarkToolbarButton>
+            <ToolbarGroup>
+              <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
+                <BoldIcon />
+              </MarkToolbarButton>
 
-            <MarkToolbarButton
-              nodeType={KEYS.strikethrough}
-              tooltip="Strikethrough (⌘+⇧+M)"
-            >
-              <StrikethroughIcon />
-            </MarkToolbarButton>
+              <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
+                <ItalicIcon />
+              </MarkToolbarButton>
 
-            <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
-              <Code2Icon />
-            </MarkToolbarButton>
+              <MarkToolbarButton
+                nodeType={KEYS.underline}
+                tooltip="Underline (⌘+U)"
+              >
+                <UnderlineIcon />
+              </MarkToolbarButton>
 
-            <FontColorToolbarButton nodeType={KEYS.color} tooltip="Text color">
-              <BaselineIcon />
-            </FontColorToolbarButton>
+              <MarkToolbarButton
+                nodeType={KEYS.strikethrough}
+                tooltip="Strikethrough (⌘+⇧+M)"
+              >
+                <StrikethroughIcon />
+              </MarkToolbarButton>
 
-            <FontColorToolbarButton
-              nodeType={KEYS.backgroundColor}
-              tooltip="Background color"
-            >
-              <PaintBucketIcon />
-            </FontColorToolbarButton>
-          </ToolbarGroup>
+              <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
+                <Code2Icon />
+              </MarkToolbarButton>
 
-          <ToolbarGroup>
-            <AlignToolbarButton />
+              <FontColorToolbarButton
+                nodeType={KEYS.color}
+                tooltip="Text color"
+              >
+                <BaselineIcon />
+              </FontColorToolbarButton>
 
-            <NumberedListToolbarButton />
-            <BulletedListToolbarButton />
-            <TodoListToolbarButton />
-            <ToggleToolbarButton />
-          </ToolbarGroup>
+              <FontColorToolbarButton
+                nodeType={KEYS.backgroundColor}
+                tooltip="Background color"
+              >
+                <PaintBucketIcon />
+              </FontColorToolbarButton>
+            </ToolbarGroup>
 
-          <ToolbarGroup>
-            <LinkToolbarButton />
-            <TableToolbarButton />
-            {/* <EmojiToolbarButton /> */}
-          </ToolbarGroup>
+            <ToolbarGroup>
+              <AlignToolbarButton />
 
-          <ToolbarGroup>
-            <MediaToolbarButton nodeType={KEYS.img} />
-            <MediaToolbarButton nodeType={KEYS.video} />
-            <MediaToolbarButton nodeType={KEYS.audio} />
-            <MediaToolbarButton nodeType={KEYS.file} />
-          </ToolbarGroup>
+              <NumberedListToolbarButton />
+              <BulletedListToolbarButton />
+              <TodoListToolbarButton />
+              <ToggleToolbarButton />
+            </ToolbarGroup>
 
-          <ToolbarGroup>
-            <LineHeightToolbarButton />
-            <OutdentToolbarButton />
-            <IndentToolbarButton />
-          </ToolbarGroup>
+            <ToolbarGroup>
+              <LinkToolbarButton />
+              <TableToolbarButton />
+              <EmojiToolbarButton />
+            </ToolbarGroup>
 
-          <ToolbarGroup>
-            <MoreToolbarButton />
-          </ToolbarGroup>
-        </>
-      )}
+            <ToolbarGroup>
+              <MediaToolbarButton nodeType={KEYS.img} />
+              <MediaToolbarButton nodeType={KEYS.video} />
+              <MediaToolbarButton nodeType={KEYS.audio} />
+              <MediaToolbarButton nodeType={KEYS.file} />
+            </ToolbarGroup>
+
+            <ToolbarGroup>
+              <LineHeightToolbarButton />
+              <OutdentToolbarButton />
+              <IndentToolbarButton />
+            </ToolbarGroup>
+
+            <ToolbarGroup>
+              <MoreToolbarButton />
+            </ToolbarGroup>
+          </>
+        )
+      }
 
       <div className="grow" />
 

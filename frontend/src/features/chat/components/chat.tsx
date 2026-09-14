@@ -103,8 +103,8 @@ export function Chat() {
 
   return (
     <MessageScrollerProvider>
-      <Card className="flex h-200 flex-col gap-0 ring-0 mt-1">
-        <CardHeader className="gap-1 border rounded-none">
+      <Card className="flex h-full flex-col gap-0 rounded-none ring-0">
+        <CardHeader className="gap-1 rounded-none border-b">
           <CardTitle>New Chat</CardTitle>
           <CardDescription>How can I help you today?</CardDescription>
           <CardAction>
@@ -160,7 +160,7 @@ export function Chat() {
             </MessageScroller>
           )}
         </CardContent>
-        <CardFooter className="border flex-col gap-2">
+        <CardFooter className="flex-col gap-2 rounded-none">
           <form
             onSubmit={(e) => {
               e.preventDefault();
