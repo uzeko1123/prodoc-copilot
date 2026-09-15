@@ -59,13 +59,11 @@ export function FixedToolbarButtons() {
   return (
     <div className="flex w-full">
       <ToolbarGroup>
-        <Button
-          variant="ghost"
-          aria-expanded={isLeftPanelOpen}
-          onClick={toggleLeftPanel}
-        >
-          <PanelLeftIcon />
-        </Button>
+        {!isLeftPanelOpen && (
+          <Button variant="ghost" onClick={toggleLeftPanel}>
+            <PanelLeftIcon />
+          </Button>
+        )}
       </ToolbarGroup>
 
       <div className="grow" />

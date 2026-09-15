@@ -2,6 +2,7 @@
 
 // import * as React from 'react';
 import { commentPlugin } from '@/features/editor/components/editor/plugins/comment-kit';
+import { useWorkbenchStore } from '@/stores/workbench';
 import { getCommentCount } from '@platejs/comment';
 import { cn } from 'cn';
 import type { TCommentText } from 'platejs';
@@ -31,7 +32,11 @@ export function CommentLeaf(props: PlateLeafProps<TCommentText>) {
       )}
       attributes={{
         ...props.attributes,
-        onClick: () => setOption('activeId', currentId ?? null),
+        onClick: () => {
+          setOption('activeId', currentId ?? null);
+          if (currentId)
+            useWorkbenchStore.getState().setActiveMainTab('comment');
+        },
         onMouseEnter: () => setOption('hoverId', currentId ?? null),
         onMouseLeave: () => setOption('hoverId', null),
       }}

@@ -1,7 +1,7 @@
 'use client';
 
 import { getDiscussionClickTarget } from '@/components/shadcn/editor/plugins/discussion-kit';
-import { CommentLeaf } from '@/features/editor/components/ui/comment-node';
+import { useWorkbenchStore } from '@/stores/workbench';
 import {
   BaseCommentPlugin,
   getDraftCommentKey,
@@ -9,6 +9,7 @@ import {
 } from '@platejs/comment';
 import type { ExtendConfig, Path } from 'platejs';
 import { toTPlatePlugin } from 'platejs/react';
+import { CommentLeaf } from '../../ui/comment-node';
 
 type CommentConfig = ExtendConfig<
   BaseCommentConfig,
@@ -33,11 +34,13 @@ export const commentPlugin = toTPlatePlugin<CommentConfig>(BaseCommentPlugin, {
       }
 
       const commentEntry = api.comment?.node();
-
-      setOption(
-        'activeId',
-        commentEntry ? (api.comment?.nodeId(commentEntry[0]) ?? null) : null,
-      );
+      const activeId = commentEntry
+        ? (api.comment?.nodeId(commentEntry[0]) ?? null)
+        : null;
+      setOption('activeId', activeId);
+      if (activeId) {
+        useWorkbenchStore.getState().setActiveMainTab('comment');
+      }
     },
   },
   options: {

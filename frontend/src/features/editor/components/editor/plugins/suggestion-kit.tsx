@@ -5,11 +5,7 @@ import {
   getDiscussionBlockClickTarget,
   getDiscussionClickTarget,
 } from '@/components/shadcn/editor/plugins/discussion-kit';
-import {
-  SuggestionLeaf,
-  SuggestionLineBreak,
-  VoidRemoveSuggestionOverlay,
-} from '@/features/editor/components/ui/suggestion-node';
+import { useWorkbenchStore } from '@/stores/workbench';
 import {
   BaseSuggestionPlugin,
   type BaseSuggestionConfig,
@@ -23,6 +19,11 @@ import type {
 } from 'platejs';
 import { KEYS, TextApi, TrailingBlockPlugin } from 'platejs';
 import { toTPlatePlugin, type PlateEditor } from 'platejs/react';
+import {
+  SuggestionLeaf,
+  SuggestionLineBreak,
+  VoidRemoveSuggestionOverlay,
+} from '../../ui/suggestion-node';
 
 export type SuggestionConfig = ExtendConfig<
   BaseSuggestionConfig,
@@ -87,13 +88,13 @@ export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
       const suggestionEntry = api.suggestion?.node({
         isText: !blockTarget,
       });
-
-      setOption(
-        'activeId',
-        suggestionEntry
-          ? (api.suggestion?.nodeId(suggestionEntry[0]) ?? null)
-          : null,
-      );
+      const activeId = suggestionEntry
+        ? (api.suggestion?.nodeId(suggestionEntry[0]) ?? null)
+        : null;
+      setOption('activeId', activeId);
+      if (activeId) {
+        useWorkbenchStore.getState().setActiveMainTab('comment');
+      }
     },
   },
   inject: {

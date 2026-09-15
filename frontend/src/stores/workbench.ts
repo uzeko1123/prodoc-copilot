@@ -10,8 +10,14 @@ type WorkbenchState = {
   setRightPanelOpen: (isRightPanelOpen: boolean) => void;
   toggleRightPanel: () => void;
 
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeMainTab: string;
+  setActiveMainTab: (tab: string) => void;
+
+  activeLeftPanelTab: string;
+  setActiveLeftPanelTab: (tab: string) => void;
+
+  activeRightPanelTab: string;
+  setActiveRightPanelTab: (tab: string) => void;
 };
 
 export const useWorkbenchStore = create<WorkbenchState>()(
@@ -27,8 +33,16 @@ export const useWorkbenchStore = create<WorkbenchState>()(
       toggleRightPanel: () =>
         set((state) => ({ isRightPanelOpen: !state.isRightPanelOpen })),
 
-      activeTab: 'chat',
-      setActiveTab: (activeTab) => set({ activeTab }),
+      activeMainTab: 'chat',
+      setActiveMainTab: (activeMainTab) => set({ activeMainTab }),
+
+      activeLeftPanelTab: 'toc',
+      setActiveLeftPanelTab: (activeLeftPanelTab) =>
+        set({ activeLeftPanelTab }),
+
+      activeRightPanelTab: '1',
+      setActiveRightPanelTab: (activeRightPanelTab) =>
+        set({ activeRightPanelTab }),
     }),
     { name: 'WorkbenchStore' },
   ),

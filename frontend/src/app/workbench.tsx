@@ -60,8 +60,22 @@ function WorkbenchPage() {
     setRightPanelOpen(!rightPanelRef.current?.isCollapsed());
   };
 
-  const activeTab = useWorkbenchStore((state) => state.activeTab);
-  const setActiveTab = useWorkbenchStore((state) => state.setActiveTab);
+  const activeMainTab = useWorkbenchStore((state) => state.activeMainTab);
+  const setActiveMainTab = useWorkbenchStore((state) => state.setActiveMainTab);
+
+  const activeLeftPanelTab = useWorkbenchStore(
+    (state) => state.activeLeftPanelTab,
+  );
+  const setActiveLeftPanelTab = useWorkbenchStore(
+    (state) => state.setActiveLeftPanelTab,
+  );
+
+  const activeRightPanelTab = useWorkbenchStore(
+    (state) => state.activeRightPanelTab,
+  );
+  const setActiveRightPanelTab = useWorkbenchStore(
+    (state) => state.setActiveRightPanelTab,
+  );
 
   const editor = usePlateEditor({ plugins: EditorKit, value });
 
@@ -79,7 +93,23 @@ function WorkbenchPage() {
             minSize="10%"
             panelRef={leftPanelRef}
             onResize={handleLeftPanelResize}
-          ></ResizablePanel>
+          >
+            <Tabs
+              value={activeLeftPanelTab}
+              onValueChange={(value) => setActiveLeftPanelTab(value)}
+              className="h-full gap-0"
+            >
+              <TabsList
+                variant="line"
+                className="h-10 max-h-10 min-h-10 w-full border-b"
+              >
+                <TabsTrigger value="toc">ToC</TabsTrigger>
+                <TabsTrigger value="find">Find</TabsTrigger>
+              </TabsList>
+              <TabsContent value="toc" className="min-h-0"></TabsContent>
+              <TabsContent value="find" className="min-h-0"></TabsContent>
+            </Tabs>
+          </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="50%" minSize="40%">
             <Editor />
@@ -87,8 +117,8 @@ function WorkbenchPage() {
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="20%" minSize="15%">
             <Tabs
-              value={activeTab}
-              onValueChange={(value) => setActiveTab(value)}
+              value={activeMainTab}
+              onValueChange={(value) => setActiveMainTab(value)}
               className="h-full gap-0"
             >
               <TabsList
@@ -97,13 +127,11 @@ function WorkbenchPage() {
               >
                 <TabsTrigger value="chat">Chat</TabsTrigger>
                 <TabsTrigger value="comment">Comment</TabsTrigger>
-                <Button
-                  variant="ghost"
-                  aria-expanded={isRightPanelOpen}
-                  onClick={toggleRightPanel}
-                >
-                  <PanelRightIcon />
-                </Button>
+                {!isRightPanelOpen && (
+                  <Button variant="ghost" onClick={toggleRightPanel}>
+                    <PanelRightIcon />
+                  </Button>
+                )}
               </TabsList>
               <TabsContent value="chat" className="min-h-0">
                 <Chat />
@@ -120,7 +148,25 @@ function WorkbenchPage() {
             minSize="15%"
             panelRef={rightPanelRef}
             onResize={handleRightPanelResize}
-          ></ResizablePanel>
+          >
+            <Tabs
+              value={activeRightPanelTab}
+              onValueChange={(value) => setActiveRightPanelTab(value)}
+              className="h-full gap-0"
+            >
+              <TabsList
+                variant="line"
+                className="h-10 max-h-10 min-h-10 w-full border-b"
+              >
+                <TabsTrigger value="1">1</TabsTrigger>
+                <TabsTrigger value="2">2</TabsTrigger>
+                <TabsTrigger value="3">3</TabsTrigger>
+              </TabsList>
+              <TabsContent value="1" className="min-h-0"></TabsContent>
+              <TabsContent value="2" className="min-h-0"></TabsContent>
+              <TabsContent value="3" className="min-h-0"></TabsContent>
+            </Tabs>
+          </ResizablePanel>
         </ResizablePanelGroup>
       </Plate>
     </div>
