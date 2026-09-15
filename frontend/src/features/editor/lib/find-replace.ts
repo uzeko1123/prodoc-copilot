@@ -1,14 +1,18 @@
 import { ElementApi, TextApi, type Node, type Path } from 'platejs';
 
+/** 一次命中的区间：相对某个 text 节点的选区对 + 命中的原文 */
+export type FindRange = {
+  anchor: { offset: number; path: Path };
+  focus: { offset: number; path: Path };
+  search: string;
+};
+
+/** 在单个「纯文本叶子元素」内查找（其 children 全部是 text 节点） */
 export function findReplace(
   node: Node,
   path: Path,
   search: string,
-): {
-  anchor: { offset: number; path: Path };
-  focus: { offset: number; path: Path };
-  search: string;
-}[] {
+): FindRange[] {
   if (!(
     search &&
     ElementApi.isElement(node) &&
@@ -66,4 +70,29 @@ export function findReplace(
     cumulativePosition = textEnd;
   }
   return ranges;
+}
+
+/**
+ * 在整个文档（子树）中递归查找，不受「children 必须全是 text」限制：
+ * - 纯文本叶子元素 → 直接复用 findReplace；
+ * - 含非 text 子节点的元素 → 把查找下放到每个子节点。
+ */
+export function findAll(
+  nodes: Node[],
+  path: Path,
+  search: string,
+): FindRange[] {
+  if (!search) return [];
+  const results: FindRange[] = [];
+  for (const [i, node] of nodes.entries()) {
+    if (!ElementApi.isElement(node)) continue;
+    const childPath = [...path, i];
+
+    if (node.children.every(TextApi.isText)) {
+      results.push(...findReplace(node, childPath, search));
+    } else {
+      results.push(...findAll(node.children as Node[], childPath, search));
+    }
+  }
+  return results;
 }
