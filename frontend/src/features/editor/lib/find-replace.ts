@@ -1,7 +1,14 @@
-import { ElementApi, TextApi } from 'platejs';
+import { ElementApi, TextApi, type Node, type Path } from 'platejs';
 
-const decorateFindReplace = ({ entry: [node, path], getOptions, type }) => {
-  const { search } = getOptions();
+export function findReplace(
+  node: Node,
+  path: Path,
+  search: string,
+): {
+  anchor: { offset: number; path: Path };
+  focus: { offset: number; path: Path };
+  search: string;
+}[] {
   if (!(
     search &&
     ElementApi.isElement(node) &&
@@ -51,7 +58,6 @@ const decorateFindReplace = ({ entry: [node, path], getOptions, type }) => {
             path: textNodePath,
           },
           search: search.slice(searchOverlapStart, searchOverlapEnd),
-          [type]: true,
         });
       }
       if (matchEnd <= textEnd) matchIndex++;
@@ -60,4 +66,4 @@ const decorateFindReplace = ({ entry: [node, path], getOptions, type }) => {
     cumulativePosition = textEnd;
   }
   return ranges;
-};
+}
