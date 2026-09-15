@@ -6,7 +6,7 @@ import {
   type TRange,
 } from 'platejs';
 
-export function findReplace(node: TNode, path: Path, search: string): TRange[] {
+function find(node: TNode, path: Path, search: string): TRange[] {
   if (!(
     search &&
     ElementApi.isElement(node) &&
@@ -72,7 +72,7 @@ export function findAll(nodes: TNode[], path: Path, search: string): TRange[] {
   for (const [i, node] of nodes.entries()) {
     if (!ElementApi.isElement(node)) continue;
     if (node.children.every(TextApi.isText)) {
-      ranges.push(...findReplace(node, [...path, i], search));
+      ranges.push(...find(node, [...path, i], search));
     } else {
       ranges.push(...findAll(node.children as TNode[], [...path, i], search));
     }
