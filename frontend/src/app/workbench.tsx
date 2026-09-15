@@ -81,6 +81,8 @@ function WorkbenchPage() {
 
   const editor = usePlateEditor({ plugins: EditorKit, value });
 
+  const _hideFind = false;
+
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex h-12 shrink-0 items-center border-b px-4">
@@ -96,25 +98,39 @@ function WorkbenchPage() {
             panelRef={leftPanelRef}
             onResize={handleLeftPanelResize}
           >
-            <Tabs
-              value={activeLeftPanelTab}
-              onValueChange={(value) => setActiveLeftPanelTab(value)}
-              className="h-full gap-0"
-            >
-              <TabsList
-                variant="line"
-                className="h-10 max-h-10 min-h-10 w-full border-b"
+            {!_hideFind ? (
+              <Tabs
+                value={activeLeftPanelTab}
+                onValueChange={(value) => setActiveLeftPanelTab(value)}
+                className="h-full gap-0"
               >
-                <TabsTrigger value="toc">ToC</TabsTrigger>
-                <TabsTrigger value="find">Find</TabsTrigger>
-              </TabsList>
-              <TabsContent value="toc" className="min-h-0">
-                <ToC />
-              </TabsContent>
-              <TabsContent value="find" className="min-h-0">
-                <Find />
-              </TabsContent>
-            </Tabs>
+                <TabsList
+                  variant="line"
+                  className="h-10 max-h-10 min-h-10 w-full border-b"
+                >
+                  <TabsTrigger value="toc">ToC</TabsTrigger>
+                  <TabsTrigger value="find">Find</TabsTrigger>
+                </TabsList>
+                <TabsContent value="toc" className="min-h-0">
+                  <ToC />
+                </TabsContent>
+                <TabsContent value="find" className="min-h-0">
+                  <Find />
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <Tabs value="toc" className="h-full gap-0">
+                <TabsList
+                  variant="line"
+                  className="h-10 max-h-10 min-h-10 w-full border-b"
+                >
+                  <TabsTrigger value="toc">ToC</TabsTrigger>
+                </TabsList>
+                <TabsContent value="toc" className="min-h-0">
+                  <ToC />
+                </TabsContent>
+              </Tabs>
+            )}
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="50%" minSize="40%">

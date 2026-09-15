@@ -88,7 +88,9 @@ export function Find() {
             </Button>
           ))
         ) : (
-          <p>Not found</p>
+          <p className="text-muted-foreground h-auto w-full p-2 text-center text-xs">
+            Not found
+          </p>
         )}
       </div>
     </div>

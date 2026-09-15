@@ -43,8 +43,6 @@ function find(node: TNode, path: Path, search: string): TRange[] {
       if (overlapStart < overlapEnd) {
         const anchorOffset = overlapStart - textStart;
         const focusOffset = overlapEnd - textStart;
-        // const searchOverlapStart = overlapStart - matchStart;
-        // const searchOverlapEnd = overlapEnd - matchStart;
         const textNodePath = [...path, textIndex];
         ranges.push({
           anchor: {
@@ -55,7 +53,6 @@ function find(node: TNode, path: Path, search: string): TRange[] {
             offset: focusOffset,
             path: textNodePath,
           },
-          // search: search.slice(searchOverlapStart, searchOverlapEnd),
         });
       }
       if (matchEnd <= textEnd) matchIndex++;
