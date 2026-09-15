@@ -1,8 +1,15 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
-import { useTocSideBar, useTocSideBarState } from '@platejs/toc/react';
+import {
+  heightToTop,
+  TocPlugin,
+  useTocSideBar,
+  useTocSideBarState,
+} from '@platejs/toc/react';
 import { cva } from 'class-variance-authority';
+import { NodeApi } from 'platejs';
+import { useEditorPlugin, useEditorScrollRef } from 'platejs/react';
 
 const headingItemVariants = cva(
   'block h-auto w-full cursor-pointer truncate rounded-none px-0.5 py-1.5 text-left font-medium underline decoration-[0.5px] underline-offset-4',
@@ -22,9 +29,27 @@ const headingItemVariants = cva(
 );
 
 export function ToC() {
-  const state = useTocSideBarState({ topOffset: 80 });
-  const { navProps, onContentClick } = useTocSideBar(state);
-  const { activeContentId, headingList } = state;
+  const { editor, getOptions } = useEditorPlugin(TocPlugin);
+  const { topOffset } = getOptions();
+
+  const tocSideBarState = useTocSideBarState({ topOffset });
+  const { navProps, onContentClick } = useTocSideBar(tocSideBarState);
+  const { activeContentId, headingList } = tocSideBarState;
+
+  const editorScrollRef = useEditorScrollRef();
+  const onClick = (...args: Parameters<typeof onContentClick>) => {
+    const [, item, behavior] = args;
+    const node = NodeApi.get(editor, item.path);
+    if (!node) return;
+    const el = editor.api.toDOMNode(node);
+    if (!el) return;
+    editorScrollRef.current?.scrollTo({
+      behavior,
+      top: heightToTop(el, editorScrollRef) - topOffset,
+    });
+
+    onContentClick(...args);
+  };
 
   return (
     <nav
@@ -40,7 +65,7 @@ export function ToC() {
               active: item.id === activeContentId,
               depth: item.depth as 1 | 2 | 3,
             })}
-            onClick={(e) => onContentClick(e, item, 'smooth')}
+            onClick={(e) => onClick(e, item, 'smooth')}
             aria-current={item.id === activeContentId ? 'location' : undefined}
           >
             {item.title}
