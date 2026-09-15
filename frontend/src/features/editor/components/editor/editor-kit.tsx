@@ -34,6 +34,7 @@ import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
 import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
 import { CommentKit } from './plugins/comment-kit';
+import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FixedToolbarKit } from './plugins/fixed-toolbar-kit';
 import { SuggestionKit } from './plugins/suggestion-kit';
 
@@ -87,6 +88,9 @@ export const EditorKit = [
   ...BlockPlaceholderKit,
   ...FixedToolbarKit,
   ...FloatingToolbarKit,
+
+  // Find
+  ...FindReplaceKit,
 ];
 
 export type MyEditor = TPlateEditor<Value, (typeof EditorKit)[number]>;

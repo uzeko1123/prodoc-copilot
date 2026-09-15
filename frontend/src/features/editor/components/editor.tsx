@@ -1,8 +1,8 @@
 'use client';
 
 import { SettingsDialog } from '@/components/shadcn/editor/settings-dialog';
-import { Editor as Editor_, EditorContainer } from './ui/editor';
 import { useEditorScrollRef } from 'platejs/react';
+import { Editor as Editor_, EditorContainer } from './ui/editor';
 
 export function Editor() {
   const editorScrollRef = useEditorScrollRef();

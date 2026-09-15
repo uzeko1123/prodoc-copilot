@@ -1,14 +1,11 @@
 'use client';
 
 // import * as React from 'react';
-
-import type { PlateElementProps } from 'platejs/react';
-
+import { Button } from '@/components/shadcn/ui/button';
 import { useTocElement, useTocElementState } from '@platejs/toc/react';
 import { cva } from 'class-variance-authority';
+import type { PlateElementProps } from 'platejs/react';
 import { PlateElement } from 'platejs/react';
-
-import { Button } from '@/components/shadcn/ui/button';
 
 const headingItemVariants = cva(
   'block h-auto w-full cursor-pointer truncate rounded-none px-0.5 py-1.5 text-left font-medium underline decoration-[0.5px] underline-offset-4',
@@ -24,7 +21,7 @@ const headingItemVariants = cva(
         3: 'pl-[50px]',
       },
     },
-  }
+  },
 );
 
 export function TocElement(props: PlateElementProps) {
@@ -53,7 +50,7 @@ export function TocElement(props: PlateElementProps) {
             </Button>
           ))
         ) : (
-          <div className="text-gray-500 text-sm">
+          <div className="text-sm text-gray-500">
             Create a heading to display the table of contents.
           </div>
         )}

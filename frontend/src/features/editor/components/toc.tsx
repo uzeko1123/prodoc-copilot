@@ -1,9 +1,8 @@
 'use client';
 
+import { Button } from '@/components/shadcn/ui/button';
 import { useTocSideBar, useTocSideBarState } from '@platejs/toc/react';
 import { cva } from 'class-variance-authority';
-
-import { Button } from '@/components/shadcn/ui/button';
 
 const headingItemVariants = cva(
   'block h-auto w-full cursor-pointer truncate rounded-none px-0.5 py-1.5 text-left font-medium underline decoration-[0.5px] underline-offset-4',
@@ -30,7 +29,7 @@ export function ToC() {
   return (
     <nav
       {...navProps}
-      className="p-2 scrollbar-thumb-border h-full scrollbar-thin overflow-y-auto"
+      className="scrollbar-thumb-border h-full scrollbar-thin overflow-y-auto p-2"
     >
       {headingList.length > 0 ? (
         headingList.map((item) => (
