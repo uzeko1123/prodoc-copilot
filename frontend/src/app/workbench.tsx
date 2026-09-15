@@ -14,6 +14,8 @@ import { Chat } from '@/features/chat/components/chat';
 import { Comment } from '@/features/comment/components/comment';
 import { Editor } from '@/features/editor/components/editor';
 import { EditorKit } from '@/features/editor/components/editor/editor-kit';
+import { Find } from '@/features/editor/components/find';
+import { ToC } from '@/features/editor/components/toc';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { createFileRoute } from '@tanstack/react-router';
 import { PanelRightIcon } from 'lucide-react';
@@ -106,8 +108,12 @@ function WorkbenchPage() {
                 <TabsTrigger value="toc">ToC</TabsTrigger>
                 <TabsTrigger value="find">Find</TabsTrigger>
               </TabsList>
-              <TabsContent value="toc" className="min-h-0"></TabsContent>
-              <TabsContent value="find" className="min-h-0"></TabsContent>
+              <TabsContent value="toc" className="min-h-0">
+                <ToC />
+              </TabsContent>
+              <TabsContent value="find" className="min-h-0">
+                <Find />
+              </TabsContent>
             </Tabs>
           </ResizablePanel>
           <ResizableHandle withHandle />

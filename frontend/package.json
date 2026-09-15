@@ -46,6 +46,7 @@
     "@platejs/docx-io": "^53.3.10",
     "@platejs/emoji": "^53.1.7",
     "@platejs/excalidraw": "^53.0.0",
+    "@platejs/find-replace": "^53.0.0",
     "@platejs/floating": "^53.0.0",
     "@platejs/footnote": "^53.0.0",
     "@platejs/indent": "^53.0.0",

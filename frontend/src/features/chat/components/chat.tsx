@@ -127,7 +127,7 @@ export function Chat() {
             </Tooltip>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex-1 overflow-hidden p-0">
+        <CardContent className="scrollbar-thumb-border flex-1 scrollbar-thin overflow-hidden p-0">
           {messages.length === 0 ? (
             <Empty className="h-full">
               <EmptyHeader>

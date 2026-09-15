@@ -7,7 +7,7 @@ export function Editor() {
   return (
     <div className="h-full">
       <EditorContainer>
-        <Editor_ className="scrollbar-thin" />
+        <Editor_ className="scrollbar-thumb-border scrollbar-thin" />
       </EditorContainer>
       <SettingsDialog />
     </div>
