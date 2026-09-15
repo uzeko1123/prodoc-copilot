@@ -1,12 +1,12 @@
-import { ElementApi, TextApi, type Node, type Path, type Range } from 'platejs';
+import {
+  ElementApi,
+  TextApi,
+  type Path,
+  type TNode,
+  type TRange,
+} from 'platejs';
 
-export type FindRange = Range & { search: string };
-
-export function findReplace(
-  node: Node,
-  path: Path,
-  search: string,
-): FindRange[] {
+export function findReplace(node: TNode, path: Path, search: string): TRange[] {
   if (!(
     search &&
     ElementApi.isElement(node) &&
@@ -43,8 +43,8 @@ export function findReplace(
       if (overlapStart < overlapEnd) {
         const anchorOffset = overlapStart - textStart;
         const focusOffset = overlapEnd - textStart;
-        const searchOverlapStart = overlapStart - matchStart;
-        const searchOverlapEnd = overlapEnd - matchStart;
+        // const searchOverlapStart = overlapStart - matchStart;
+        // const searchOverlapEnd = overlapEnd - matchStart;
         const textNodePath = [...path, textIndex];
         ranges.push({
           anchor: {
@@ -55,7 +55,7 @@ export function findReplace(
             offset: focusOffset,
             path: textNodePath,
           },
-          search: search.slice(searchOverlapStart, searchOverlapEnd),
+          // search: search.slice(searchOverlapStart, searchOverlapEnd),
         });
       }
       if (matchEnd <= textEnd) matchIndex++;
@@ -66,11 +66,7 @@ export function findReplace(
   return ranges;
 }
 
-export function findAll(
-  nodes: Node[],
-  path: Path,
-  search: string,
-): FindRange[] {
+export function findAll(nodes: TNode[], path: Path, search: string): TRange[] {
   if (!search) return [];
   const ranges = [];
   for (const [i, node] of nodes.entries()) {
@@ -78,7 +74,7 @@ export function findAll(
     if (node.children.every(TextApi.isText)) {
       ranges.push(...findReplace(node, [...path, i], search));
     } else {
-      ranges.push(...findAll(node.children as Node[], [...path, i], search));
+      ranges.push(...findAll(node.children as TNode[], [...path, i], search));
     }
   }
   return ranges;
