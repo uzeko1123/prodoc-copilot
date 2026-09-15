@@ -68,8 +68,7 @@ export function ToC() {
       let currentHeadingId: string | null = null;
       for (const heading of headingListFiltered) {
         const node = NodeApi.get(editor, heading.path);
-        if (!node) continue;
-        const el = editor.api.toDOMNode(node);
+        const el = node ? editor.api.toDOMNode(node) : undefined;
         if (!el) continue;
         if (
           el.getBoundingClientRect().top <
@@ -99,8 +98,7 @@ export function ToC() {
   const onClick = (...args: Parameters<typeof onContentClick>) => {
     const [, item, behavior] = args;
     const node = NodeApi.get(editor, item.path);
-    if (!node) return;
-    const el = editor.api.toDOMNode(node);
+    const el = node ? editor.api.toDOMNode(node) : undefined;
     if (!el) return;
     editorScrollRef.current?.scrollTo({
       behavior,
