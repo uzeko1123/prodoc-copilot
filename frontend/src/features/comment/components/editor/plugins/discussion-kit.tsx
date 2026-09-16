@@ -1,7 +1,7 @@
 'use client';
 
-import { discussionsData } from '@/data/comment-discussions';
 import { createPlatePlugin } from 'platejs/react';
+import { useCommentStore } from '../../../stores';
 import { BlockDiscussion } from '../../ui/block-discussion';
 import type { TComment } from '../../ui/comment';
 
@@ -78,7 +78,7 @@ export const discussionPlugin = createPlatePlugin({
   key: 'discussion',
   options: {
     currentUserId: 'alice',
-    discussions: discussionsData,
+    discussions: useCommentStore.getState().discussions,
     users: usersData,
   },
 })

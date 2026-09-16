@@ -10,13 +10,13 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/tabs';
-import { value } from '@/data/editor-value';
 import { Chat } from '@/features/chat/components/chat';
 import { Comment } from '@/features/comment/components/comment';
 import { Editor } from '@/features/editor/components/editor';
 import { EditorKit } from '@/features/editor/components/editor/editor-kit';
 import { Find } from '@/features/editor/components/find';
 import { ToC } from '@/features/editor/components/toc';
+import { useEditorStore } from '@/features/editor/stores';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { createFileRoute } from '@tanstack/react-router';
 import { PanelRightIcon } from 'lucide-react';
@@ -79,7 +79,10 @@ function Workbench() {
     (state) => state.setActiveRightPanelTab,
   );
 
-  const editor = usePlateEditor({ plugins: EditorKit, value });
+  const editor = usePlateEditor({
+    plugins: EditorKit,
+    value: useEditorStore.getState().value,
+  });
 
   const _hideFind = false;
 
