@@ -1,6 +1,5 @@
 'use client';
 
-import { AIKit } from '@/components/shadcn/editor/plugins/ai-kit';
 import { AlignKit } from '@/components/shadcn/editor/plugins/align-kit';
 import { AutoformatKit } from '@/components/shadcn/editor/plugins/autoformat-kit';
 import { BasicBlocksKit } from '@/components/shadcn/editor/plugins/basic-blocks-kit';
@@ -10,10 +9,8 @@ import { BlockPlaceholderKit } from '@/components/shadcn/editor/plugins/block-pl
 import { CalloutKit } from '@/components/shadcn/editor/plugins/callout-kit';
 import { CodeBlockKit } from '@/components/shadcn/editor/plugins/code-block-kit';
 import { ColumnKit } from '@/components/shadcn/editor/plugins/column-kit';
-import { CopilotKit } from '@/components/shadcn/editor/plugins/copilot-kit';
 import { CursorOverlayKit } from '@/components/shadcn/editor/plugins/cursor-overlay-kit';
 import { DateKit } from '@/components/shadcn/editor/plugins/date-kit';
-import { DiscussionKit } from '@/components/shadcn/editor/plugins/discussion-kit';
 import { DndKit } from '@/components/shadcn/editor/plugins/dnd-kit';
 import { DocxKit } from '@/components/shadcn/editor/plugins/docx-kit';
 import { EmojiKit } from '@/components/shadcn/editor/plugins/emoji-kit';
@@ -31,12 +28,15 @@ import { SlashKit } from '@/components/shadcn/editor/plugins/slash-kit';
 import { TableKit } from '@/components/shadcn/editor/plugins/table-kit';
 import { TocKit } from '@/components/shadcn/editor/plugins/toc-kit';
 import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
+import { AIKit } from '@/features/chat/components/editor/plugins/ai-kit';
+import { CopilotKit } from '@/features/chat/components/editor/plugins/copilot-kit';
+import { CommentKit } from '@/features/comment/components/editor/plugins/comment-kit';
+import { DiscussionKit } from '@/features/comment/components/editor/plugins/discussion-kit';
+import { SuggestionKit } from '@/features/comment/components/editor/plugins/suggestion-kit';
 import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
-import { CommentKit } from './plugins/comment-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FixedToolbarKit } from './plugins/fixed-toolbar-kit';
-import { SuggestionKit } from './plugins/suggestion-kit';
 
 export const EditorKit = [
   ...CopilotKit,

@@ -1,10 +1,5 @@
 'use client';
 
-import {
-  discussionPlugin,
-  getDiscussionBlockClickTarget,
-  getDiscussionClickTarget,
-} from '@/components/shadcn/editor/plugins/discussion-kit';
 import { useWorkbenchStore } from '@/stores/workbench';
 import {
   BaseSuggestionPlugin,
@@ -24,6 +19,11 @@ import {
   SuggestionLineBreak,
   VoidRemoveSuggestionOverlay,
 } from '../../ui/suggestion-node';
+import {
+  discussionPlugin,
+  getDiscussionBlockClickTarget,
+  getDiscussionClickTarget,
+} from './discussion-kit';
 
 export type SuggestionConfig = ExtendConfig<
   BaseSuggestionConfig,

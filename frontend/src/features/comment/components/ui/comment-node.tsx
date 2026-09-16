@@ -1,13 +1,13 @@
 'use client';
 
 // import * as React from 'react';
-import { commentPlugin } from '@/features/editor/components/editor/plugins/comment-kit';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { getCommentCount } from '@platejs/comment';
 import { cn } from 'cn';
 import type { TCommentText } from 'platejs';
 import type { PlateLeafProps } from 'platejs/react';
 import { PlateLeaf, useEditorPlugin, usePluginOption } from 'platejs/react';
+import { commentPlugin } from '../editor/plugins/comment-kit';
 
 export function CommentLeaf(props: PlateLeafProps<TCommentText>) {
   const { children, leaf } = props;

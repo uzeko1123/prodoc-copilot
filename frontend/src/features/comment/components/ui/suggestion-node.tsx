@@ -2,7 +2,6 @@
 'use client';
 
 import { voidRemoveSuggestionOverlayVariants } from '@/components/shadcn/ui/suggestion-node-static';
-import type { SuggestionConfig } from '@/features/editor/components/editor/plugins/suggestion-kit';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { cva } from 'class-variance-authority';
 import { cn } from 'cn';
@@ -22,6 +21,7 @@ import type {
 } from 'platejs/react';
 import { PlateLeaf, useEditorPlugin, usePluginOption } from 'platejs/react';
 import * as React from 'react';
+import type { SuggestionConfig } from '../editor/plugins/suggestion-kit';
 
 const suggestionPlugin = SuggestionPlugin as WithRequiredKey<SuggestionConfig>;
 

@@ -1,6 +1,5 @@
 'use client';
 
-import { getDiscussionClickTarget } from '@/components/shadcn/editor/plugins/discussion-kit';
 import { useWorkbenchStore } from '@/stores/workbench';
 import {
   BaseCommentPlugin,
@@ -10,6 +9,7 @@ import {
 import type { ExtendConfig, Path } from 'platejs';
 import { toTPlatePlugin } from 'platejs/react';
 import { CommentLeaf } from '../../ui/comment-node';
+import { getDiscussionClickTarget } from './discussion-kit';
 
 type CommentConfig = ExtendConfig<
   BaseCommentConfig,

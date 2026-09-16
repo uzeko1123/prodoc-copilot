@@ -1,10 +1,5 @@
 'use client';
 
-import {
-  discussionPlugin,
-  type TDiscussion,
-} from '@/components/shadcn/editor/plugins/discussion-kit';
-import type { TComment } from '@/components/shadcn/ui/comment';
 import { CommentPlugin } from '@platejs/comment/react';
 import type { TResolvedSuggestion } from '@platejs/suggestion';
 import { getSuggestionKey, keyId2SuggestionId } from '@platejs/suggestion';
@@ -24,6 +19,11 @@ import {
 import type { PlateEditor } from 'platejs/react';
 import { useEditorRef, useEditorVersion, usePluginOption } from 'platejs/react';
 import * as React from 'react';
+import {
+  discussionPlugin,
+  type TDiscussion,
+} from '../components/editor/plugins/discussion-kit';
+import type { TComment } from '../components/ui/comment';
 
 export interface ResolvedSuggestion extends TResolvedSuggestion {
   comments: TComment[];
@@ -37,11 +37,7 @@ type BlockDiscussionEntry = NodeEntry<
 type SuggestionEntry = NodeEntry<TElement | TSuggestionText>;
 
 type BlockDiscussionIndex = {
-  discussionFragmentsById: Map<string, Path[]>;
   discussionsByBlock: Map<string, TDiscussion[]>;
-  orderById: Map<string, number>;
-  suggestionFragmentsById: Map<string, Path[]>;
-  suggestionsById: Map<string, ResolvedSuggestion>;
   suggestionsByBlock: Map<string, ResolvedSuggestion[]>;
 };
 
@@ -118,23 +114,6 @@ const appendByKey = <T>(map: Map<string, T[]>, key: string, value: T) => {
   }
 
   map.set(key, [value]);
-};
-
-const appendDistinctBlockPath = (
-  map: Map<string, Path[]>,
-  id: string,
-  blockPath: Path,
-) => {
-  const paths = map.get(id);
-
-  if (paths) {
-    if (getBlockKey(paths[paths.length - 1]) !== getBlockKey(blockPath)) {
-      paths.push(blockPath);
-    }
-    return;
-  }
-
-  map.set(id, [blockPath]);
 };
 
 const getBlockKey = (path: Path) => path.join(',');
@@ -394,10 +373,6 @@ export const buildBlockDiscussionIndex = ({
   const discussionsById = new Map(
     discussions.map((discussion) => [discussion.id, discussion]),
   );
-  const orderById = new Map<string, number>();
-  const discussionFragmentsById = new Map<string, Path[]>();
-  const suggestionFragmentsById = new Map<string, Path[]>();
-  let orderCounter = 0;
 
   entries.forEach(([node, path]) => {
     const blockPath = getTopLevelPath(path);
@@ -413,12 +388,6 @@ export const buildBlockDiscussionIndex = ({
         if (!commentOwnerById.has(commentId)) {
           commentOwnerById.set(commentId, blockPath);
         }
-
-        if (!orderById.has(commentId)) {
-          orderById.set(commentId, orderCounter++);
-        }
-
-        appendDistinctBlockPath(discussionFragmentsById, commentId, blockPath);
       }
     }
 
@@ -427,16 +396,6 @@ export const buildBlockDiscussionIndex = ({
         if (!suggestionOwnerById.has(suggestionId)) {
           suggestionOwnerById.set(suggestionId, blockPath);
         }
-
-        if (!orderById.has(suggestionId)) {
-          orderById.set(suggestionId, orderCounter++);
-        }
-
-        appendDistinctBlockPath(
-          suggestionFragmentsById,
-          suggestionId,
-          blockPath,
-        );
 
         appendByKey(suggestionEntriesById, suggestionId, [
           node as TElement | TSuggestionText,
@@ -462,7 +421,6 @@ export const buildBlockDiscussionIndex = ({
   });
 
   const suggestionsByBlock = new Map<string, ResolvedSuggestion[]>();
-  const suggestionsById = new Map<string, ResolvedSuggestion>();
 
   suggestionEntriesById.forEach((suggestionEntries, suggestionId) => {
     const ownerPath = suggestionOwnerById.get(suggestionId);
@@ -481,15 +439,10 @@ export const buildBlockDiscussionIndex = ({
     if (!resolvedSuggestion) return;
 
     appendByKey(suggestionsByBlock, getBlockKey(ownerPath), resolvedSuggestion);
-    suggestionsById.set(resolvedSuggestion.suggestionId, resolvedSuggestion);
   });
 
   return {
-    discussionFragmentsById,
     discussionsByBlock,
-    orderById,
-    suggestionFragmentsById,
-    suggestionsById,
     suggestionsByBlock,
   };
 };
@@ -542,57 +495,4 @@ export const useBlockDiscussionItems = (blockPath: Path) => {
       resolvedSuggestions: index.suggestionsByBlock.get(blockKey) ?? [],
     };
   }, [blockPath, discussions, editor, version]);
-};
-
-export type DiscussionListItem =
-  | {
-      discussion: TDiscussion;
-      fragmentPaths: Path[];
-      kind: 'discussion';
-    }
-  | {
-      fragmentPaths: Path[];
-      kind: 'suggestion';
-      suggestion: ResolvedSuggestion;
-    };
-
-export const useDocumentDiscussionItems = (): DiscussionListItem[] => {
-  const editor = useEditorRef();
-  const discussions = usePluginOption(discussionPlugin, 'discussions');
-  const version = useEditorVersion() ?? 0;
-
-  return React.useMemo(() => {
-    const index = getDiscussionIndex(editor, discussions, version);
-    const items: DiscussionListItem[] = [];
-
-    discussions.forEach((discussion) => {
-      const fragmentPaths = index.discussionFragmentsById.get(discussion.id);
-
-      if (!fragmentPaths || fragmentPaths.length === 0) return;
-
-      items.push({ discussion, fragmentPaths, kind: 'discussion' });
-    });
-
-    index.suggestionsById.forEach((suggestion) => {
-      items.push({
-        fragmentPaths:
-          index.suggestionFragmentsById.get(suggestion.suggestionId) ?? [],
-        kind: 'suggestion',
-        suggestion,
-      });
-    });
-
-    const orderKey = (item: DiscussionListItem) =>
-      item.kind === 'discussion'
-        ? item.discussion.id
-        : item.suggestion.suggestionId;
-
-    items.sort(
-      (a, b) =>
-        (index.orderById.get(orderKey(a)) ?? 0) -
-        (index.orderById.get(orderKey(b)) ?? 0),
-    );
-
-    return items;
-  }, [discussions, editor, version]);
 };
