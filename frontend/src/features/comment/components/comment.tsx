@@ -6,7 +6,7 @@ import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { cn } from 'cn';
 import { PathApi, type Path } from 'platejs';
 import { useEditorRef, useEditorVersion, usePluginOption } from 'platejs/react';
-import * as React from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   getDiscussionIndex,
   type ResolvedSuggestion,
@@ -28,7 +28,7 @@ type CommentItem = { id: string; path: Path } & (
 
 function CommentCard({ commentItem }: { commentItem: CommentItem }) {
   const editor = useEditorRef();
-  const commentCardRef = React.useRef<HTMLDivElement>(null);
+  const commentCardRef = useRef<HTMLDivElement>(null);
   const activeId = usePluginOption(
     commentItem.type === 'comment' ? commentPlugin : suggestionPlugin,
     'activeId',
@@ -36,7 +36,7 @@ function CommentCard({ commentItem }: { commentItem: CommentItem }) {
 
   const isActive = commentItem.id === activeId;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isActive) {
       commentCardRef.current?.scrollIntoView({
         block: 'center',
@@ -90,11 +90,11 @@ export function Comment() {
 
   const setDiscussions = useCommentStore((state) => state.setDiscussions);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setDiscussions(discussions);
   }, [discussions, setDiscussions]);
 
-  const commentItems = React.useMemo(() => {
+  const commentItems = useMemo(() => {
     const discussionIndex = getDiscussionIndex(editor, discussions, version);
     const commentItems: CommentItem[] = [];
 
