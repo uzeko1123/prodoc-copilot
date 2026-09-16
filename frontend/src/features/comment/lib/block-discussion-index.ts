@@ -447,7 +447,7 @@ export const buildBlockDiscussionIndex = ({
   };
 };
 
-const getDiscussionIndex = (
+export const getDiscussionIndex = (
   editor: PlateEditor,
   discussions: TDiscussion[],
   version: number,
