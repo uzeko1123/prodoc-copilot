@@ -229,7 +229,7 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   );
 };
 
-function BlockComment({
+export function BlockComment({
   discussion,
   isLast,
 }: {

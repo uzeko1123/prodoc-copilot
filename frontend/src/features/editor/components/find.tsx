@@ -59,7 +59,7 @@ export function Find() {
   };
 
   return (
-    <div className="scrollbar-thumb-border h-full scrollbar-thin overflow-y-auto p-2">
+    <div className="scrollbar-thumb-border flex h-full scrollbar-thin flex-col gap-2 overflow-y-auto p-2">
       <Input
         value={search}
         onChange={(e) => {
@@ -69,27 +69,25 @@ export function Find() {
         placeholder="Search the text..."
         type="search"
       />
-      <div className="flex w-full flex-col gap-2 py-2">
-        {matches.length === 0 && (
-          <p className="text-sm text-gray-500">
-            {!search ? 'No search.' : 'Not found.'}
+      {matches.length === 0 && (
+        <p className="text-sm text-gray-500">
+          {!search ? 'No search.' : 'Not found.'}
+        </p>
+      )}
+      {matches.map((match) => (
+        <Button
+          key={match.key}
+          variant="outline"
+          className="h-auto p-2"
+          onClick={() => onClick(match.range)}
+        >
+          <p className="line-clamp-3 w-full text-left text-xs whitespace-pre-wrap">
+            {match.before}
+            <mark className="bg-yellow-100 font-semibold">{match.text}</mark>
+            {match.after}
           </p>
-        )}
-        {matches.map((match) => (
-          <Button
-            key={match.key}
-            variant="outline"
-            className="h-auto p-2"
-            onClick={() => onClick(match.range)}
-          >
-            <p className="line-clamp-3 w-full text-left text-xs whitespace-pre-wrap">
-              {match.before}
-              <mark className="bg-yellow-100 font-semibold">{match.text}</mark>
-              {match.after}
-            </p>
-          </Button>
-        ))}
-      </div>
+        </Button>
+      ))}
     </div>
   );
 }
