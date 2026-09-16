@@ -1,0 +1,1098 @@
+[
+  {
+    "children": [
+      {
+        "text": "Welcome to the Plate Playground!"
+      }
+    ],
+    "type": "h1",
+    "id": "static-0001"
+  },
+  {
+    "children": [
+      {
+        "text": "Experience a modern rich-text editor built with "
+      },
+      {
+        "children": [
+          {
+            "text": "Slate"
+          }
+        ],
+        "type": "a",
+        "url": "https://slatejs.org",
+        "id": "static-0002"
+      },
+      {
+        "text": " and "
+      },
+      {
+        "children": [
+          {
+            "text": "React"
+          }
+        ],
+        "type": "a",
+        "url": "https://reactjs.org",
+        "id": "static-0003"
+      },
+      {
+        "text": ". This playground showcases just a part of Plate's capabilities. "
+      },
+      {
+        "children": [
+          {
+            "text": "Explore the documentation"
+          }
+        ],
+        "type": "a",
+        "url": "/docs",
+        "id": "static-0004"
+      },
+      {
+        "text": " to discover more."
+      }
+    ],
+    "type": "p",
+    "id": "static-0005"
+  },
+  {
+    "children": [
+      {
+        "text": "Collaborative Editing"
+      }
+    ],
+    "type": "h2",
+    "id": "static-0006"
+  },
+  {
+    "children": [
+      {
+        "text": "Review and refine content seamlessly. Use "
+      },
+      {
+        "children": [
+          {
+            "suggestion": true,
+            "suggestion_playground1": {
+              "id": "playground1",
+              "createdAt": 1704067200000,
+              "type": "insert",
+              "userId": "alice"
+            },
+            "text": "suggestions"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/suggestion",
+        "id": "static-0007"
+      },
+      {
+        "suggestion": true,
+        "suggestion_playground1": {
+          "id": "playground1",
+          "createdAt": 1704067200000,
+          "type": "insert",
+          "userId": "alice"
+        },
+        "text": " like this added text"
+      },
+      {
+        "text": " or to "
+      },
+      {
+        "suggestion": true,
+        "suggestion_playground2": {
+          "id": "playground2",
+          "createdAt": 1704067200000,
+          "type": "remove",
+          "userId": "bob"
+        },
+        "text": "mark text for removal"
+      },
+      {
+        "text": ". Discuss changes using "
+      },
+      {
+        "children": [
+          {
+            "comment": true,
+            "comment_discussion1": true,
+            "text": "comments"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/comment",
+        "id": "static-0008"
+      },
+      {
+        "comment": true,
+        "comment_discussion1": true,
+        "text": " on many text segments"
+      },
+      {
+        "text": ". You can even have "
+      },
+      {
+        "comment": true,
+        "comment_discussion2": true,
+        "suggestion": true,
+        "suggestion_playground3": {
+          "id": "playground3",
+          "createdAt": 1704067200000,
+          "type": "insert",
+          "userId": "charlie"
+        },
+        "text": "overlapping"
+      },
+      {
+        "text": " annotations!"
+      }
+    ],
+    "type": "p",
+    "id": "static-0009"
+  },
+  {
+    "children": [
+      {
+        "text": "AI-Powered Editing"
+      }
+    ],
+    "type": "h2",
+    "id": "static-0010"
+  },
+  {
+    "children": [
+      {
+        "text": "Boost your productivity with integrated "
+      },
+      {
+        "children": [
+          {
+            "text": "AI SDK"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/ai",
+        "id": "static-0011"
+      },
+      {
+        "text": ". Press "
+      },
+      {
+        "kbd": true,
+        "text": "⌘+J"
+      },
+      {
+        "text": " or "
+      },
+      {
+        "kbd": true,
+        "text": "Space"
+      },
+      {
+        "text": " in an empty line to:"
+      }
+    ],
+    "type": "p",
+    "id": "static-0012"
+  },
+  {
+    "children": [
+      {
+        "text": "Generate content (continue writing, summarize, explain)"
+      }
+    ],
+    "indent": 1,
+    "listStyleType": "disc",
+    "type": "p",
+    "id": "static-0013"
+  },
+  {
+    "children": [
+      {
+        "text": "Edit existing text (improve, fix grammar, change tone)"
+      }
+    ],
+    "indent": 1,
+    "listStyleType": "disc",
+    "type": "p",
+    "id": "static-0014"
+  },
+  {
+    "children": [
+      {
+        "text": "Rich Content Editing"
+      }
+    ],
+    "type": "h2",
+    "id": "static-0015"
+  },
+  {
+    "children": [
+      {
+        "text": "Structure your content with "
+      },
+      {
+        "children": [
+          {
+            "text": "headings"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/heading",
+        "id": "static-0016"
+      },
+      {
+        "text": ", "
+      },
+      {
+        "children": [
+          {
+            "text": "lists"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/list",
+        "id": "static-0017"
+      },
+      {
+        "text": ", and "
+      },
+      {
+        "children": [
+          {
+            "text": "quotes"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/blockquote",
+        "id": "static-0018"
+      },
+      {
+        "text": ". Apply "
+      },
+      {
+        "children": [
+          {
+            "text": "marks"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/basic-marks",
+        "id": "static-0019"
+      },
+      {
+        "text": " like "
+      },
+      {
+        "bold": true,
+        "text": "bold"
+      },
+      {
+        "text": ", "
+      },
+      {
+        "italic": true,
+        "text": "italic"
+      },
+      {
+        "text": ", "
+      },
+      {
+        "text": "underline",
+        "underline": true
+      },
+      {
+        "text": ", "
+      },
+      {
+        "strikethrough": true,
+        "text": "strikethrough"
+      },
+      {
+        "text": ", and "
+      },
+      {
+        "code": true,
+        "text": "code"
+      },
+      {
+        "text": ". Use "
+      },
+      {
+        "children": [
+          {
+            "text": "autoformatting"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/autoformat",
+        "id": "static-0020"
+      },
+      {
+        "text": " for "
+      },
+      {
+        "children": [
+          {
+            "text": "Markdown"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/markdown",
+        "id": "static-0021"
+      },
+      {
+        "text": "-like shortcuts (e.g., "
+      },
+      {
+        "kbd": true,
+        "text": "* "
+      },
+      {
+        "text": " for lists, "
+      },
+      {
+        "kbd": true,
+        "text": "# "
+      },
+      {
+        "text": " for H1)."
+      }
+    ],
+    "type": "p",
+    "id": "static-0022"
+  },
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "text": "Blockquotes can group paragraphs, quoted lists, and reply chains."
+          }
+        ],
+        "type": "p",
+        "id": "static-0023"
+      },
+      {
+        "children": [
+          {
+            "text": "Markdown blockquotes keep this nested structure instead of flattening it."
+          }
+        ],
+        "type": "p",
+        "id": "static-0024"
+      },
+      {
+        "children": [
+          {
+            "text": "Quoted list item inside the same container."
+          }
+        ],
+        "indent": 1,
+        "listStyleType": "disc",
+        "type": "p",
+        "id": "static-0025"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "text": "Nested blockquotes work here too."
+              }
+            ],
+            "type": "p",
+            "id": "static-0026"
+          }
+        ],
+        "type": "blockquote",
+        "id": "static-0027"
+      }
+    ],
+    "type": "blockquote",
+    "id": "static-0028"
+  },
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "text": "function hello() {"
+          }
+        ],
+        "type": "code_line",
+        "id": "static-0029"
+      },
+      {
+        "children": [
+          {
+            "text": "  console.info('Code blocks are supported!');"
+          }
+        ],
+        "type": "code_line",
+        "id": "static-0030"
+      },
+      {
+        "children": [
+          {
+            "text": "}"
+          }
+        ],
+        "type": "code_line",
+        "id": "static-0031"
+      }
+    ],
+    "lang": "javascript",
+    "type": "code_block",
+    "id": "static-0032"
+  },
+  {
+    "children": [
+      {
+        "text": "Create "
+      },
+      {
+        "children": [
+          {
+            "text": "links"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/link",
+        "id": "static-0033"
+      },
+      {
+        "text": ", "
+      },
+      {
+        "children": [
+          {
+            "text": "@mention"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/mention",
+        "id": "static-0034"
+      },
+      {
+        "text": " users like "
+      },
+      {
+        "children": [
+          {
+            "text": ""
+          }
+        ],
+        "type": "mention",
+        "value": "Alice",
+        "id": "static-0035"
+      },
+      {
+        "text": ", or insert "
+      },
+      {
+        "children": [
+          {
+            "text": "emojis"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/emoji",
+        "id": "static-0036"
+      },
+      {
+        "text": " ✨. Use the "
+      },
+      {
+        "children": [
+          {
+            "text": "slash command"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/slash-command",
+        "id": "static-0037"
+      },
+      {
+        "text": " (/) for quick access to elements."
+      }
+    ],
+    "type": "p",
+    "id": "static-0038"
+  },
+  {
+    "children": [
+      {
+        "text": "How Plate Compares"
+      }
+    ],
+    "type": "h3",
+    "id": "static-0039"
+  },
+  {
+    "children": [
+      {
+        "text": "Plate offers many features out-of-the-box as free, open-source plugins."
+      }
+    ],
+    "type": "p",
+    "id": "static-0040"
+  },
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Feature"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0041"
+              }
+            ],
+            "type": "th",
+            "id": "static-0042"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Plate (Free & OSS)"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0043"
+              }
+            ],
+            "type": "th",
+            "id": "static-0044"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "bold": true,
+                    "text": "Tiptap"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0045"
+              }
+            ],
+            "type": "th",
+            "id": "static-0046"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0047"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "AI"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0048"
+              }
+            ],
+            "type": "td",
+            "id": "static-0049"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0050"
+              }
+            ],
+            "type": "td",
+            "id": "static-0051"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Paid Extension"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0052"
+              }
+            ],
+            "type": "td",
+            "id": "static-0053"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0054"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Comments"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0055"
+              }
+            ],
+            "type": "td",
+            "id": "static-0056"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0057"
+              }
+            ],
+            "type": "td",
+            "id": "static-0058"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Paid Extension"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0059"
+              }
+            ],
+            "type": "td",
+            "id": "static-0060"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0061"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Suggestions"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0062"
+              }
+            ],
+            "type": "td",
+            "id": "static-0063"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0064"
+              }
+            ],
+            "type": "td",
+            "id": "static-0065"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Paid (Comments Pro)"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0066"
+              }
+            ],
+            "type": "td",
+            "id": "static-0067"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0068"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Emoji Picker"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0069"
+              }
+            ],
+            "type": "td",
+            "id": "static-0070"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0071"
+              }
+            ],
+            "type": "td",
+            "id": "static-0072"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Paid Extension"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0073"
+              }
+            ],
+            "type": "td",
+            "id": "static-0074"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0075"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Table of Contents"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0076"
+              }
+            ],
+            "type": "td",
+            "id": "static-0077"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0078"
+              }
+            ],
+            "type": "td",
+            "id": "static-0079"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Paid Extension"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0080"
+              }
+            ],
+            "type": "td",
+            "id": "static-0081"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0082"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Drag Handle"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0083"
+              }
+            ],
+            "type": "td",
+            "id": "static-0084"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0085"
+              }
+            ],
+            "type": "td",
+            "id": "static-0086"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Paid Extension"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0087"
+              }
+            ],
+            "type": "td",
+            "id": "static-0088"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0089"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Collaboration (Yjs)"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0090"
+              }
+            ],
+            "type": "td",
+            "id": "static-0091"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "align": "center"
+                },
+                "children": [
+                  {
+                    "text": "✅"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0092"
+              }
+            ],
+            "type": "td",
+            "id": "static-0093"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "text": "Hocuspocus (OSS/Paid)"
+                  }
+                ],
+                "type": "p",
+                "id": "static-0094"
+              }
+            ],
+            "type": "td",
+            "id": "static-0095"
+          }
+        ],
+        "type": "tr",
+        "id": "static-0096"
+      }
+    ],
+    "type": "table",
+    "id": "static-0097"
+  },
+  {
+    "children": [
+      {
+        "text": "Images and Media"
+      }
+    ],
+    "type": "h3",
+    "id": "static-0098"
+  },
+  {
+    "children": [
+      {
+        "text": "Embed rich media like images directly in your content. Supports "
+      },
+      {
+        "children": [
+          {
+            "text": "Media uploads"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/media",
+        "id": "static-0099"
+      },
+      {
+        "text": " and "
+      },
+      {
+        "children": [
+          {
+            "text": "drag & drop"
+          }
+        ],
+        "type": "a",
+        "url": "/docs/dnd",
+        "id": "static-0100"
+      },
+      {
+        "text": " for a smooth experience."
+      }
+    ],
+    "type": "p",
+    "id": "static-0101"
+  },
+  {
+    "attributes": {
+      "align": "center"
+    },
+    "caption": [
+      {
+        "children": [
+          {
+            "text": "Images with captions provide context."
+          }
+        ],
+        "type": "p"
+      }
+    ],
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "img",
+    "url": "https://images.unsplash.com/photo-1712688930249-98e1963af7bd?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "width": "75%",
+    "id": "static-0102"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "isUpload": true,
+    "name": "sample.pdf",
+    "type": "file",
+    "url": "https://s26.q4cdn.com/900411403/files/doc_downloads/test.pdf",
+    "id": "static-0103"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "audio",
+    "url": "https://samplelib.com/lib/preview/mp3/sample-3s.mp3",
+    "id": "static-0104"
+  },
+  {
+    "children": [
+      {
+        "text": "Table of Contents"
+      }
+    ],
+    "type": "h3",
+    "id": "static-0105"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "toc",
+    "id": "static-0106"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "p",
+    "id": "static-0107"
+  }
+]
