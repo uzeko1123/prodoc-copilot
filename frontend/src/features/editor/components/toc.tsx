@@ -113,29 +113,26 @@ export function ToC() {
       {...navProps}
       className="scrollbar-thumb-border h-full scroll-py-10 scrollbar-thin overflow-y-auto p-2"
     >
-      {headingListFiltered.length > 0 ? (
-        headingListFiltered.map((heading) => (
-          <Button
-            key={heading.id}
-            variant="ghost"
-            className={headingItemVariants({
-              active: heading.id === activeHeadingId,
-              depth: heading.depth as 1 | 2 | 3,
-            })}
-            ref={(el) => setTocButtonRefs(heading.id, el)}
-            onClick={(e) => onClick(e, heading, 'smooth')}
-            aria-current={
-              heading.id === activeHeadingId ? 'location' : undefined
-            }
-          >
-            {heading.title}
-          </Button>
-        ))
-      ) : (
+      {headingListFiltered.length === 0 && (
         <div className="text-sm text-gray-500">
           Create a heading to display the table of contents.
         </div>
       )}
+      {headingListFiltered.map((heading) => (
+        <Button
+          key={heading.id}
+          variant="ghost"
+          className={headingItemVariants({
+            active: heading.id === activeHeadingId,
+            depth: heading.depth as 1 | 2 | 3,
+          })}
+          ref={(el) => setTocButtonRefs(heading.id, el)}
+          onClick={(e) => onClick(e, heading, 'smooth')}
+          aria-current={heading.id === activeHeadingId ? 'location' : undefined}
+        >
+          {heading.title}
+        </Button>
+      ))}
     </nav>
   );
 }

@@ -70,28 +70,25 @@ export function Find() {
         type="search"
       />
       <div className="flex w-full flex-col gap-2 py-2">
-        {matches.length > 0 ? (
-          matches.map((match) => (
-            <Button
-              key={match.key}
-              variant="outline"
-              className="h-auto p-2"
-              onClick={() => onClick(match.range)}
-            >
-              <p className="line-clamp-3 w-full text-left text-xs whitespace-pre-wrap">
-                {match.before}
-                <mark className="bg-yellow-100 font-semibold">
-                  {match.text}
-                </mark>
-                {match.after}
-              </p>
-            </Button>
-          ))
-        ) : (
-          <p className="text-muted-foreground h-auto w-full p-2 text-center text-xs">
-            Not found
+        {matches.length === 0 && (
+          <p className="text-sm text-gray-500">
+            {!search ? 'No search.' : 'Not found.'}
           </p>
         )}
+        {matches.map((match) => (
+          <Button
+            key={match.key}
+            variant="outline"
+            className="h-auto p-2"
+            onClick={() => onClick(match.range)}
+          >
+            <p className="line-clamp-3 w-full text-left text-xs whitespace-pre-wrap">
+              {match.before}
+              <mark className="bg-yellow-100 font-semibold">{match.text}</mark>
+              {match.after}
+            </p>
+          </Button>
+        ))}
       </div>
     </div>
   );

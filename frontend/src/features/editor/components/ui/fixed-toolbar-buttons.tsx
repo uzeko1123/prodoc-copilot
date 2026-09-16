@@ -56,6 +56,8 @@ export function FixedToolbarButtons() {
   const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
 
+  const _hideMainToolbar = true;
+
   return (
     <div className="flex w-full">
       <ToolbarGroup>
@@ -68,111 +70,105 @@ export function FixedToolbarButtons() {
 
       <div className="grow" />
 
-      {
-        // eslint-disable-next-line no-constant-binary-expression
-        false && !readOnly && (
-          <>
-            <ToolbarGroup>
-              <UndoToolbarButton />
-              <RedoToolbarButton />
-            </ToolbarGroup>
+      {!_hideMainToolbar && !readOnly && (
+        <>
+          <ToolbarGroup>
+            <UndoToolbarButton />
+            <RedoToolbarButton />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <AIToolbarButton tooltip="AI commands">
-                <WandSparklesIcon />
-              </AIToolbarButton>
-            </ToolbarGroup>
+          <ToolbarGroup>
+            <AIToolbarButton tooltip="AI commands">
+              <WandSparklesIcon />
+            </AIToolbarButton>
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <ExportToolbarButton>
-                <ArrowUpToLineIcon />
-              </ExportToolbarButton>
+          <ToolbarGroup>
+            <ExportToolbarButton>
+              <ArrowUpToLineIcon />
+            </ExportToolbarButton>
 
-              <ImportToolbarButton />
-            </ToolbarGroup>
+            <ImportToolbarButton />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <InsertToolbarButton />
-              <TurnIntoToolbarButton />
-              <FontSizeToolbarButton />
-            </ToolbarGroup>
+          <ToolbarGroup>
+            <InsertToolbarButton />
+            <TurnIntoToolbarButton />
+            <FontSizeToolbarButton />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
-                <BoldIcon />
-              </MarkToolbarButton>
+          <ToolbarGroup>
+            <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
+              <BoldIcon />
+            </MarkToolbarButton>
 
-              <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
-                <ItalicIcon />
-              </MarkToolbarButton>
+            <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
+              <ItalicIcon />
+            </MarkToolbarButton>
 
-              <MarkToolbarButton
-                nodeType={KEYS.underline}
-                tooltip="Underline (⌘+U)"
-              >
-                <UnderlineIcon />
-              </MarkToolbarButton>
+            <MarkToolbarButton
+              nodeType={KEYS.underline}
+              tooltip="Underline (⌘+U)"
+            >
+              <UnderlineIcon />
+            </MarkToolbarButton>
 
-              <MarkToolbarButton
-                nodeType={KEYS.strikethrough}
-                tooltip="Strikethrough (⌘+⇧+M)"
-              >
-                <StrikethroughIcon />
-              </MarkToolbarButton>
+            <MarkToolbarButton
+              nodeType={KEYS.strikethrough}
+              tooltip="Strikethrough (⌘+⇧+M)"
+            >
+              <StrikethroughIcon />
+            </MarkToolbarButton>
 
-              <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
-                <Code2Icon />
-              </MarkToolbarButton>
+            <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
+              <Code2Icon />
+            </MarkToolbarButton>
 
-              <FontColorToolbarButton
-                nodeType={KEYS.color}
-                tooltip="Text color"
-              >
-                <BaselineIcon />
-              </FontColorToolbarButton>
+            <FontColorToolbarButton nodeType={KEYS.color} tooltip="Text color">
+              <BaselineIcon />
+            </FontColorToolbarButton>
 
-              <FontColorToolbarButton
-                nodeType={KEYS.backgroundColor}
-                tooltip="Background color"
-              >
-                <PaintBucketIcon />
-              </FontColorToolbarButton>
-            </ToolbarGroup>
+            <FontColorToolbarButton
+              nodeType={KEYS.backgroundColor}
+              tooltip="Background color"
+            >
+              <PaintBucketIcon />
+            </FontColorToolbarButton>
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <AlignToolbarButton />
+          <ToolbarGroup>
+            <AlignToolbarButton />
 
-              <NumberedListToolbarButton />
-              <BulletedListToolbarButton />
-              <TodoListToolbarButton />
-              <ToggleToolbarButton />
-            </ToolbarGroup>
+            <NumberedListToolbarButton />
+            <BulletedListToolbarButton />
+            <TodoListToolbarButton />
+            <ToggleToolbarButton />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <LinkToolbarButton />
-              <TableToolbarButton />
-              <EmojiToolbarButton />
-            </ToolbarGroup>
+          <ToolbarGroup>
+            <LinkToolbarButton />
+            <TableToolbarButton />
+            <EmojiToolbarButton />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <MediaToolbarButton nodeType={KEYS.img} />
-              <MediaToolbarButton nodeType={KEYS.video} />
-              <MediaToolbarButton nodeType={KEYS.audio} />
-              <MediaToolbarButton nodeType={KEYS.file} />
-            </ToolbarGroup>
+          <ToolbarGroup>
+            <MediaToolbarButton nodeType={KEYS.img} />
+            <MediaToolbarButton nodeType={KEYS.video} />
+            <MediaToolbarButton nodeType={KEYS.audio} />
+            <MediaToolbarButton nodeType={KEYS.file} />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <LineHeightToolbarButton />
-              <OutdentToolbarButton />
-              <IndentToolbarButton />
-            </ToolbarGroup>
+          <ToolbarGroup>
+            <LineHeightToolbarButton />
+            <OutdentToolbarButton />
+            <IndentToolbarButton />
+          </ToolbarGroup>
 
-            <ToolbarGroup>
-              <MoreToolbarButton />
-            </ToolbarGroup>
-          </>
-        )
-      }
+          <ToolbarGroup>
+            <MoreToolbarButton />
+          </ToolbarGroup>
+        </>
+      )}
 
       <div className="grow" />
 
