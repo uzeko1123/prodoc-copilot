@@ -114,10 +114,18 @@ function Workbench() {
                   <TabsTrigger value="toc">ToC</TabsTrigger>
                   <TabsTrigger value="find">Find</TabsTrigger>
                 </TabsList>
-                <TabsContent value="toc" className="min-h-0">
+                <TabsContent
+                  value="toc"
+                  className="min-h-0 data-[state=inactive]:hidden"
+                  forceMount
+                >
                   <ToC />
                 </TabsContent>
-                <TabsContent value="find" className="min-h-0">
+                <TabsContent
+                  value="find"
+                  className="min-h-0 data-[state=inactive]:hidden"
+                  forceMount
+                >
                   <Find />
                 </TabsContent>
               </Tabs>
@@ -129,7 +137,11 @@ function Workbench() {
                 >
                   <TabsTrigger value="toc">ToC</TabsTrigger>
                 </TabsList>
-                <TabsContent value="toc" className="min-h-0">
+                <TabsContent
+                  value="toc"
+                  className="min-h-0 data-[state=inactive]:hidden"
+                  forceMount
+                >
                   <ToC />
                 </TabsContent>
               </Tabs>
@@ -158,10 +170,18 @@ function Workbench() {
                   </Button>
                 )}
               </TabsList>
-              <TabsContent value="chat" className="min-h-0">
+              <TabsContent
+                value="chat"
+                className="min-h-0 data-[state=inactive]:hidden"
+                forceMount
+              >
                 <Chat />
               </TabsContent>
-              <TabsContent value="comment" className="min-h-0">
+              <TabsContent
+                value="comment"
+                className="min-h-0 data-[state=inactive]:hidden"
+                forceMount
+              >
                 <Comment />
               </TabsContent>
             </Tabs>
@@ -187,9 +207,21 @@ function Workbench() {
                 <TabsTrigger value="2">2</TabsTrigger>
                 <TabsTrigger value="3">3</TabsTrigger>
               </TabsList>
-              <TabsContent value="1" className="min-h-0"></TabsContent>
-              <TabsContent value="2" className="min-h-0"></TabsContent>
-              <TabsContent value="3" className="min-h-0"></TabsContent>
+              <TabsContent
+                value="1"
+                className="min-h-0 data-[state=inactive]:hidden"
+                forceMount
+              ></TabsContent>
+              <TabsContent
+                value="2"
+                className="min-h-0 data-[state=inactive]:hidden"
+                forceMount
+              ></TabsContent>
+              <TabsContent
+                value="3"
+                className="min-h-0 data-[state=inactive]:hidden"
+                forceMount
+              ></TabsContent>
             </Tabs>
           </ResizablePanel>
         </ResizablePanelGroup>

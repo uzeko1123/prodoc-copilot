@@ -38,7 +38,7 @@ export const suggestionVariants = cva(
     variants: {
       insertActive: {
         false: '',
-        true: 'decoration-2',
+        true: 'bg-blue-100',
       },
       remove: {
         false: '',
@@ -46,7 +46,7 @@ export const suggestionVariants = cva(
       },
       removeActive: {
         false: '',
-        true: 'decoration-2',
+        true: 'bg-red-100',
       },
     },
   },
