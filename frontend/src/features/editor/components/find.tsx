@@ -1,9 +1,17 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/shadcn/ui/empty';
 import { Input } from '@/components/shadcn/ui/input';
 import { FindReplacePlugin } from '@platejs/find-replace';
 import { ElementApi, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
+import { SearchIcon, SearchXIcon } from 'lucide-react';
 import {
   useEditorPlugin,
   useEditorRef,
@@ -70,9 +78,19 @@ export function Find() {
         type="search"
       />
       {matches.length === 0 && (
-        <p className="text-sm text-gray-500">
-          {!search ? 'No search.' : 'Not found.'}
-        </p>
+        <Empty className="h-full">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              {!search ? <SearchIcon /> : <SearchXIcon />}
+            </EmptyMedia>
+            <EmptyTitle>{!search ? 'No search' : 'Not found'}</EmptyTitle>
+            <EmptyDescription>
+              {!search
+                ? 'Type in the search box to find text in the document'
+                : 'No matches found, try a different keyword'}
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
       {matches.map((match) => (
         <Button

@@ -1,8 +1,16 @@
 'use client';
 
 import { Card } from '@/components/shadcn/ui/card';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/shadcn/ui/empty';
 import { CommentPlugin } from '@platejs/comment/react';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
+import { MessagesSquareIcon } from 'lucide-react';
 import { cn } from 'cn';
 import { PathApi, type Path } from 'platejs';
 import { useEditorRef, useEditorVersion, usePluginOption } from 'platejs/react';
@@ -134,7 +142,17 @@ export function Comment() {
   return (
     <div className="scrollbar-thumb-border flex h-full scrollbar-thin flex-col gap-2 overflow-y-auto p-2">
       {commentItems.length === 0 && (
-        <p className="text-sm text-gray-500">No comments</p>
+        <Empty className="h-full">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <MessagesSquareIcon />
+            </EmptyMedia>
+            <EmptyTitle>No comments</EmptyTitle>
+            <EmptyDescription>
+              Select the text in the editor to leave a comment
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
       {commentItems.map((commentItem) => (
         <CommentCard key={commentItem.id} commentItem={commentItem} />

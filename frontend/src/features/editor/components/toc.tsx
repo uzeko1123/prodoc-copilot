@@ -2,12 +2,20 @@
 
 import { Button } from '@/components/shadcn/ui/button';
 import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/shadcn/ui/empty';
+import {
   heightToTop,
   TocPlugin,
   useTocSideBar,
   useTocSideBarState,
 } from '@platejs/toc/react';
 import { cva } from 'class-variance-authority';
+import { ListTreeIcon } from 'lucide-react';
 import { NodeApi } from 'platejs';
 import {
   useEditorMounted,
@@ -114,9 +122,17 @@ export function ToC() {
       className="scrollbar-thumb-border h-full scroll-py-10 scrollbar-thin overflow-y-auto p-2"
     >
       {headingListFiltered.length === 0 && (
-        <div className="text-sm text-gray-500">
-          Create a heading to display the table of contents.
-        </div>
+        <Empty className="h-full">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <ListTreeIcon />
+            </EmptyMedia>
+            <EmptyTitle>No headings</EmptyTitle>
+            <EmptyDescription>
+              Create a heading to display the table of contents
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
       {headingListFiltered.map((heading) => (
         <Button
