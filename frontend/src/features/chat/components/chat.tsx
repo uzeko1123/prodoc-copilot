@@ -72,7 +72,7 @@ export function Chat() {
 
   useEffect(() => {
     if (messages.length > 0) {
-      setChatMessages(messages as unknown as ChatMessage[]);
+      setChatMessages(messages as ChatMessage[]);
     }
   }, [messages, setChatMessages]);
 
