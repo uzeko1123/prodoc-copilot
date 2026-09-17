@@ -4,7 +4,7 @@ import type { ChatMessage } from './components/editor/use-chat';
 
 type ChatState = {
   chatMessages: ChatMessage[];
-  setChatMessagess: (chatMessages: ChatMessage[]) => void;
+  setChatMessages: (chatMessages: ChatMessage[]) => void;
 };
 
 export const useChatStore = create<ChatState>()(
@@ -12,7 +12,7 @@ export const useChatStore = create<ChatState>()(
     persist(
       (set) => ({
         chatMessages: [],
-        setChatMessagess: (chatMessages) => set({ chatMessages }),
+        setChatMessages: (chatMessages) => set({ chatMessages }),
       }),
       {
         name: 'chat-storage',

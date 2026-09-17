@@ -10,8 +10,8 @@ import {
 } from '@/components/shadcn/ui/empty';
 import { Input } from '@/components/shadcn/ui/input';
 import { FindReplacePlugin } from '@platejs/find-replace';
-import { ElementApi, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
 import { SearchIcon, SearchXIcon } from 'lucide-react';
+import { ElementApi, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
 import {
   useEditorPlugin,
   useEditorRef,

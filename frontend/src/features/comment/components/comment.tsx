@@ -10,8 +10,8 @@ import {
 } from '@/components/shadcn/ui/empty';
 import { CommentPlugin } from '@platejs/comment/react';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
-import { MessagesSquareIcon } from 'lucide-react';
 import { cn } from 'cn';
+import { MessagesSquareIcon } from 'lucide-react';
 import { PathApi, type Path } from 'platejs';
 import { useEditorRef, useEditorVersion, usePluginOption } from 'platejs/react';
 import { useEffect, useMemo, useRef } from 'react';
