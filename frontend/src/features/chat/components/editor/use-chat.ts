@@ -1,6 +1,7 @@
 'use client';
 
 /* eslint-disable react-hooks/refs -- Fake stream abort control is imperative transport state. */
+import { fakeStreamText } from '@/data/chat';
 import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
 import { useChat as useBaseChat, type UseChatHelpers } from '@ai-sdk/react';
 import { withAIBatch } from '@platejs/ai';
@@ -16,8 +17,7 @@ import { DefaultChatTransport, type UIMessage } from 'ai';
 import { KEYS, nanoid, NodeApi, TextApi, type TNode } from 'platejs';
 import { useEditorRef, usePluginOption, type PlateEditor } from 'platejs/react';
 import * as React from 'react';
-import { aiChatPlugin } from '../editor/plugins/ai-kit';
-import { fakeStreamText } from '@/data/chat';
+import { aiChatPlugin } from './plugins/ai-kit';
 
 export type ToolName = 'comment' | 'edit' | 'generate';
 
@@ -38,37 +38,16 @@ export type TTableCellUpdate = {
   status: 'finished' | 'streaming';
 };
 
-export type MessageDataParts = {
-  selectionText: string;
+export type MessageDataPart = {
   toolName: ToolName;
   comment?: TComment;
   table?: TTableCellUpdate;
 };
 
-export type CommentTool = {
-  input: { blockId: string; comment: string; content: string }[];
-  output: undefined;
-};
-
-export type GenerateTool = {
-  input: { markdown: string };
-  output: undefined;
-};
-
-export type EditTool = {
-  input: { markdown: string };
-  output: undefined;
-};
-
-export type MessageTools = {
-  generate: GenerateTool;
-  edit: EditTool;
-  comment: CommentTool;
-};
-
 export type Chat = UseChatHelpers<ChatMessage>;
 
-export type ChatMessage = UIMessage<unknown, MessageDataParts, MessageTools>;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type ChatMessage = UIMessage<{}, MessageDataPart>;
 
 function createChatTransport({
   api,
