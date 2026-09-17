@@ -38,16 +38,37 @@ export type TTableCellUpdate = {
   status: 'finished' | 'streaming';
 };
 
-export type MessageDataPart = {
+export type MessageDataParts = {
+  selectionText: string;
   toolName: ToolName;
   comment?: TComment;
   table?: TTableCellUpdate;
 };
 
+export type CommentTool = {
+  input: { blockId: string; comment: string; content: string }[];
+  output: undefined;
+};
+
+export type GenerateTool = {
+  input: { markdown: string };
+  output: undefined;
+};
+
+export type EditTool = {
+  input: { markdown: string };
+  output: undefined;
+};
+
+export type MessageTools = {
+  generate: GenerateTool;
+  edit: EditTool;
+  comment: CommentTool;
+};
+
 export type Chat = UseChatHelpers<ChatMessage>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type ChatMessage = UIMessage<{}, MessageDataPart>;
+export type ChatMessage = UIMessage<unknown, MessageDataParts, MessageTools>;
 
 function createChatTransport({
   api,
