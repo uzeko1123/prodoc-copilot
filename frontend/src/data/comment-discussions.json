@@ -1,0 +1,88 @@
+[
+    {
+        "id": "discussion1",
+        "comments": [
+            {
+                "id": "comment1",
+                "contentRich": [
+                    {
+                        "children": [
+                            {
+                                "text": "Comments are a great way to provide feedback and discuss changes."
+                            }
+                        ],
+                        "type": "p"
+                    }
+                ],
+                "createdAt": "2026-09-17T04:16:54.215Z",
+                "discussionId": "discussion1",
+                "isEdited": false,
+                "userId": "charlie"
+            },
+            {
+                "id": "comment2",
+                "contentRich": [
+                    {
+                        "children": [
+                            {
+                                "text": "Agreed! The link to the docs makes it easy to learn more."
+                            }
+                        ],
+                        "type": "p"
+                    }
+                ],
+                "createdAt": "2026-09-17T04:18:34.215Z",
+                "discussionId": "discussion1",
+                "isEdited": false,
+                "userId": "bob"
+            }
+        ],
+        "createdAt": "2026-09-17T04:26:54.215Z",
+        "documentContent": "comments",
+        "isResolved": false,
+        "userId": "charlie"
+    },
+    {
+        "id": "discussion2",
+        "comments": [
+            {
+                "id": "comment1",
+                "contentRich": [
+                    {
+                        "children": [
+                            {
+                                "text": "Nice demonstration of overlapping annotations with both comments and suggestions!"
+                            }
+                        ],
+                        "type": "p"
+                    }
+                ],
+                "createdAt": "2026-09-17T04:21:54.215Z",
+                "discussionId": "discussion2",
+                "isEdited": false,
+                "userId": "bob"
+            },
+            {
+                "id": "comment2",
+                "contentRich": [
+                    {
+                        "children": [
+                            {
+                                "text": "This helps users understand how powerful the editor can be."
+                            }
+                        ],
+                        "type": "p"
+                    }
+                ],
+                "createdAt": "2026-09-17T04:23:34.215Z",
+                "discussionId": "discussion2",
+                "isEdited": false,
+                "userId": "charlie"
+            }
+        ],
+        "createdAt": "2026-09-17T04:26:54.215Z",
+        "documentContent": "overlapping",
+        "isResolved": false,
+        "userId": "bob"
+    }
+]
