@@ -60,11 +60,11 @@ export async function mockApiResponse(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .parts.find((p: any) => p.type === 'text')?.text;
 
-    if (content.includes('Generate a markdown sample')) {
+    if (content.includes('/generateMarkdownSample')) {
       sample = 'markdown';
-    } else if (content.includes('Generate a mdx sample')) {
+    } else if (content.includes('/generateMdxSample')) {
       sample = 'mdx';
-    } else if (content.includes('comment')) {
+    } else if (content.includes('/comment')) {
       sample = 'comment';
     }
 
