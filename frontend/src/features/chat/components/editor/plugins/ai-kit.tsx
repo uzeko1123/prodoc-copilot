@@ -5,7 +5,8 @@ import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
 import { AIChatPlugin, AIPlugin } from '@platejs/ai/react';
 import { AILoadingBar, AIMenu } from '../../ui/ai-menu';
 import { AIAnchorElement, AILeaf } from '../../ui/ai-node';
-import { useChat } from '../use-chat';
+// import { useChat } from '../use-chat';
+import { useAgent } from '../use-agent';
 
 export const aiChatPlugin = AIChatPlugin.extend({
   options: {
@@ -20,7 +21,8 @@ export const aiChatPlugin = AIChatPlugin.extend({
     node: AIAnchorElement,
   },
   shortcuts: { show: { keys: 'mod+j' } },
-  useHooks: useChat,
+  // useHooks: useChat,
+  useHooks: useAgent,
 });
 
 export const AIKit = [

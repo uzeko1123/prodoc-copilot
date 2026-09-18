@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import type { ChatMessage } from './components/editor/use-chat';
+// import type { ChatMessage } from './components/editor/use-chat';
+import type { ChatMessage } from './components/editor/use-agent';
 
 type ChatState = {
   chatMessages: ChatMessage[];

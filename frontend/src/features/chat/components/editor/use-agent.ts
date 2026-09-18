@@ -9,37 +9,17 @@ import { useEditorRef, usePluginOption } from 'platejs/react';
 import * as React from 'react';
 import { aiChatPlugin } from '../editor/plugins/ai-kit';
 import { applyTools, type Tools } from './agent/tools';
-import { createAgentTransport } from './agent/transport';
+// import { createAgentTransport } from './agent/transport';
+import { createAgentTransport } from './agent/transport-openai';
 
-export type ToolName = 'comment' | 'edit' | 'generate';
-
-export type TComment = {
-  comment: {
-    blockId: string;
-    comment: string;
-    content: string;
-  } | null;
-  status: 'finished' | 'streaming';
+type DataParts = {
+  selectionText: string;
 };
-
-export type TTableCellUpdate = {
-  cellUpdate: {
-    content: string;
-    id: string;
-  } | null;
-  status: 'finished' | 'streaming';
-};
-
-export type MessageDataPart = {
-  toolName: ToolName;
-  comment?: TComment;
-  table?: TTableCellUpdate;
-};
-
-export type Chat = UseChatHelpers<ChatMessage>;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type ChatMessage = UIMessage<{}, MessageDataPart, Tools>;
+export type ChatMessage = UIMessage<{}, DataParts, Tools>;
+
+export type Chat = UseChatHelpers<ChatMessage>;
 
 export const useAgent = () => {
   const editor = useEditorRef();
