@@ -5,8 +5,8 @@ import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
 import { AIChatPlugin, AIPlugin } from '@platejs/ai/react';
 import { AILoadingBar, AIMenu } from '../../ui/ai-menu';
 import { AIAnchorElement, AILeaf } from '../../ui/ai-node';
-import { useChat, useEditorChatChunk } from '../use-chat';
-import { useEditorAgentTools } from '../use-chat-new';
+import { useChat, useEditorChatChunk } from '../use-chat-v1';
+import { useEditorAgentTools } from '../use-chat-v2';
 
 export const aiChatPlugin = AIChatPlugin.extend({
   options: {
