@@ -10,19 +10,11 @@ import { ElementApi, getPluginType, KEYS, PathApi } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
-/**
- * Tool: generate (insert + generate).
- * Streams newly generated content below the cursor/selection.
- */
-export type GenerateToolInput = { content: string };
+type GenerateToolInput = { content: string };
 
-/** Entry of the generate tool for the UIMessage TOOLS generic. */
 export type GenerateTool = {
   generate: { input: GenerateToolInput; output: { success: boolean } };
 };
-
-/** Tool part of the generate tool, across all lifecycle states. */
-type GenerateToolUIPart = ToolUIPart<GenerateTool>;
 
 export const generateTool = tool({
   description:
@@ -40,14 +32,10 @@ export const generateTool = tool({
   }),
 });
 
-/**
- * Insertion path of the legacy `useChatChunk` onChunk handler (insert mode).
- * `isFirst` sets up the AI preview anchor below the current block unconditionally
- * (even for an empty chunk); the streaming section only runs on non-empty chunks.
- */
-export function applyGenerateChunk(
+export function applyGeneratePrimitive(
   editor: PlateEditor,
-  { chunk, isFirst }: { chunk: string; isFirst: boolean },
+  chunk: string,
+  isFirst: boolean,
 ) {
   if (isFirst) {
     const { startBlock, startInEmptyParagraph } = getInsertPreviewStart(editor);
@@ -58,8 +46,6 @@ export function applyGenerateChunk(
           ? [cloneDeep(startBlock)]
           : [],
     });
-
-    if (!editor.selection) return;
 
     editor.tf.withoutSaving(() => {
       editor.tf.insertNodes(
@@ -90,29 +76,13 @@ export function applyGenerateChunk(
   }
 }
 
-/**
- * Per-toolCallId applied-content prefixes (the diff base). Module-level on
- * purpose: the tool-part effect re-runs on every snapshot, so the base must
- * live outside the render cycle. Entries are never cleared — after
- * `addToolOutput` flips the part to `output-available` the effect re-runs
- * once more and must not re-insert the full content.
- */
-const appliedPrefixes = new Map<string, string>();
+const applied = new Map<string, string>();
 
-/**
- * Generate branch of the agent tool-part dispatch: consume the (possibly
- * still partial) content as it grows, diffing against the per-toolCallId
- * applied prefix and inserting each new chunk below the cursor.
- */
 export function applyGenerateTool(
   editor: PlateEditor,
   chat: Chat,
-  part: GenerateToolUIPart,
+  part: ToolUIPart<GenerateTool>,
 ) {
-  // Backfill the `{success}` output as soon as the input is complete —
-  // mid-stream is fine (this mirrors the SDK's onToolCall timing). This
-  // promotes the part to `output-available`, so the next request includes it
-  // as a tool result.
   if (part.state === 'input-available') {
     chat.addToolOutput({
       tool: 'generate',
@@ -122,31 +92,17 @@ export function applyGenerateTool(
   }
 
   const content = part.input?.content;
-
   if (typeof content !== 'string') return;
 
-  let applied = appliedPrefixes.get(part.toolCallId) ?? '';
+  let appliedContent = applied.get(part.toolCallId) ?? '';
+  if (!content.startsWith(appliedContent)) appliedContent = '';
+  if (content === appliedContent) return;
+  applied.set(part.toolCallId, content);
 
-  // Partial JSON hiccups (e.g. incomplete unicode escapes) can momentarily
-  // rewrite the prefix — restart the diff from zero in that case.
-  if (!content.startsWith(applied)) applied = '';
-  if (content === applied) return;
+  const chunk = content.slice(appliedContent.length);
+  const isFirst = appliedContent === '';
 
-  const isFirst = applied.length === 0;
-  const chunk = content.slice(applied.length);
-
-  appliedPrefixes.set(part.toolCallId, content);
-
-  setInsertGenerateContext(editor);
-  applyGenerateChunk(editor, { chunk, isFirst });
-}
-
-/** Restore the Plate.js AIChatPlugin context (insert + generate) this tool maps to. */
-function setInsertGenerateContext(editor: PlateEditor) {
-  if (editor.getOption(AIChatPlugin, 'mode') !== 'insert') {
-    editor.setOption(AIChatPlugin, 'mode', 'insert');
-  }
-  if (editor.getOption(AIChatPlugin, 'toolName') !== 'generate') {
-    editor.setOption(AIChatPlugin, 'toolName', 'generate');
-  }
+  editor.setOption(AIChatPlugin, 'mode', 'insert');
+  editor.setOption(AIChatPlugin, 'toolName', 'generate');
+  applyGeneratePrimitive(editor, chunk, isFirst);
 }

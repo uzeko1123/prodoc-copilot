@@ -4,19 +4,11 @@ import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
-/**
- * Tool: edit (chat + edit).
- * Rewrites the selected text; the result is presented as inline suggestions.
- */
-export type EditToolInput = { content: string };
+type EditToolInput = { content: string };
 
-/** Entry of the edit tool for the UIMessage TOOLS generic. */
 export type EditTool = {
   edit: { input: EditToolInput; output: { success: boolean } };
 };
-
-/** Tool part of the edit tool, across all lifecycle states. */
-type EditToolUIPart = ToolUIPart<EditTool>;
 
 export const editTool = tool({
   description:
@@ -34,48 +26,27 @@ export const editTool = tool({
   }),
 });
 
-/**
- * Edit path of the legacy `useChatChunk` onChunk handler (chat + edit):
- * re-applies suggestions from the full accumulated content, splitting the
- * undo batch only on the first chunk.
- */
-export function applyEditChunk(
+export function applyEditPrimitive(
   editor: PlateEditor,
-  content: string,
   isFirst: boolean,
+  content: string,
 ) {
   withAIBatch(
     editor,
     () => {
       applyAISuggestions(editor, content);
     },
-    {
-      split: isFirst,
-    },
+    { split: isFirst },
   );
 }
 
-/**
- * Per-toolCallId last-applied content prefixes (used to detect `isFirst`).
- * Module-level on purpose: the tool-part effect re-runs on every snapshot,
- * so the base must live outside the render cycle. Entries are never cleared.
- */
-const appliedPrefixes = new Map<string, string>();
+const applied = new Map<string, string>();
 
-/**
- * Edit branch of the agent tool-part dispatch: consume the (possibly still
- * partial) content as it grows, diffing against the per-toolCallId applied
- * prefix, then re-apply suggestions from the full accumulated content.
- */
 export function applyEditTool(
   editor: PlateEditor,
   chat: Chat,
-  part: EditToolUIPart,
+  part: ToolUIPart<EditTool>,
 ) {
-  // Backfill the `{success}` output as soon as the input is complete —
-  // mid-stream is fine (this mirrors the SDK's onToolCall timing). This
-  // promotes the part to `output-available`, so the next request includes it
-  // as a tool result.
   if (part.state === 'input-available') {
     chat.addToolOutput({
       tool: 'edit',
@@ -85,30 +56,16 @@ export function applyEditTool(
   }
 
   const content = part.input?.content;
-
   if (typeof content !== 'string') return;
 
-  let applied = appliedPrefixes.get(part.toolCallId) ?? '';
+  let appliedContent = applied.get(part.toolCallId) ?? '';
+  if (!content.startsWith(appliedContent)) appliedContent = '';
+  if (content === appliedContent) return;
+  applied.set(part.toolCallId, content);
 
-  // Partial JSON hiccups (e.g. incomplete unicode escapes) can momentarily
-  // rewrite the prefix — restart the diff from zero in that case.
-  if (!content.startsWith(applied)) applied = '';
-  if (content === applied) return;
+  const isFirst = appliedContent === '';
 
-  const isFirst = applied.length === 0;
-
-  appliedPrefixes.set(part.toolCallId, content);
-
-  setChatEditContext(editor);
-  applyEditChunk(editor, content, isFirst);
-}
-
-/** Restore the Plate.js AIChatPlugin context (chat + edit) this tool maps to. */
-function setChatEditContext(editor: PlateEditor) {
-  if (editor.getOption(AIChatPlugin, 'mode') !== 'chat') {
-    editor.setOption(AIChatPlugin, 'mode', 'chat');
-  }
-  if (editor.getOption(AIChatPlugin, 'toolName') !== 'edit') {
-    editor.setOption(AIChatPlugin, 'toolName', 'edit');
-  }
+  editor.setOption(AIChatPlugin, 'mode', 'chat');
+  editor.setOption(AIChatPlugin, 'toolName', 'edit');
+  applyEditPrimitive(editor, isFirst, content);
 }

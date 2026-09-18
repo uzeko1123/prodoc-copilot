@@ -8,28 +8,20 @@ import { KEYS, nanoid, NodeApi, TextApi, type TNode } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
-/**
- * Tool: comment (insert + comment and chat + comment, merged).
- * Creates a discussion and marks the commented range in the document.
- */
-export type AIComment = {
+type CommentToolInput = {
   blockId: string;
   comment: string;
   content: string;
 };
 
-/** Entry of the comment tool for the UIMessage TOOLS generic. */
 export type CommentTool = {
-  comment: { input: AIComment; output: { success: boolean } };
+  comment: { input: CommentToolInput; output: { success: boolean } };
 };
-
-/** Tool part of the comment tool, across all lifecycle states. */
-type CommentToolUIPart = ToolUIPart<CommentTool>;
 
 export const commentTool = tool({
   description:
     '对文档中的某个块添加评论。blockId 取自请求 context.children 顶层块的 id；content 为该块内的原文片段，用于锚定精确的评论范围。',
-  inputSchema: jsonSchema<AIComment>({
+  inputSchema: jsonSchema<CommentToolInput>({
     additionalProperties: false,
     properties: {
       blockId: {
@@ -50,11 +42,10 @@ export const commentTool = tool({
   }),
 });
 
-/**
- * Comment path of the legacy `onData` handler (`data-comment` events), moved
- * as-is: resolve the range, create the discussion + comment, apply marks.
- */
-export function applyAIComment(editor: PlateEditor, aiComment: AIComment) {
+function applyCommentPrimitive(
+  editor: PlateEditor,
+  aiComment: CommentToolInput,
+) {
   const range = aiCommentToRange(editor, aiComment);
 
   if (!range) return console.warn('No range found for AI comment');
@@ -107,54 +98,31 @@ export function applyAIComment(editor: PlateEditor, aiComment: AIComment) {
   });
 }
 
-/**
- * Tool call ids already applied. Comments mutate the document
- * non-idempotently, so the id guard makes the snapshot-driven effect re-runs
- * (including the post-`addToolOutput` re-run) apply exactly once. Entries are
- * never cleared.
- */
-const appliedComments = new Set<string>();
+function applyCommentFinishedPrimitive(editor: PlateEditor) {
+  editor.getApi(BlockSelectionPlugin).blockSelection.deselect();
 
-/**
- * Comment branch of the agent tool-part dispatch: comments mutate the
- * document non-idempotently, so wait for the complete input
- * (`input-available`) and apply exactly once, ending the block selection
- * right after each comment (was: `finishAIComments` at stream end).
- */
+  return;
+}
+
+const applied = new Set<string>();
+
 export function applyCommentTool(
   editor: PlateEditor,
   chat: Chat,
-  part: CommentToolUIPart,
+  part: ToolUIPart<CommentTool>,
 ) {
   if (part.state !== 'input-available') return;
-  if (appliedComments.has(part.toolCallId)) return;
-
-  appliedComments.add(part.toolCallId);
-
-  // Backfill the `{success}` output right after applying — this promotes the
-  // part to `output-available`, so the next request includes it as a tool result.
   chat.addToolOutput({
     tool: 'comment',
     toolCallId: part.toolCallId,
     output: { success: true },
   });
 
-  setInsertCommentContext(editor);
-  applyAIComment(editor, part.input);
+  if (applied.has(part.toolCallId)) return;
+  applied.add(part.toolCallId);
 
-  // End block selection immediately so the new comment marks are not masked
-  // by the selection overlay. No re-select is needed for later comments in
-  // the same response: they address blocks by id (aiCommentToRange never
-  // reads the selection), so nothing downstream depends on the selection.
-  editor.getApi(BlockSelectionPlugin).blockSelection.deselect();
-}
-
-/** Restore the Plate.js AIChatPlugin context (insert + comment) this tool maps to. */
-function setInsertCommentContext(editor: PlateEditor) {
-  if (editor.getOption(AIChatPlugin, 'mode') !== 'insert') {
-    editor.setOption(AIChatPlugin, 'mode', 'insert');
-  }
-  if (editor.getOption(AIChatPlugin, 'toolName') !== 'comment') {
-    editor.setOption(AIChatPlugin, 'toolName', 'comment');
-  }
+  editor.setOption(AIChatPlugin, 'mode', 'insert');
+  editor.setOption(AIChatPlugin, 'toolName', 'comment');
+  applyCommentPrimitive(editor, part.input);
+  applyCommentFinishedPrimitive(editor);
 }
