@@ -1,7 +1,7 @@
 import { getErrorMessage } from '@/lib/error-message';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import {
-  ErrorBoundary as ErrorBoundary_,
+  ErrorBoundary as ErrorBoundaryPrimitive,
   type FallbackProps,
 } from 'react-error-boundary';
 
@@ -15,7 +15,7 @@ export function ErrorBoundary({
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
-        <ErrorBoundary_
+        <ErrorBoundaryPrimitive
           onError={(error, info) => {
             console.error(error, info);
           }}
@@ -29,7 +29,7 @@ export function ErrorBoundary({
           )}
         >
           {children}
-        </ErrorBoundary_>
+        </ErrorBoundaryPrimitive>
       )}
     </QueryErrorResetBoundary>
   );

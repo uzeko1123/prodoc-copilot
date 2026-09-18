@@ -12,7 +12,7 @@ import {
   applyTableCellSuggestion,
   getInsertPreviewStart,
   streamInsertChunk,
-  useChatChunk as useChatChunk_,
+  useChatChunk as useChatChunkPrimitive,
 } from '@platejs/ai/react';
 import { getCommentKey, getTransientCommentKey } from '@platejs/comment';
 import { deserializeMd } from '@platejs/markdown';
@@ -239,7 +239,7 @@ function useChatChunk() {
   const mode = usePluginOption(AIChatPlugin, 'mode');
   const toolName = usePluginOption(AIChatPlugin, 'toolName');
 
-  useChatChunk_({
+  useChatChunkPrimitive({
     onChunk: ({ chunk, isFirst, nodes, text: content }) => {
       if (isFirst && mode === 'insert') {
         const { startBlock, startInEmptyParagraph } =

@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios';
-import { getErrorMessage as getErrorMessage_ } from 'react-error-boundary';
+import { getErrorMessage as getErrorMessagePrimitive } from 'react-error-boundary';
 import { toast } from 'sonner';
 
 function getAxiosErrorMessage(error: unknown): string | undefined {
@@ -38,7 +38,7 @@ export function getErrorMessage(
 ): string {
   return (
     getAxiosErrorMessage(error)?.trim() ||
-    getErrorMessage_(error)?.trim() ||
+    getErrorMessagePrimitive(error)?.trim() ||
     fallback
   );
 }

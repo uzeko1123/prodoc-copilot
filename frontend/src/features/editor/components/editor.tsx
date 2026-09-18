@@ -4,7 +4,7 @@ import { SettingsDialog } from '@/components/shadcn/editor/settings-dialog';
 import { useEditorStore } from '@/features/editor/stores';
 import { useEditorScrollRef, useEditorValue } from 'platejs/react';
 import { useEffect } from 'react';
-import { Editor as Editor_, EditorContainer } from './ui/editor';
+import { EditorContainer, Editor as EditorPrimitive } from './ui/editor';
 
 export function Editor() {
   const editorScrollRef = useEditorScrollRef();
@@ -19,7 +19,7 @@ export function Editor() {
   return (
     <div className="h-full">
       <EditorContainer>
-        <Editor_
+        <EditorPrimitive
           ref={editorScrollRef}
           className="scrollbar-thumb-border scrollbar-thin"
         />
