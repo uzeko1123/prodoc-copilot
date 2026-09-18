@@ -78,7 +78,7 @@ export const useAgent = () => {
     [baseChat, _abortFakeStream],
   );
 
-  const finishedIdRef = React.useRef<string | null>(null);
+  const finishedChatMessageIdRef = React.useRef<string | null>(null);
   const upsertChatMessage = useChatStore((state) => state.upsertChatMessage);
 
   React.useEffect(() => {
@@ -89,9 +89,9 @@ export const useAgent = () => {
     upsertChatMessage(lastChatMessage);
 
     if (chat.status === 'streaming' || chat.status === 'submitted') return;
-    if (finishedIdRef.current === lastChatMessage.id) return;
+    if (finishedChatMessageIdRef.current === lastChatMessage.id) return;
 
-    finishedIdRef.current = lastChatMessage.id;
+    finishedChatMessageIdRef.current = lastChatMessage.id;
     editor.getApi(AIChatPlugin).aiChat.stop();
   }, [chat, editor, upsertChatMessage]);
 
