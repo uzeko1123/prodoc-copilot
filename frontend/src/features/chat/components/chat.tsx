@@ -56,10 +56,7 @@ import {
   RotateCwIcon,
   TelescopeIcon,
 } from 'lucide-react';
-import { useEffect } from 'react';
-import { useChatStore } from '../stores';
 import { Context } from './context';
-import type { ChatMessage } from './editor/use-chat';
 
 export function Chat() {
   const { messages, sendMessage, status, setMessages } = useChat({
@@ -67,16 +64,7 @@ export function Chat() {
     transport,
   });
 
-  const chatMessages = useChatStore((state) => state.chatMessages);
-  const setChatMessages = useChatStore((state) => state.setChatMessages);
-
-  useEffect(() => {
-    if (messages.length > 0) {
-      setChatMessages(messages as ChatMessage[]);
-    }
-  }, [messages, setChatMessages]);
-
-  const nextMessage = chat.next(chatMessages);
+  const nextMessage = chat.next(messages);
   const isBusy = status === 'submitted' || status === 'streaming';
 
   return (
@@ -105,7 +93,7 @@ export function Chat() {
           </CardAction>
         </CardHeader>
         <CardContent className="scrollbar-thumb-border flex-1 scrollbar-thin overflow-hidden p-0">
-          {chatMessages.length === 0 ? (
+          {messages.length === 0 ? (
             <Empty className="h-full">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
@@ -125,7 +113,7 @@ export function Chat() {
                   aria-busy={isBusy}
                   className="p-(--card-spacing)"
                 >
-                  {chatMessages.map((message) => (
+                  {messages.map((message) => (
                     <MessageAnimated
                       key={message.id}
                       message={message}
