@@ -43,8 +43,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import { chat, initialMessages, transport } from '@/data/chat';
 import { getMessageText } from '@/lib/shadcn/ai';
+import { chat, initialMessages, transport } from '@/mock/chat';
 import { useChat } from '@ai-sdk/react';
 import {
   ArrowUpIcon,

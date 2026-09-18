@@ -1,4 +1,4 @@
-import { value } from '@/data/editor-value';
+import { value } from '@/mock/editor-value';
 import { type Value } from 'platejs';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';

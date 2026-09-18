@@ -1,298 +1,130 @@
-'use client';
-
-/* eslint-disable react-hooks/refs -- Fake stream abort control is imperative transport state. */
-
-import * as React from 'react';
-
-import { type UseChatHelpers, useChat as useBaseChat } from '@ai-sdk/react';
 import { faker } from '@faker-js/faker';
-import {
-  AIChatPlugin,
-  aiCommentToRange,
-  applyTableCellSuggestion,
-} from '@platejs/ai/react';
-import { getCommentKey, getTransientCommentKey } from '@platejs/comment';
-import { deserializeMd } from '@platejs/markdown';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
-import { type UIMessage, DefaultChatTransport } from 'ai';
-import { type TNode, KEYS, nanoid, NodeApi, TextApi } from 'platejs';
-import { type PlateEditor, useEditorRef, usePluginOption } from 'platejs/react';
+import { createChat } from '@shadcn/helpers/ai-sdk';
+import { KEYS, nanoid, NodeApi } from 'platejs';
+import type { PlateEditor } from 'platejs/react';
 
-import { aiChatPlugin } from '@/components/shadcn/editor/plugins/ai-kit';
+//#region @shadcn/helpers/ai-sdk
 
-import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
-import { withAIBatch } from '@platejs/ai';
+export const chat = createChat()
+  .user(
+    "I'm building a chat for our app and the scroll behavior is driving me nuts. Every time the AI streams a reply, the whole thread jumps around.",
+  )
+  .sleep(1000)
+  .assistant(({ writer }) => {
+    writer.reasoning(
+      'They are describing a streaming transcript that keeps taking control of the viewport. I should explain when auto-scroll follows and when it stops.',
+    );
+    writer.sleep(1000);
+    writer.text(
+      "That's the classic streaming scroll problem. Wrap your message list in `MessageScroller` and turn on `autoScroll` — the viewport pins to the bottom as tokens arrive, so users always see the latest text land in place.\n\nThe important part: it only auto-scrolls while the reader is already at the bottom. The moment they scroll up to read something earlier, auto-scroll backs off and their position is preserved. You get smooth streaming without fighting the user's intent.",
+    );
+  })
+  .user(
+    'Okay, but when someone sends a new message the view still feels jarring — like the whole conversation reloads from the top.',
+  )
+  .sleep(1000)
+  .assistant(
+    "MessageScrollerItem fixes that with turn anchoring. Set `scrollAnchor` on the turn that should settle near the top instead of blindly snapping to the document bottom.\n\nIt also leaves a small peek of the previous exchange visible above the anchor, so context isn't lost. The reply starts in view without that disorienting jump you get from a plain overflow container.",
+  )
+  .user(
+    "And if they've scrolled up to re-read an older answer? I don't want to yank them back down.",
+  )
+  .sleep(1000)
+  .assistant(
+    "You won't. Auto-scroll only runs when the viewport is already pinned to the bottom, so scrolling up is a deliberate opt-out — their place in the thread stays put even as new tokens keep arriving below.\n\nWhen there is content they haven't seen yet, `MessageScrollerButton` appears at the bottom of the viewport. One tap jumps them back to the newest message and re-engages auto-scroll. Same pattern as Slack or iMessage: quiet when you're caught up, helpful when you're not.",
+  )
+  .user('Last one — does this work with assistive tech?')
+  .sleep(1000)
+  .assistant(
+    '`MessageScrollerContent` sets `role="log"` and `aria-relevant="additions"` by default, so screen readers announce new messages as they stream in.\n\nThe scroll button is a real `<button>` with an sr-only label, and it\'s removed from the tab order when you\'re already at the bottom — no ghost focus stops.',
+  );
+export const initialMessages = chat.get(0);
+export const transport = chat.transport({ delayMs: 20 });
 
-export type ToolName = 'comment' | 'edit' | 'generate';
+//#endregion
 
-export type TComment = {
-  comment: {
-    blockId: string;
-    comment: string;
-    content: string;
-  } | null;
-  status: 'finished' | 'streaming';
-};
+//#region  @platejs/ai
 
-export type TTableCellUpdate = {
-  cellUpdate: {
-    content: string;
-    id: string;
-  } | null;
-  status: 'finished' | 'streaming';
-};
+export async function mockApiResponse(
+  editor: PlateEditor,
+  init: RequestInit | undefined,
+  abortControllerRef: React.RefObject<AbortController | null>,
+) {
+  let sample: 'comment' | 'markdown' | 'mdx' | 'table' | null = null;
 
-export type MessageDataPart = {
-  toolName: ToolName;
-  comment?: TComment;
-  table?: TTableCellUpdate;
-};
+  try {
+    const body = JSON.parse(init?.body as string);
+    const content = body.messages
+      .at(-1)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .parts.find((p: any) => p.type === 'text')?.text;
 
-export type Chat = UseChatHelpers<ChatMessage>;
+    if (content.includes('Generate a markdown sample')) {
+      sample = 'markdown';
+    } else if (content.includes('Generate a mdx sample')) {
+      sample = 'mdx';
+    } else if (content.includes('comment')) {
+      sample = 'comment';
+    }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type ChatMessage = UIMessage<{}, MessageDataPart>;
+    // Detect table editing by checking if multiple table cells are selected
+    // Single cell selection should use normal edit flow, only multi-cell uses table tool
+    if (!sample) {
+      // First check: selectedCells from TablePlugin (cell selection mode)
+      const selectedCells =
+        editor.getOption({ key: KEYS.table }, 'selectedCells') || [];
 
-function createChatTransport({
-  api,
-  abortControllerRef,
-  editor,
-}: {
-  api: string;
-  abortControllerRef: React.RefObject<AbortController | null>;
-  editor: PlateEditor;
-}) {
-  return new DefaultChatTransport({
-    api,
-    // Mock the API response. Remove it when you implement the route /api/ai/command
-    fetch: (async (input, init) => {
-      const bodyOptions = editor.getOptions(aiChatPlugin).chatOptions?.body;
+      if (selectedCells.length > 1) {
+        sample = 'table';
+      }
+      // Second check: selection range spans multiple cells
+      else if (body.ctx?.children && body.ctx?.selection) {
+        const { selection, children } = body.ctx;
+        const anchorPath = selection.anchor?.path;
+        const focusPath = selection.focus?.path;
 
-      const initBody = JSON.parse(init?.body as string);
+        if (anchorPath && anchorPath.length >= 3) {
+          const rootIndex = anchorPath[0];
+          const rootNode = children[rootIndex];
 
-      const body = {
-        ...initBody,
-        ...bodyOptions,
-      };
+          if (rootNode?.type === 'table') {
+            // Cell path is at index 2 (table -> row -> cell)
+            const anchorCellPath = anchorPath.slice(0, 3).join(',');
+            const focusCellPath = focusPath?.slice(0, 3).join(',');
 
-      const res = await fetch(input, {
-        ...init,
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        let sample: 'comment' | 'markdown' | 'mdx' | 'table' | null = null;
-
-        try {
-          const body = JSON.parse(init?.body as string);
-          const content = body.messages
-            .at(-1)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .parts.find((p: any) => p.type === 'text')?.text;
-
-          if (content.includes('Generate a markdown sample')) {
-            sample = 'markdown';
-          } else if (content.includes('Generate a mdx sample')) {
-            sample = 'mdx';
-          } else if (content.includes('comment')) {
-            sample = 'comment';
-          }
-
-          // Detect table editing by checking if multiple table cells are selected
-          // Single cell selection should use normal edit flow, only multi-cell uses table tool
-          if (!sample) {
-            // First check: selectedCells from TablePlugin (cell selection mode)
-            const selectedCells =
-              editor.getOption({ key: KEYS.table }, 'selectedCells') || [];
-
-            if (selectedCells.length > 1) {
+            // Only use table mock if anchor and focus are in different cells
+            if (focusCellPath && anchorCellPath !== focusCellPath) {
               sample = 'table';
             }
-            // Second check: selection range spans multiple cells
-            else if (body.ctx?.children && body.ctx?.selection) {
-              const { selection, children } = body.ctx;
-              const anchorPath = selection.anchor?.path;
-              const focusPath = selection.focus?.path;
-
-              if (anchorPath && anchorPath.length >= 3) {
-                const rootIndex = anchorPath[0];
-                const rootNode = children[rootIndex];
-
-                if (rootNode?.type === 'table') {
-                  // Cell path is at index 2 (table -> row -> cell)
-                  const anchorCellPath = anchorPath.slice(0, 3).join(',');
-                  const focusCellPath = focusPath?.slice(0, 3).join(',');
-
-                  // Only use table mock if anchor and focus are in different cells
-                  if (focusCellPath && anchorCellPath !== focusCellPath) {
-                    sample = 'table';
-                  }
-                }
-              }
-            }
           }
-        } catch {
-          sample = null;
         }
-
-        const abortController = new AbortController();
-        abortControllerRef.current = abortController;
-
-        await new Promise((resolve) => setTimeout(resolve, 400));
-
-        const stream = fakeStreamText({
-          editor,
-          sample,
-          signal: abortController.signal,
-        });
-
-        const response = new Response(stream, {
-          headers: {
-            Connection: 'keep-alive',
-            'Content-Type': 'text/plain',
-          },
-        });
-
-        return response;
       }
-
-      return res;
-    }) as typeof fetch,
-  });
-}
-
-export const useChat = () => {
-  const editor = useEditorRef();
-  const options = usePluginOption(aiChatPlugin, 'chatOptions');
-
-  // remove when you implement the route /api/ai/command
-  const abortControllerRef = React.useRef<AbortController | null>(null);
-  const _abortFakeStream = React.useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
     }
-  }, []);
+  } catch {
+    sample = null;
+  }
 
-  const transport = React.useMemo(
-    () =>
-      createChatTransport({
-        api: options.api || '/api/ai/command',
-        abortControllerRef,
-        editor,
-      }),
-    [editor, options.api]
-  );
+  const abortController = new AbortController();
+  abortControllerRef.current = abortController;
 
-  const baseChat = useBaseChat<ChatMessage>({
-    id: 'editor',
-    transport,
-    onData(data) {
-      if (data.type === 'data-toolName') {
-        editor.setOption(AIChatPlugin, 'toolName', data.data as ToolName);
-      }
+  await new Promise((resolve) => setTimeout(resolve, 400));
 
-      if (data.type === 'data-table' && data.data) {
-        const tableData = data.data as TTableCellUpdate;
-
-        if (tableData.status === 'finished') {
-          const chatSelection = editor.getOption(AIChatPlugin, 'chatSelection');
-
-          if (!chatSelection) return;
-
-          editor.tf.setSelection(chatSelection);
-
-          return;
-        }
-
-        const cellUpdate = tableData.cellUpdate!;
-
-        withAIBatch(editor, () => {
-          applyTableCellSuggestion(editor, cellUpdate);
-        });
-      }
-
-      if (data.type === 'data-comment' && data.data) {
-        const commentData = data.data as TComment;
-
-        if (commentData.status === 'finished') {
-          editor.getApi(BlockSelectionPlugin).blockSelection.deselect();
-
-          return;
-        }
-
-        const aiComment = commentData.comment!;
-        const range = aiCommentToRange(editor, aiComment);
-
-        if (!range) return console.warn('No range found for AI comment');
-
-        const discussions =
-          editor.getOption(discussionPlugin, 'discussions') || [];
-
-        // Generate a new discussion ID
-        const discussionId = nanoid();
-
-        // Create a new comment
-        const newComment = {
-          id: nanoid(),
-          contentRich: [{ children: [{ text: aiComment.comment }], type: 'p' }],
-          createdAt: new Date(),
-          discussionId,
-          isEdited: false,
-          userId: editor.getOption(discussionPlugin, 'currentUserId'),
-        };
-
-        // Create a new discussion
-        const newDiscussion = {
-          id: discussionId,
-          comments: [newComment],
-          createdAt: new Date(),
-          documentContent: deserializeMd(editor, aiComment.content)
-            .map((node: TNode) => NodeApi.string(node))
-            .join('\n'),
-          isResolved: false,
-          userId: editor.getOption(discussionPlugin, 'currentUserId'),
-        };
-
-        // Update discussions
-        const updatedDiscussions = [...discussions, newDiscussion];
-        editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
-
-        // Apply comment marks to the editor
-        editor.tf.withMerging(() => {
-          editor.tf.setNodes(
-            {
-              [getCommentKey(newDiscussion.id)]: true,
-              [getTransientCommentKey()]: true,
-              [KEYS.comment]: true,
-            },
-            {
-              at: range,
-              match: TextApi.isText,
-              split: true,
-            }
-          );
-        });
-      }
-    },
-
-    ...options,
+  const stream = fakeStreamText({
+    editor,
+    sample,
+    signal: abortController.signal,
   });
 
-  const chat = {
-    ...baseChat,
-    _abortFakeStream,
-  };
+  const response = new Response(stream, {
+    headers: {
+      Connection: 'keep-alive',
+      'Content-Type': 'text/plain',
+    },
+  });
 
-  React.useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    editor.setOption(AIChatPlugin, 'chat', chat as any);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chat.status, chat.messages, chat.error, _abortFakeStream]);
-
-  return chat;
-};
-
+  return response;
+}
 // Used for testing. Remove it after implementing useChat api.
 const fakeStreamText = ({
   chunkCount = 10,
@@ -394,8 +226,8 @@ const fakeStreamText = ({
 
         controller.enqueue(
           encoder.encode(
-            `data: {"type":"text-start","id":"${messageId}","providerMetadata":{"openai":{"itemId":"${messageId}"}}}\n\n`
-          )
+            `data: {"type":"text-start","id":"${messageId}","providerMetadata":{"openai":{"itemId":"${messageId}"}}}\n\n`,
+          ),
         );
         await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -421,8 +253,8 @@ const fakeStreamText = ({
 
             controller.enqueue(
               encoder.encode(
-                `data: {"type":"text-delta","id":"${messageId}","delta":"${escapedText}"}\n\n`
-              )
+                `data: {"type":"text-delta","id":"${messageId}","delta":"${escapedText}"}\n\n`,
+              ),
             );
           }
 
@@ -430,15 +262,15 @@ const fakeStreamText = ({
           if (i < blocks.length - 1) {
             controller.enqueue(
               encoder.encode(
-                `data: {"type":"text-delta","id":"${messageId}","delta":"\\n\\n"}\n\n`
-              )
+                `data: {"type":"text-delta","id":"${messageId}","delta":"\\n\\n"}\n\n`,
+              ),
             );
           }
         }
 
         // Send end events
         controller.enqueue(
-          encoder.encode(`data: {"type":"text-end","id":"${messageId}"}\n\n`)
+          encoder.encode(`data: {"type":"text-end","id":"${messageId}"}\n\n`),
         );
         await new Promise((resolve) => setTimeout(resolve, 10));
 
@@ -1570,7 +1402,7 @@ const createCommentChunks = (editor: PlateEditor) => {
 
   const isSelectingSome = editor.getOption(
     BlockSelectionPlugin,
-    'isSelectingSome'
+    'isSelectingSome',
   );
 
   const blocks =
@@ -1640,7 +1472,7 @@ const createTableCellChunks = (editor: PlateEditor) => {
         match: (n) =>
           (n as { type?: string }).type === KEYS.td ||
           (n as { type?: string }).type === KEYS.th,
-      })
+      }),
     );
     cellIds = cells
       .map(([node]) => (node as { id?: string }).id)
@@ -1675,3 +1507,5 @@ const createTableCellChunks = (editor: PlateEditor) => {
 
   return result_chunks;
 };
+
+//#endregion

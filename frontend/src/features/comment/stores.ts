@@ -1,4 +1,4 @@
-import { discussionsData } from '@/data/comment-discussions';
+import { discussionsData } from '@/mock/comment-discussions';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import type { TDiscussion } from './components/editor/plugins/discussion-kit';

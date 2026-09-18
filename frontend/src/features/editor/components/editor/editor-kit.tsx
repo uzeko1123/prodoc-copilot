@@ -28,7 +28,7 @@ import { SlashKit } from '@/components/shadcn/editor/plugins/slash-kit';
 import { TableKit } from '@/components/shadcn/editor/plugins/table-kit';
 import { TocKit } from '@/components/shadcn/editor/plugins/toc-kit';
 import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
-import { AIKit } from '@/features/chat/components/editor/plugins/ai-kit-new';
+import { AIKit } from '@/features/chat/components/editor/plugins/ai-kit';
 import { CopilotKit } from '@/features/chat/components/editor/plugins/copilot-kit';
 import { CommentKit } from '@/features/comment/components/editor/plugins/comment-kit';
 import { DiscussionKit } from '@/features/comment/components/editor/plugins/discussion-kit';
