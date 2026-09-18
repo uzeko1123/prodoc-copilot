@@ -11,17 +11,16 @@ export type EditTool = {
 };
 
 export const editTool = tool({
-  description:
-    '重写用户选中的文本。通过参数 content 返回完整的替换文本，将以 inline suggestion（差异对比）形式呈现给用户。',
+  description: 'edit',
   inputSchema: jsonSchema<EditToolInput>({
-    additionalProperties: false,
     properties: {
       content: {
-        description: '完整的替换文本',
+        description: 'content',
         type: 'string',
       },
     },
     required: ['content'],
+    additionalProperties: false,
     type: 'object',
   }),
 });

@@ -17,17 +17,16 @@ export type GenerateTool = {
 };
 
 export const generateTool = tool({
-  description:
-    '在光标或选区下方插入新生成的内容。通过参数 content 流式返回完整内容（markdown）。',
+  description: 'generate',
   inputSchema: jsonSchema<GenerateToolInput>({
-    additionalProperties: false,
     properties: {
       content: {
-        description: '完整生成内容（markdown）',
+        description: 'content',
         type: 'string',
       },
     },
     required: ['content'],
+    additionalProperties: false,
     type: 'object',
   }),
 });

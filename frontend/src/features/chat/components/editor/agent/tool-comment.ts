@@ -19,25 +19,24 @@ export type CommentTool = {
 };
 
 export const commentTool = tool({
-  description:
-    '对文档中的某个块添加评论。blockId 取自请求 context.children 顶层块的 id；content 为该块内的原文片段，用于锚定精确的评论范围。',
+  description: 'comment',
   inputSchema: jsonSchema<CommentToolInput>({
-    additionalProperties: false,
     properties: {
       blockId: {
-        description: '被评论的顶层块 id（来自 context.children）',
+        description: 'blockId',
         type: 'string',
       },
       comment: {
-        description: '评论内容',
+        description: 'comment',
         type: 'string',
       },
       content: {
-        description: '块内被评论的原文片段',
+        description: 'content',
         type: 'string',
       },
     },
     required: ['blockId', 'comment', 'content'],
+    additionalProperties: false,
     type: 'object',
   }),
 });
