@@ -2,14 +2,14 @@
 
 /* eslint-disable react-hooks/refs -- Fake stream abort control is imperative transport state. */
 import { useChatStore } from '@/features/chat/stores';
-import { mockApiResponse } from '@/mock/chat';
 import { useChat as useBaseChat, type UseChatHelpers } from '@ai-sdk/react';
 import { AIChatPlugin } from '@platejs/ai/react';
-import { DefaultChatTransport, type UIMessage } from 'ai';
-import { useEditorRef, usePluginOption, type PlateEditor } from 'platejs/react';
+import { type UIMessage } from 'ai';
+import { useEditorRef, usePluginOption } from 'platejs/react';
 import * as React from 'react';
 import { aiChatPlugin } from '../editor/plugins/ai-kit';
 import { applyTools, type Tools } from './agent/tools';
+import { createAgentTransport } from './agent/transport';
 
 export type ToolName = 'comment' | 'edit' | 'generate';
 
@@ -56,7 +56,7 @@ export const useAgent = () => {
 
   const transport = React.useMemo(
     () =>
-      createChatTransport({
+      createAgentTransport({
         api: options.api || '/api/ai/command',
         abortControllerRef,
         editor,
@@ -103,39 +103,3 @@ export const useAgent = () => {
 
   return chat;
 };
-
-function createChatTransport({
-  api,
-  abortControllerRef,
-  editor,
-}: {
-  api: string;
-  abortControllerRef: React.RefObject<AbortController | null>;
-  editor: PlateEditor;
-}) {
-  return new DefaultChatTransport({
-    api,
-    // Mock the API response. Remove it when you implement the route /api/ai/command
-    fetch: (async (input, init) => {
-      const bodyOptions = editor.getOptions(aiChatPlugin).chatOptions?.body;
-
-      const initBody = JSON.parse(init?.body as string);
-
-      const body = {
-        ...initBody,
-        ...bodyOptions,
-      };
-
-      const res = await fetch(input, {
-        ...init,
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) {
-        return mockApiResponse(editor, init, abortControllerRef);
-      }
-
-      return res;
-    }) as typeof fetch,
-  });
-}
