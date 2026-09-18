@@ -11,15 +11,15 @@ import {
 } from 'ai';
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import type * as React from 'react';
+import * as React from 'react';
 import type { ChatMessage } from '../use-agent';
 import { tools } from './tools';
 
-const BASE_URL = '';
+const BASE_URL = 'https://open.bigmodel.cn/api/paas/v4';
 
-const API_KEY = '';
+const API_KEY = '26073da819274bb983f3738aa40e7d41.KFJFuEAQU2nPmdxf';
 
-const MODEL = '';
+const MODEL = 'glm-5.3';
 
 const SYSTEM_PROMPT = `你是一个富文本文档编辑器中的 AI 助手。
 
@@ -36,8 +36,7 @@ const SYSTEM_PROMPT = `你是一个富文本文档编辑器中的 AI 助手。
 - 当请求通过 tool_choice 强制指定工具时，必须调用该工具。
 - 仅在无需操作编辑器内容时（如回答提问、解释概念），才直接回复纯文本。`;
 
-/** Editor context submitted by `aiChat.submit`. */
-type Ctx = {
+type Context = {
   children: Value;
   selection: TRange | null;
   toolName: string | null;
@@ -53,18 +52,16 @@ export function createAgentTransport({
   return new DefaultChatTransport({
     fetch: (async (_input, init) => {
       const { ctx, messages } = JSON.parse(init?.body as string) as {
-        ctx: Ctx;
+        ctx: Context;
         messages: ChatMessage[];
       };
 
       const lastMessage = messages.at(-1);
       const selectionText = getSelectionText(editor, ctx.selection);
-
       if (lastMessage?.role === 'user') {
         lastMessage.metadata = { selectionText };
         useChatStore.getState().upsertChatMessage(lastMessage);
       }
-
       const chatMessages = useChatStore.getState().chatMessages;
 
       const result = streamText({
@@ -74,15 +71,15 @@ export function createAgentTransport({
           apiKey: API_KEY,
         }).chatModel(MODEL),
         system: SYSTEM_PROMPT,
-        messages: await convertToModelMessages(chatMessages, {
-          ignoreIncompleteToolCalls: true,
-          tools,
-        }),
+        messages: await convertToModelMessages(
+          createChatMessagesWithCtx(chatMessages, ctx),
+          { tools, ignoreIncompleteToolCalls: true },
+        ),
         tools,
         toolChoice:
           ctx.toolName && ctx.toolName in tools
             ? {
-                type: 'tool',
+                type: 'tool' as const,
                 toolName: ctx.toolName as keyof typeof tools,
               }
             : undefined,
@@ -94,4 +91,25 @@ export function createAgentTransport({
       });
     }) as typeof fetch,
   });
+}
+
+function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
+  const lastUserMessageIndex = chatMessages
+    .map((message) => message.role === 'user')
+    .lastIndexOf(true);
+  if (lastUserMessageIndex === -1) return chatMessages;
+  return chatMessages.map((message, index) =>
+    index === lastUserMessageIndex
+      ? {
+          ...message,
+          parts: [
+            ...message.parts,
+            {
+              type: 'text' as const,
+              text: `<Context>\n${JSON.stringify({ children: ctx.children, selection: ctx.selection })}\n</Context>`,
+            },
+          ],
+        }
+      : message,
+  );
 }

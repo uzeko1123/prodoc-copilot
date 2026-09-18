@@ -1,6 +1,7 @@
 import { mockApiResponse } from '@/mock/chat';
 import { DefaultChatTransport } from 'ai';
 import type { PlateEditor } from 'platejs/react';
+import * as React from 'react';
 import { aiChatPlugin } from '../plugins/ai-kit';
 
 export function createAgentTransport({
