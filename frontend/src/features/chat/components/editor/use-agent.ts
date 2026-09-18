@@ -4,7 +4,7 @@
 import { useChatStore } from '@/features/chat/stores';
 import { useChat as useBaseChat, type UseChatHelpers } from '@ai-sdk/react';
 import { AIChatPlugin } from '@platejs/ai/react';
-import { type UIMessage } from 'ai';
+import type { UIMessage } from 'ai';
 import { useEditorRef, usePluginOption } from 'platejs/react';
 import * as React from 'react';
 import { aiChatPlugin } from '../editor/plugins/ai-kit';
@@ -12,12 +12,10 @@ import { applyTools, type Tools } from './agent/tools';
 // import { createAgentTransport } from './agent/transport';
 import { createAgentTransport } from './agent/transport-openai';
 
-type DataParts = {
-  selectionText: string;
-};
+type MetaData = { selectionText?: string };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type ChatMessage = UIMessage<{}, DataParts, Tools>;
+export type ChatMessage = UIMessage<MetaData, {}, Tools>;
 
 export type Chat = UseChatHelpers<ChatMessage>;
 
