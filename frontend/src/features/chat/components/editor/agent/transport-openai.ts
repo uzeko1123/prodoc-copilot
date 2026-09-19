@@ -7,11 +7,9 @@ import {
   DefaultChatTransport,
   streamText,
   toUIMessageStream,
-  type ChatTransport,
 } from 'ai';
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import * as React from 'react';
 import type { ChatMessage } from '../use-agent';
 import { tools } from './tools';
 
@@ -42,13 +40,7 @@ type Context = {
   toolName: string | null;
 };
 
-export function createAgentTransport({
-  editor,
-}: {
-  api: string;
-  abortControllerRef: React.RefObject<AbortController | null>;
-  editor: PlateEditor;
-}): ChatTransport<ChatMessage> {
+export function createAgentTransport(editor: PlateEditor) {
   return new DefaultChatTransport({
     fetch: (async (_input, init) => {
       const { ctx, messages } = JSON.parse(init?.body as string) as {
@@ -57,10 +49,14 @@ export function createAgentTransport({
       };
 
       const lastMessage = messages.at(-1);
-      const selectionText = getSelectionText(editor, ctx.selection);
       if (lastMessage?.role === 'user') {
-        lastMessage.metadata = { selectionText };
-        useChatStore.getState().upsertChatMessage(lastMessage);
+        useChatStore.getState().upsertChatMessage({
+          ...lastMessage,
+          metadata: {
+            ...lastMessage.metadata,
+            selectionText: getSelectionText(editor, ctx.selection),
+          },
+        });
       }
       const chatMessages = useChatStore.getState().chatMessages;
 
@@ -94,22 +90,20 @@ export function createAgentTransport({
 }
 
 function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
-  const lastUserMessageIndex = chatMessages
-    .map((message) => message.role === 'user')
-    .lastIndexOf(true);
-  if (lastUserMessageIndex === -1) return chatMessages;
-  return chatMessages.map((message, index) =>
-    index === lastUserMessageIndex
-      ? {
-          ...message,
-          parts: [
-            ...message.parts,
-            {
-              type: 'text' as const,
-              text: `<Context>\n${JSON.stringify({ children: ctx.children, selection: ctx.selection })}\n</Context>`,
-            },
-          ],
-        }
-      : message,
+  const lastUserChatMessageIndex = chatMessages.findLastIndex(
+    (message) => message.role === 'user',
   );
+  if (lastUserChatMessageIndex === -1) return chatMessages;
+  const lastUserChatMessage = chatMessages[lastUserChatMessageIndex];
+
+  return chatMessages.with(lastUserChatMessageIndex, {
+    ...lastUserChatMessage,
+    parts: [
+      ...lastUserChatMessage.parts,
+      {
+        type: 'text' as const,
+        text: `<Context>\n${JSON.stringify({ children: ctx.children, selection: ctx.selection })}\n</Context>`,
+      },
+    ],
+  });
 }
