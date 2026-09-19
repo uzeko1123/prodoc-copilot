@@ -5,6 +5,7 @@ import {
   convertToModelMessages,
   createUIMessageStreamResponse,
   DefaultChatTransport,
+  stepCountIs,
   streamText,
   toUIMessageStream,
 } from 'ai';
@@ -60,11 +61,12 @@ export function createAgentTransport(editor: PlateEditor) {
       }
       const chatMessages = useChatStore.getState().chatMessages;
 
-      const result = streamText({
+      const res = streamText({
         model: createOpenAICompatible({
           baseURL: BASE_URL,
           name: '',
           apiKey: API_KEY,
+          includeUsage: true,
         }).chatModel(MODEL),
         system: SYSTEM_PROMPT,
         messages: await convertToModelMessages(
@@ -79,11 +81,17 @@ export function createAgentTransport(editor: PlateEditor) {
                 toolName: ctx.toolName as keyof typeof tools,
               }
             : undefined,
+        stopWhen: stepCountIs(5),
         abortSignal: init?.signal ?? undefined,
       });
 
       return createUIMessageStreamResponse({
-        stream: toUIMessageStream({ stream: result.stream, tools }),
+        stream: toUIMessageStream({
+          stream: res.stream,
+          tools,
+          messageMetadata: ({ part }) =>
+            part.type === 'finish' ? { usage: part.totalUsage } : undefined,
+        }),
       });
     }) as typeof fetch,
   });

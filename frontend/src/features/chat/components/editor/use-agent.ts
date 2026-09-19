@@ -3,14 +3,17 @@
 import { useChatStore } from '@/features/chat/stores';
 import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { AIChatPlugin } from '@platejs/ai/react';
-import type { UIMessage } from 'ai';
+import type { LanguageModelUsage, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
 import { applyTools, type Tools } from './agent/tools';
 // import { createAgentTransport } from './agent/transport';
 import { createAgentTransport } from './agent/transport-openai';
 
-type MetaData = { selectionText?: string };
+type MetaData = {
+  selectionText?: string;
+  usage?: LanguageModelUsage;
+};
 
 export type ChatMessage = UIMessage<MetaData, Record<never, never>, Tools>;
 

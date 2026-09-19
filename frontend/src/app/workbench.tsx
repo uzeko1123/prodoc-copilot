@@ -84,7 +84,8 @@ function Workbench() {
     value: useEditorStore.getState().value,
   });
 
-  const _hideFind = false;
+  const _hideFindTab = false;
+  const _hideRightPanel = true;
 
   return (
     <div className="flex h-dvh flex-col">
@@ -101,7 +102,7 @@ function Workbench() {
             panelRef={leftPanelRef}
             onResize={handleLeftPanelResize}
           >
-            {!_hideFind ? (
+            {!_hideFindTab ? (
               <Tabs
                 value={activeLeftPanelTab}
                 onValueChange={(value) => setActiveLeftPanelTab(value)}
@@ -186,44 +187,48 @@ function Workbench() {
               </TabsContent>
             </Tabs>
           </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel
-            collapsible
-            defaultSize="20%"
-            minSize="15%"
-            panelRef={rightPanelRef}
-            onResize={handleRightPanelResize}
-          >
-            <Tabs
-              value={activeRightPanelTab}
-              onValueChange={(value) => setActiveRightPanelTab(value)}
-              className="h-full gap-0"
-            >
-              <TabsList
-                variant="line"
-                className="h-10 max-h-10 min-h-10 w-full border-b"
+          {!_hideRightPanel && (
+            <>
+              <ResizableHandle withHandle />
+              <ResizablePanel
+                collapsible
+                defaultSize="20%"
+                minSize="15%"
+                panelRef={rightPanelRef}
+                onResize={handleRightPanelResize}
               >
-                <TabsTrigger value="1">1</TabsTrigger>
-                <TabsTrigger value="2">2</TabsTrigger>
-                <TabsTrigger value="3">3</TabsTrigger>
-              </TabsList>
-              <TabsContent
-                value="1"
-                className="min-h-0 data-[state=inactive]:hidden"
-                forceMount
-              ></TabsContent>
-              <TabsContent
-                value="2"
-                className="min-h-0 data-[state=inactive]:hidden"
-                forceMount
-              ></TabsContent>
-              <TabsContent
-                value="3"
-                className="min-h-0 data-[state=inactive]:hidden"
-                forceMount
-              ></TabsContent>
-            </Tabs>
-          </ResizablePanel>
+                <Tabs
+                  value={activeRightPanelTab}
+                  onValueChange={(value) => setActiveRightPanelTab(value)}
+                  className="h-full gap-0"
+                >
+                  <TabsList
+                    variant="line"
+                    className="h-10 max-h-10 min-h-10 w-full border-b"
+                  >
+                    <TabsTrigger value="1">1</TabsTrigger>
+                    <TabsTrigger value="2">2</TabsTrigger>
+                    <TabsTrigger value="3">3</TabsTrigger>
+                  </TabsList>
+                  <TabsContent
+                    value="1"
+                    className="min-h-0 data-[state=inactive]:hidden"
+                    forceMount
+                  ></TabsContent>
+                  <TabsContent
+                    value="2"
+                    className="min-h-0 data-[state=inactive]:hidden"
+                    forceMount
+                  ></TabsContent>
+                  <TabsContent
+                    value="3"
+                    className="min-h-0 data-[state=inactive]:hidden"
+                    forceMount
+                  ></TabsContent>
+                </Tabs>
+              </ResizablePanel>
+            </>
+          )}
         </ResizablePanelGroup>
       </Plate>
     </div>
