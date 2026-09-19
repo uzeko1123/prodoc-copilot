@@ -1,4 +1,4 @@
-import { getSelectionText } from '@/features/chat/lib/selection-text';
+import { getSelectionText } from '@/features/chat/lib/utils';
 import { useChatStore } from '@/features/chat/stores';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import {

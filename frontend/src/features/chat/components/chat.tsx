@@ -1,6 +1,5 @@
 'use client';
 
-import { MessageAnimated } from '@/components/shadcn/message-animated';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   Card,
@@ -14,8 +13,8 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import {
@@ -43,29 +42,52 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import { getMessageText } from '@/lib/shadcn/ai';
-import { chat, initialMessages, transport } from '@/mock/chat';
-import { useChat } from '@ai-sdk/react';
+import type { AIToolName } from '@platejs/ai';
+import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
-  GlobeIcon,
-  ImageIcon,
+  ChevronDownIcon,
+  CircleAlertIcon,
   MessageCircleDashedIcon,
-  PaperclipIcon,
-  PlusIcon,
   RotateCwIcon,
-  TelescopeIcon,
+  WrenchIcon,
 } from 'lucide-react';
+import {
+  useEditorRef,
+  useEditorSelection,
+  usePluginOption,
+} from 'platejs/react';
+import * as React from 'react';
+import { getSelectionText } from '../lib/utils';
+import { useChatStore } from '../stores';
 import { Context } from './context';
+import { MessageAnimated } from './message-animated';
+
+const TOOL_OPTIONS: { label: string; value: AIToolName }[] = [
+  { label: 'Chat', value: null },
+  { label: 'Comment', value: 'comment' },
+  { label: 'Edit', value: 'edit' },
+  { label: 'Generate', value: 'generate' },
+];
 
 export function Chat() {
-  const { messages, sendMessage, status, setMessages } = useChat({
-    messages: initialMessages,
-    transport,
-  });
+  const editor = useEditorRef();
+  const selection = useEditorSelection();
+  const selectionText = getSelectionText(editor, selection);
 
-  const nextMessage = chat.next(messages);
+  const chatMessages = useChatStore((state) => state.chatMessages);
+  const setChatMessages = useChatStore((state) => state.setChatMessages);
+
+  const { status, error } = usePluginOption(AIChatPlugin, 'chat');
   const isBusy = status === 'submitted' || status === 'streaming';
+
+  const [input, setInput] = React.useState('');
+  const [toolName, setToolName] = React.useState<AIToolName>(null);
+  const activeTool =
+    TOOL_OPTIONS.find((option) => option.value === toolName) ?? TOOL_OPTIONS[0];
+
+  const onSubmit = () =>
+    editor.getApi(AIChatPlugin).aiChat.submit(input, { toolName });
 
   return (
     <MessageScrollerProvider>
@@ -80,7 +102,12 @@ export function Chat() {
                   variant="outline"
                   size="icon"
                   aria-label="Reset conversation"
-                  onClick={() => setMessages(initialMessages)}
+                  onClick={() => {
+                    editor.getApi(AIChatPlugin).aiChat.reset({
+                      undo: false,
+                    });
+                    setChatMessages([]);
+                  }}
                   disabled={isBusy}
                 >
                   <RotateCwIcon />
@@ -93,7 +120,7 @@ export function Chat() {
           </CardAction>
         </CardHeader>
         <CardContent className="scrollbar-thumb-border flex-1 scrollbar-thin overflow-hidden p-0">
-          {messages.length === 0 ? (
+          {chatMessages.length === 0 ? (
             <Empty className="h-full">
               <EmptyHeader>
                 <EmptyMedia variant="icon">
@@ -113,13 +140,19 @@ export function Chat() {
                   aria-busy={isBusy}
                   className="p-(--card-spacing)"
                 >
-                  {messages.map((message) => (
+                  {chatMessages.map((message) => (
                     <MessageAnimated
                       key={message.id}
                       message={message}
                       scrollAnchor={message.role === 'user'}
                     />
                   ))}
+                  {status === 'error' && (
+                    <div className="text-destructive flex items-center gap-1.5 text-sm">
+                      <CircleAlertIcon className="size-4 shrink-0" />
+                      {error?.message || 'Something went wrong.'}
+                    </div>
+                  )}
                 </MessageScrollerContent>
               </MessageScrollerViewport>
               <MessageScrollerButton />
@@ -127,67 +160,77 @@ export function Chat() {
           )}
         </CardContent>
         <CardFooter className="flex-col gap-2 rounded-none">
-          <Context />
+          <Context variant="chat">{selectionText}</Context>
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (!nextMessage || isBusy) {
+              if (isBusy || input.length === 0) {
                 return;
               }
-              void sendMessage(nextMessage);
+              void onSubmit();
+              setInput('');
             }}
             className="w-full"
           >
             <InputGroup>
               <InputGroupTextarea
-                aria-label="Next predefined message"
-                className="h-14 min-h-14 overflow-hidden px-3 py-2.5 opacity-60 data-[status=ready]:opacity-100"
-                data-status={status}
-                placeholder="No messages queued. Reset the conversation."
-                value={nextMessage ? getMessageText(nextMessage) : ''}
-                readOnly
+                aria-label="Chat message"
+                className="max-h-40 min-h-14 overflow-y-auto px-3 py-2.5"
+                placeholder="Ask anything..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    e.currentTarget.form?.requestSubmit();
+                  }
+                }}
               />
               <InputGroupAddon align="block-end" className="pt-1">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
-                      aria-label="Add files"
+                      aria-label="Select tool"
                       type="button"
-                      size="icon-sm"
+                      size="xs"
                       variant="outline"
                     >
-                      <PlusIcon />
+                      <WrenchIcon />
+                      {activeTool.label}
+                      <ChevronDownIcon className="opacity-50" />
                     </InputGroupButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
                     side="top"
-                    className="w-44"
+                    className="w-40"
                   >
-                    <DropdownMenuItem>
-                      <PaperclipIcon />
-                      Add Photos & Files
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <ImageIcon />
-                      Create Image
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <TelescopeIcon />
-                      Deep Research
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <GlobeIcon />
-                      Web Search
-                    </DropdownMenuItem>
+                    <DropdownMenuRadioGroup
+                      value={toolName ?? 'chat'}
+                      onValueChange={(value) =>
+                        setToolName(
+                          value === 'chat'
+                            ? null
+                            : (value as Exclude<AIToolName, null>),
+                        )
+                      }
+                    >
+                      {TOOL_OPTIONS.map((option) => (
+                        <DropdownMenuRadioItem
+                          key={option.label}
+                          value={option.value ?? 'chat'}
+                        >
+                          {option.label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <InputGroupButton
                   type="submit"
                   variant="default"
                   size="icon-sm"
-                  disabled={!nextMessage || isBusy}
+                  disabled={isBusy}
                   className="ml-auto"
                 >
                   <ArrowUpIcon />

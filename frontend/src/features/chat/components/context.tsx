@@ -3,15 +3,18 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
+import { cn } from 'cn';
 import { QuoteIcon } from 'lucide-react';
-import { useEditorRef, useEditorSelection } from 'platejs/react';
-import { getSelectionText } from '../lib/selection-text';
+import * as React from 'react';
 
-export function Context() {
-  const editor = useEditorRef();
-  const selection = useEditorSelection();
-  const text = getSelectionText(editor, selection);
-  if (text === '') return;
+export function Context({
+  children,
+  variant,
+}: {
+  children: React.ReactNode;
+  variant: 'chat' | 'message';
+}) {
+  if (!children) return;
 
   return (
     <div className="flex w-full gap-1 rounded-lg border p-2">
@@ -21,12 +24,17 @@ export function Context() {
       />
       <Tooltip>
         <TooltipTrigger asChild>
-          <p className="text-muted-foreground line-clamp-3 flex-1 text-sm whitespace-pre-wrap">
-            {text}
+          <p
+            className={cn(
+              'text-muted-foreground flex-1 text-xs whitespace-pre-wrap',
+              variant === 'chat' ? 'line-clamp-3' : 'line-clamp-1',
+            )}
+          >
+            {children}
           </p>
         </TooltipTrigger>
         <TooltipContent side="top">
-          <p className="whitespace-pre-wrap">{text}</p>
+          <p className="whitespace-pre-wrap">{children}</p>
         </TooltipContent>
       </Tooltip>
       <QuoteIcon

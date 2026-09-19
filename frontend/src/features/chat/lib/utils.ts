@@ -15,3 +15,11 @@ export function getSelectionText(
     return '';
   }
 }
+
+const compactFormatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+});
+
+export function formatTokens(count: number) {
+  return compactFormatter.format(count);
+}

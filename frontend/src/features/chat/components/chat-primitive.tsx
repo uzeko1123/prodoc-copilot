@@ -56,14 +56,12 @@ import {
   RotateCwIcon,
   TelescopeIcon,
 } from 'lucide-react';
-import { Context } from './context';
 
 export function Chat() {
   const { messages, sendMessage, status, setMessages } = useChat({
     messages: initialMessages,
     transport,
   });
-
   const nextMessage = chat.next(messages);
   const isBusy = status === 'submitted' || status === 'streaming';
 
@@ -75,6 +73,19 @@ export function Chat() {
           <CardDescription>How can I help you today?</CardDescription>
           <CardAction>
             <Tooltip>
+              {/* <TooltipTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      aria-label="Reset conversation"
+                      onClick={() => setMessages(initialMessages)}
+                      disabled={isBusy}
+                    />
+                  }
+                >
+                  <RotateCwIcon />
+                </TooltipTrigger> */}
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
@@ -127,7 +138,6 @@ export function Chat() {
           )}
         </CardContent>
         <CardFooter className="flex-col gap-2 rounded-none">
-          <Context />
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -149,6 +159,18 @@ export function Chat() {
               />
               <InputGroupAddon align="block-end" className="pt-1">
                 <DropdownMenu>
+                  {/* <DropdownMenuTrigger
+                      render={
+                        <InputGroupButton
+                          aria-label="Add files"
+                          type="button"
+                          size="icon-sm"
+                          variant="outline"
+                        />
+                      }
+                    >
+                      <PlusIcon />
+                    </DropdownMenuTrigger> */}
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
                       aria-label="Add files"
