@@ -434,7 +434,7 @@ export function CommentCreateForm({
   const discussionId = discussionIdProp ?? commentId;
 
   const userInfo = usePluginOption(discussionPlugin, 'currentUser');
-  const [commentValue, setCommentValue] = React.useState<Value | undefined>();
+  const [commentValue, setCommentValue] = React.useState<Value | null>(null);
   const commentContent = React.useMemo(
     () =>
       commentValue

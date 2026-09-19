@@ -19,19 +19,19 @@ export type CommentTool = {
 };
 
 export const commentTool = tool({
-  description: 'comment',
+  description: 'Comment',
   inputSchema: jsonSchema<CommentToolInput>({
     properties: {
       blockId: {
-        description: 'blockId',
+        description: 'Block ID',
         type: 'string',
       },
       comment: {
-        description: 'comment',
+        description: 'Comment',
         type: 'string',
       },
       content: {
-        description: 'content',
+        description: 'Content',
         type: 'string',
       },
     },

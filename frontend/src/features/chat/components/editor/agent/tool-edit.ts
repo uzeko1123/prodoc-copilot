@@ -11,11 +11,11 @@ export type EditTool = {
 };
 
 export const editTool = tool({
-  description: 'edit',
+  description: 'Edit',
   inputSchema: jsonSchema<EditToolInput>({
     properties: {
       content: {
-        description: 'content',
+        description: 'Content',
         type: 'string',
       },
     },

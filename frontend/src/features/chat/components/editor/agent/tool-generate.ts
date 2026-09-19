@@ -17,11 +17,11 @@ export type GenerateTool = {
 };
 
 export const generateTool = tool({
-  description: 'generate',
+  description: 'Generate',
   inputSchema: jsonSchema<GenerateToolInput>({
     properties: {
       content: {
-        description: 'content',
+        description: 'Content',
         type: 'string',
       },
     },
