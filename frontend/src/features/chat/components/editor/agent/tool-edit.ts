@@ -15,7 +15,7 @@ export const editTool = tool({
   inputSchema: jsonSchema<EditToolInput>({
     properties: {
       content: {
-        description: 'Content',
+        description: 'Content (markdown)',
         type: 'string',
       },
     },

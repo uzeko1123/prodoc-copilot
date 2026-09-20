@@ -21,7 +21,7 @@ export const generateTool = tool({
   inputSchema: jsonSchema<GenerateToolInput>({
     properties: {
       content: {
-        description: 'Content',
+        description: 'Content (markdown)',
         type: 'string',
       },
     },

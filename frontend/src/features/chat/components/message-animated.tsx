@@ -141,7 +141,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                 <CollapsibleTrigger className="mb-1 flex items-center gap-1.5 text-xs font-medium">
                   <BrainIcon className="size-3.5" />
                   Reasoning
-                  <ChevronDownIcon className="size-3.5 group-data-[state=open]:rotate-180" />
+                  <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
                   <AIChatEditor content={part.text} />
@@ -172,7 +172,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                       <Spinner className="size-3.5" />
                     )}
                     {getToolPartName(toolPart)}
-                    <ChevronDownIcon className="size-3.5 group-data-[state=open]:rotate-180" />
+                    <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
                     {toolPart.state === 'input-available' ? (

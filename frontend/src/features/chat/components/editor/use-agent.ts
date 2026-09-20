@@ -3,7 +3,7 @@
 import { useChatStore } from '@/features/chat/stores';
 import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { AIChatPlugin } from '@platejs/ai/react';
-import type { LanguageModelUsage, UIMessage } from 'ai';
+import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
 import { applyTools, resetTools, type Tools } from './agent/tools';
@@ -22,7 +22,17 @@ export type Chat = UseChatHelpers<ChatMessage>;
 export const useAgent = () => {
   const editor = useEditorRef();
   const transport = React.useMemo(() => createAgentTransport(editor), [editor]);
-  const chat = useChat<ChatMessage>({ transport });
+  const chat = useChat<ChatMessage>({
+    transport,
+    sendAutomaticallyWhen: ({ messages }) => {
+      const lastPart = messages.at(-1)?.parts.at(-1);
+      if (lastPart?.type.startsWith('tool-')) {
+        const lastToolPart = lastPart as ToolUIPart<Tools>;
+        return lastToolPart.state === 'output-available';
+      }
+      return false;
+    },
+  });
 
   const finishedChatMessageIdRef = React.useRef<string | null>(null);
   const upsertChatMessage = useChatStore((state) => state.upsertChatMessage);

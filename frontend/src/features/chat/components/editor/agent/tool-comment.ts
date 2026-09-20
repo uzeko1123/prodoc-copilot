@@ -27,11 +27,11 @@ export const commentTool = tool({
         type: 'string',
       },
       comment: {
-        description: 'Comment',
+        description: 'Comment (plain text)',
         type: 'string',
       },
       content: {
-        description: 'Content',
+        description: 'Content (plain text)',
         type: 'string',
       },
     },
