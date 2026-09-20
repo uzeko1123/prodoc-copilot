@@ -14,14 +14,12 @@ import {
   PopoverContent,
 } from '@/components/shadcn/ui/popover';
 import { useChatStore } from '@/features/chat/stores';
-import { commentPlugin } from '@/features/comment/components/editor/plugins/comment-kit';
 import {
   AIChatPlugin,
   AIPlugin,
   useEditorChat,
   useLastAssistantMessage,
 } from '@platejs/ai/react';
-import { getTransientCommentKey } from '@platejs/comment';
 import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react';
 import { getTransientSuggestionKey } from '@platejs/suggestion';
 import { Command as CommandPrimitive } from 'cmdk';
@@ -43,13 +41,7 @@ import {
   Wand,
   X,
 } from 'lucide-react';
-import {
-  isHotkey,
-  KEYS,
-  TextApi,
-  type NodeEntry,
-  type SlateEditor,
-} from 'platejs';
+import { isHotkey, KEYS, type NodeEntry, type SlateEditor } from 'platejs';
 import {
   useEditorPlugin,
   useEditorRef,
@@ -623,35 +615,14 @@ export const AIMenuItems = ({
 };
 
 export function AILoadingBar() {
-  const editor = useEditorRef();
-
-  const toolName = usePluginOption(AIChatPlugin, 'toolName');
   const chatStatus = usePluginOptions(
     AIChatPlugin,
     (options) => options.chat?.status,
   );
-  const mode = usePluginOption(AIChatPlugin, 'mode');
 
   const { api } = useEditorPlugin(AIChatPlugin);
 
   const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
-
-  const handleComments = (type: 'accept' | 'reject') => {
-    if (type === 'accept') {
-      editor.tf.unsetNodes([getTransientCommentKey()], {
-        at: [],
-        match: (n) => TextApi.isText(n) && !!n[KEYS.comment],
-      });
-    }
-
-    if (type === 'reject') {
-      editor
-        .getTransforms(commentPlugin)
-        .comment.unsetMark({ transient: true });
-    }
-
-    api.aiChat.hide();
-  };
 
   useHotkeys('esc', () => {
     api.aiChat.stop();
@@ -660,67 +631,28 @@ export function AILoadingBar() {
     // (chat as any)._abortFakeStream();
   });
 
-  if (
-    isLoading &&
-    (mode === 'insert' ||
-      toolName === 'comment' ||
-      (toolName === 'edit' && mode === 'chat'))
-  ) {
-    return (
-      <div
-        className={cn(
-          'border-border bg-muted text-muted-foreground absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-md border px-3 py-1.5 text-sm shadow-md transition-all duration-300',
-        )}
+  if (!isLoading) return null;
+
+  return (
+    <div
+      className={cn(
+        'border-border bg-muted text-muted-foreground absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-md border px-3 py-1.5 text-sm shadow-md transition-all duration-300',
+      )}
+    >
+      <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+      <span>{chatStatus === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="flex items-center gap-1 text-xs"
+        onClick={() => api.aiChat.stop()}
       >
-        <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-        <span>{chatStatus === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="flex items-center gap-1 text-xs"
-          onClick={() => api.aiChat.stop()}
-        >
-          <PauseIcon className="h-4 w-4" />
-          Stop
-          <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
-            Esc
-          </kbd>
-        </Button>
-      </div>
-    );
-  }
-
-  if (toolName === 'comment' && chatStatus === 'ready') {
-    return (
-      <div
-        className={cn(
-          'border-border/50 bg-popover text-muted-foreground absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-0 rounded-xl border p-1 text-sm shadow-xl backdrop-blur-sm',
-          'p-3',
-        )}
-      >
-        {/* Header with controls */}
-        <div className="flex w-full items-center justify-between gap-3">
-          <div className="flex items-center gap-5">
-            <Button
-              size="sm"
-              disabled={isLoading}
-              onClick={() => handleComments('accept')}
-            >
-              Accept
-            </Button>
-
-            <Button
-              size="sm"
-              disabled={isLoading}
-              onClick={() => handleComments('reject')}
-            >
-              Reject
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
+        <PauseIcon className="h-4 w-4" />
+        Stop
+        <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
+          Esc
+        </kbd>
+      </Button>
+    </div>
+  );
 }
