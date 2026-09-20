@@ -165,7 +165,7 @@ function Workbench() {
               >
                 <TabsTrigger value="chat">Chat</TabsTrigger>
                 <TabsTrigger value="comment">Comment</TabsTrigger>
-                {!isRightPanelOpen && (
+                {!_hideRightPanel && !isRightPanelOpen && (
                   <Button variant="ghost" onClick={toggleRightPanel}>
                     <PanelRightIcon />
                   </Button>
