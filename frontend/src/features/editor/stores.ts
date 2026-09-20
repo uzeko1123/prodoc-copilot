@@ -18,7 +18,9 @@ export const useEditorStore = create<EditorState>()(
       }),
       {
         name: 'editor-storage',
-        storage: createDebouncedJSONStorage('localStorage'),
+        storage: createDebouncedJSONStorage('localStorage', {
+          debounceTime: 1000,
+        }),
         partialize: (state) => ({ value: state.value }),
       },
     ),
