@@ -26,16 +26,22 @@ import {
 
 export type Tools = CommentTool & EditTool & GenerateTool;
 
-export function getChatModeTools(chatMode: ChatMode): ToolSet {
+export const tools = {
+  comment: commentTool,
+  edit: editTool,
+  generate: generateTool,
+} as ToolSet;
+
+export function getChatModeTools(chatMode: ChatMode) {
   switch (chatMode) {
     case 'chat':
-      return {};
+      return {} as ToolSet;
     case 'comment':
-      return { comment: commentTool };
+      return { comment: commentTool } as ToolSet;
     case 'suggestion':
-      return { edit: editTool, generate: generateTool };
+      return { edit: editTool, generate: generateTool } as ToolSet;
     default:
-      return { comment: commentTool, edit: editTool, generate: generateTool };
+      return tools;
   }
 }
 

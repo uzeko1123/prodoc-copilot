@@ -4,25 +4,28 @@ import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
-type EditToolInput = { content: string };
+type EditToolIO = { content: string };
 
 export type EditTool = {
-  edit: { input: EditToolInput; output: string };
+  edit: { input: EditToolIO; output: EditToolIO };
 };
+
+const schema = jsonSchema<EditToolIO>({
+  properties: {
+    content: {
+      description: 'Content (markdown)',
+      type: 'string',
+    },
+  },
+  required: ['content'],
+  additionalProperties: false,
+  type: 'object',
+});
 
 export const editTool = tool({
   description: 'Edit',
-  inputSchema: jsonSchema<EditToolInput>({
-    properties: {
-      content: {
-        description: 'Content (markdown)',
-        type: 'string',
-      },
-    },
-    required: ['content'],
-    additionalProperties: false,
-    type: 'object',
-  }),
+  inputSchema: schema,
+  outputSchema: schema,
 });
 
 export function applyEditPrimitive(
@@ -52,7 +55,7 @@ export function applyEditTool(
     chat.addToolOutput({
       tool: 'edit',
       toolCallId: part.toolCallId,
-      output: part.input.content,
+      output: part.input,
     });
   }
 

@@ -9,37 +9,40 @@ import { KEYS, nanoid, NodeApi, TextApi, type TNode } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
-type CommentToolInput = {
+type CommentToolIO = {
   blockId: string;
   comment: string;
   content: string;
 };
 
 export type CommentTool = {
-  comment: { input: CommentToolInput; output: string };
+  comment: { input: CommentToolIO; output: CommentToolIO };
 };
+
+const schema = jsonSchema<CommentToolIO>({
+  properties: {
+    blockId: {
+      description: 'Block ID',
+      type: 'string',
+    },
+    comment: {
+      description: 'Comment (plain text)',
+      type: 'string',
+    },
+    content: {
+      description: 'Content (plain text)',
+      type: 'string',
+    },
+  },
+  required: ['blockId', 'comment', 'content'],
+  additionalProperties: false,
+  type: 'object',
+});
 
 export const commentTool = tool({
   description: 'Comment',
-  inputSchema: jsonSchema<CommentToolInput>({
-    properties: {
-      blockId: {
-        description: 'Block ID',
-        type: 'string',
-      },
-      comment: {
-        description: 'Comment (plain text)',
-        type: 'string',
-      },
-      content: {
-        description: 'Content (plain text)',
-        type: 'string',
-      },
-    },
-    required: ['blockId', 'comment', 'content'],
-    additionalProperties: false,
-    type: 'object',
-  }),
+  inputSchema: schema,
+  outputSchema: schema,
 });
 
 type StreamedComment = {
@@ -126,7 +129,7 @@ function upsertStreamedComment(
 
 function applyCommentPrimitive(
   editor: PlateEditor,
-  aiComment: CommentToolInput,
+  aiComment: CommentToolIO,
   existing?: StreamedComment,
 ) {
   const range = aiCommentToRange(editor, aiComment);
@@ -221,7 +224,7 @@ export function applyCommentTool(
     chat.addToolOutput({
       tool: 'comment',
       toolCallId: part.toolCallId,
-      output: part.input.comment,
+      output: part.input,
     });
   }
 

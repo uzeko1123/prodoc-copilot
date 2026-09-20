@@ -1,41 +1,98 @@
-import { mockApiResponse } from '@/mock/chat';
-import { DefaultChatTransport } from 'ai';
+import { getSelectionText } from '@/features/chat/lib/utils';
+import { useChatStore } from '@/features/chat/stores';
+import {
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  DefaultChatTransport,
+  streamText,
+  toUIMessageStream,
+  type LanguageModel,
+  type ToolChoice,
+  type ToolSet,
+} from 'ai';
+import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import * as React from 'react';
-import { aiChatPlugin } from '../plugins/ai-kit';
+import type { ChatMessage } from '../use-agent';
+import { getChatModeTools, tools } from './tools';
+import instructions from "./instructions.md?raw";
 
-export function createAgentTransport({
-  api,
-  abortControllerRef,
-  editor,
-}: {
-  api: string;
-  abortControllerRef: React.RefObject<AbortController | null>;
-  editor: PlateEditor;
-}) {
+type Context = {
+  children: Value;
+  selection: TRange | null;
+  toolName: string | null;
+};
+
+export function createAgentTransport(
+  editor: PlateEditor,
+  model: LanguageModel,
+) {
   return new DefaultChatTransport({
-    api,
-    // Mock the API response. Remove it when you implement the route /api/ai/command
-    fetch: (async (input, init) => {
-      const bodyOptions = editor.getOptions(aiChatPlugin).chatOptions?.body;
-
-      const initBody = JSON.parse(init?.body as string);
-
-      const body = {
-        ...initBody,
-        ...bodyOptions,
+    fetch: (async (_input, init) => {
+      const { ctx, messages } = JSON.parse(init?.body as string) as {
+        ctx: Context;
+        messages: ChatMessage[];
       };
 
-      const res = await fetch(input, {
-        ...init,
-        body: JSON.stringify(body),
+      const lastMessage = messages.at(-1);
+      if (lastMessage?.role === 'user') {
+        useChatStore.getState().upsertChatMessage({
+          ...lastMessage,
+          metadata: {
+            ...lastMessage.metadata,
+            selectionText: getSelectionText(editor, ctx.selection),
+          },
+        });
+      }
+      const chatMessages = useChatStore.getState().chatMessages;
+
+      const chatMode = useChatStore.getState().chatMode;
+      const availableTools = getChatModeTools(chatMode);
+
+      const result = streamText({
+        model,
+        instructions,
+        messages: await convertToModelMessages(
+          createChatMessagesWithCtx(chatMessages, ctx),
+          { tools, ignoreIncompleteToolCalls: true },
+        ),
+        tools: availableTools,
+        toolChoice:
+          ctx.toolName && ctx.toolName in availableTools
+            ? ({
+                type: 'tool',
+                toolName: ctx.toolName,
+              } as ToolChoice<ToolSet>)
+            : undefined,
+        abortSignal: init?.signal ?? undefined,
       });
 
-      if (!res.ok) {
-        return mockApiResponse(editor, init, abortControllerRef);
-      }
-
-      return res;
+      return createUIMessageStreamResponse({
+        stream: toUIMessageStream({
+          stream: result.stream,
+          tools,
+          messageMetadata: ({ part }) =>
+            part.type === 'finish' ? { usage: part.totalUsage } : undefined,
+        }),
+      });
     }) as typeof fetch,
+  });
+}
+
+function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
+  const lastUserChatMessageIndex = chatMessages.findLastIndex(
+    (message) => message.role === 'user',
+  );
+  if (lastUserChatMessageIndex === -1) return chatMessages;
+  const lastUserChatMessage = chatMessages[lastUserChatMessageIndex];
+
+  return chatMessages.with(lastUserChatMessageIndex, {
+    ...lastUserChatMessage,
+    parts: [
+      ...lastUserChatMessage.parts,
+      {
+        type: 'text',
+        text: `<Context>\n${JSON.stringify({ children: ctx.children, selection: ctx.selection }, undefined, 2)}\n</Context>`,
+      },
+    ],
   });
 }

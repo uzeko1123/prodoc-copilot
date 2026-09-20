@@ -7,25 +7,28 @@ import { KEYS, nanoid, type TSuggestionData } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
-type GenerateToolInput = { content: string };
+type GenerateToolIO = { content: string };
 
 export type GenerateTool = {
-  generate: { input: GenerateToolInput; output: string };
+  generate: { input: GenerateToolIO; output: GenerateToolIO };
 };
+
+const schema = jsonSchema<GenerateToolIO>({
+  properties: {
+    content: {
+      description: 'Content (markdown)',
+      type: 'string',
+    },
+  },
+  required: ['content'],
+  additionalProperties: false,
+  type: 'object',
+});
 
 export const generateTool = tool({
   description: 'Generate',
-  inputSchema: jsonSchema<GenerateToolInput>({
-    properties: {
-      content: {
-        description: 'Content (markdown)',
-        type: 'string',
-      },
-    },
-    required: ['content'],
-    additionalProperties: false,
-    type: 'object',
-  }),
+  inputSchema: schema,
+  outputSchema: schema,
 });
 
 // One stable suggestion id per tool call, so every streamed chunk lands as
@@ -103,7 +106,7 @@ export function applyGenerateTool(
     chat.addToolOutput({
       tool: 'generate',
       toolCallId: part.toolCallId,
-      output: part.input.content,
+      output: part.input,
     });
   }
 

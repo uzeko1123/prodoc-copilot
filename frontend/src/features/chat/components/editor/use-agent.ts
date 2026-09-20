@@ -13,7 +13,7 @@ import {
   type Tools,
 } from './agent/tools';
 // import { createAgentTransport } from './agent/transport';
-import { createAgentTransport } from './agent/transport-openai';
+import { createAgentTransportOpenAI } from './agent/transport-openai';
 
 export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
 export type ChatMode = (typeof chatModes)[number];
@@ -29,7 +29,10 @@ export type Chat = UseChatHelpers<ChatMessage>;
 
 export const useAgent = () => {
   const editor = useEditorRef();
-  const transport = React.useMemo(() => createAgentTransport(editor), [editor]);
+  const transport = React.useMemo(
+    () => createAgentTransportOpenAI(editor),
+    [editor],
+  );
   const chat = useChat<ChatMessage>({
     transport,
     sendAutomaticallyWhen: ({ messages }) => {
@@ -57,7 +60,6 @@ export const useAgent = () => {
 
     if (chat.status === 'streaming' || chat.status === 'submitted') return;
     if (finishedChatMessageIdRef.current === lastChatMessage.id) return;
-
     finishedChatMessageIdRef.current = lastChatMessage.id;
     editor.getApi(AIChatPlugin).aiChat.stop();
     finalizeAITools(editor);
