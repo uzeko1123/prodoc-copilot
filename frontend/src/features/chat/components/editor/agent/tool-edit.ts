@@ -7,7 +7,7 @@ import type { Chat } from '../use-agent';
 type EditToolInput = { content: string };
 
 export type EditTool = {
-  edit: { input: EditToolInput; output: { success: boolean } };
+  edit: { input: EditToolInput; output: string };
 };
 
 export const editTool = tool({
@@ -50,7 +50,7 @@ export function applyEditTool(
     chat.addToolOutput({
       tool: 'edit',
       toolCallId: part.toolCallId,
-      output: { success: true },
+      output: part.input.content,
     });
   }
 

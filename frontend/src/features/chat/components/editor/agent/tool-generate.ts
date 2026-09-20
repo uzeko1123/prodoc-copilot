@@ -13,7 +13,7 @@ import type { Chat } from '../use-agent';
 type GenerateToolInput = { content: string };
 
 export type GenerateTool = {
-  generate: { input: GenerateToolInput; output: { success: boolean } };
+  generate: { input: GenerateToolInput; output: string };
 };
 
 export const generateTool = tool({
@@ -86,7 +86,7 @@ export function applyGenerateTool(
     chat.addToolOutput({
       tool: 'generate',
       toolCallId: part.toolCallId,
-      output: { success: true },
+      output: part.input.content,
     });
   }
 

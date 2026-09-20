@@ -1,5 +1,7 @@
+import type { ToolUIPart } from 'ai';
 import { NodeApi, type TRange } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
+import type { Tools } from '../components/editor/agent/tools';
 
 export function getSelectionText(
   editor: PlateEditor,
@@ -14,6 +16,17 @@ export function getSelectionText(
   } catch {
     return '';
   }
+}
+export function getParagraphs(text: string) {
+  return text
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+export function getToolPartName(toolPart: ToolUIPart<Tools>) {
+  const toolName = toolPart.type.slice('tool-'.length);
+  return toolName.charAt(0).toUpperCase() + toolName.slice(1);
 }
 
 const compactFormatter = new Intl.NumberFormat('en', {

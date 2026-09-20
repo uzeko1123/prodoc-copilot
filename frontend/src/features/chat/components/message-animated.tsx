@@ -13,19 +13,21 @@ import type { MessageAnimationPreset } from '@/lib/shadcn/message-animations';
 import { MESSAGE_ANIMATIONS } from '@/lib/shadcn/message-animations';
 import type { ToolUIPart } from 'ai';
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   BrainIcon,
   CheckIcon,
   ChevronDownIcon,
   CircleAlertIcon,
-  WrenchIcon,
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import * as React from 'react';
-import { formatTokens } from '../lib/utils';
+import { formatTokens, getParagraphs, getToolPartName } from '../lib/utils';
 import { Context } from './context';
 import type { Tools } from './editor/agent/tools';
 import type { ChatMessage } from './editor/use-agent';
 import { AIChatEditor } from './ui/ai-chat-editor';
+import { cn } from 'cn';
 
 const MotionMessageScrollerItem = motion.create(MessageScrollerItem);
 
@@ -99,10 +101,6 @@ function MessageAnimatedRow({
         {message.parts.map((part, index) => {
           if (message.role === 'user') {
             if (part.type !== 'text') return;
-            const paragraphs = part.text
-              .split(/\n\s*\n/)
-              .map((paragraph) => paragraph.trim())
-              .filter(Boolean);
             return (
               <Bubble key={index} variant={userVariant}>
                 <BubbleContent className="space-y-2">
@@ -111,7 +109,7 @@ function MessageAnimatedRow({
                       {message.metadata.selectionText}
                     </Context>
                   )}
-                  {paragraphs.map((paragraph, paragraphIndex) => (
+                  {getParagraphs(part.text).map((paragraph, paragraphIndex) => (
                     <p
                       key={`${index}-${paragraphIndex}`}
                       className="whitespace-pre-wrap"
@@ -151,37 +149,71 @@ function MessageAnimatedRow({
             );
           }
           if (part.type.startsWith('tool-')) {
-            // TODO
             const toolPart = part as ToolUIPart<Tools>;
             return (
-              <div
-                key={index}
-                className="text-muted-foreground flex items-center gap-1.5 text-xs"
-              >
-                <WrenchIcon className="size-3.5 shrink-0" />
-                <span className="font-medium capitalize">
-                  {toolPart.type.slice('tool-'.length)}
-                </span>
-                {toolPart.state === 'output-available' ? (
-                  <CheckIcon className="size-3.5 shrink-0" />
-                ) : toolPart.state === 'output-error' ? (
-                  <>
-                    <CircleAlertIcon className="text-destructive size-3.5 shrink-0" />
-                    <span className="text-destructive truncate">
-                      {toolPart.errorText ?? 'Tool call failed'}
-                    </span>
-                  </>
-                ) : (
-                  <Spinner className="size-3.5" />
-                )}
-              </div>
+              <>
+                <Collapsible
+                  key={index}
+                  defaultOpen={false}
+                  className="text-muted-foreground group w-full"
+                >
+                  <CollapsibleTrigger
+                    className={cn(
+                      'mb-1 flex items-center gap-1.5 text-xs font-medium',
+                      toolPart.state === 'output-error' && 'text-destructive',
+                    )}
+                  >
+                    {toolPart.state === 'output-available' ? (
+                      <CheckIcon className="size-3.5" />
+                    ) : toolPart.state === 'output-error' ? (
+                      <CircleAlertIcon className="text-destructive size-3.5" />
+                    ) : (
+                      <Spinner className="size-3.5" />
+                    )}
+                    {getToolPartName(toolPart)}
+                    <ChevronDownIcon className="size-3.5 group-data-[state=open]:rotate-180" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
+                    {toolPart.state === 'input-available' ? (
+                      <pre className="font-mono">
+                        {JSON.stringify(toolPart.input)}
+                      </pre>
+                    ) : toolPart.state === 'output-available' ? (
+                      <AIChatEditor content={toolPart.output} />
+                    ) : toolPart.state === 'output-error' ? (
+                      getParagraphs(toolPart.errorText).map(
+                        (paragraph, paragraphIndex) => (
+                          <p
+                            key={`${index}-${paragraphIndex}`}
+                            className="whitespace-pre-wrap"
+                          >
+                            {paragraph}
+                          </p>
+                        ),
+                      )
+                    ) : (
+                      <p>Executing...</p>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
+              </>
             );
           }
         })}
-        {message.metadata?.usage && ( // TODO
-          <div className="text-muted-foreground text-xs">
-            ↑ {formatTokens(message.metadata.usage.inputTokens ?? 0)} {' · '}↓
-            {formatTokens(message.metadata.usage.outputTokens ?? 0)}
+        {message.metadata?.usage && (
+          <div className="text-muted-foreground flex w-full items-center gap-1.5 text-xs">
+            {message.metadata.usage.inputTokens && (
+              <span className="flex items-center gap-0.5">
+                <ArrowUpIcon className="size-3" />
+                {formatTokens(message.metadata.usage.inputTokens)}
+              </span>
+            )}
+            {message.metadata.usage.outputTokens && (
+              <span className="flex items-center gap-0.5">
+                <ArrowDownIcon className="size-3" />
+                {formatTokens(message.metadata.usage.outputTokens)}
+              </span>
+            )}
           </div>
         )}
       </MessageContent>

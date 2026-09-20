@@ -15,7 +15,7 @@ type CommentToolInput = {
 };
 
 export type CommentTool = {
-  comment: { input: CommentToolInput; output: { success: boolean } };
+  comment: { input: CommentToolInput; output: string };
 };
 
 export const commentTool = tool({
@@ -114,7 +114,7 @@ export function applyCommentTool(
   chat.addToolOutput({
     tool: 'comment',
     toolCallId: part.toolCallId,
-    output: { success: true },
+    output: part.input.comment,
   });
 
   if (applied.has(part.toolCallId)) return;
