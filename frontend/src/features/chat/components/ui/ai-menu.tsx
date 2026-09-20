@@ -1,6 +1,6 @@
 'use client';
 
-import { AIChatEditor } from '@/components/shadcn/ui/ai-chat-editor';
+import { AIChatEditor as AIChatEditorPrimitive } from '@/components/shadcn/ui/ai-chat-editor';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   Command,
@@ -55,9 +55,11 @@ import {
   useFocusedLast,
   useHotkeys,
   usePluginOption,
+  usePluginOptions,
   type PlateEditor,
 } from 'platejs/react';
 import * as React from 'react';
+import { AICommentIcon } from './ai-comment-icon';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
@@ -72,16 +74,18 @@ export function AIMenu() {
 
   const [input, setInput] = React.useState('');
 
-  const chat = usePluginOption(AIChatPlugin, 'chat');
+  const chatStatus = usePluginOptions(
+    AIChatPlugin,
+    (options) => options.chat?.status,
+  );
+  const chatMessageLength = usePluginOptions(
+    AIChatPlugin,
+    (options) => options.chat?.messages?.length ?? 0,
+  );
 
-  const { messages, status } = chat;
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
     null,
   );
-
-  const content = useLastAssistantMessage()?.parts.find(
-    (part) => part.type === 'text',
-  )?.text;
 
   React.useEffect(() => {
     if (!streaming) return;
@@ -138,11 +142,10 @@ export function AIMenu() {
     api.aiChat.stop();
 
     // remove when you implement the route /api/ai/command
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (chat as any)._abortFakeStream();
+    // (chat as any)._abortFakeStream();
   });
 
-  const isLoading = status === 'streaming' || status === 'submitted';
+  const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
 
   React.useEffect(() => {
     if (toolName !== 'edit' || mode !== 'chat' || isLoading) return;
@@ -196,15 +199,14 @@ export function AIMenu() {
           value={value}
           onValueChange={setValue}
         >
-          {mode === 'chat' &&
-            isSelecting &&
-            content &&
-            toolName === 'generate' && <AIChatEditor content={content} />}
+          {mode === 'chat' && isSelecting && toolName === 'generate' && (
+            <AIChatEditor />
+          )}
 
           {isLoading ? (
             <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
               <Loader2Icon className="size-4 animate-spin" />
-              {messages.length > 1 ? 'Editing...' : 'Thinking...'}
+              {chatMessageLength > 1 ? 'Editing...' : 'Thinking...'}
             </div>
           ) : (
             <CommandPrimitive.Input
@@ -247,31 +249,19 @@ export function AIMenu() {
   );
 }
 
+function AIChatEditor() {
+  const content = useLastAssistantMessage()?.parts.find(
+    (part) => part.type === 'text',
+  )?.text;
+  if (!content) return;
+  return <AIChatEditorPrimitive content={content} />;
+}
+
 type EditorChatState =
   | 'cursorCommand'
   | 'cursorSuggestion'
   | 'selectionCommand'
   | 'selectionSuggestion';
-
-const AICommentIcon = () => (
-  <svg
-    fill="none"
-    height="24"
-    stroke="currentColor"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
-    viewBox="0 0 24 24"
-    width="24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M0 0h24v24H0z" fill="none" stroke="none" />
-    <path d="M8 9h8" />
-    <path d="M8 13h4.5" />
-    <path d="M10 19l-1 -1h-3a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v4.5" />
-    <path d="M17.8 20.817l-2.172 1.138a.392 .392 0 0 1 -.568 -.41l.415 -2.411l-1.757 -1.707a.389 .389 0 0 1 .217 -.665l2.428 -.352l1.086 -2.193a.392 .392 0 0 1 .702 0l1.086 2.193l2.428 .352a.39 .39 0 0 1 .217 .665l-1.757 1.707l.414 2.41a.39 .39 0 0 1 -.567 .411l-2.172 -1.138z" />
-  </svg>
-);
 
 const aiChatItems = {
   accept: {
@@ -567,17 +557,20 @@ export const AIMenuItems = ({
   setValue: (value: string) => void;
 }) => {
   const editor = useEditorRef();
-  const { messages } = usePluginOption(AIChatPlugin, 'chat');
+  const hasChatMessages = usePluginOptions(
+    AIChatPlugin,
+    (options) => (options.chat?.messages?.length ?? 0) > 0,
+  );
   const aiEditor = usePluginOption(AIChatPlugin, 'aiEditor')!;
   const isSelecting = useIsSelecting();
 
   const menuState = React.useMemo(() => {
-    if (messages && messages.length > 0) {
+    if (hasChatMessages) {
       return isSelecting ? 'selectionSuggestion' : 'cursorSuggestion';
     }
 
     return isSelecting ? 'selectionCommand' : 'cursorCommand';
-  }, [isSelecting, messages]);
+  }, [isSelecting, hasChatMessages]);
 
   const menuGroups = React.useMemo(() => {
     const items = menuStateItems[menuState];
@@ -623,14 +616,15 @@ export function AILoadingBar() {
   const editor = useEditorRef();
 
   const toolName = usePluginOption(AIChatPlugin, 'toolName');
-  const chat = usePluginOption(AIChatPlugin, 'chat');
+  const chatStatus = usePluginOptions(
+    AIChatPlugin,
+    (options) => options.chat?.status,
+  );
   const mode = usePluginOption(AIChatPlugin, 'mode');
-
-  const { status } = chat;
 
   const { api } = useEditorPlugin(AIChatPlugin);
 
-  const isLoading = status === 'streaming' || status === 'submitted';
+  const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
 
   const handleComments = (type: 'accept' | 'reject') => {
     if (type === 'accept') {
@@ -653,8 +647,7 @@ export function AILoadingBar() {
     api.aiChat.stop();
 
     // remove when you implement the route /api/ai/command
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (chat as any)._abortFakeStream();
+    // (chat as any)._abortFakeStream();
   });
 
   if (
@@ -670,7 +663,7 @@ export function AILoadingBar() {
         )}
       >
         <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-        <span>{status === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
+        <span>{chatStatus === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
         <Button
           size="sm"
           variant="ghost"
@@ -687,7 +680,7 @@ export function AILoadingBar() {
     );
   }
 
-  if (toolName === 'comment' && status === 'ready') {
+  if (toolName === 'comment' && chatStatus === 'ready') {
     return (
       <div
         className={cn(

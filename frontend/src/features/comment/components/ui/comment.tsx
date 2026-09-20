@@ -427,8 +427,6 @@ export function CommentCreateForm({
   discussionId?: string;
   focusOnMount?: boolean;
 }) {
-  const discussions = usePluginOption(discussionPlugin, 'discussions');
-
   const editor = useEditorRef();
   const commentId = useCommentId();
   const discussionId = discussionIdProp ?? commentId;
@@ -452,6 +450,8 @@ export function CommentCreateForm({
 
   const onAddComment = React.useCallback(async () => {
     if (!commentValue) return;
+
+    const discussions = editor.getOption(discussionPlugin, 'discussions');
 
     commentEditor.tf.reset();
 
@@ -556,7 +556,7 @@ export function CommentCreateForm({
       );
       editor.tf.unsetNodes([getDraftCommentKey()], { at: path });
     });
-  }, [commentValue, commentEditor.tf, discussionId, editor, discussions]);
+  }, [commentValue, commentEditor.tf, discussionId, editor]);
 
   return (
     <div className={cn('flex w-full', className)}>

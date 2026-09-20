@@ -31,7 +31,7 @@ import { AIChatEditor } from './ui/ai-chat-editor';
 
 const MotionMessageScrollerItem = motion.create(MessageScrollerItem);
 
-const MessageAnimated = React.memo(function MessageAnimated({
+export const MessageAnimated = React.memo(function MessageAnimated({
   message,
   animationPreset = MESSAGE_ANIMATIONS['slide-up'],
   assistantVariant = 'ghost',
@@ -221,5 +221,3 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
     </Message>
   );
 });
-
-export { MessageAnimated };

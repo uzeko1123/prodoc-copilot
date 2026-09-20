@@ -18,20 +18,46 @@ import {
   useEditorValue,
   usePluginOption,
 } from 'platejs/react';
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { findAll } from '../lib/find';
 
 export function Find() {
   const editor = useEditorRef();
-  const editorValue = useEditorValue();
   const { setOption } = useEditorPlugin(FindReplacePlugin);
   const search = usePluginOption(FindReplacePlugin, 'search');
+
+  return (
+    <div className="scrollbar-thumb-border flex h-full scrollbar-thin flex-col gap-2 overflow-y-auto p-2">
+      <Input
+        value={search}
+        onChange={(e) => {
+          setOption('search', e.target.value);
+          editor.api.redecorate();
+        }}
+        placeholder="Search the text..."
+        type="search"
+      />
+      {search ? (
+        <FindMatches search={search} />
+      ) : (
+        <FindEmpty
+          description="Type in the search box to find text in the document"
+          icon={<SearchIcon />}
+          title="No search"
+        />
+      )}
+    </div>
+  );
+}
+
+function FindMatches({ search }: { search: string }) {
+  const editor = useEditorRef();
+  const editorValue = useEditorValue();
 
   const matches = useMemo(() => {
     if (!search) return [];
     const ranges = findAll(editorValue as TNode[], [], search);
     return ranges.map((range) => {
-      const key = `${range.anchor.path.join('/')}:${range.anchor.offset}`;
       const root = { children: editorValue } as TNode;
       const block = NodeApi.parent(root, range.anchor.path);
 
@@ -51,7 +77,7 @@ export function Find() {
       const before = [...nodeBefore.map(NodeApi.string), textBefore].join('');
       const after = [...nodeAfter.map(NodeApi.string), textAfter].join('');
 
-      return { key, range, text, before, after };
+      return { range, text, before, after };
     });
   }, [editorValue, search]);
 
@@ -67,34 +93,17 @@ export function Find() {
   };
 
   return (
-    <div className="scrollbar-thumb-border flex h-full scrollbar-thin flex-col gap-2 overflow-y-auto p-2">
-      <Input
-        value={search}
-        onChange={(e) => {
-          setOption('search', e.target.value);
-          editor.api.redecorate();
-        }}
-        placeholder="Search the text..."
-        type="search"
-      />
+    <>
       {matches.length === 0 && (
-        <Empty className="h-full">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              {!search ? <SearchIcon /> : <SearchXIcon />}
-            </EmptyMedia>
-            <EmptyTitle>{!search ? 'No search' : 'Not found'}</EmptyTitle>
-            <EmptyDescription>
-              {!search
-                ? 'Type in the search box to find text in the document'
-                : 'No matches found, try a different keyword'}
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
+        <FindEmpty
+          icon={<SearchXIcon />}
+          title="Not found"
+          description="No matches found, try a different keyword"
+        />
       )}
-      {matches.map((match) => (
+      {matches.map((match, index) => (
         <Button
-          key={match.key}
+          key={index}
           variant="outline"
           className="h-auto p-2"
           onClick={() => onClick(match.range)}
@@ -106,6 +115,26 @@ export function Find() {
           </p>
         </Button>
       ))}
-    </div>
+    </>
+  );
+}
+
+function FindEmpty({
+  icon,
+  title,
+  description,
+}: {
+  icon: ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Empty className="h-full">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">{icon}</EmptyMedia>
+        <EmptyTitle>{title}</EmptyTitle>
+        <EmptyDescription>{description}</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
   );
 }

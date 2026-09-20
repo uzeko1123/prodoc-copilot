@@ -9,15 +9,9 @@ import { EditorContainer, Editor as EditorPrimitive } from './ui/editor';
 export function Editor() {
   const editorScrollRef = useEditorScrollRef();
 
-  const value = useEditorValue();
-  const setValue = useEditorStore((state) => state.setValue);
-
-  useEffect(() => {
-    setValue(value);
-  }, [setValue, value]);
-
   return (
     <div className="h-full">
+      <EditorValueSync />
       <EditorContainer>
         <EditorPrimitive
           ref={editorScrollRef}
@@ -27,4 +21,15 @@ export function Editor() {
       <SettingsDialog />
     </div>
   );
+}
+
+function EditorValueSync() {
+  const value = useEditorValue();
+  const setValue = useEditorStore((state) => state.setValue);
+
+  useEffect(() => {
+    setValue(value);
+  }, [setValue, value]);
+
+  return null;
 }

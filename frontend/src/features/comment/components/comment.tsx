@@ -34,63 +34,6 @@ type CommentItem = { id: string; path: Path } & (
   | { type: 'suggestion'; item: ResolvedSuggestion }
 );
 
-function CommentCard({ commentItem }: { commentItem: CommentItem }) {
-  const editor = useEditorRef();
-  const commentCardRef = useRef<HTMLDivElement>(null);
-  const activeId = usePluginOption(
-    commentItem.type === 'comment' ? commentPlugin : suggestionPlugin,
-    'activeId',
-  );
-
-  const isActive = commentItem.id === activeId;
-
-  useEffect(() => {
-    if (isActive) {
-      commentCardRef.current?.scrollIntoView({
-        block: 'center',
-        behavior: 'smooth',
-      });
-    }
-  }, [isActive]);
-
-  const onClick = () => {
-    editor.setOption(
-      commentPlugin,
-      'activeId',
-      commentItem.type === 'comment' ? commentItem.item.id : null,
-    );
-    editor.setOption(
-      suggestionPlugin,
-      'activeId',
-      commentItem.type === 'suggestion' ? commentItem.item.suggestionId : null,
-    );
-
-    const range = editor.api.range(commentItem.path);
-    const domRange = range ? editor.api.toDOMRange(range) : null;
-    if (domRange) {
-      editor.api.scrollIntoView(domRange, {
-        block: 'center',
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  return (
-    <Card
-      ref={commentCardRef}
-      data-active={isActive}
-      className={cn('shrink-0 p-0', isActive && 'ring-primary ring-2')}
-      onClick={onClick}
-    >
-      {commentItem.type === 'comment' ? (
-        <BlockComment discussion={commentItem.item} isLast />
-      ) : (
-        <BlockSuggestionCard idx={0} isLast suggestion={commentItem.item} />
-      )}
-    </Card>
-  );
-}
-
 export function Comment() {
   const editor = useEditorRef();
   const discussions = usePluginOption(discussionPlugin, 'discussions');
@@ -158,5 +101,62 @@ export function Comment() {
         <CommentCard key={commentItem.id} commentItem={commentItem} />
       ))}
     </div>
+  );
+}
+
+function CommentCard({ commentItem }: { commentItem: CommentItem }) {
+  const editor = useEditorRef();
+  const commentCardRef = useRef<HTMLDivElement>(null);
+  const activeId = usePluginOption(
+    commentItem.type === 'comment' ? commentPlugin : suggestionPlugin,
+    'activeId',
+  );
+
+  const isActive = commentItem.id === activeId;
+
+  useEffect(() => {
+    if (isActive) {
+      commentCardRef.current?.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth',
+      });
+    }
+  }, [isActive]);
+
+  const onClick = () => {
+    editor.setOption(
+      commentPlugin,
+      'activeId',
+      commentItem.type === 'comment' ? commentItem.item.id : null,
+    );
+    editor.setOption(
+      suggestionPlugin,
+      'activeId',
+      commentItem.type === 'suggestion' ? commentItem.item.suggestionId : null,
+    );
+
+    const range = editor.api.range(commentItem.path);
+    const domRange = range ? editor.api.toDOMRange(range) : null;
+    if (domRange) {
+      editor.api.scrollIntoView(domRange, {
+        block: 'center',
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  return (
+    <Card
+      ref={commentCardRef}
+      data-active={isActive}
+      className={cn('shrink-0 p-0', isActive && 'ring-primary ring-2')}
+      onClick={onClick}
+    >
+      {commentItem.type === 'comment' ? (
+        <BlockComment discussion={commentItem.item} isLast />
+      ) : (
+        <BlockSuggestionCard idx={0} isLast suggestion={commentItem.item} />
+      )}
+    </Card>
   );
 }

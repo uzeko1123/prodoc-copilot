@@ -5,6 +5,7 @@ import { cn } from 'cn';
 import {
   PlateElement,
   PlateText,
+  useEditorSelector,
   usePluginOption,
   type PlateElementProps,
   type PlateTextProps,
@@ -12,11 +13,13 @@ import {
 
 export function AILeaf(props: PlateTextProps) {
   const streaming = usePluginOption(AIChatPlugin, 'streaming');
-  const streamingLeaf = props.editor
-    .getApi(AIChatPlugin)
-    .aiChat.node({ streaming: true });
 
-  const isLast = streamingLeaf?.[0] === props.text;
+  const isLast = useEditorSelector(
+    (editor) =>
+      editor.getApi(AIChatPlugin).aiChat.node({ streaming: true })?.[0] ===
+      props.text,
+    [props.text],
+  );
 
   return (
     <PlateText

@@ -21,6 +21,7 @@ import {
   useEditorMounted,
   useEditorPlugin,
   useEditorScrollRef,
+  usePluginOption,
 } from 'platejs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -42,8 +43,8 @@ const headingItemVariants = cva(
 );
 
 export function ToC() {
-  const { editor, getOptions } = useEditorPlugin(TocPlugin);
-  const { topOffset } = getOptions();
+  const { editor } = useEditorPlugin(TocPlugin);
+  const topOffset = usePluginOption(TocPlugin, 'topOffset');
   const editorMounted = useEditorMounted();
   const editorScrollRef = useEditorScrollRef();
 
