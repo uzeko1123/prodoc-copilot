@@ -3,6 +3,7 @@ import { AIChatPlugin, applyAISuggestions } from '@platejs/ai/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
+import { applyEditSuggestion } from './tool-suggestion';
 
 type EditToolIO = { content: string };
 
@@ -68,7 +69,8 @@ export function applyEditTool(
 
   editor.setOption(AIChatPlugin, 'mode', 'chat');
   editor.setOption(AIChatPlugin, 'toolName', 'edit');
-  applyEditPrimitive(editor, appliedContent === '', content);
+  // applyEditPrimitive(editor, appliedContent === '', content);
+  applyEditSuggestion(editor, appliedContent === '', content);
 }
 
 export function resetEditTool() {

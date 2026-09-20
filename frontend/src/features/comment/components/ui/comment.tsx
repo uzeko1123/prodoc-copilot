@@ -64,6 +64,7 @@ export type TComment = {
   discussionId: string;
   isEdited: boolean;
   userId: string;
+  createdByAI?: boolean;
 };
 
 export function Comment(props: {

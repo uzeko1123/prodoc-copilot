@@ -13,8 +13,8 @@ import {
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../use-agent';
+import instructions from './instructions.md?raw';
 import { getChatModeTools, tools } from './tools';
-import instructions from "./instructions.md?raw";
 
 type Context = {
   children: Value;

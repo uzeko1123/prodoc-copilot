@@ -12,6 +12,7 @@ export type TDiscussion = {
   isResolved: boolean;
   userId: string;
   documentContent?: string;
+  createdByAI?: boolean;
 };
 
 const BLOCK_SUGGESTION_SELECTOR = '[data-block-suggestion="true"]';
