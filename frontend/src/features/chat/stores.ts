@@ -2,10 +2,12 @@ import { create } from 'zustand';
 import { createDebouncedJSONStorage } from 'zustand-debounce';
 import { devtools, persist } from 'zustand/middleware';
 // import type { ChatMessage } from './components/editor/use-chat';
-import type { ChatMessage } from './components/editor/use-agent';
+import type { ChatMessage, ChatMode } from './components/editor/use-agent';
 
 type ChatState = {
+  chatMode: ChatMode;
   chatMessages: ChatMessage[];
+  setChatMode: (chatMode: ChatMode) => void;
   setChatMessages: (chatMessages: ChatMessage[]) => void;
   upsertChatMessage: (message: ChatMessage) => void;
 };
@@ -14,7 +16,9 @@ export const useChatStore = create<ChatState>()(
   devtools(
     persist(
       (set) => ({
+        chatMode: 'auto',
         chatMessages: [],
+        setChatMode: (chatMode) => set({ chatMode }),
         setChatMessages: (chatMessages) => set({ chatMessages }),
         upsertChatMessage: (chatMessage) =>
           set((state) => {
@@ -41,6 +45,7 @@ export const useChatStore = create<ChatState>()(
           debounceTime: 1000,
         }),
         partialize: (state) => ({
+          chatMode: state.chatMode,
           chatMessages: state.chatMessages,
         }),
       },

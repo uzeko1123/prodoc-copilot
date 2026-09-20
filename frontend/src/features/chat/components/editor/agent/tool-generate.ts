@@ -1,12 +1,9 @@
-import { BaseAIPlugin } from '@platejs/ai';
-import {
-  AIChatPlugin,
-  getInsertPreviewStart,
-  streamInsertChunk,
-} from '@platejs/ai/react';
+import { withAIBatch } from '@platejs/ai';
+import { AIChatPlugin, streamInsertChunk } from '@platejs/ai/react';
+import { BlockSelectionPlugin } from '@platejs/selection/react';
+import { BaseSuggestionPlugin, getSuggestionKey } from '@platejs/suggestion';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
-import cloneDeep from 'lodash/cloneDeep.js';
-import { ElementApi, getPluginType, KEYS, PathApi } from 'platejs';
+import { KEYS, nanoid, type TSuggestionData } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../use-agent';
 
@@ -31,48 +28,66 @@ export const generateTool = tool({
   }),
 });
 
+// One stable suggestion id per tool call, so every streamed chunk lands as
+// part of a single reviewable insertion.
+const suggestionData = new Map<string, TSuggestionData>();
+
 export function applyGeneratePrimitive(
   editor: PlateEditor,
   chunk: string,
   isFirst: boolean,
+  toolCallId: string,
 ) {
   if (isFirst) {
-    const { startBlock, startInEmptyParagraph } = getInsertPreviewStart(editor);
-
-    editor.getTransforms(BaseAIPlugin).ai.beginPreview({
-      originalBlocks:
-        startInEmptyParagraph && startBlock && ElementApi.isElement(startBlock)
-          ? [cloneDeep(startBlock)]
-          : [],
+    suggestionData.set(toolCallId, {
+      createdAt: Date.now(),
+      id: nanoid(),
+      type: 'insert',
+      userId: editor.getOption(BaseSuggestionPlugin, 'currentUserId'),
     });
 
-    editor.tf.withoutSaving(() => {
-      editor.tf.insertNodes(
-        {
-          children: [{ text: '' }],
-          type: getPluginType(editor, KEYS.aiChat),
-        },
-        {
-          at: PathApi.next(editor.selection!.focus.path.slice(0, 1)),
-        },
-      );
-    });
+    // Reset the streamInsertChunk cursor so consecutive tool calls in one
+    // message don't continue the previous insertion.
+    editor.setOption(AIChatPlugin, '_blockPath', null);
+    editor.setOption(AIChatPlugin, '_blockChunks', '');
     editor.setOption(AIChatPlugin, 'streaming', true);
+
+    // In block-selection mode there is no editor.selection. Select the end of
+    // the last selected block so the insertion lands below it instead of
+    // falling back to the document top.
+    if (!editor.selection) {
+      const lastBlock = editor
+        .getApi(BlockSelectionPlugin)
+        .blockSelection.getNodes()
+        .at(-1);
+
+      if (lastBlock) {
+        editor.tf.select(editor.api.end(lastBlock[1]));
+      }
+    }
   }
 
-  if (chunk.length > 0) {
-    editor.tf.withoutSaving(() => {
+  if (chunk.length === 0) return;
+
+  const data = suggestionData.get(toolCallId);
+  if (!data) return;
+
+  withAIBatch(
+    editor,
+    () => {
       if (!editor.getOption(AIChatPlugin, 'streaming')) return;
 
       editor.tf.withScrolling(() => {
         streamInsertChunk(editor, chunk, {
           textProps: {
-            [getPluginType(editor, KEYS.ai)]: true,
+            [getSuggestionKey(data.id)]: data,
+            [KEYS.suggestion]: true,
           },
         });
       });
-    });
-  }
+    },
+    { split: isFirst },
+  );
 }
 
 const applied = new Map<string, string>();
@@ -105,10 +120,12 @@ export function applyGenerateTool(
     editor,
     content.slice(appliedContent.length),
     appliedContent === '',
+    part.toolCallId,
   );
 }
 
 export function resetGenerateTool() {
   applied.clear();
   output.clear();
+  suggestionData.clear();
 }

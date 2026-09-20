@@ -2,6 +2,11 @@ import type { ToolUIPart } from 'ai';
 import { NodeApi, type TRange } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Tools } from '../components/editor/agent/tools';
+import type { ChatMode } from '../components/editor/use-agent';
+
+export function getChatModeName(chatMode: ChatMode) {
+  return chatMode.charAt(0).toUpperCase() + chatMode.slice(1);
+}
 
 export function getSelectionText(
   editor: PlateEditor,

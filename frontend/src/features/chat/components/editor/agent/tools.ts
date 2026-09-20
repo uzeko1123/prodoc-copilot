@@ -1,7 +1,12 @@
+import { withAIBatch } from '@platejs/ai';
+import { AIChatPlugin } from '@platejs/ai/react';
+import { getTransientSuggestionKey } from '@platejs/suggestion';
+import type { ToolSet } from 'ai';
 import type { PlateEditor } from 'platejs/react';
-import type { Chat, ChatMessage } from '../use-agent';
+import type { Chat, ChatMessage, ChatMode } from '../use-agent';
 import {
   applyCommentTool,
+  cleanupCommentTool,
   commentTool,
   resetCommentTool,
   type CommentTool,
@@ -21,11 +26,18 @@ import {
 
 export type Tools = CommentTool & EditTool & GenerateTool;
 
-export const tools = {
-  comment: commentTool,
-  edit: editTool,
-  generate: generateTool,
-};
+export function getChatModeTools(chatMode: ChatMode): ToolSet {
+  switch (chatMode) {
+    case 'chat':
+      return {};
+    case 'comment':
+      return { comment: commentTool };
+    case 'suggestion':
+      return { edit: editTool, generate: generateTool };
+    default:
+      return { comment: commentTool, edit: editTool, generate: generateTool };
+  }
+}
 
 export function applyTools(
   editor: PlateEditor,
@@ -44,6 +56,27 @@ export function applyTools(
         applyGenerateTool(editor, chat, part);
         break;
     }
+  }
+}
+
+/**
+ * Runs once an assistant message finishes: commits streamed AI suggestions as
+ * persistent reviewable suggestions, drops orphaned streamed comments, and
+ * closes the AI menu without undoing anything.
+ */
+export function finalizeAITools(editor: PlateEditor) {
+  withAIBatch(editor, () => {
+    editor.tf.unsetNodes([getTransientSuggestionKey()], {
+      at: [],
+      mode: 'all',
+      match: (node) => !!node[getTransientSuggestionKey()],
+    });
+  });
+
+  cleanupCommentTool(editor);
+
+  if (editor.getOption(AIChatPlugin, 'toolName')) {
+    editor.getApi(AIChatPlugin).aiChat.hide({ undo: false });
   }
 }
 

@@ -13,16 +13,14 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from '@/components/shadcn/ui/popover';
-import { commentPlugin } from '@/features/comment/components/editor/plugins/comment-kit';
+import { useChatStore } from '@/features/chat/stores';
 import {
   AIChatPlugin,
   AIPlugin,
   useEditorChat,
   useLastAssistantMessage,
 } from '@platejs/ai/react';
-import { getTransientCommentKey } from '@platejs/comment';
 import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react';
-import { getTransientSuggestionKey } from '@platejs/suggestion';
 import { Command as CommandPrimitive } from 'cmdk';
 import { cn } from 'cn';
 import {
@@ -42,13 +40,7 @@ import {
   Wand,
   X,
 } from 'lucide-react';
-import {
-  isHotkey,
-  KEYS,
-  TextApi,
-  type NodeEntry,
-  type SlateEditor,
-} from 'platejs';
+import { isHotkey, type NodeEntry, type SlateEditor } from 'platejs';
 import {
   useEditorPlugin,
   useEditorRef,
@@ -147,30 +139,6 @@ export function AIMenu() {
 
   const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
 
-  React.useEffect(() => {
-    if (toolName !== 'edit' || mode !== 'chat' || isLoading) return;
-
-    let anchorNode = editor.api.node({
-      at: [],
-      reverse: true,
-      match: (n) => !!n[KEYS.suggestion] && !!n[getTransientSuggestionKey()],
-    });
-
-    if (!anchorNode) {
-      anchorNode = editor
-        .getApi(BlockSelectionPlugin)
-        .blockSelection.getNodes({ selectionFallback: true, sort: true })
-        .at(-1);
-    }
-
-    if (!anchorNode) return;
-
-    const block = editor.api.block({ at: anchorNode[1] });
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Position the popover from editor DOM after the edit stream completes.
-    setAnchorElement(editor.api.toDOMNode(block![0]!)!);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
-
   if (isLoading && mode === 'insert') return null;
 
   if (toolName === 'comment') return null;
@@ -223,6 +191,7 @@ export function AIMenu() {
                 }
                 if (isHotkey('enter')(e) && !e.shiftKey && !value) {
                   e.preventDefault();
+                  useChatStore.getState().setChatMode('auto');
                   void api.aiChat.submit(input);
                   setInput('');
                 }
@@ -286,6 +255,7 @@ const aiChatItems = {
     label: 'Comment',
     value: 'comment',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('comment');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/comment ${input}` : '/comment', {
@@ -299,6 +269,7 @@ const aiChatItems = {
     label: 'Continue writing',
     value: 'continueWrite',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/continueWrite ${input}` : '/continueWrite', {
@@ -322,6 +293,7 @@ const aiChatItems = {
     label: 'Emojify',
     value: 'emojify',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/emojify ${input}` : '/emojify', {
@@ -334,6 +306,7 @@ const aiChatItems = {
     label: 'Explain',
     value: 'explain',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/explain ${input}` : '/explain', {
@@ -346,6 +319,7 @@ const aiChatItems = {
     label: 'Fix spelling & grammar',
     value: 'fixSpelling',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/fixSpelling ${input}` : '/fixSpelling', {
@@ -358,6 +332,7 @@ const aiChatItems = {
     label: 'Generate Markdown sample',
     value: 'generateMarkdownSample',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(
@@ -375,6 +350,7 @@ const aiChatItems = {
     label: 'Generate MDX sample',
     value: 'generateMdxSample',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(
@@ -390,6 +366,7 @@ const aiChatItems = {
     label: 'Improve writing',
     value: 'improveWriting',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/improveWriting ${input}` : '/improveWriting', {
@@ -413,6 +390,7 @@ const aiChatItems = {
     label: 'Make longer',
     value: 'makeLonger',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/makeLonger ${input}` : '/makeLonger', {
@@ -425,6 +403,7 @@ const aiChatItems = {
     label: 'Make shorter',
     value: 'makeShorter',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/makeShorter ${input}` : '/makeShorter', {
@@ -445,6 +424,7 @@ const aiChatItems = {
     label: 'Simplify language',
     value: 'simplifyLanguage',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(
@@ -460,6 +440,7 @@ const aiChatItems = {
     label: 'Add a summary',
     value: 'summarize',
     onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/summarize ${input}` : '/summarize', {
@@ -613,8 +594,6 @@ export const AIMenuItems = ({
 };
 
 export function AILoadingBar() {
-  const editor = useEditorRef();
-
   const toolName = usePluginOption(AIChatPlugin, 'toolName');
   const chatStatus = usePluginOptions(
     AIChatPlugin,
@@ -625,23 +604,6 @@ export function AILoadingBar() {
   const { api } = useEditorPlugin(AIChatPlugin);
 
   const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
-
-  const handleComments = (type: 'accept' | 'reject') => {
-    if (type === 'accept') {
-      editor.tf.unsetNodes([getTransientCommentKey()], {
-        at: [],
-        match: (n) => TextApi.isText(n) && !!n[KEYS.comment],
-      });
-    }
-
-    if (type === 'reject') {
-      editor
-        .getTransforms(commentPlugin)
-        .comment.unsetMark({ transient: true });
-    }
-
-    api.aiChat.hide();
-  };
 
   useHotkeys('esc', () => {
     api.aiChat.stop();
@@ -676,38 +638,6 @@ export function AILoadingBar() {
             Esc
           </kbd>
         </Button>
-      </div>
-    );
-  }
-
-  if (toolName === 'comment' && chatStatus === 'ready') {
-    return (
-      <div
-        className={cn(
-          'border-border/50 bg-popover text-muted-foreground absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-0 rounded-xl border p-1 text-sm shadow-xl backdrop-blur-sm',
-          'p-3',
-        )}
-      >
-        {/* Header with controls */}
-        <div className="flex w-full items-center justify-between gap-3">
-          <div className="flex items-center gap-5">
-            <Button
-              size="sm"
-              disabled={isLoading}
-              onClick={() => handleComments('accept')}
-            >
-              Accept
-            </Button>
-
-            <Button
-              size="sm"
-              disabled={isLoading}
-              onClick={() => handleComments('reject')}
-            >
-              Reject
-            </Button>
-          </div>
-        </div>
       </div>
     );
   }

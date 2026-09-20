@@ -6,9 +6,17 @@ import { AIChatPlugin } from '@platejs/ai/react';
 import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
-import { applyTools, resetTools, type Tools } from './agent/tools';
+import {
+  applyTools,
+  finalizeAITools,
+  resetTools,
+  type Tools,
+} from './agent/tools';
 // import { createAgentTransport } from './agent/transport';
 import { createAgentTransport } from './agent/transport-openai';
+
+export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
+export type ChatMode = (typeof chatModes)[number];
 
 type MetaData = {
   selectionText?: string;
@@ -52,6 +60,7 @@ export const useAgent = () => {
 
     finishedChatMessageIdRef.current = lastChatMessage.id;
     editor.getApi(AIChatPlugin).aiChat.stop();
+    finalizeAITools(editor);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, chat.status, chat.messages, chat.error]);
 

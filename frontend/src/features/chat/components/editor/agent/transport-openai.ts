@@ -12,7 +12,7 @@ import {
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../use-agent';
-import { tools } from './tools';
+import { getChatModeTools } from './tools';
 
 const BASE_URL = 'https://open.bigmodel.cn/api/paas/v4';
 
@@ -60,6 +60,8 @@ export function createAgentTransport(editor: PlateEditor) {
         });
       }
       const chatMessages = useChatStore.getState().chatMessages;
+      const chatMode = useChatStore.getState().chatMode;
+      const tools = getChatModeTools(chatMode);
 
       const res = streamText({
         model: createOpenAICompatible({
@@ -71,13 +73,13 @@ export function createAgentTransport(editor: PlateEditor) {
         system: SYSTEM_PROMPT,
         messages: await convertToModelMessages(
           createChatMessagesWithCtx(chatMessages, ctx),
-          { tools, ignoreIncompleteToolCalls: true },
+          { tools, ignoreIncompleteToolCalls: true }, // All Tools
         ),
         tools,
         toolChoice:
           ctx.toolName && ctx.toolName in tools
             ? {
-                type: 'tool' as const,
+                type: 'tool',
                 toolName: ctx.toolName as keyof typeof tools,
               }
             : undefined,

@@ -42,7 +42,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import type { AIToolName } from '@platejs/ai';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
@@ -54,40 +53,31 @@ import {
 } from 'lucide-react';
 import {
   useEditorRef,
-  useEditorSelection,
-  usePluginOption,
+  useEditorSelector,
+  usePluginOptions,
 } from 'platejs/react';
 import * as React from 'react';
-import { getSelectionText } from '../lib/utils';
+import { getChatModeName, getSelectionText } from '../lib/utils';
 import { useChatStore } from '../stores';
-import { Context } from './context';
+import { Context as ContextPrimitive } from './context';
+import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
-
-const TOOL_OPTIONS: { label: string; value: AIToolName }[] = [
-  { label: 'Chat', value: null },
-  { label: 'Comment', value: 'comment' },
-  { label: 'Edit', value: 'edit' },
-  { label: 'Generate', value: 'generate' },
-];
 
 export function Chat() {
   const editor = useEditorRef();
-  const selection = useEditorSelection();
-  const selectionText = getSelectionText(editor, selection);
 
+  const chatMode = useChatStore((state) => state.chatMode);
+  const setChatMode = useChatStore((state) => state.setChatMode);
   const chatMessages = useChatStore((state) => state.chatMessages);
   const setChatMessages = useChatStore((state) => state.setChatMessages);
 
-  const { status, error } = usePluginOption(AIChatPlugin, 'chat');
+  const status = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);
+  const error = usePluginOptions(AIChatPlugin, (o) => o.chat?.error);
   const isBusy = status === 'submitted' || status === 'streaming';
 
   const [input, setInput] = React.useState('');
-  const [toolName, setToolName] = React.useState<AIToolName>(null);
-  const activeTool =
-    TOOL_OPTIONS.find((option) => option.value === toolName) ?? TOOL_OPTIONS[0];
 
-  const onSubmit = () =>
-    editor.getApi(AIChatPlugin).aiChat.submit(input, { toolName });
+  const onSubmit = () => editor.getApi(AIChatPlugin).aiChat.submit(input);
 
   return (
     <MessageScrollerProvider>
@@ -160,7 +150,7 @@ export function Chat() {
           )}
         </CardContent>
         <CardFooter className="flex-col gap-2 rounded-none">
-          <Context variant="chat">{selectionText}</Context>
+          <SelectionContext />
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -190,13 +180,13 @@ export function Chat() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
-                      aria-label="Select tool"
+                      aria-label="Select mode"
                       type="button"
                       size="xs"
                       variant="outline"
                     >
                       <WrenchIcon />
-                      {activeTool.label}
+                      {getChatModeName(chatMode)}
                       <ChevronDownIcon className="opacity-50" />
                     </InputGroupButton>
                   </DropdownMenuTrigger>
@@ -206,21 +196,12 @@ export function Chat() {
                     className="w-40"
                   >
                     <DropdownMenuRadioGroup
-                      value={toolName ?? 'chat'}
-                      onValueChange={(value) =>
-                        setToolName(
-                          value === 'chat'
-                            ? null
-                            : (value as Exclude<AIToolName, null>),
-                        )
-                      }
+                      value={chatMode}
+                      onValueChange={(value) => setChatMode(value as ChatMode)}
                     >
-                      {TOOL_OPTIONS.map((option) => (
-                        <DropdownMenuRadioItem
-                          key={option.label}
-                          value={option.value ?? 'chat'}
-                        >
-                          {option.label}
+                      {chatModes.map((chatMode) => (
+                        <DropdownMenuRadioItem key={chatMode} value={chatMode}>
+                          {getChatModeName(chatMode as ChatMode)}
                         </DropdownMenuRadioItem>
                       ))}
                     </DropdownMenuRadioGroup>
@@ -243,4 +224,12 @@ export function Chat() {
       </Card>
     </MessageScrollerProvider>
   );
+}
+
+function SelectionContext() {
+  const selectionText = useEditorSelector(
+    (editor) => getSelectionText(editor, editor.selection),
+    [],
+  );
+  return <ContextPrimitive variant="chat" content={selectionText} />;
 }
