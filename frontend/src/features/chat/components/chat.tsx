@@ -49,6 +49,7 @@ import {
   CircleAlertIcon,
   MessageCircleDashedIcon,
   RotateCwIcon,
+  SquareIcon,
   WrenchIcon,
 } from 'lucide-react';
 import {
@@ -207,16 +208,30 @@ export function Chat() {
                     </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <InputGroupButton
-                  type="submit"
-                  variant="default"
-                  size="icon-sm"
-                  disabled={isBusy}
-                  className="ml-auto"
-                >
-                  <ArrowUpIcon />
-                  <span className="sr-only">Send</span>
-                </InputGroupButton>
+                {isBusy ? (
+                  <InputGroupButton
+                    type="button"
+                    variant="default"
+                    size="icon-sm"
+                    aria-label="Stop"
+                    className="ml-auto"
+                    onClick={() => editor.getApi(AIChatPlugin).aiChat.stop()}
+                  >
+                    <SquareIcon className="fill-current" />
+                    <span className="sr-only">Stop</span>
+                  </InputGroupButton>
+                ) : (
+                  <InputGroupButton
+                    type="submit"
+                    variant="default"
+                    size="icon-sm"
+                    disabled={isBusy}
+                    className="ml-auto"
+                  >
+                    <ArrowUpIcon />
+                    <span className="sr-only">Send</span>
+                  </InputGroupButton>
+                )}
               </InputGroupAddon>
             </InputGroup>
           </form>

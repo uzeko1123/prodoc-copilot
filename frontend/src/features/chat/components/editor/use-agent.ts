@@ -6,12 +6,7 @@ import { AIChatPlugin } from '@platejs/ai/react';
 import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
-import {
-  applyTools,
-  finalizeAITools,
-  resetTools,
-  type Tools,
-} from './agent/tools';
+import { applyTools, resetTools, type Tools } from './agent/tools';
 // import { createAgentTransport } from './agent/transport';
 import { createAgentTransportOpenAI } from './agent/transport-openai';
 
@@ -62,7 +57,6 @@ export const useAgent = () => {
     if (finishedChatMessageIdRef.current === lastChatMessage.id) return;
     finishedChatMessageIdRef.current = lastChatMessage.id;
     editor.getApi(AIChatPlugin).aiChat.stop();
-    finalizeAITools(editor);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, chat.status, chat.messages, chat.error]);
 
