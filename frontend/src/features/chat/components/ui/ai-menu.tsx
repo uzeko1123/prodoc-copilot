@@ -111,8 +111,8 @@ export function AIMenu() {
   React.useEffect(() => {
     if (chatStatus !== 'submitted') return;
 
-    api.aiChat.hide({ undo: false });
-  }, [api, chatStatus]);
+    editor.setOption(AIChatPlugin, 'open', false);
+  }, [chatStatus, editor]);
 
   if (isLoading) return null;
 
