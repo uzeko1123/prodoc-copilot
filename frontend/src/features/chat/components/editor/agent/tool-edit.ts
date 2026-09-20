@@ -40,13 +40,15 @@ export function applyEditPrimitive(
 }
 
 const applied = new Map<string, string>();
+const output = new Set<string>();
 
 export function applyEditTool(
   editor: PlateEditor,
   chat: Chat,
   part: ToolUIPart<EditTool>,
 ) {
-  if (part.state === 'input-available') {
+  if (part.state === 'input-available' && !output.has(part.toolCallId)) {
+    output.add(part.toolCallId);
     chat.addToolOutput({
       tool: 'edit',
       toolCallId: part.toolCallId,
@@ -56,15 +58,17 @@ export function applyEditTool(
 
   const content = part.input?.content;
   if (typeof content !== 'string') return;
-
   let appliedContent = applied.get(part.toolCallId) ?? '';
   if (!content.startsWith(appliedContent)) appliedContent = '';
   if (content === appliedContent) return;
   applied.set(part.toolCallId, content);
 
-  const isFirst = appliedContent === '';
-
   editor.setOption(AIChatPlugin, 'mode', 'chat');
   editor.setOption(AIChatPlugin, 'toolName', 'edit');
-  applyEditPrimitive(editor, isFirst, content);
+  applyEditPrimitive(editor, appliedContent === '', content);
+}
+
+export function resetEditTool() {
+  applied.clear();
+  output.clear();
 }

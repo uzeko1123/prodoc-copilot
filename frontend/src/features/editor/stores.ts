@@ -1,7 +1,8 @@
 import { value } from '@/mock/editor-value';
 import type { Value } from 'platejs';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { createDebouncedJSONStorage } from 'zustand-debounce';
+import { devtools, persist } from 'zustand/middleware';
 
 type EditorState = {
   value: Value;
@@ -17,7 +18,7 @@ export const useEditorStore = create<EditorState>()(
       }),
       {
         name: 'editor-storage',
-        storage: createJSONStorage(() => localStorage),
+        storage: createDebouncedJSONStorage('localStorage'),
         partialize: (state) => ({ value: state.value }),
       },
     ),

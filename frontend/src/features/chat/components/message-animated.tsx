@@ -12,6 +12,7 @@ import { Spinner } from '@/components/shadcn/ui/spinner';
 import type { MessageAnimationPreset } from '@/lib/shadcn/message-animations';
 import { MESSAGE_ANIMATIONS } from '@/lib/shadcn/message-animations';
 import type { ToolUIPart } from 'ai';
+import { cn } from 'cn';
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -27,11 +28,10 @@ import { Context } from './context';
 import type { Tools } from './editor/agent/tools';
 import type { ChatMessage } from './editor/use-agent';
 import { AIChatEditor } from './ui/ai-chat-editor';
-import { cn } from 'cn';
 
 const MotionMessageScrollerItem = motion.create(MessageScrollerItem);
 
-function MessageAnimated({
+const MessageAnimated = React.memo(function MessageAnimated({
   message,
   animationPreset = MESSAGE_ANIMATIONS['slide-up'],
   assistantVariant = 'ghost',
@@ -84,9 +84,9 @@ function MessageAnimated({
       />
     </MotionMessageScrollerItem>
   );
-}
+});
 
-function MessageAnimatedRow({
+const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
   message,
   assistantVariant,
   userVariant,
@@ -105,9 +105,10 @@ function MessageAnimatedRow({
               <Bubble key={index} variant={userVariant}>
                 <BubbleContent className="space-y-2">
                   {message.metadata?.selectionText && (
-                    <Context variant="message">
-                      {message.metadata.selectionText}
-                    </Context>
+                    <Context
+                      variant="message"
+                      content={message.metadata.selectionText}
+                    />
                   )}
                   {getParagraphs(part.text).map((paragraph, paragraphIndex) => (
                     <p
@@ -219,6 +220,6 @@ function MessageAnimatedRow({
       </MessageContent>
     </Message>
   );
-}
+});
 
 export { MessageAnimated };

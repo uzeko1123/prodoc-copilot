@@ -76,13 +76,15 @@ export function applyGeneratePrimitive(
 }
 
 const applied = new Map<string, string>();
+const output = new Set<string>();
 
 export function applyGenerateTool(
   editor: PlateEditor,
   chat: Chat,
   part: ToolUIPart<GenerateTool>,
 ) {
-  if (part.state === 'input-available') {
+  if (part.state === 'input-available' && !output.has(part.toolCallId)) {
+    output.add(part.toolCallId);
     chat.addToolOutput({
       tool: 'generate',
       toolCallId: part.toolCallId,
@@ -92,16 +94,21 @@ export function applyGenerateTool(
 
   const content = part.input?.content;
   if (typeof content !== 'string') return;
-
   let appliedContent = applied.get(part.toolCallId) ?? '';
   if (!content.startsWith(appliedContent)) appliedContent = '';
   if (content === appliedContent) return;
   applied.set(part.toolCallId, content);
 
-  const chunk = content.slice(appliedContent.length);
-  const isFirst = appliedContent === '';
-
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'generate');
-  applyGeneratePrimitive(editor, chunk, isFirst);
+  applyGeneratePrimitive(
+    editor,
+    content.slice(appliedContent.length),
+    appliedContent === '',
+  );
+}
+
+export function resetGenerateTool() {
+  applied.clear();
+  output.clear();
 }

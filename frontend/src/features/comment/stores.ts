@@ -1,6 +1,7 @@
 import { discussionsData } from '@/mock/comment-discussions';
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { createDebouncedJSONStorage } from 'zustand-debounce';
+import { devtools, persist } from 'zustand/middleware';
 import type { TDiscussion } from './components/editor/plugins/discussion-kit';
 
 type CommentState = {
@@ -17,7 +18,7 @@ export const useCommentStore = create<CommentState>()(
       }),
       {
         name: 'comment-storage',
-        storage: createJSONStorage(() => localStorage),
+        storage: createDebouncedJSONStorage('localStorage'),
         partialize: (state) => ({ discussions: state.discussions }),
       },
     ),

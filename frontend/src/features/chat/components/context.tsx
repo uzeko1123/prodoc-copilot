@@ -5,16 +5,15 @@ import {
 } from '@/components/shadcn/ui/tooltip';
 import { cn } from 'cn';
 import { QuoteIcon } from 'lucide-react';
-import * as React from 'react';
 
 export function Context({
-  children,
+  content,
   variant,
 }: {
-  children: React.ReactNode;
+  content: string;
   variant: 'chat' | 'message';
 }) {
-  if (!children) return;
+  if (!content) return;
 
   return (
     <div className="flex w-full gap-1 rounded-lg border p-2">
@@ -30,11 +29,11 @@ export function Context({
               variant === 'chat' ? 'line-clamp-3' : 'line-clamp-1',
             )}
           >
-            {children}
+            {content}
           </p>
         </TooltipTrigger>
         <TooltipContent side="top">
-          <p className="whitespace-pre-wrap">{children}</p>
+          <p className="whitespace-pre-wrap">{content}</p>
         </TooltipContent>
       </Tooltip>
       <QuoteIcon

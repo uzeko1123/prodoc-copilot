@@ -104,19 +104,23 @@ function applyCommentFinishedPrimitive(editor: PlateEditor) {
 }
 
 const applied = new Set<string>();
+const output = new Set<string>();
 
 export function applyCommentTool(
   editor: PlateEditor,
   chat: Chat,
   part: ToolUIPart<CommentTool>,
 ) {
-  if (part.state !== 'input-available') return;
-  chat.addToolOutput({
-    tool: 'comment',
-    toolCallId: part.toolCallId,
-    output: part.input.comment,
-  });
+  if (part.state === 'input-available' && !output.has(part.toolCallId)) {
+    output.add(part.toolCallId);
+    chat.addToolOutput({
+      tool: 'comment',
+      toolCallId: part.toolCallId,
+      output: part.input.comment,
+    });
+  }
 
+  if (part.state !== 'input-available') return;
   if (applied.has(part.toolCallId)) return;
   applied.add(part.toolCallId);
 
@@ -124,4 +128,9 @@ export function applyCommentTool(
   editor.setOption(AIChatPlugin, 'toolName', 'comment');
   applyCommentPrimitive(editor, part.input);
   applyCommentFinishedPrimitive(editor);
+}
+
+export function resetCommentTool() {
+  applied.clear();
+  output.clear();
 }

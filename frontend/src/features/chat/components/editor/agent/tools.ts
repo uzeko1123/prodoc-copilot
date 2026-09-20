@@ -3,12 +3,19 @@ import type { Chat, ChatMessage } from '../use-agent';
 import {
   applyCommentTool,
   commentTool,
+  resetCommentTool,
   type CommentTool,
 } from './tool-comment';
-import { applyEditTool, editTool, type EditTool } from './tool-edit';
+import {
+  applyEditTool,
+  editTool,
+  resetEditTool,
+  type EditTool,
+} from './tool-edit';
 import {
   applyGenerateTool,
   generateTool,
+  resetGenerateTool,
   type GenerateTool,
 } from './tool-generate';
 
@@ -38,4 +45,10 @@ export function applyTools(
         break;
     }
   }
+}
+
+export function resetTools() {
+  resetCommentTool();
+  resetEditTool();
+  resetGenerateTool();
 }

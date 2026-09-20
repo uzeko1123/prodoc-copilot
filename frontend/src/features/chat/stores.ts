@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
+import { createDebouncedJSONStorage } from 'zustand-debounce';
+import { devtools, persist } from 'zustand/middleware';
 // import type { ChatMessage } from './components/editor/use-chat';
 import type { ChatMessage } from './components/editor/use-agent';
 
@@ -16,19 +17,27 @@ export const useChatStore = create<ChatState>()(
         chatMessages: [],
         setChatMessages: (chatMessages) => set({ chatMessages }),
         upsertChatMessage: (chatMessage) =>
-          set((state) => ({
-            chatMessages: state.chatMessages.some(
-              (m) => m.id === chatMessage.id,
-            )
-              ? state.chatMessages.map((m) =>
-                  m.id === chatMessage.id ? chatMessage : m,
-                )
-              : [...state.chatMessages, chatMessage],
-          })),
+          set((state) => {
+            const chatMessageIndex = state.chatMessages.findIndex(
+              (message) => message.id === chatMessage.id,
+            );
+            if (chatMessageIndex === -1) {
+              return { chatMessages: [...state.chatMessages, chatMessage] };
+            }
+            if (state.chatMessages[chatMessageIndex] === chatMessage) {
+              return state;
+            }
+            return {
+              chatMessages: state.chatMessages.with(
+                chatMessageIndex,
+                chatMessage,
+              ),
+            };
+          }),
       }),
       {
         name: 'chat-storage',
-        storage: createJSONStorage(() => localStorage),
+        storage: createDebouncedJSONStorage('localStorage'),
         partialize: (state) => ({
           chatMessages: state.chatMessages,
         }),
