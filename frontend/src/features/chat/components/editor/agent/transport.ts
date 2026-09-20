@@ -6,7 +6,6 @@ import {
   DefaultChatTransport,
   streamText,
   toUIMessageStream,
-  type LanguageModel,
   type ToolChoice,
   type ToolSet,
 } from 'ai';
@@ -14,6 +13,7 @@ import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../use-agent';
 import instructions from './instructions.md?raw';
+import { model } from './model-openai';
 import { getChatModeTools, tools } from './tools';
 
 type Context = {
@@ -22,10 +22,7 @@ type Context = {
   toolName: string | null;
 };
 
-export function createAgentTransport(
-  editor: PlateEditor,
-  model: LanguageModel,
-) {
+export function createAgentTransport(editor: PlateEditor) {
   return new DefaultChatTransport({
     fetch: (async (_input, init) => {
       const { ctx, messages } = JSON.parse(init?.body as string) as {

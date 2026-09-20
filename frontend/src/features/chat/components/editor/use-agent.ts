@@ -7,8 +7,7 @@ import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
 import { applyTools, resetTools, type Tools } from './agent/tools';
-// import { createAgentTransport } from './agent/transport';
-import { createAgentTransportOpenAI } from './agent/transport-openai';
+import { createAgentTransport } from './agent/transport';
 
 export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
 export type ChatMode = (typeof chatModes)[number];
@@ -24,10 +23,7 @@ export type Chat = UseChatHelpers<ChatMessage>;
 
 export const useAgent = () => {
   const editor = useEditorRef();
-  const transport = React.useMemo(
-    () => createAgentTransportOpenAI(editor),
-    [editor],
-  );
+  const transport = React.useMemo(() => createAgentTransport(editor), [editor]);
   const chat = useChat<ChatMessage>({
     transport,
     sendAutomaticallyWhen: ({ messages }) => {
