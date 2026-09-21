@@ -56,7 +56,7 @@ export function FixedToolbarButtons() {
   const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
 
-  const _hideMainToolbar = true;
+  const _hideMainToolbar = false;
 
   return (
     <div className="flex w-full">

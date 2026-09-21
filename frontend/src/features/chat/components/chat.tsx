@@ -77,7 +77,7 @@ export function Chat() {
   return (
     <MessageScrollerProvider autoScroll scrollEdgeThreshold={80}>
       <Card className="flex h-full flex-col gap-0 rounded-none ring-0">
-        <CardContent className="scrollbar-thumb-border flex-1 scrollbar-thin overflow-hidden p-0">
+        <CardContent className="flex-1 overflow-hidden p-0">
           {chatMessages.length === 0 ? (
             <Empty className="h-full">
               <EmptyHeader>
@@ -93,7 +93,7 @@ export function Chat() {
             </Empty>
           ) : (
             <MessageScroller>
-              <MessageScrollerViewport>
+              <MessageScrollerViewport className="data-autoscrolling:[scrollbar-color:var(--color-border)_transparent]!">
                 <MessageScrollerContent
                   aria-busy={isBusy}
                   className="p-(--card-spacing)"
@@ -186,8 +186,9 @@ export function Chat() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <div className="grow"></div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild className="ml-auto">
+                  <DropdownMenuTrigger asChild>
                     <InputGroupButton
                       aria-label="Select mode"
                       type="button"

@@ -27,7 +27,7 @@ export function Find() {
   const search = usePluginOption(FindReplacePlugin, 'search');
 
   return (
-    <div className="scrollbar-thumb-border flex h-full scrollbar-thin flex-col gap-2 overflow-y-auto p-2">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto p-2">
       <Input
         value={search}
         onChange={(e) => {

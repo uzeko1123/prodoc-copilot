@@ -12,10 +12,7 @@ export function Editor() {
     <div className="h-full">
       <EditorValueSync />
       <EditorContainer>
-        <EditorPrimitive
-          ref={editorScrollRef}
-          className="scrollbar-thumb-border scrollbar-thin"
-        />
+        <EditorPrimitive ref={editorScrollRef} />
       </EditorContainer>
     </div>
   );

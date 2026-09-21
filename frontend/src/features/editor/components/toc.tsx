@@ -118,10 +118,7 @@ export function ToC() {
   };
 
   return (
-    <nav
-      {...navProps}
-      className="scrollbar-thumb-border h-full scroll-py-10 scrollbar-thin overflow-y-auto p-2"
-    >
+    <nav {...navProps} className="h-full scroll-py-10 overflow-y-auto p-2">
       {headingListFiltered.length === 0 && (
         <Empty className="h-full">
           <EmptyHeader>

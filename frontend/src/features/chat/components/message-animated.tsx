@@ -176,13 +176,21 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                   </CollapsibleTrigger>
                   <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
                     {toolPart.state === 'input-available' ? (
-                      <pre className="overflow-auto font-mono">
-                        {JSON.stringify(toolPart.input, undefined, 2)}
-                      </pre>
+                      <AIChatEditor
+                        content={
+                          '```json\n' +
+                          JSON.stringify(toolPart.input, undefined, 2).trim() +
+                          '\n```'
+                        }
+                      />
                     ) : toolPart.state === 'output-available' ? (
-                      <pre className="overflow-auto font-mono">
-                        {JSON.stringify(toolPart.output, undefined, 2)}
-                      </pre>
+                      <AIChatEditor
+                        content={
+                          '```json\n' +
+                          JSON.stringify(toolPart.output, undefined, 2).trim() +
+                          '\n```'
+                        }
+                      />
                     ) : toolPart.state === 'output-error' ? (
                       getParagraphs(toolPart.errorText).map(
                         (paragraph, paragraphIndex) => (
