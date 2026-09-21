@@ -11,6 +11,7 @@ import {
   TabsTrigger,
 } from '@/components/shadcn/ui/tabs';
 import { Chat } from '@/features/chat/components/chat';
+import { SettingsDialog } from '@/features/chat/components/editor/settings-dialog';
 import { Comment } from '@/features/comment/components/comment';
 import { Editor } from '@/features/editor/components/editor';
 import { EditorKit } from '@/features/editor/components/editor/editor-kit';
@@ -231,6 +232,8 @@ function Workbench() {
           )}
         </ResizablePanelGroup>
       </Plate>
+
+      <SettingsDialog />
     </div>
   );
 }

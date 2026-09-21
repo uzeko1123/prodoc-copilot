@@ -53,7 +53,6 @@ import * as React from 'react';
 import { getChatModeName, getSelectionText } from '../lib/utils';
 import { useChatStore } from '../stores';
 import { Context as ContextPrimitive } from './context';
-import { SettingsDialog } from './editor/settings-dialog';
 import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
 
@@ -249,7 +248,6 @@ export function Chat() {
           </form>
         </CardFooter>
       </Card>
-      <SettingsDialog />
     </MessageScrollerProvider>
   );
 }
