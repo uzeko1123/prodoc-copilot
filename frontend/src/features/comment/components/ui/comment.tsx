@@ -65,6 +65,7 @@ export type TComment = {
   isEdited: boolean;
   userId: string;
   createdByAI?: boolean;
+  editedAfterAI?: boolean;
 };
 
 export function Comment(props: {
