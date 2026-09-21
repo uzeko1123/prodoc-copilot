@@ -6,7 +6,7 @@ import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import { KEYS, nanoid, NodeApi, TextApi, type TNode } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import type { Chat } from '../use-agent';
+import type { Chat } from '../components/editor/use-agent';
 
 type CommentToolIO = {
   blockId: string;

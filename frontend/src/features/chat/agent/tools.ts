@@ -1,6 +1,10 @@
 import type { ToolSet } from 'ai';
 import type { PlateEditor } from 'platejs/react';
-import type { Chat, ChatMessage, ChatMode } from '../use-agent';
+import type {
+  Chat,
+  ChatMessage,
+  ChatMode,
+} from '../components/editor/use-agent';
 import {
   applyCommentTool,
   commentTool,

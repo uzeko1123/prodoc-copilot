@@ -23,9 +23,9 @@ import {
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import * as React from 'react';
+import type { Tools } from '../agent/tools';
 import { formatTokens, getParagraphs, getToolPartName } from '../lib/utils';
 import { Context } from './context';
-import type { Tools } from './editor/agent/tools';
 import type { ChatMessage } from './editor/use-agent';
 import { AIChatEditor } from './ui/ai-chat-editor';
 

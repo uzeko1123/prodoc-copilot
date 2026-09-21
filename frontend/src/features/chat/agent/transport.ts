@@ -11,7 +11,7 @@ import {
 } from 'ai';
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import type { ChatMessage } from '../use-agent';
+import type { ChatMessage } from '../components/editor/use-agent';
 import { getInstructions } from './instructions';
 import { model } from './model-openai';
 import { getChatModeTools, tools } from './tools';

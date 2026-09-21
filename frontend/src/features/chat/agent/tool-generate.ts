@@ -8,7 +8,7 @@ import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import cloneDeep from 'lodash/cloneDeep.js';
 import { ElementApi, getPluginType, KEYS, PathApi } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import type { Chat } from '../use-agent';
+import type { Chat } from '../components/editor/use-agent';
 import { applyGenerateSuggestion } from './tool-suggestion';
 
 type GenerateToolIO = { content: string };
