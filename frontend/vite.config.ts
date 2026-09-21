@@ -42,6 +42,31 @@ export default defineConfig({
   define: {
     __VERSION__: JSON.stringify(version),
   },
+  // TODO
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom/client',
+      'react/jsx-runtime',
+      'platejs',
+      'platejs/react',
+      '@platejs/ai',
+      '@platejs/ai/react',
+      '@platejs/markdown',
+      '@ai-sdk/react',
+      'ai',
+      '@ai-sdk/openai-compatible',
+      'zustand',
+      '@tanstack/react-router',
+      '@tanstack/react-query',
+      'lucide-react',
+      'motion/react',
+      'lowlight',
+      'date-fns',
+      'recharts',
+      'lodash/cloneDeep.js',
+    ],
+  },
   envPrefix: ['VITE_'],
   resolve: {
     alias: {
