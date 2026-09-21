@@ -30,6 +30,7 @@ import {
   MessageScrollerProvider,
   MessageScrollerViewport,
 } from '@/components/shadcn/ui/message-scroller';
+import { Spinner } from '@/components/shadcn/ui/spinner';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
@@ -74,7 +75,7 @@ export function Chat() {
   const [input, setInput] = React.useState('');
 
   return (
-    <MessageScrollerProvider>
+    <MessageScrollerProvider autoScroll scrollEdgeThreshold={80}>
       <Card className="flex h-full flex-col gap-0 rounded-none ring-0">
         <CardContent className="scrollbar-thumb-border flex-1 scrollbar-thin overflow-hidden p-0">
           {chatMessages.length === 0 ? (
@@ -101,13 +102,19 @@ export function Chat() {
                     <MessageAnimated
                       key={message.id}
                       message={message}
-                      scrollAnchor={message.role === 'user'}
+                      scrollAnchor={false}
                     />
                   ))}
                   {chatStatus === 'error' && (
                     <p className="text-destructive whitespace-pre-wrap">
                       {chatError?.message || 'Unknown error.'}
                     </p>
+                  )}
+                  {isBusy && (
+                    <div className="text-muted-foreground mb-1 flex items-center gap-2 text-sm font-medium">
+                      <Spinner className="size-3.5" />
+                      <span className="shimmer">Working . . .</span>
+                    </div>
                   )}
                 </MessageScrollerContent>
               </MessageScrollerViewport>

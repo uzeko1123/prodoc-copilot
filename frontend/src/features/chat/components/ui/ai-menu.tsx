@@ -459,6 +459,9 @@ export function AILoadingBar() {
 
   if (!isLoading) return null;
 
+  const _hide = true;
+  if (_hide) return null;
+
   return (
     <div
       className={cn(

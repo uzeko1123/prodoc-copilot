@@ -176,11 +176,11 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                   </CollapsibleTrigger>
                   <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
                     {toolPart.state === 'input-available' ? (
-                      <pre className="font-mono">
+                      <pre className="overflow-auto font-mono">
                         {JSON.stringify(toolPart.input, undefined, 2)}
                       </pre>
                     ) : toolPart.state === 'output-available' ? (
-                      <pre className="font-mono">
+                      <pre className="overflow-auto font-mono">
                         {JSON.stringify(toolPart.output, undefined, 2)}
                       </pre>
                     ) : toolPart.state === 'output-error' ? (
@@ -194,9 +194,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                           </p>
                         ),
                       )
-                    ) : (
-                      <p>Executing...</p>
-                    )}
+                    ) : null}
                   </CollapsibleContent>
                 </Collapsible>
               </>
@@ -204,7 +202,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
           }
         })}
         {message.metadata?.usage && (
-          <div className="text-muted-foreground flex w-full items-center gap-1.5 text-xs">
+          <div className="text-muted-foreground flex w-full items-center gap-3 text-xs">
             {message.metadata.usage.inputTokens && (
               <span className="flex items-center gap-0.5">
                 <ArrowUpIcon className="size-3" />

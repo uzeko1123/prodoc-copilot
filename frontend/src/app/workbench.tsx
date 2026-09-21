@@ -86,7 +86,7 @@ function Workbench() {
   });
 
   const _hideFindTab = false;
-  const _hideRightPanel = true;
+  const _hideRightPanel = false;
 
   return (
     <div className="flex h-dvh flex-col">
