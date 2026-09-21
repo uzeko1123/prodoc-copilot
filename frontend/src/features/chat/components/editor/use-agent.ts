@@ -26,9 +26,6 @@ export const useAgent = () => {
   const transport = React.useMemo(() => createAgentTransport(editor), [editor]);
   const chat = useChat<ChatMessage>({
     transport,
-    // TODO
-    // 每个模型 chunk 都同步驱动渲染级联（zustand 全列表 + Plate 反序列化），
-    // 本地 streamText 密集 chunk 会触发嵌套更新上限。100ms => 最多 10 次/秒 UI 更新。
     throttle: 100,
     sendAutomaticallyWhen: ({ messages }) => {
       const lastPart = messages.at(-1)?.parts.at(-1);

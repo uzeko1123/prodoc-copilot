@@ -56,7 +56,7 @@ export function FixedToolbarButtons() {
   const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
 
-  const _hideMainToolbar = false;
+  const _hideMainToolbar = true;
 
   return (
     <div className="flex w-full">
@@ -68,21 +68,21 @@ export function FixedToolbarButtons() {
         )}
       </ToolbarGroup>
 
+      <ToolbarGroup>
+        <UndoToolbarButton />
+        <RedoToolbarButton />
+      </ToolbarGroup>
+
+      <ToolbarGroup>
+        <AIToolbarButton tooltip="AI commands">
+          <WandSparklesIcon />
+        </AIToolbarButton>
+      </ToolbarGroup>
+
       <div className="grow" />
 
       {!_hideMainToolbar && !readOnly && (
         <>
-          <ToolbarGroup>
-            <UndoToolbarButton />
-            <RedoToolbarButton />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
-            <AIToolbarButton tooltip="AI commands">
-              <WandSparklesIcon />
-            </AIToolbarButton>
-          </ToolbarGroup>
-
           <ToolbarGroup>
             <ExportToolbarButton>
               <ArrowUpToLineIcon />
