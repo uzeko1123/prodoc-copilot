@@ -13,10 +13,6 @@ export const AIChatEditor = React.memo(function AIChatEditor({
 }) {
   const aiEditor = usePlateEditor({
     plugins: BaseEditorKit,
-    // TODO
-    // 静态只读渲染无需导航反馈；避免流式时元素对象重建引发的
-    // useNavigationHighlight -> useEditorSelector atom 重建级联
-    navigationFeedback: false,
   });
 
   const value = useAIChatEditor(aiEditor, content);

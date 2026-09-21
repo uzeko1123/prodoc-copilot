@@ -143,8 +143,14 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                   Reasoning
                   <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                 </CollapsibleTrigger>
-                <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
-                  <AIChatEditor content={part.text} />
+                <CollapsibleContent>
+                  <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
+                    <AIChatEditor content={part.text} />
+                  </div>
+                  <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs font-medium">
+                    Collapse
+                    <ChevronDownIcon className="size-3.5 rotate-180" />
+                  </CollapsibleTrigger>
                 </CollapsibleContent>
               </Collapsible>
             );
@@ -174,35 +180,49 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                     {getToolPartName(toolPart)}
                     <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                   </CollapsibleTrigger>
-                  <CollapsibleContent className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
-                    {toolPart.state === 'input-available' ? (
-                      <AIChatEditor
-                        content={
-                          '```json\n' +
-                          JSON.stringify(toolPart.input, undefined, 2).trim() +
-                          '\n```'
-                        }
-                      />
-                    ) : toolPart.state === 'output-available' ? (
-                      <AIChatEditor
-                        content={
-                          '```json\n' +
-                          JSON.stringify(toolPart.output, undefined, 2).trim() +
-                          '\n```'
-                        }
-                      />
-                    ) : toolPart.state === 'output-error' ? (
-                      getParagraphs(toolPart.errorText).map(
-                        (paragraph, paragraphIndex) => (
-                          <p
-                            key={`${index}-${paragraphIndex}`}
-                            className="whitespace-pre-wrap"
-                          >
-                            {paragraph}
-                          </p>
-                        ),
-                      )
-                    ) : null}
+                  <CollapsibleContent>
+                    <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
+                      {toolPart.state === 'input-available' ? (
+                        <AIChatEditor
+                          content={
+                            '```json\n' +
+                            JSON.stringify(
+                              toolPart.input,
+                              undefined,
+                              2,
+                            ).trim() +
+                            '\n```'
+                          }
+                        />
+                      ) : toolPart.state === 'output-available' ? (
+                        <AIChatEditor
+                          content={
+                            '```json\n' +
+                            JSON.stringify(
+                              toolPart.output,
+                              undefined,
+                              2,
+                            ).trim() +
+                            '\n```'
+                          }
+                        />
+                      ) : toolPart.state === 'output-error' ? (
+                        getParagraphs(toolPart.errorText).map(
+                          (paragraph, paragraphIndex) => (
+                            <p
+                              key={`${index}-${paragraphIndex}`}
+                              className="whitespace-pre-wrap"
+                            >
+                              {paragraph}
+                            </p>
+                          ),
+                        )
+                      ) : null}
+                    </div>
+                    <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs font-medium">
+                      Collapse
+                      <ChevronDownIcon className="size-3.5 rotate-180" />
+                    </CollapsibleTrigger>
                   </CollapsibleContent>
                 </Collapsible>
               </>
