@@ -19,6 +19,7 @@ import {
   BrainIcon,
   CheckIcon,
   ChevronDownIcon,
+  ChevronUpIcon,
   CircleAlertIcon,
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
@@ -144,12 +145,12 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                   <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
+                  <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3">
                     <AIChatEditor content={part.text} />
                   </div>
                   <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs font-medium">
                     Collapse
-                    <ChevronDownIcon className="size-3.5 rotate-180" />
+                    <ChevronUpIcon className="size-3.5" />
                   </CollapsibleTrigger>
                 </CollapsibleContent>
               </Collapsible>
@@ -181,7 +182,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                     <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3 text-sm">
+                    <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3">
                       {toolPart.state === 'input-available' ? (
                         <AIChatEditor
                           content={
@@ -211,7 +212,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                           (paragraph, paragraphIndex) => (
                             <p
                               key={`${index}-${paragraphIndex}`}
-                              className="whitespace-pre-wrap"
+                              className="text-xs whitespace-pre-wrap"
                             >
                               {paragraph}
                             </p>
@@ -221,7 +222,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                     </div>
                     <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs font-medium">
                       Collapse
-                      <ChevronDownIcon className="size-3.5 rotate-180" />
+                      <ChevronUpIcon className="size-3.5" />
                     </CollapsibleTrigger>
                   </CollapsibleContent>
                 </Collapsible>

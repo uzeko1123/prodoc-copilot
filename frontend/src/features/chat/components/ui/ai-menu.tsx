@@ -360,7 +360,8 @@ const aiChatItems = {
   }
 >;
 
-const menuStateItems: Record<
+// eslint-disable-next-line react-refresh/only-export-components
+export const menuStateItems: Record<
   EditorChatState,
   {
     items: (typeof aiChatItems)[keyof typeof aiChatItems][];

@@ -33,32 +33,50 @@ import {
 import { Spinner } from '@/components/shadcn/ui/spinner';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
+import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
   ArrowUpIcon,
   MessageCircleDashedIcon,
   MessagesCircleIcon,
   MessageSquareTextIcon,
   PencilSparklesIcon,
-  PlusIcon,
   RotateCwIcon,
   SparklesIcon,
   SquareIcon,
+  SquareSlashIcon,
   WrenchIcon,
 } from 'lucide-react';
 import {
   useEditorRef,
   useEditorSelector,
+  usePluginOption,
   usePluginOptions,
 } from 'platejs/react';
 import * as React from 'react';
 import { getChatModeName, getSelectionText } from '../lib/utils';
 import { useChatStore } from '../stores';
-import { Context as ContextPrimitive } from './context';
+import { Context } from './context';
+import { aiChatPlugin } from './editor/plugins/ai-kit';
 import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
+import { menuStateItems } from './ui/ai-menu';
 
 export function Chat() {
   const editor = useEditorRef();
+  const selectedBlockIds = usePluginOption(BlockSelectionPlugin, 'selectedIds');
+  const selectionText = useEditorSelector(
+    (editor) => {
+      const blocks = editor
+        .getApi(BlockSelectionPlugin)
+        .blockSelection.getNodes({ sort: true });
+      return getSelectionText(
+        editor,
+        blocks.length > 0 ? editor.api.nodesRange(blocks) : editor.selection,
+      );
+    },
+    [selectedBlockIds],
+  );
+
   const chatStatus = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);
   const chatError = usePluginOptions(AIChatPlugin, (o) => o.chat?.error);
   const isBusy = chatStatus === 'submitted' || chatStatus === 'streaming';
@@ -72,6 +90,7 @@ export function Chat() {
     (state) => state.setSettingsDialogOpen,
   );
 
+  const inputRef = React.useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = React.useState('');
 
   return (
@@ -123,7 +142,7 @@ export function Chat() {
           )}
         </CardContent>
         <CardFooter className="flex-col gap-2 rounded-none">
-          <SelectionContext />
+          <Context variant="chat" content={selectionText} />
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -135,6 +154,7 @@ export function Chat() {
           >
             <InputGroup className="dark:has-disabled:bg-input/30 has-disabled:bg-transparent has-disabled:opacity-100">
               <InputGroupTextarea
+                ref={inputRef}
                 aria-label="Chat message"
                 className="h-14 min-h-14 overflow-hidden px-3 py-2.5"
                 placeholder="Chat message"
@@ -151,20 +171,46 @@ export function Chat() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
-                      aria-label="Add"
+                      aria-label="Slash menu"
                       type="button"
-                      size="icon-sm"
-                      variant="outline"
+                      size="xs"
+                      variant="ghost"
+                      className="gap-1 text-sm"
                     >
-                      <PlusIcon />
+                      <SquareSlashIcon className="size-4" />
+                      <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
+                        {aiChatPlugin.shortcuts.show?.keys}
+                      </kbd>
                     </InputGroupButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
                     side="top"
-                    className="w-44"
+                    className="w-auto"
+                    onCloseAutoFocus={(e) => {
+                      e.preventDefault();
+                      inputRef.current?.focus();
+                    }}
                   >
+                    {(selectionText.length > 0
+                      ? menuStateItems.selectionCommand
+                      : menuStateItems.cursorCommand
+                    ).flatMap((command) =>
+                      command.items.map((item) => (
+                        <DropdownMenuItem
+                          className="text-xs [&_svg]:size-3.5"
+                          key={item.value}
+                          onSelect={() => {
+                            setInput(`/${item.value} ${input}`);
+                          }}
+                        >
+                          {item.icon} {item.label}
+                        </DropdownMenuItem>
+                      )),
+                    )}
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
+                      className="text-xs"
                       onSelect={() => {
                         editor.getApi(AIChatPlugin).aiChat.reset({
                           undo: false,
@@ -172,16 +218,16 @@ export function Chat() {
                         setChatMessages([]);
                       }}
                     >
-                      <RotateCwIcon />
+                      <RotateCwIcon className="size-3.5" />
                       Reset
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem
+                      className="text-xs"
                       onSelect={() => {
                         setSettingsDialogOpen(true);
                       }}
                     >
-                      <WrenchIcon />
+                      <WrenchIcon className="size-3.5" />
                       Settings
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -192,24 +238,29 @@ export function Chat() {
                     <InputGroupButton
                       aria-label="Select mode"
                       type="button"
-                      size="sm"
+                      size="xs"
                       variant="ghost"
+                      className="text-xs"
                     >
                       <ChatModeIcon chatMode={chatMode} />
                       {getChatModeName(chatMode)}
                     </InputGroupButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    align="start"
+                    align="end"
                     side="top"
-                    className="w-44"
+                    className="w-auto"
                   >
                     <DropdownMenuRadioGroup
                       value={chatMode}
                       onValueChange={(value) => setChatMode(value as ChatMode)}
                     >
                       {chatModes.map((chatMode) => (
-                        <DropdownMenuRadioItem key={chatMode} value={chatMode}>
+                        <DropdownMenuRadioItem
+                          className="text-xs"
+                          key={chatMode}
+                          value={chatMode}
+                        >
                           <ChatModeIcon chatMode={chatMode as ChatMode} />
                           {getChatModeName(chatMode as ChatMode)}
                         </DropdownMenuRadioItem>
@@ -255,13 +306,5 @@ function ChatModeIcon({ chatMode }: { chatMode: ChatMode }) {
     auto: SparklesIcon,
   };
   const Icon = chatModeIcons[chatMode as keyof typeof chatModeIcons];
-  return <Icon />;
-}
-
-function SelectionContext() {
-  const selectionText = useEditorSelector(
-    (editor) => getSelectionText(editor, editor.selection),
-    [],
-  );
-  return <ContextPrimitive variant="chat" content={selectionText} />;
+  return <Icon className="size-3.5" />;
 }
