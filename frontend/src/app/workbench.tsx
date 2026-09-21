@@ -231,9 +231,9 @@ function Workbench() {
             </>
           )}
         </ResizablePanelGroup>
-      </Plate>
 
-      <SettingsDialog />
+        <SettingsDialog />
+      </Plate>
     </div>
   );
 }

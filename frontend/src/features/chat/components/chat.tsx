@@ -34,7 +34,6 @@ import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
-  ChevronDownIcon,
   MessageCircleDashedIcon,
   MessagesCircleIcon,
   MessageSquareTextIcon,
@@ -147,7 +146,7 @@ export function Chat() {
                     <InputGroupButton
                       aria-label="Add"
                       type="button"
-                      size="icon-xs"
+                      size="icon-sm"
                       variant="outline"
                     >
                       <PlusIcon />
@@ -181,16 +180,15 @@ export function Chat() {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild className="group">
+                  <DropdownMenuTrigger asChild className="ml-auto">
                     <InputGroupButton
                       aria-label="Select mode"
                       type="button"
-                      size="xs"
-                      variant="outline"
+                      size="sm"
+                      variant="ghost"
                     >
                       <ChatModeIcon chatMode={chatMode} />
                       {getChatModeName(chatMode)}
-                      <ChevronDownIcon className="rotate-180 group-data-[state=closed]:rotate-270" />
                     </InputGroupButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
@@ -217,7 +215,6 @@ export function Chat() {
                     variant="default"
                     size="icon-sm"
                     disabled={isBusy || input.trim() === ''}
-                    className="ml-auto"
                   >
                     <ArrowUpIcon />
                     <span className="sr-only">Send</span>
@@ -227,7 +224,6 @@ export function Chat() {
                     type="button"
                     variant="default"
                     size="icon-sm"
-                    className="ml-auto"
                     onClick={() => editor.getApi(AIChatPlugin).aiChat.stop()}
                   >
                     <SquareIcon />
