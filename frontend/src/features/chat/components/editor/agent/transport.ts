@@ -12,7 +12,7 @@ import {
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../use-agent';
-import instructions from './instructions.md?raw';
+import { getInstructions } from './instructions';
 import { model } from './model-openai';
 import { getChatModeTools, tools } from './tools';
 
@@ -43,6 +43,7 @@ export function createAgentTransport(editor: PlateEditor) {
       const chatMessages = useChatStore.getState().chatMessages;
 
       const chatMode = useChatStore.getState().chatMode;
+      const instructions = getInstructions(chatMode);
       const availableTools = getChatModeTools(chatMode);
 
       const result = streamText({
