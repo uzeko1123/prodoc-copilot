@@ -1,9 +1,8 @@
-import { withAIBatch } from '@platejs/ai';
-import { AIChatPlugin, applyAISuggestions } from '@platejs/ai/react';
+import { AIChatPlugin } from '@platejs/ai/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
-import { applyEditSuggestion } from './tool-suggestion';
+import { applyEdit } from './tool-utils/suggestion';
 
 type EditToolIO = { content: string };
 
@@ -28,20 +27,6 @@ export const editTool = tool({
   inputSchema: schema,
   outputSchema: schema,
 });
-
-export function applyEditPrimitive(
-  editor: PlateEditor,
-  isFirst: boolean,
-  content: string,
-) {
-  withAIBatch(
-    editor,
-    () => {
-      applyAISuggestions(editor, content);
-    },
-    { split: isFirst },
-  );
-}
 
 const applied = new Map<string, string>();
 const output = new Set<string>();
@@ -69,8 +54,7 @@ export function applyEditTool(
 
   editor.setOption(AIChatPlugin, 'mode', 'chat');
   editor.setOption(AIChatPlugin, 'toolName', 'edit');
-  // applyEditPrimitive(editor, appliedContent === '', content);
-  applyEditSuggestion(editor, appliedContent === '', content);
+  applyEdit(editor, appliedContent === '', content);
 }
 
 export function resetEditTool() {

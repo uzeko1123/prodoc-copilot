@@ -14,7 +14,7 @@ function IndexPage() {
 
 export const Route = createFileRoute('/account/')({
   beforeLoad: () => {
-    queryClient.fetchQuery(getAuthUserRetrieveQueryOptions());
+    queryClient.query(getAuthUserRetrieveQueryOptions());
   },
   component: IndexPage,
 });
