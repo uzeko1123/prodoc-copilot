@@ -17,7 +17,6 @@ import {
   IndentToolbarButton,
   OutdentToolbarButton,
 } from '@/components/shadcn/ui/indent-toolbar-button';
-import { InsertToolbarButton } from '@/components/shadcn/ui/insert-toolbar-button';
 import { LineHeightToolbarButton } from '@/components/shadcn/ui/line-height-toolbar-button';
 import { LinkToolbarButton } from '@/components/shadcn/ui/link-toolbar-button';
 import {
@@ -28,11 +27,9 @@ import {
 import { MarkToolbarButton } from '@/components/shadcn/ui/mark-toolbar-button';
 import { MediaToolbarButton } from '@/components/shadcn/ui/media-toolbar-button';
 import { ModeToolbarButton } from '@/components/shadcn/ui/mode-toolbar-button';
-import { MoreToolbarButton } from '@/components/shadcn/ui/more-toolbar-button';
 import { TableToolbarButton } from '@/components/shadcn/ui/table-toolbar-button';
 import { ToggleToolbarButton } from '@/components/shadcn/ui/toggle-toolbar-button';
 import { ToolbarGroup } from '@/components/shadcn/ui/toolbar';
-import { TurnIntoToolbarButton } from '@/components/shadcn/ui/turn-into-toolbar-button';
 import { useWorkbenchStore } from '@/stores/workbench';
 import {
   ArrowUpToLineIcon,
@@ -43,12 +40,15 @@ import {
   ItalicIcon,
   PaintBucketIcon,
   PanelLeftIcon,
+  SparklesIcon,
   StrikethroughIcon,
   UnderlineIcon,
-  WandSparklesIcon,
 } from 'lucide-react';
 import { KEYS } from 'platejs';
 import { useEditorReadOnly } from 'platejs/react';
+import { InsertToolbarButton } from './insert-toolbar-button';
+import { MoreToolbarButton } from './more-toolbar-button';
+import { TurnIntoToolbarButton } from './turn-into-toolbar-button';
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
@@ -56,7 +56,7 @@ export function FixedToolbarButtons() {
   const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
 
-  const _hideMainToolbar = true;
+  const _hideMainToolbar = false;
 
   return (
     <div className="flex w-full">
@@ -69,103 +69,33 @@ export function FixedToolbarButtons() {
       </ToolbarGroup>
 
       <ToolbarGroup>
+        <ExportToolbarButton>
+          <ArrowUpToLineIcon />
+        </ExportToolbarButton>
+
+        <ImportToolbarButton />
+      </ToolbarGroup>
+
+      <ToolbarGroup>
         <UndoToolbarButton />
         <RedoToolbarButton />
       </ToolbarGroup>
 
-      <ToolbarGroup>
-        <AIToolbarButton tooltip="AI commands">
-          <WandSparklesIcon />
-        </AIToolbarButton>
-      </ToolbarGroup>
+      <ToolbarGroup></ToolbarGroup>
 
       <div className="grow" />
 
       {!_hideMainToolbar && !readOnly && (
         <>
           <ToolbarGroup>
-            <ExportToolbarButton>
-              <ArrowUpToLineIcon />
-            </ExportToolbarButton>
-
-            <ImportToolbarButton />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
             <InsertToolbarButton />
             <TurnIntoToolbarButton />
-            <FontSizeToolbarButton />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
-            <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
-              <BoldIcon />
-            </MarkToolbarButton>
-
-            <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
-              <ItalicIcon />
-            </MarkToolbarButton>
-
-            <MarkToolbarButton
-              nodeType={KEYS.underline}
-              tooltip="Underline (⌘+U)"
-            >
-              <UnderlineIcon />
-            </MarkToolbarButton>
-
-            <MarkToolbarButton
-              nodeType={KEYS.strikethrough}
-              tooltip="Strikethrough (⌘+⇧+M)"
-            >
-              <StrikethroughIcon />
-            </MarkToolbarButton>
-
-            <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
-              <Code2Icon />
-            </MarkToolbarButton>
-
-            <FontColorToolbarButton nodeType={KEYS.color} tooltip="Text color">
-              <BaselineIcon />
-            </FontColorToolbarButton>
-
-            <FontColorToolbarButton
-              nodeType={KEYS.backgroundColor}
-              tooltip="Background color"
-            >
-              <PaintBucketIcon />
-            </FontColorToolbarButton>
-          </ToolbarGroup>
-
-          <ToolbarGroup>
             <AlignToolbarButton />
-
-            <NumberedListToolbarButton />
-            <BulletedListToolbarButton />
-            <TodoListToolbarButton />
-            <ToggleToolbarButton />
           </ToolbarGroup>
 
           <ToolbarGroup>
-            <LinkToolbarButton />
             <TableToolbarButton />
-            <EmojiToolbarButton />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
             <MediaToolbarButton nodeType={KEYS.img} />
-            <MediaToolbarButton nodeType={KEYS.video} />
-            <MediaToolbarButton nodeType={KEYS.audio} />
-            <MediaToolbarButton nodeType={KEYS.file} />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
-            <LineHeightToolbarButton />
-            <OutdentToolbarButton />
-            <IndentToolbarButton />
-          </ToolbarGroup>
-
-          <ToolbarGroup>
-            <MoreToolbarButton />
           </ToolbarGroup>
         </>
       )}
@@ -173,10 +103,9 @@ export function FixedToolbarButtons() {
       <div className="grow" />
 
       <ToolbarGroup>
-        <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Highlight">
-          <HighlighterIcon />
-        </MarkToolbarButton>
-        <CommentToolbarButton />
+        <AIToolbarButton tooltip="AI commands">
+          <SparklesIcon />
+        </AIToolbarButton>
       </ToolbarGroup>
 
       <ToolbarGroup>

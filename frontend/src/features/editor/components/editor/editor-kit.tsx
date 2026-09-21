@@ -15,7 +15,6 @@ import { DndKit } from '@/components/shadcn/editor/plugins/dnd-kit';
 import { DocxKit } from '@/components/shadcn/editor/plugins/docx-kit';
 import { EmojiKit } from '@/components/shadcn/editor/plugins/emoji-kit';
 import { ExitBreakKit } from '@/components/shadcn/editor/plugins/exit-break-kit';
-import { FloatingToolbarKit } from '@/components/shadcn/editor/plugins/floating-toolbar-kit';
 import { FontKit } from '@/components/shadcn/editor/plugins/font-kit';
 import { LineHeightKit } from '@/components/shadcn/editor/plugins/line-height-kit';
 import { LinkKit } from '@/components/shadcn/editor/plugins/link-kit';
@@ -37,6 +36,7 @@ import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FixedToolbarKit } from './plugins/fixed-toolbar-kit';
+import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
 
 export const EditorKit = [
   ...CopilotKit,
