@@ -6,19 +6,24 @@ import type { ChatMessage, ChatMode } from './components/editor/use-agent';
 
 type ChatState = {
   chatMode: ChatMode;
-  chatMessages: ChatMessage[];
   setChatMode: (chatMode: ChatMode) => void;
+
+  chatMessages: ChatMessage[];
   setChatMessages: (chatMessages: ChatMessage[]) => void;
   upsertChatMessage: (message: ChatMessage) => void;
+
+  chatSettingsOpen: boolean;
+  setChatSettingsOpen: (chatSettingsOpen: boolean) => void;
 };
 
 export const useChatStore = create<ChatState>()(
   devtools(
     persist(
       (set) => ({
-        chatMode: 'auto',
-        chatMessages: [],
+        chatMode: 'chat',
         setChatMode: (chatMode) => set({ chatMode }),
+
+        chatMessages: [],
         setChatMessages: (chatMessages) => set({ chatMessages }),
         upsertChatMessage: (chatMessage) =>
           set((state) => {
@@ -38,6 +43,9 @@ export const useChatStore = create<ChatState>()(
               ),
             };
           }),
+
+        chatSettingsOpen: false,
+        setChatSettingsOpen: (chatSettingsOpen) => set({ chatSettingsOpen }),
       }),
       {
         name: 'chat-storage',

@@ -1,20 +1,13 @@
 'use client';
 
-import { Button } from '@/components/shadcn/ui/button';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/shadcn/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import {
@@ -37,18 +30,17 @@ import {
   MessageScrollerProvider,
   MessageScrollerViewport,
 } from '@/components/shadcn/ui/message-scroller';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/shadcn/ui/tooltip';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
   ChevronDownIcon,
-  CircleAlertIcon,
   MessageCircleDashedIcon,
+  MessagesCircleIcon,
+  MessageSquareTextIcon,
+  PencilSparklesIcon,
+  PlusIcon,
   RotateCwIcon,
+  SparklesIcon,
   SquareIcon,
   WrenchIcon,
 } from 'lucide-react';
@@ -61,55 +53,40 @@ import * as React from 'react';
 import { getChatModeName, getSelectionText } from '../lib/utils';
 import { useChatStore } from '../stores';
 import { Context as ContextPrimitive } from './context';
+import { SettingsDialog } from './editor/settings-dialog';
 import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
 
+function ChatModeIcon({ chatMode }: { chatMode: ChatMode }) {
+  const chatModeIcons = {
+    chat: MessagesCircleIcon,
+    comment: MessageSquareTextIcon,
+    suggestion: PencilSparklesIcon,
+    auto: SparklesIcon,
+  };
+  const Icon = chatModeIcons[chatMode as keyof typeof chatModeIcons];
+  return <Icon />;
+}
+
 export function Chat() {
   const editor = useEditorRef();
+  const chatStatus = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);
+  const chatError = usePluginOptions(AIChatPlugin, (o) => o.chat?.error);
+  const isBusy = chatStatus === 'submitted' || chatStatus === 'streaming';
 
   const chatMode = useChatStore((state) => state.chatMode);
   const setChatMode = useChatStore((state) => state.setChatMode);
   const chatMessages = useChatStore((state) => state.chatMessages);
   const setChatMessages = useChatStore((state) => state.setChatMessages);
-
-  const status = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);
-  const error = usePluginOptions(AIChatPlugin, (o) => o.chat?.error);
-  const isBusy = status === 'submitted' || status === 'streaming';
+  const setChatSettingsOpen = useChatStore(
+    (state) => state.setChatSettingsOpen,
+  );
 
   const [input, setInput] = React.useState('');
-
-  const onSubmit = () => editor.getApi(AIChatPlugin).aiChat.submit(input);
 
   return (
     <MessageScrollerProvider>
       <Card className="flex h-full flex-col gap-0 rounded-none ring-0">
-        <CardHeader className="gap-1 rounded-none border-b">
-          <CardTitle>New Chat</CardTitle>
-          <CardDescription>How can I help you today?</CardDescription>
-          <CardAction>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="Reset conversation"
-                  onClick={() => {
-                    editor.getApi(AIChatPlugin).aiChat.reset({
-                      undo: false,
-                    });
-                    setChatMessages([]);
-                  }}
-                  disabled={isBusy}
-                >
-                  <RotateCwIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Reset</p>
-              </TooltipContent>
-            </Tooltip>
-          </CardAction>
-        </CardHeader>
         <CardContent className="scrollbar-thumb-border flex-1 scrollbar-thin overflow-hidden p-0">
           {chatMessages.length === 0 ? (
             <Empty className="h-full">
@@ -138,11 +115,10 @@ export function Chat() {
                       scrollAnchor={message.role === 'user'}
                     />
                   ))}
-                  {status === 'error' && (
-                    <div className="text-destructive flex items-center gap-1.5 text-sm">
-                      <CircleAlertIcon className="size-4 shrink-0" />
-                      {error?.message || 'Something went wrong.'}
-                    </div>
+                  {chatStatus === 'error' && (
+                    <p className="text-destructive whitespace-pre-wrap">
+                      {chatError?.message || 'Unknown error.'}
+                    </p>
                   )}
                 </MessageScrollerContent>
               </MessageScrollerViewport>
@@ -155,19 +131,17 @@ export function Chat() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (isBusy || input.length === 0) {
-                return;
-              }
-              void onSubmit();
+              if (isBusy || input.length === 0) return;
+              void editor.getApi(AIChatPlugin).aiChat.submit(input);
               setInput('');
             }}
             className="w-full"
           >
-            <InputGroup>
+            <InputGroup className="dark:has-disabled:bg-input/30 has-disabled:bg-transparent has-disabled:opacity-100">
               <InputGroupTextarea
                 aria-label="Chat message"
-                className="max-h-40 min-h-14 overflow-y-auto px-3 py-2.5"
-                placeholder="Ask anything..."
+                className="h-14 min-h-14 overflow-hidden px-3 py-2.5"
+                placeholder="Chat message"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -181,20 +155,58 @@ export function Chat() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
-                      aria-label="Select mode"
+                      aria-label="Add"
                       type="button"
-                      size="xs"
+                      size="icon-xs"
                       variant="outline"
                     >
-                      <WrenchIcon />
-                      {getChatModeName(chatMode)}
-                      <ChevronDownIcon className="opacity-50" />
+                      <PlusIcon />
                     </InputGroupButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
                     side="top"
-                    className="w-40"
+                    className="w-44"
+                  >
+                    <DropdownMenuItem
+                      onSelect={() => {
+                        editor.getApi(AIChatPlugin).aiChat.reset({
+                          undo: false,
+                        });
+                        setChatMessages([]);
+                      }}
+                    >
+                      <RotateCwIcon />
+                      Reset
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onSelect={() => {
+                        setChatSettingsOpen(true);
+                      }}
+                    >
+                      <WrenchIcon />
+                      Settings
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild className="group">
+                    <InputGroupButton
+                      aria-label="Select mode"
+                      type="button"
+                      size="xs"
+                      variant="outline"
+                    >
+                      <ChatModeIcon chatMode={chatMode} />
+                      {getChatModeName(chatMode)}
+                      <ChevronDownIcon className="rotate-180 group-data-[state=closed]:rotate-270" />
+                    </InputGroupButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    side="top"
+                    className="w-44"
                   >
                     <DropdownMenuRadioGroup
                       value={chatMode}
@@ -202,34 +214,34 @@ export function Chat() {
                     >
                       {chatModes.map((chatMode) => (
                         <DropdownMenuRadioItem key={chatMode} value={chatMode}>
+                          <ChatModeIcon chatMode={chatMode as ChatMode} />
                           {getChatModeName(chatMode as ChatMode)}
                         </DropdownMenuRadioItem>
                       ))}
                     </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {isBusy ? (
-                  <InputGroupButton
-                    type="button"
-                    variant="default"
-                    size="icon-sm"
-                    aria-label="Stop"
-                    className="ml-auto"
-                    onClick={() => editor.getApi(AIChatPlugin).aiChat.stop()}
-                  >
-                    <SquareIcon className="fill-current" />
-                    <span className="sr-only">Stop</span>
-                  </InputGroupButton>
-                ) : (
+                {!isBusy ? (
                   <InputGroupButton
                     type="submit"
                     variant="default"
                     size="icon-sm"
-                    disabled={isBusy}
+                    disabled={isBusy || input.trim() === ''}
                     className="ml-auto"
                   >
                     <ArrowUpIcon />
                     <span className="sr-only">Send</span>
+                  </InputGroupButton>
+                ) : (
+                  <InputGroupButton
+                    type="button"
+                    variant="default"
+                    size="icon-sm"
+                    className="ml-auto"
+                    onClick={() => editor.getApi(AIChatPlugin).aiChat.stop()}
+                  >
+                    <SquareIcon />
+                    <span className="sr-only">Stop</span>
                   </InputGroupButton>
                 )}
               </InputGroupAddon>
@@ -237,6 +249,7 @@ export function Chat() {
           </form>
         </CardFooter>
       </Card>
+      <SettingsDialog />
     </MessageScrollerProvider>
   );
 }

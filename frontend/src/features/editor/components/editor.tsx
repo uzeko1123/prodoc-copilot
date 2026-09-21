@@ -1,6 +1,5 @@
 'use client';
 
-import { SettingsDialog } from '@/components/shadcn/editor/settings-dialog';
 import { useEditorStore } from '@/features/editor/stores';
 import { useEditorScrollRef, useEditorValue } from 'platejs/react';
 import { useEffect } from 'react';
@@ -18,7 +17,6 @@ export function Editor() {
           className="scrollbar-thumb-border scrollbar-thin"
         />
       </EditorContainer>
-      <SettingsDialog />
     </div>
   );
 }
