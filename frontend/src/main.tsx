@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/components/shadcn/ui/tooltip';
 import { queryClient } from '@/lib/query-client';
 import { router } from '@/lib/router';
 import { QueryClientProvider } from '@tanstack/react-query';
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
@@ -21,7 +21,7 @@ if (!rootElement.innerHTML) {
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <RouterProvider router={router} />
-            {/* <ReactQueryDevtools /> */}
+            <ReactQueryDevtools />
           </TooltipProvider>
           <Toaster />
         </QueryClientProvider>

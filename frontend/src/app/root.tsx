@@ -2,7 +2,7 @@ import { getAuthCsrfRetrieveQueryOptions } from '@/api/gen/endpoints/auth/auth';
 import { queryClient } from '@/lib/query-client';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 
-// import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 export const Route = createRootRoute({
   beforeLoad: () => {
@@ -11,7 +11,7 @@ export const Route = createRootRoute({
   component: () => (
     <>
       <Outlet />
-      {/* <TanStackRouterDevtools /> */}
+      <TanStackRouterDevtools />
     </>
   ),
 });
