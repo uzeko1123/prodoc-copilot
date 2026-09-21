@@ -11,9 +11,6 @@ type ChatState = {
   chatMessages: ChatMessage[];
   setChatMessages: (chatMessages: ChatMessage[]) => void;
   upsertChatMessage: (message: ChatMessage) => void;
-
-  chatSettingsOpen: boolean;
-  setChatSettingsOpen: (chatSettingsOpen: boolean) => void;
 };
 
 export const useChatStore = create<ChatState>()(
@@ -43,9 +40,6 @@ export const useChatStore = create<ChatState>()(
               ),
             };
           }),
-
-        chatSettingsOpen: false,
-        setChatSettingsOpen: (chatSettingsOpen) => set({ chatSettingsOpen }),
       }),
       {
         name: 'chat-storage',

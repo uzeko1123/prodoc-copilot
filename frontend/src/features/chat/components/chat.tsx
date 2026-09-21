@@ -30,6 +30,7 @@ import {
   MessageScrollerProvider,
   MessageScrollerViewport,
 } from '@/components/shadcn/ui/message-scroller';
+import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
@@ -56,17 +57,6 @@ import { Context as ContextPrimitive } from './context';
 import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
 
-function ChatModeIcon({ chatMode }: { chatMode: ChatMode }) {
-  const chatModeIcons = {
-    chat: MessagesCircleIcon,
-    comment: MessageSquareTextIcon,
-    suggestion: PencilSparklesIcon,
-    auto: SparklesIcon,
-  };
-  const Icon = chatModeIcons[chatMode as keyof typeof chatModeIcons];
-  return <Icon />;
-}
-
 export function Chat() {
   const editor = useEditorRef();
   const chatStatus = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);
@@ -77,8 +67,9 @@ export function Chat() {
   const setChatMode = useChatStore((state) => state.setChatMode);
   const chatMessages = useChatStore((state) => state.chatMessages);
   const setChatMessages = useChatStore((state) => state.setChatMessages);
-  const setChatSettingsOpen = useChatStore(
-    (state) => state.setChatSettingsOpen,
+
+  const setSettingsDialogOpen = useWorkbenchStore(
+    (state) => state.setSettingsDialogOpen,
   );
 
   const [input, setInput] = React.useState('');
@@ -181,7 +172,7 @@ export function Chat() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onSelect={() => {
-                        setChatSettingsOpen(true);
+                        setSettingsDialogOpen(true);
                       }}
                     >
                       <WrenchIcon />
@@ -250,6 +241,17 @@ export function Chat() {
       </Card>
     </MessageScrollerProvider>
   );
+}
+
+function ChatModeIcon({ chatMode }: { chatMode: ChatMode }) {
+  const chatModeIcons = {
+    chat: MessagesCircleIcon,
+    comment: MessageSquareTextIcon,
+    suggestion: PencilSparklesIcon,
+    auto: SparklesIcon,
+  };
+  const Icon = chatModeIcons[chatMode as keyof typeof chatModeIcons];
+  return <Icon />;
 }
 
 function SelectionContext() {

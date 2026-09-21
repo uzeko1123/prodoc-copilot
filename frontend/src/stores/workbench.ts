@@ -18,6 +18,9 @@ type WorkbenchState = {
 
   activeRightPanelTab: string;
   setActiveRightPanelTab: (tab: string) => void;
+
+  isSettingsDialogOpen: boolean;
+  setSettingsDialogOpen: (isSettingsDialogOpen: boolean) => void;
 };
 
 export const useWorkbenchStore = create<WorkbenchState>()(
@@ -43,6 +46,10 @@ export const useWorkbenchStore = create<WorkbenchState>()(
       activeRightPanelTab: '1',
       setActiveRightPanelTab: (activeRightPanelTab) =>
         set({ activeRightPanelTab }),
+
+      isSettingsDialogOpen: false,
+      setSettingsDialogOpen: (isSettingsDialogOpen) =>
+        set({ isSettingsDialogOpen }),
     }),
     { name: 'WorkbenchStore' },
   ),

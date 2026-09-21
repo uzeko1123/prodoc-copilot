@@ -23,6 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/popover';
+import { useWorkbenchStore } from '@/stores/workbench';
 import { CopilotPlugin } from '@platejs/ai/react';
 import { cn } from 'cn';
 import {
@@ -35,7 +36,6 @@ import {
 } from 'lucide-react';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
-import { useChatStore } from '../../stores';
 import { aiChatPlugin } from './plugins/ai-kit';
 
 type Model = {
@@ -219,9 +219,11 @@ export function SettingsDialog() {
     uploadthing: '',
   });
   const [showKey, setShowKey] = React.useState<Record<string, boolean>>({});
-  const chatSettingsOpen = useChatStore((state) => state.chatSettingsOpen);
-  const setChatSettingsOpen = useChatStore(
-    (state) => state.setChatSettingsOpen,
+  const isSettingsDialogOpen = useWorkbenchStore(
+    (state) => state.isSettingsDialogOpen,
+  );
+  const setSettingsDialogOpen = useWorkbenchStore(
+    (state) => state.setSettingsDialogOpen,
   );
   const [openModel, setOpenModel] = React.useState(false);
 
@@ -240,7 +242,7 @@ export function SettingsDialog() {
       },
     });
 
-    setChatSettingsOpen(false);
+    setSettingsDialogOpen(false);
 
     // Update AI complete options
     const completeOptions =
@@ -321,7 +323,7 @@ export function SettingsDialog() {
   );
 
   return (
-    <Dialog open={chatSettingsOpen} onOpenChange={setChatSettingsOpen}>
+    <Dialog open={isSettingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl">Settings</DialogTitle>
