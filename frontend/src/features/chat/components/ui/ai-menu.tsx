@@ -7,14 +7,17 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/shadcn/ui/command';
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from '@/components/shadcn/ui/popover';
 import { useChatStore } from '@/features/chat/stores';
 import { AIChatPlugin, useEditorChat } from '@platejs/ai/react';
+import {
+  flip,
+  getDefaultBoundingClientRect,
+  getRangeBoundingClientRect,
+  offset,
+  useVirtualFloating,
+} from '@platejs/floating';
 import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react';
+import { useComposedRef } from '@udecode/cn';
 import { Command as CommandPrimitive } from 'cmdk';
 import { cn } from 'cn';
 import {
@@ -28,17 +31,21 @@ import {
   Loader2Icon,
   PauseIcon,
   PenLine,
+  SendIcon,
   SmileIcon,
   Wand,
 } from 'lucide-react';
 import { isHotkey, type NodeEntry } from 'platejs';
 import {
+  useEditorMounted,
   useEditorPlugin,
   useEditorRef,
   useFocusedLast,
   useHotkeys,
+  useOnClickOutside,
   usePluginOption,
   usePluginOptions,
+  useScrollRef,
   type PlateEditor,
 } from 'platejs/react';
 import * as React from 'react';
@@ -49,6 +56,7 @@ export function AIMenu() {
 
   const isFocusedLast = useFocusedLast();
   const open = usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
+  const [value, setValue] = React.useState('');
 
   const [input, setInput] = React.useState('');
 
@@ -74,6 +82,10 @@ export function AIMenu() {
     setOpen(true);
   };
 
+  const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
+
+  const _skipBlockSelection = true;
+
   useEditorChat({
     onOpenBlockSelection: (blocks: NodeEntry[]) => {
       show(editor.api.toDOMNode(blocks.at(-1)![0])!);
@@ -87,7 +99,12 @@ export function AIMenu() {
     onOpenCursor: () => {
       const [ancestor] = editor.api.block({ highest: true })!;
 
-      if (!editor.api.isAt({ end: true }) && !editor.api.isEmpty(ancestor)) {
+      if (
+        !_skipBlockSelection &&
+        !isLoading &&
+        !editor.api.isAt({ end: true }) &&
+        !editor.api.isEmpty(ancestor)
+      ) {
         editor
           .getApi(BlockSelectionPlugin)
           .blockSelection.set(ancestor.id as string);
@@ -107,81 +124,139 @@ export function AIMenu() {
     // (chat as any)._abortFakeStream();
   });
 
-  const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
-
   React.useEffect(() => {
     if (chatStatus !== 'submitted') return;
 
     editor.setOption(AIChatPlugin, 'open', false);
   }, [chatStatus, editor]);
 
+  const floating = useVirtualFloating({
+    getBoundingClientRect: () => {
+      const anchorElementRect = anchorElement?.getBoundingClientRect();
+      if (editor.selection) {
+        const rangeRect = getRangeBoundingClientRect(editor, editor.selection);
+        if (rangeRect && (rangeRect.width > 0 || rangeRect.height > 0)) {
+          return new DOMRect(
+            anchorElementRect?.x ?? rangeRect.x,
+            rangeRect.y,
+            anchorElementRect?.width ?? rangeRect.width,
+            rangeRect.height,
+          );
+        }
+      }
+      return anchorElementRect ?? getDefaultBoundingClientRect();
+    },
+    middleware: [
+      offset(12),
+      flip({
+        fallbackPlacements: [
+          'top-start',
+          'top-end',
+          'bottom-start',
+          'bottom-end',
+        ],
+        padding: 12,
+      }),
+    ],
+    placement: 'bottom',
+  });
+
+  const clickOutsideRef = useOnClickOutside(() => setOpen(false));
+  const ref = useComposedRef<HTMLDivElement>(
+    floating.refs.setFloating,
+    clickOutsideRef,
+  );
+
+  const editorMounted = useEditorMounted();
+  const scrollRef = useScrollRef();
+  const { update } = floating;
+
+  React.useEffect(() => {
+    void update();
+  }, [anchorElement, open, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted) return;
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+
+    scroll.addEventListener('scroll', update, { passive: true });
+    return () => scroll.removeEventListener('scroll', update);
+  }, [editorMounted, scrollRef, update]);
+
+  if (!open || !anchorElement) return null;
+
   return (
-    <Popover open={open} onOpenChange={setOpen} modal={false}>
-      <PopoverAnchor virtualRef={{ current: anchorElement! }} />
-
-      <PopoverContent
-        className="border-none bg-transparent p-0 shadow-none"
-        style={{
-          width: anchorElement?.offsetWidth,
-        }}
-        onEscapeKeyDown={(e) => {
-          e.preventDefault();
-
-          api.aiChat.hide();
-        }}
-        align="center"
-        side="bottom"
+    <div
+      ref={ref}
+      className="z-50"
+      style={{
+        ...floating.style,
+        width: anchorElement.offsetWidth,
+      }}
+    >
+      <Command
+        className="w-full rounded-lg border shadow-md"
+        value={value}
+        onValueChange={setValue}
+        shouldFilter={false}
       >
-        <Command
-          className="w-full rounded-lg border shadow-md"
-          shouldFilter={false}
-        >
-          {isLoading ? (
-            <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
-              <Loader2Icon className="size-4 animate-spin" />
-              {chatStatus === 'submitted' ? 'Editing...' : 'Thinking...'}
-            </div>
-          ) : (
-            <CommandPrimitive.Input
-              className={cn(
-                'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
-                'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-                'border-b focus-visible:ring-transparent',
-              )}
-              value={input}
-              onKeyDown={(e) => {
-                if (isHotkey('backspace')(e) && input.length === 0) {
-                  e.preventDefault();
-                  api.aiChat.hide();
-                }
-                if (isHotkey('enter')(e) && !e.shiftKey) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  void api.aiChat.submit(input);
-                  setInput('');
-                }
-              }}
-              onValueChange={setInput}
-              placeholder="Ask AI anything..."
-              data-plate-focus
-              autoFocus
-            />
-          )}
+        {isLoading ? (
+          <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
+            <Loader2Icon className="size-4 animate-spin" />
+            {chatStatus === 'submitted' ? 'Editing...' : 'Thinking...'}
+          </div>
+        ) : (
+          <CommandPrimitive.Input
+            className={cn(
+              'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
+              'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+              'border-b focus-visible:ring-transparent',
+            )}
+            value={input}
+            onKeyDown={(e) => {
+              if (isHotkey('escape')(e)) {
+                e.preventDefault();
+                api.aiChat.hide();
+              }
+              if (isHotkey('backspace')(e) && input.length === 0) {
+                e.preventDefault();
+                api.aiChat.hide();
+              }
+              if (isHotkey('enter')(e) && !e.shiftKey && !value) {
+                e.preventDefault();
+                void api.aiChat.submit(input);
+                setInput('');
+              }
+            }}
+            onValueChange={setInput}
+            placeholder="Ask AI anything..."
+            data-plate-focus
+            autoFocus
+          />
+        )}
 
-          {!isLoading && (
-            <CommandList>
-              <AIMenuItems input={input} setInput={setInput} />
-            </CommandList>
-          )}
-        </Command>
-      </PopoverContent>
-    </Popover>
+        {!isLoading && (
+          <CommandList>
+            <AIMenuItems input={input} setInput={setInput} />
+          </CommandList>
+        )}
+      </Command>
+    </div>
   );
 }
 
 type EditorChatState = 'cursorCommand' | 'selectionCommand';
 
 const aiChatItems = {
+  send: {
+    icon: <SendIcon />,
+    label: 'Send',
+    value: 'send',
+    onSelect: ({ editor, input }) => {
+      void editor.getApi(AIChatPlugin).aiChat.submit(input);
+    },
+  },
   comment: {
     icon: <AICommentIcon />,
     label: 'Comment',
@@ -387,6 +462,7 @@ export const menuStateItems: Record<
         aiChatItems.summarize,
         aiChatItems.explain,
       ],
+      heading: 'Cursor Command',
     },
   ],
   selectionCommand: [
@@ -400,6 +476,7 @@ export const menuStateItems: Record<
         aiChatItems.fixSpelling,
         aiChatItems.simplifyLanguage,
       ],
+      heading: 'Selection Command',
     },
   ],
 };
@@ -425,6 +502,22 @@ export const AIMenuItems = ({
 
   return (
     <>
+      <CommandGroup>
+        <CommandItem
+          className="[&_svg]:text-muted-foreground"
+          value={aiChatItems.send.value}
+          onSelect={() => {
+            aiChatItems.send.onSelect?.({
+              editor,
+              input,
+            });
+            setInput('');
+          }}
+        >
+          {aiChatItems.send.icon}
+          <span>{aiChatItems.send.label}</span>
+        </CommandItem>
+      </CommandGroup>
       {menuGroups.map((group, index) => (
         <CommandGroup key={index} heading={group.heading}>
           {group.items.map((menuItem) => (

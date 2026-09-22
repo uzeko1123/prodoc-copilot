@@ -14,15 +14,41 @@ export const aiChatPlugin = AIChatPlugin.extend({
       api: '/api/ai/command',
       body: {},
     },
+    trigger: [],
   },
   render: {
     afterContainer: AILoadingBar,
     afterEditable: AIMenu,
     node: AIAnchorElement,
   },
-  shortcuts: { show: { keys: 'Tab' } },
+  shortcuts: { show: { keys: 'mod+q' } },
   // useHooks: useChat,
   useHooks: useAgent,
+}).extendApi(({ api, getOption, getOptions, setOption }) => {
+  const show = api.aiChat.show;
+  const hide = api.aiChat.hide;
+
+  const isRunning = () =>
+    getOption('streaming') ||
+    getOptions().chat?.status === 'streaming' ||
+    getOptions().chat?.status === 'submitted';
+
+  return {
+    show: () => {
+      if (isRunning()) {
+        setOption('open', true);
+        return;
+      }
+      show();
+    },
+    hide: (options?: { focus?: boolean; undo?: boolean }) => {
+      if (isRunning()) {
+        setOption('open', false);
+        return;
+      }
+      hide(options);
+    },
+  };
 });
 
 export const AIKit = [

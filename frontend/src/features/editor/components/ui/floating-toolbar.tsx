@@ -67,21 +67,16 @@ export function FloatingToolbar({
 
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
+  const { update } = floatingToolbarState.floating;
 
   React.useEffect(() => {
     if (!editorMounted) return;
     const scroll = scrollRef.current;
     if (!scroll) return;
 
-    scroll.addEventListener('scroll', floatingToolbarState.floating.update, {
-      passive: true,
-    });
-    return () =>
-      scroll.removeEventListener(
-        'scroll',
-        floatingToolbarState.floating.update,
-      );
-  }, [editorMounted, scrollRef, floatingToolbarState.floating.update]);
+    scroll.addEventListener('scroll', update, { passive: true });
+    return () => scroll.removeEventListener('scroll', update);
+  }, [editorMounted, scrollRef, update]);
 
   if (hidden) return null;
 

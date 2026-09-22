@@ -54,7 +54,6 @@ import * as React from 'react';
 import { getChatModeName, getSelectionText } from '../lib/utils';
 import { useChatStore } from '../stores';
 import { Context } from './context';
-import { aiChatPlugin } from './editor/plugins/ai-kit';
 import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
 import { menuStateItems } from './ui/ai-menu';
@@ -168,7 +167,7 @@ export function Chat() {
                     >
                       <SquareSlashIcon className="size-4" />
                       <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
-                        {aiChatPlugin.shortcuts.show?.keys}
+                        Ctrl+Q
                       </kbd>
                     </InputGroupButton>
                   </DropdownMenuTrigger>
