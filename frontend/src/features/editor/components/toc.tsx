@@ -44,9 +44,9 @@ const headingItemVariants = cva(
 
 export function ToC() {
   const { editor } = useEditorPlugin(TocPlugin);
-  const topOffset = usePluginOption(TocPlugin, 'topOffset');
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
+  const topOffset = usePluginOption(TocPlugin, 'topOffset');
 
   const tocSideBarState = useTocSideBarState({ topOffset });
   const { navProps, onContentClick } = useTocSideBar(tocSideBarState);
@@ -98,7 +98,7 @@ export function ToC() {
     return () => {
       scroll.removeEventListener('scroll', updateActiveHeadingId);
     };
-  }, [editor, topOffset, editorMounted, scrollRef, headingListFiltered]);
+  }, [editor, editorMounted, scrollRef, topOffset, headingListFiltered]);
 
   useEffect(() => {
     if (!activeHeadingId) return;

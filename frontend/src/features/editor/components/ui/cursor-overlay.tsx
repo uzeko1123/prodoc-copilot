@@ -9,20 +9,28 @@ import {
 import { getTableGridAbove } from '@platejs/table';
 import { cn } from 'cn';
 import { RangeApi } from 'platejs';
-import { useEditorRef, usePluginOption, useScrollRef } from 'platejs/react';
+import {
+  useEditorMounted,
+  useEditorRef,
+  usePluginOption,
+  useScrollRef,
+} from 'platejs/react';
 import * as React from 'react';
 
 export function CursorOverlay() {
   const { cursors, refresh } = useCursorOverlay();
+
+  const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
 
   React.useEffect(() => {
+    if (!editorMounted) return;
     const scroll = scrollRef.current;
     if (!scroll) return;
 
     scroll.addEventListener('scroll', refresh, { passive: true });
     return () => scroll.removeEventListener('scroll', refresh);
-  }, [scrollRef, refresh]);
+  }, [editorMounted, scrollRef, refresh]);
 
   return (
     <>
