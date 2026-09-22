@@ -40,6 +40,7 @@ import {
   useEditorMounted,
   useEditorPlugin,
   useEditorRef,
+  useEditorSelection,
   useFocusedLast,
   useHotkeys,
   useOnClickOutside,
@@ -53,10 +54,10 @@ import { AICommentIcon } from './ai-comment-icon';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
+  const selection = useEditorSelection();
 
   const isFocusedLast = useFocusedLast();
   const open = usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
-  const [value, setValue] = React.useState('');
 
   const [input, setInput] = React.useState('');
 
@@ -133,8 +134,8 @@ export function AIMenu() {
   const floating = useVirtualFloating({
     getBoundingClientRect: () => {
       const anchorElementRect = anchorElement?.getBoundingClientRect();
-      if (editor.selection) {
-        const rangeRect = getRangeBoundingClientRect(editor, editor.selection);
+      if (selection) {
+        const rangeRect = getRangeBoundingClientRect(editor, selection);
         if (rangeRect && (rangeRect.width > 0 || rangeRect.height > 0)) {
           return new DOMRect(
             anchorElementRect?.x ?? rangeRect.x,
@@ -173,7 +174,7 @@ export function AIMenu() {
 
   React.useEffect(() => {
     void update();
-  }, [anchorElement, open, update]);
+  }, [anchorElement, selection, open, update]);
 
   React.useEffect(() => {
     if (!editorMounted) return;
@@ -197,8 +198,6 @@ export function AIMenu() {
     >
       <Command
         className="w-full rounded-lg border shadow-md"
-        value={value}
-        onValueChange={setValue}
         shouldFilter={false}
       >
         {isLoading ? (
@@ -215,18 +214,12 @@ export function AIMenu() {
             )}
             value={input}
             onKeyDown={(e) => {
-              if (isHotkey('escape')(e)) {
+              if (
+                isHotkey('escape')(e) ||
+                (isHotkey('backspace')(e) && input.length === 0)
+              ) {
                 e.preventDefault();
                 api.aiChat.hide();
-              }
-              if (isHotkey('backspace')(e) && input.length === 0) {
-                e.preventDefault();
-                api.aiChat.hide();
-              }
-              if (isHotkey('enter')(e) && !e.shiftKey && !value) {
-                e.preventDefault();
-                void api.aiChat.submit(input);
-                setInput('');
               }
             }}
             onValueChange={setInput}

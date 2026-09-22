@@ -1,0 +1,112 @@
+'use client';
+
+import { Button } from '@/components/shadcn/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
+import { AIChatPlugin } from '@platejs/ai/react';
+import {
+  flip,
+  getDefaultBoundingClientRect,
+  getRangeBoundingClientRect,
+  offset,
+  useVirtualFloating,
+} from '@platejs/floating';
+import { useComposedRef } from '@udecode/cn';
+import { SparklesIcon } from 'lucide-react';
+import {
+  useEditorMounted,
+  useEditorPlugin,
+  useEditorSelection,
+  useFocusedLast,
+  usePluginOption,
+  useScrollRef,
+} from 'platejs/react';
+import * as React from 'react';
+
+export function AICursorButton() {
+  const { api, editor } = useEditorPlugin(AIChatPlugin);
+  const selection = useEditorSelection();
+
+  const isFocusedLast = useFocusedLast();
+  const isAIMenuClose = !usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
+
+  const floating = useVirtualFloating({
+    getBoundingClientRect: () => {
+      if (selection) {
+        const rangeRect = getRangeBoundingClientRect(editor, selection);
+        if (rangeRect) return rangeRect;
+      }
+      return getDefaultBoundingClientRect();
+    },
+    middleware: [
+      offset(6),
+      flip({
+        fallbackPlacements: [
+          'top-start',
+          'top-end',
+          'bottom-start',
+          'bottom-end',
+        ],
+        padding: 6,
+      }),
+    ],
+    placement: 'bottom',
+  });
+
+  const ref = useComposedRef<HTMLButtonElement>(floating.refs.setFloating);
+
+  const editorMounted = useEditorMounted();
+  const scrollRef = useScrollRef();
+  const { update } = floating;
+
+  React.useEffect(() => {
+    void update();
+  }, [selection, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted) return;
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+
+    scroll.addEventListener('scroll', update, { passive: true });
+    return () => scroll.removeEventListener('scroll', update);
+  }, [editorMounted, scrollRef, update]);
+
+  if (!isAIMenuClose || !selection) return null;
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            ref={ref}
+            type="button"
+            size="icon-xs"
+            variant="outline"
+            aria-label="AI commands"
+            className="z-50 rounded-full opacity-50 shadow-md hover:opacity-80"
+            style={floating.style}
+            onClick={() => {
+              api.aiChat.show();
+            }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <SparklesIcon className="size-3.5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          AI commands
+          <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
+            Ctrl+Q
+          </kbd>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
