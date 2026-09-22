@@ -9,7 +9,7 @@ export const FloatingToolbarKit = [
     key: 'floating-toolbar',
     render: {
       afterEditable: () => (
-        <FloatingToolbar>
+        <FloatingToolbar state={{ showWhenReadOnly: true }}>
           <FloatingToolbarButtons />
         </FloatingToolbar>
       ),

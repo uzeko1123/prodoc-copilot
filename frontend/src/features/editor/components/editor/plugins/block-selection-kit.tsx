@@ -20,6 +20,7 @@ export const hasSelectableClass = ({
 
 export const BlockSelectionKit = [
   BlockSelectionPlugin.configure(({ editor }) => ({
+    editOnly: false,
     options: {
       enableContextMenu: true,
       isSelectable: (element) =>
