@@ -1,7 +1,7 @@
 'use client';
 
-import { FloatingToolbar } from '@/components/shadcn/ui/floating-toolbar';
 import { createPlatePlugin } from 'platejs/react';
+import { FloatingToolbar } from '../../ui/floating-toolbar';
 import { FloatingToolbarButtons } from '../../ui/floating-toolbar-buttons';
 
 export const FloatingToolbarKit = [

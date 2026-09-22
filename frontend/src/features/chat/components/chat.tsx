@@ -33,7 +33,6 @@ import {
 import { Spinner } from '@/components/shadcn/ui/spinner';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
-import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
   ArrowUpIcon,
   MessageCircleDashedIcon,
@@ -49,7 +48,6 @@ import {
 import {
   useEditorRef,
   useEditorSelector,
-  usePluginOption,
   usePluginOptions,
 } from 'platejs/react';
 import * as React from 'react';
@@ -63,18 +61,9 @@ import { menuStateItems } from './ui/ai-menu';
 
 export function Chat() {
   const editor = useEditorRef();
-  const selectedBlockIds = usePluginOption(BlockSelectionPlugin, 'selectedIds');
   const selectionText = useEditorSelector(
-    (editor) => {
-      const blocks = editor
-        .getApi(BlockSelectionPlugin)
-        .blockSelection.getNodes({ sort: true });
-      return getSelectionText(
-        editor,
-        blocks.length > 0 ? editor.api.nodesRange(blocks) : editor.selection,
-      );
-    },
-    [selectedBlockIds],
+    (editor) => getSelectionText(editor, editor.selection),
+    [],
   );
 
   const chatStatus = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);

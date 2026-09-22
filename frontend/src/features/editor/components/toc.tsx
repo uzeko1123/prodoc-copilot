@@ -92,7 +92,9 @@ export function ToC() {
     };
     updateActiveHeadingId();
 
-    editorScroll.addEventListener('scroll', updateActiveHeadingId);
+    editorScroll.addEventListener('scroll', updateActiveHeadingId, {
+      passive: true,
+    });
     return () => {
       editorScroll.removeEventListener('scroll', updateActiveHeadingId);
     };
