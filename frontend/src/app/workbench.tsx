@@ -111,7 +111,7 @@ function Workbench() {
               >
                 <TabsList
                   variant="line"
-                  className="h-10 max-h-10 min-h-10 w-full border-b"
+                  className="h-10 min-h-10 w-full border-b"
                 >
                   <TabsTrigger value="toc">ToC</TabsTrigger>
                   <TabsTrigger value="find">Find</TabsTrigger>
@@ -135,7 +135,7 @@ function Workbench() {
               <Tabs value="toc" className="h-full gap-0">
                 <TabsList
                   variant="line"
-                  className="h-10 max-h-10 min-h-10 w-full border-b"
+                  className="h-10 min-h-10 w-full border-b"
                 >
                   <TabsTrigger value="toc">ToC</TabsTrigger>
                 </TabsList>
@@ -162,7 +162,7 @@ function Workbench() {
             >
               <TabsList
                 variant="line"
-                className="h-10 max-h-10 min-h-10 w-full border-b"
+                className="h-10 min-h-10 w-full border-b"
               >
                 <TabsTrigger value="chat">Chat</TabsTrigger>
                 <TabsTrigger value="comment">Comment</TabsTrigger>
@@ -205,7 +205,7 @@ function Workbench() {
                 >
                   <TabsList
                     variant="line"
-                    className="h-10 max-h-10 min-h-10 w-full border-b"
+                    className="h-10 min-h-10 w-full border-b"
                   >
                     <TabsTrigger value="1">1</TabsTrigger>
                     <TabsTrigger value="2">2</TabsTrigger>

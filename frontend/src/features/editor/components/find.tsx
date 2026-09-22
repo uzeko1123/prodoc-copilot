@@ -9,6 +9,7 @@ import {
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
 import { Input } from '@/components/shadcn/ui/input';
+import { Separator } from '@/components/shadcn/ui/separator';
 import { FindReplacePlugin } from '@platejs/find-replace';
 import { SearchIcon, SearchXIcon } from 'lucide-react';
 import { ElementApi, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
@@ -27,16 +28,19 @@ export function Find() {
   const search = usePluginOption(FindReplacePlugin, 'search');
 
   return (
-    <div className="flex h-full flex-col gap-2 overflow-y-auto p-2">
-      <Input
-        value={search}
-        onChange={(e) => {
-          setOption('search', e.target.value);
-          editor.api.redecorate();
-        }}
-        placeholder="Search the text..."
-        type="search"
-      />
+    <div className="flex h-full flex-col">
+      <div className="p-2">
+        <Input
+          value={search}
+          onChange={(e) => {
+            setOption('search', e.target.value);
+            editor.api.redecorate();
+          }}
+          placeholder="Search the text..."
+          type="search"
+        />
+      </div>
+      <Separator />
       {search ? (
         <FindMatches search={search} />
       ) : (
@@ -101,20 +105,22 @@ function FindMatches({ search }: { search: string }) {
           description="No matches found, try a different keyword"
         />
       )}
-      {matches.map((match, index) => (
-        <Button
-          key={index}
-          variant="outline"
-          className="h-auto p-2"
-          onClick={() => onClick(match.range)}
-        >
-          <p className="line-clamp-3 w-full text-left text-xs whitespace-pre-wrap">
-            {match.before}
-            <mark className="bg-yellow-100 font-semibold">{match.text}</mark>
-            {match.after}
-          </p>
-        </Button>
-      ))}
+      <div className="flex flex-col gap-2 overflow-y-auto p-2">
+        {matches.map((match, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            className="h-auto p-2"
+            onClick={() => onClick(match.range)}
+          >
+            <p className="line-clamp-3 w-full text-left text-xs whitespace-pre-wrap">
+              {match.before}
+              <mark className="bg-yellow-100 font-semibold">{match.text}</mark>
+              {match.after}
+            </p>
+          </Button>
+        ))}
+      </div>
     </>
   );
 }

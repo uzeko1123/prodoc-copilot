@@ -35,7 +35,6 @@ import { useEditorRef, type TPlateEditor } from 'platejs/react';
 import { BlockSelectionKit } from './plugins/block-selection-kit';
 import { DndKit } from './plugins/dnd-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
-import { FixedToolbarKit } from './plugins/fixed-toolbar-kit';
 import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
 
 export const EditorKit = [
@@ -86,7 +85,6 @@ export const EditorKit = [
 
   // UI
   ...BlockPlaceholderKit,
-  ...FixedToolbarKit,
   ...FloatingToolbarKit,
 
   // Find
