@@ -25,6 +25,7 @@ import {
   FeatherIcon,
   ListMinus,
   ListPlus,
+  Loader2Icon,
   PauseIcon,
   PenLine,
   SmileIcon,
@@ -114,8 +115,6 @@ export function AIMenu() {
     editor.setOption(AIChatPlugin, 'open', false);
   }, [chatStatus, editor]);
 
-  if (isLoading) return null;
-
   return (
     <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverAnchor virtualRef={{ current: anchorElement! }} />
@@ -137,33 +136,43 @@ export function AIMenu() {
           className="w-full rounded-lg border shadow-md"
           shouldFilter={false}
         >
-          <CommandPrimitive.Input
-            className={cn(
-              'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
-              'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-              'border-b focus-visible:ring-transparent',
-            )}
-            value={input}
-            onKeyDown={(e) => {
-              if (isHotkey('backspace')(e) && input.length === 0) {
-                e.preventDefault();
-                api.aiChat.hide();
-              }
-              if (isHotkey('enter')(e) && !e.shiftKey) {
-                e.preventDefault();
-                e.stopPropagation();
-                void api.aiChat.submit(input);
-                setInput('');
-              }
-            }}
-            onValueChange={setInput}
-            placeholder="Ask AI anything..."
-            data-plate-focus
-            autoFocus
-          />
-          <CommandList>
-            <AIMenuItems input={input} setInput={setInput} />
-          </CommandList>
+          {isLoading ? (
+            <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
+              <Loader2Icon className="size-4 animate-spin" />
+              {chatStatus === 'submitted' ? 'Editing...' : 'Thinking...'}
+            </div>
+          ) : (
+            <CommandPrimitive.Input
+              className={cn(
+                'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
+                'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+                'border-b focus-visible:ring-transparent',
+              )}
+              value={input}
+              onKeyDown={(e) => {
+                if (isHotkey('backspace')(e) && input.length === 0) {
+                  e.preventDefault();
+                  api.aiChat.hide();
+                }
+                if (isHotkey('enter')(e) && !e.shiftKey) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  void api.aiChat.submit(input);
+                  setInput('');
+                }
+              }}
+              onValueChange={setInput}
+              placeholder="Ask AI anything..."
+              data-plate-focus
+              autoFocus
+            />
+          )}
+
+          {!isLoading && (
+            <CommandList>
+              <AIMenuItems input={input} setInput={setInput} />
+            </CommandList>
+          )}
         </Command>
       </PopoverContent>
     </Popover>
