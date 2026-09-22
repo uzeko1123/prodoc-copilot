@@ -20,7 +20,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
     afterEditable: AIMenu,
     node: AIAnchorElement,
   },
-  shortcuts: { show: { keys: 'Tab' } },
+  shortcuts: { show: { keys: 'tab' } },
   // useHooks: useChat,
   useHooks: useAgent,
 });

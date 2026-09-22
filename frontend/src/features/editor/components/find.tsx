@@ -10,6 +10,7 @@ import {
 } from '@/components/shadcn/ui/empty';
 import { Input } from '@/components/shadcn/ui/input';
 import { Separator } from '@/components/shadcn/ui/separator';
+import { useWorkbenchStore } from '@/stores/workbench';
 import { FindReplacePlugin } from '@platejs/find-replace';
 import { SearchIcon, SearchXIcon } from 'lucide-react';
 import { ElementApi, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
@@ -19,13 +20,22 @@ import {
   useEditorValue,
   usePluginOption,
 } from 'platejs/react';
-import { useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import { findAll } from '../lib/find';
 
 export function Find() {
   const editor = useEditorRef();
   const { setOption } = useEditorPlugin(FindReplacePlugin);
   const search = usePluginOption(FindReplacePlugin, 'search');
+  const activeLeftPanelTab = useWorkbenchStore(
+    (state) => state.activeLeftPanelTab,
+  );
+
+  useEffect(() => {
+    if (activeLeftPanelTab === 'find' || !search) return;
+    setOption('search', '');
+    editor.api.redecorate();
+  }, [activeLeftPanelTab, editor, search, setOption]);
 
   return (
     <div className="flex h-full flex-col">
@@ -86,14 +96,13 @@ function FindMatches({ search }: { search: string }) {
   }, [editorValue, search]);
 
   const onClick = (range: TRange) => {
-    editor.tf.select(range);
-    editor.tf.focus();
     const domRange = editor.api.toDOMRange(range);
-    if (domRange)
-      editor.api.scrollIntoView(domRange, {
-        block: 'center',
-        behavior: 'smooth',
-      });
+    if (!domRange) return;
+    editor.api.scrollIntoView(domRange, {
+      block: 'center',
+      behavior: 'smooth',
+    });
+    flashDomRange(domRange);
   };
 
   return (
@@ -143,4 +152,16 @@ function FindEmpty({
       </EmptyHeader>
     </Empty>
   );
+}
+
+let flashTimeout: ReturnType<typeof setTimeout> | undefined;
+
+function flashDomRange(domRange: Range) {
+  CSS.highlights.delete('flash-range');
+  CSS.highlights.set('flash-range', new Highlight(domRange));
+
+  clearTimeout(flashTimeout);
+  flashTimeout = setTimeout(() => {
+    CSS.highlights.delete('flash-range');
+  }, 1600);
 }

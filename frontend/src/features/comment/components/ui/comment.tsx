@@ -14,10 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
-import {
-  Editor,
-  EditorContainer,
-} from '@/features/editor/components/ui/editor';
+import { Editor, EditorContainer } from '@/components/shadcn/ui/editor';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
 import { cn } from 'cn';
