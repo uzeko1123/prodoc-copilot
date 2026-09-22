@@ -9,3 +9,7 @@
     scrollbar-color: var(--color-border) transparent;
   }
 }
+
+::highlight(flash-range) {
+  background-color: var(--color-highlight);
+}

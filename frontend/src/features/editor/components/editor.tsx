@@ -1,5 +1,10 @@
 'use client';
 
+import {
+  EditorContainer,
+  Editor as EditorPrimitive,
+} from '@/components/shadcn/ui/editor';
+import { FixedToolbar } from '@/components/shadcn/ui/fixed-toolbar';
 import { useEditorStore } from '@/features/editor/stores';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
@@ -9,13 +14,16 @@ import {
   usePluginOption,
 } from 'platejs/react';
 import { useEffect } from 'react';
-import { EditorContainer, Editor as EditorPrimitive } from './ui/editor';
+import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
 export function Editor() {
   const editorScrollRef = useEditorScrollRef();
 
   return (
-    <div className="h-full">
+    <div className="flex h-full flex-col">
+      <FixedToolbar className="h-10 min-h-10">
+        <FixedToolbarButtons />
+      </FixedToolbar>
       <EditorContainer>
         <EditorPrimitive ref={editorScrollRef} />
       </EditorContainer>
