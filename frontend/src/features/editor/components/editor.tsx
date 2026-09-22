@@ -41,13 +41,14 @@ function BlockSelectionRangeSync() {
   const selectedIds = usePluginOption(BlockSelectionPlugin, 'selectedIds');
 
   useEffect(() => {
-    if (!selectedIds || selectedIds.size === 0) return;
     const blocks = editor
       .getApi(BlockSelectionPlugin)
       .blockSelection.getNodes({ sort: true });
-    if (blocks.length === 0) return;
     const range = editor.api.nodesRange(blocks);
-    if (!range) return;
+    if (!range) {
+      editor.tf.deselect();
+      return;
+    }
 
     editor.tf.select(range);
     editor.setOption(BlockSelectionPlugin, 'selectedIds', selectedIds);

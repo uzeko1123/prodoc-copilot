@@ -33,7 +33,7 @@ import { DiscussionKit } from '@/features/comment/components/editor/plugins/disc
 import { SuggestionKit } from '@/features/comment/components/editor/plugins/suggestion-kit';
 import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
-import { BlockMenuKit } from './plugins/block-menu-kit';
+import { BlockSelectionKit } from './plugins/block-selection-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FixedToolbarKit } from './plugins/fixed-toolbar-kit';
 import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
@@ -74,7 +74,7 @@ export const EditorKit = [
   ...SlashKit,
   ...AutoformatKit,
   ...CursorOverlayKit,
-  ...BlockMenuKit,
+  ...BlockSelectionKit,
   ...DndKit,
   ...EmojiKit,
   ...ExitBreakKit,
