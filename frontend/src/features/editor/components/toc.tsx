@@ -20,8 +20,8 @@ import { NodeApi } from 'platejs';
 import {
   useEditorMounted,
   useEditorPlugin,
-  useEditorScrollRef,
   usePluginOption,
+  useScrollRef,
 } from 'platejs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -46,7 +46,7 @@ export function ToC() {
   const { editor } = useEditorPlugin(TocPlugin);
   const topOffset = usePluginOption(TocPlugin, 'topOffset');
   const editorMounted = useEditorMounted();
-  const editorScrollRef = useEditorScrollRef();
+  const scrollRef = useScrollRef();
 
   const tocSideBarState = useTocSideBarState({ topOffset });
   const { navProps, onContentClick } = useTocSideBar(tocSideBarState);
@@ -70,8 +70,8 @@ export function ToC() {
 
   useEffect(() => {
     if (!editorMounted) return;
-    const editorScroll = editorScrollRef.current;
-    if (!editorScroll) return;
+    const scroll = scrollRef.current;
+    if (!scroll) return;
 
     const updateActiveHeadingId = () => {
       let currentHeadingId: string | null = null;
@@ -81,7 +81,7 @@ export function ToC() {
         if (!el) continue;
         if (
           el.getBoundingClientRect().top <
-          editorScroll.getBoundingClientRect().top + topOffset
+          scroll.getBoundingClientRect().top + topOffset
         ) {
           currentHeadingId = heading.id;
         } else break;
@@ -92,13 +92,13 @@ export function ToC() {
     };
     updateActiveHeadingId();
 
-    editorScroll.addEventListener('scroll', updateActiveHeadingId, {
+    scroll.addEventListener('scroll', updateActiveHeadingId, {
       passive: true,
     });
     return () => {
-      editorScroll.removeEventListener('scroll', updateActiveHeadingId);
+      scroll.removeEventListener('scroll', updateActiveHeadingId);
     };
-  }, [editor, topOffset, editorMounted, editorScrollRef, headingListFiltered]);
+  }, [editor, topOffset, editorMounted, scrollRef, headingListFiltered]);
 
   useEffect(() => {
     if (!activeHeadingId) return;
@@ -111,9 +111,9 @@ export function ToC() {
     const node = NodeApi.get(editor, item.path);
     const el = node ? editor.api.toDOMNode(node) : undefined;
     if (!el) return;
-    editorScrollRef.current?.scrollTo({
+    scrollRef.current?.scrollTo({
       behavior,
-      top: heightToTop(el, editorScrollRef) - topOffset,
+      top: heightToTop(el, scrollRef) - topOffset,
     });
 
     onContentClick(...args);

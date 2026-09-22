@@ -1,8 +1,8 @@
 'use client';
 
-import { CursorOverlayKit } from '@/components/shadcn/editor/plugins/cursor-overlay-kit';
 import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
 import { AIAnchorElement, AILeaf } from '@/components/shadcn/ui/ai-node';
+import { CursorOverlayKit } from '@/features/editor/components/editor/plugins/cursor-overlay-kit';
 import { AIChatPlugin, AIPlugin } from '@platejs/ai/react';
 import { AILoadingBar, AIMenu } from '../../ui/ai-menu';
 // import { useChat } from '../use-chat';

@@ -13,9 +13,9 @@ import { cn } from 'cn';
 import { KEYS } from 'platejs';
 import {
   useEditorId,
-  useEditorScrollRef,
   useEventEditorValue,
   usePluginOption,
+  useScrollRef,
 } from 'platejs/react';
 import * as React from 'react';
 
@@ -64,23 +64,21 @@ export function FloatingToolbar({
 
   const ref = useComposedRef<HTMLDivElement>(props.ref, floatingRef);
 
-  const editorScrollRef = useEditorScrollRef();
+  const scrollRef = useScrollRef();
 
   React.useEffect(() => {
-    const editorScroll = editorScrollRef.current;
-    if (!editorScroll) return;
+    const scroll = scrollRef.current;
+    if (!scroll) return;
 
-    editorScroll.addEventListener(
-      'scroll',
-      floatingToolbarState.floating.update,
-      { passive: true },
-    );
+    scroll.addEventListener('scroll', floatingToolbarState.floating.update, {
+      passive: true,
+    });
     return () =>
-      editorScroll.removeEventListener(
+      scroll.removeEventListener(
         'scroll',
         floatingToolbarState.floating.update,
       );
-  }, [editorScrollRef, floatingToolbarState.floating.update]);
+  }, [scrollRef, floatingToolbarState.floating.update]);
 
   if (hidden) return null;
 

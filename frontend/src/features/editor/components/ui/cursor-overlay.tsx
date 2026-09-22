@@ -1,36 +1,27 @@
 'use client';
 
-import * as React from 'react';
-
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
+  useCursorOverlay,
   type CursorData,
   type CursorOverlayState,
-  useCursorOverlay,
 } from '@platejs/selection/react';
 import { getTableGridAbove } from '@platejs/table';
-import { RangeApi } from 'platejs';
-import {
-  useEditorRef,
-  usePluginOption,
-  useScrollRef,
-} from 'platejs/react';
-
 import { cn } from 'cn';
+import { RangeApi } from 'platejs';
+import { useEditorRef, usePluginOption, useScrollRef } from 'platejs/react';
+import * as React from 'react';
 
 export function CursorOverlay() {
   const { cursors, refresh } = useCursorOverlay();
   const scrollRef = useScrollRef();
 
-  // The selection rects are computed once per cursor state, but the editor
-  // scrolls in its own element (not the container the rects are positioned
-  // against), so they must be recomputed on scroll to stay on the text.
   React.useEffect(() => {
-    const editorScroll = scrollRef.current;
-    if (!editorScroll) return;
+    const scroll = scrollRef.current;
+    if (!scroll) return;
 
-    editorScroll.addEventListener('scroll', refresh, { passive: true });
-    return () => editorScroll.removeEventListener('scroll', refresh);
+    scroll.addEventListener('scroll', refresh, { passive: true });
+    return () => scroll.removeEventListener('scroll', refresh);
   }, [scrollRef, refresh]);
 
   return (
@@ -76,7 +67,7 @@ function Cursor({
           className={cn(
             'pointer-events-none absolute z-10',
             id === 'selection' && 'bg-brand/25',
-            id === 'selection' && isCursor && 'bg-primary'
+            id === 'selection' && isCursor && 'bg-primary',
           )}
           style={{
             ...selectionStyle,
@@ -88,7 +79,7 @@ function Cursor({
         <div
           className={cn(
             'pointer-events-none absolute z-10 w-0.5',
-            id === 'drag' && 'w-px bg-brand'
+            id === 'drag' && 'bg-brand w-px',
           )}
           style={{ ...caretPosition, ...style }}
         />
