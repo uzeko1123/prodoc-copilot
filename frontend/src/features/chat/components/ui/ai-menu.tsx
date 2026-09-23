@@ -39,6 +39,7 @@ import { isHotkey, type NodeEntry } from 'platejs';
 import {
   useEditorMounted,
   useEditorPlugin,
+  useEditorReadOnly,
   useEditorRef,
   useEditorSelection,
   useFocusedLast,
@@ -239,7 +240,8 @@ export function AIMenu() {
   );
 }
 
-type EditorChatState = 'cursorCommand' | 'selectionCommand';
+type EditorChatState =
+  'sendCommand' | 'cursorCommand' | 'selectionCommand' | 'readonlyCommand';
 
 const aiChatItems = {
   send: {
@@ -406,7 +408,7 @@ const aiChatItems = {
   },
   summarize: {
     icon: <Album />,
-    label: 'Add a summary',
+    label: 'Summarize',
     value: 'summarize',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
@@ -445,15 +447,17 @@ export const menuStateItems: Record<
     heading?: string;
   }[]
 > = {
+  sendCommand: [
+    {
+      items: [aiChatItems.send],
+    },
+  ],
   cursorCommand: [
     {
       items: [
-        aiChatItems.comment,
         aiChatItems.generateMdxSample,
         aiChatItems.generateMarkdownSample,
         aiChatItems.continueWrite,
-        aiChatItems.summarize,
-        aiChatItems.explain,
       ],
       heading: 'Cursor Command',
     },
@@ -462,7 +466,6 @@ export const menuStateItems: Record<
     {
       items: [
         aiChatItems.improveWriting,
-        aiChatItems.comment,
         aiChatItems.emojify,
         aiChatItems.makeLonger,
         aiChatItems.makeShorter,
@@ -470,6 +473,12 @@ export const menuStateItems: Record<
         aiChatItems.simplifyLanguage,
       ],
       heading: 'Selection Command',
+    },
+  ],
+  readonlyCommand: [
+    {
+      items: [aiChatItems.comment, aiChatItems.explain, aiChatItems.summarize],
+      heading: 'Readonly Command',
     },
   ],
 };
@@ -482,56 +491,47 @@ export const AIMenuItems = ({
   setInput: (value: string) => void;
 }) => {
   const editor = useEditorRef();
+  const readOnly = useEditorReadOnly();
   const isSelecting = useIsSelecting();
 
-  const menuState = React.useMemo(() => {
-    return isSelecting ? 'selectionCommand' : 'cursorCommand';
-  }, [isSelecting]);
-  const menuGroups = React.useMemo(() => {
-    const items = menuStateItems[menuState];
-
-    return items;
-  }, [menuState]);
+  const menuStates = React.useMemo(() => {
+    return (
+      readOnly
+        ? ['sendCommand', 'readonlyCommand']
+        : isSelecting
+          ? ['sendCommand', 'selectionCommand', 'readonlyCommand']
+          : ['sendCommand', 'cursorCommand', 'readonlyCommand']
+    ) as EditorChatState[];
+  }, [readOnly, isSelecting]);
 
   return (
     <>
-      <CommandGroup>
-        <CommandItem
-          className="[&_svg]:text-muted-foreground"
-          value={aiChatItems.send.value}
-          onSelect={() => {
-            aiChatItems.send.onSelect?.({
-              editor,
-              input,
-            });
-            setInput('');
-          }}
-        >
-          {aiChatItems.send.icon}
-          <span>{aiChatItems.send.label}</span>
-        </CommandItem>
-      </CommandGroup>
-      {menuGroups.map((group, index) => (
-        <CommandGroup key={index} heading={group.heading}>
-          {group.items.map((menuItem) => (
-            <CommandItem
-              key={menuItem.value}
-              className="[&_svg]:text-muted-foreground"
-              value={menuItem.value}
-              onSelect={() => {
-                menuItem.onSelect?.({
-                  editor,
-                  input,
-                });
-                setInput('');
-              }}
-            >
-              {menuItem.icon}
-              <span>{menuItem.label}</span>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      ))}
+      {menuStates.map((menuState, menuStateIndex) =>
+        menuStateItems[menuState].map((group, index) => (
+          <CommandGroup
+            key={`${menuStateIndex}-${index}`}
+            heading={group.heading}
+          >
+            {group.items.map((menuItem) => (
+              <CommandItem
+                key={menuItem.value}
+                className="[&_svg]:text-muted-foreground"
+                value={menuItem.value}
+                onSelect={() => {
+                  menuItem.onSelect?.({
+                    editor,
+                    input,
+                  });
+                  setInput('');
+                }}
+              >
+                {menuItem.icon}
+                <span>{menuItem.label}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        )),
+      )}
     </>
   );
 };

@@ -46,6 +46,7 @@ import {
   WrenchIcon,
 } from 'lucide-react';
 import {
+  useEditorReadOnly,
   useEditorRef,
   useEditorSelector,
   usePluginOptions,
@@ -60,6 +61,7 @@ import { menuStateItems } from './ui/ai-menu';
 
 export function Chat() {
   const editor = useEditorRef();
+  const readOnly = useEditorReadOnly();
   const selectionText = useEditorSelector(
     (editor) => getSelectionText(editor, editor.selection),
     [],
@@ -73,6 +75,17 @@ export function Chat() {
   const setChatMode = useChatStore((state) => state.setChatMode);
   const chatMessages = useChatStore((state) => state.chatMessages);
   const setChatMessages = useChatStore((state) => state.setChatMessages);
+
+  const availableChatModes = React.useMemo(
+    () => (readOnly ? ['chat', 'comment'] : chatModes),
+    [readOnly],
+  );
+
+  React.useEffect(() => {
+    if (!availableChatModes.includes(chatMode)) {
+      setChatMode('chat');
+    }
+  }, [availableChatModes, chatMode, setChatMode]);
 
   const setSettingsDialogOpen = useWorkbenchStore(
     (state) => state.setSettingsDialogOpen,
@@ -243,7 +256,7 @@ export function Chat() {
                       value={chatMode}
                       onValueChange={(value) => setChatMode(value as ChatMode)}
                     >
-                      {chatModes.map((chatMode) => (
+                      {availableChatModes.map((chatMode) => (
                         <DropdownMenuRadioItem
                           className="text-xs"
                           key={chatMode}

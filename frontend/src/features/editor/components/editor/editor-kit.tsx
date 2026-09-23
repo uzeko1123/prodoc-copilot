@@ -36,6 +36,7 @@ import { CursorOverlayKit } from './plugins/cursor-overlay-kit';
 import { DndKit } from './plugins/dnd-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
+import { SelectionKit } from './plugins/selection-kit';
 
 export const EditorKit = [
   ...CopilotKit,
@@ -73,6 +74,7 @@ export const EditorKit = [
   ...SlashKit,
   ...AutoformatKit,
   ...CursorOverlayKit,
+  ...SelectionKit,
   ...BlockSelectionKit,
   ...DndKit,
   ...EmojiKit,
