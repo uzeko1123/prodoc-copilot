@@ -3,6 +3,7 @@
 import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
 import { AIAnchorElement, AILeaf } from '@/components/shadcn/ui/ai-node';
 import { CursorOverlayKit } from '@/features/editor/components/editor/plugins/cursor-overlay-kit';
+import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin, AIPlugin } from '@platejs/ai/react';
 import { AICursorButton } from '../../ui/ai-cursor-button';
 import { AILoadingBar, AIMenu } from '../../ui/ai-menu';
@@ -31,7 +32,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
   // useHooks: useChat,
   useHooks: useAgent,
 }).extendApi(({ api, getOption, getOptions, setOption }) => {
-  const { show, hide } = api.aiChat;
+  const { show, hide, submit } = api.aiChat;
 
   const isRunning = () =>
     getOption('streaming') ||
@@ -39,6 +40,10 @@ export const aiChatPlugin = AIChatPlugin.extend({
     getOptions().chat?.status === 'submitted';
 
   return {
+    submit: (...args: Parameters<typeof submit>) => {
+      useWorkbenchStore.getState().setActiveMainTab('chat');
+      submit(...args);
+    },
     show: () => {
       if (isRunning()) {
         setOption('open', true);

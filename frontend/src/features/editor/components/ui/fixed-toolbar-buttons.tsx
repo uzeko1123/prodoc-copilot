@@ -9,7 +9,6 @@ import {
   UndoToolbarButton,
 } from '@/components/shadcn/ui/history-toolbar-button';
 import { MediaToolbarButton } from '@/components/shadcn/ui/media-toolbar-button';
-import { ModeToolbarButton } from '@/components/shadcn/ui/mode-toolbar-button';
 import { TableToolbarButton } from '@/components/shadcn/ui/table-toolbar-button';
 import { ToolbarGroup } from '@/components/shadcn/ui/toolbar';
 import { useWorkbenchStore } from '@/stores/workbench';
@@ -19,6 +18,7 @@ import { useEditorReadOnly } from 'platejs/react';
 import { ExportToolbarButton } from './export-toolbar-button';
 import { ImportToolbarButton } from './import-toolbar-button';
 import { InsertToolbarButton } from './insert-toolbar-button';
+import { ModeToolbarButton } from './mode-toolbar-button';
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();

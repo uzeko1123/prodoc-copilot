@@ -12,6 +12,7 @@ import { useComposedRef } from '@udecode/cn';
 import { cn } from 'cn';
 import { KEYS } from 'platejs';
 import {
+  useEditorContainerRef,
   useEditorId,
   useEditorMounted,
   useEventEditorValue,
@@ -67,6 +68,7 @@ export function FloatingToolbar({
 
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
+  const containerRef = useEditorContainerRef();
   const { update } = floatingToolbarState.floating;
 
   React.useEffect(() => {
@@ -77,6 +79,16 @@ export function FloatingToolbar({
     scroll.addEventListener('scroll', update, { passive: true });
     return () => scroll.removeEventListener('scroll', update);
   }, [editorMounted, scrollRef, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => update());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [editorMounted, containerRef, update]);
 
   if (hidden) return null;
 

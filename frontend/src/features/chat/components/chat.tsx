@@ -37,7 +37,6 @@ import {
   ArrowUpIcon,
   MessageCircleDashedIcon,
   MessagesCircleIcon,
-  MessageSquareTextIcon,
   PencilSparklesIcon,
   RotateCwIcon,
   SparklesIcon,
@@ -57,6 +56,7 @@ import { useChatStore } from '../stores';
 import { Context } from './context';
 import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
+import { AICommentIcon } from './ui/ai-comment-icon';
 import { menuStateItems } from './ui/ai-menu';
 
 export function Chat() {
@@ -302,7 +302,7 @@ export function Chat() {
 function ChatModeIcon({ chatMode }: { chatMode: ChatMode }) {
   const chatModeIcons = {
     chat: MessagesCircleIcon,
-    comment: MessageSquareTextIcon,
+    comment: AICommentIcon,
     suggestion: PencilSparklesIcon,
     auto: SparklesIcon,
   };

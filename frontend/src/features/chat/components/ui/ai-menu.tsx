@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { isHotkey, type NodeEntry } from 'platejs';
 import {
+  useEditorContainerRef,
   useEditorMounted,
   useEditorPlugin,
   useEditorReadOnly,
@@ -171,6 +172,7 @@ export function AIMenu() {
 
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
+  const containerRef = useEditorContainerRef();
   const { update } = floating;
 
   React.useEffect(() => {
@@ -185,6 +187,16 @@ export function AIMenu() {
     scroll.addEventListener('scroll', update, { passive: true });
     return () => scroll.removeEventListener('scroll', update);
   }, [editorMounted, scrollRef, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => update());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [editorMounted, containerRef, update]);
 
   if (!open || !anchorElement) return null;
 

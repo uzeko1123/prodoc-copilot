@@ -18,6 +18,7 @@ import { useComposedRef } from '@udecode/cn';
 import { ChevronDownIcon, ChevronUpIcon, SparklesIcon } from 'lucide-react';
 import { RangeApi } from 'platejs';
 import {
+  useEditorContainerRef,
   useEditorMounted,
   useEditorPlugin,
   useEditorSelection,
@@ -51,6 +52,7 @@ export function AICursorButton() {
 
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
+  const containerRef = useEditorContainerRef();
   const { update } = floating;
 
   React.useEffect(() => {
@@ -65,6 +67,16 @@ export function AICursorButton() {
     scroll.addEventListener('scroll', update, { passive: true });
     return () => scroll.removeEventListener('scroll', update);
   }, [editorMounted, scrollRef, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => update());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [editorMounted, containerRef, update]);
 
   if (!isAIMenuClose || !selection) return null;
 
