@@ -34,8 +34,10 @@ export const BlockDiscussion: RenderNodeWrapper<AnyPluginConfig> =
 const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const editor = useEditorRef();
   const commentsApi = editor.getApi(CommentPlugin).comment;
+  const suggestionApi = editor.getApi(SuggestionPlugin).suggestion;
   const blockPath = editor.api.findPath(element) ?? [];
   const isTopLevelBlock = blockPath.length === 1;
+
   const { resolvedDiscussions, resolvedSuggestions, version } =
     useBlockDiscussionItems(blockPath);
 
@@ -55,45 +57,36 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     activeCommentId &&
     resolvedDiscussions.find((d) => d.id === activeCommentId);
 
-  // Node lookups below read the live document, so they must be keyed on the
-  // (debounced) value version — leaving them as bare render expressions
-  // would re-walk the block on every keystroke and let React Compiler
-  // serve stale results across document edits. The draft lookup also keys
-  // on activeCommentId so the draft popover opens immediately when
-  // commenting starts, without waiting for the debounce to flush.
+  const noneActive = !activeSuggestion && !activeDiscussion;
+
   const draftCommentNode = React.useMemo(
     () =>
       isTopLevelBlock && isCommenting
         ? commentsApi.node({ at: blockPath, isDraft: true })
         : undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      commentsApi,
-      blockPath,
-      isTopLevelBlock,
-      isCommenting,
-      activeCommentId,
-      version,
-    ],
+    [version, commentsApi, blockPath, isTopLevelBlock, isCommenting],
   );
 
-  // Only blocks that actually carry items consume these node lists (see the
-  // early returns below), so skip the walks for the common empty block.
-  const { commentNodes, suggestionNodes } = React.useMemo(() => {
-    if (!isTopLevelBlock || totalCount === 0) {
-      return { commentNodes: [], suggestionNodes: [] };
-    }
-
-    return {
-      commentNodes: [...commentsApi.nodes({ at: blockPath })],
-      suggestionNodes: [
-        ...editor.getApi(SuggestionPlugin).suggestion.nodes({ at: blockPath }),
-      ].filter(([node]) => !node[getTransientSuggestionKey()]),
-    };
+  const commentNodes = React.useMemo(
+    () =>
+      isTopLevelBlock && totalCount > 0
+        ? [...commentsApi.nodes({ at: blockPath })]
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commentsApi, editor, blockPath, isTopLevelBlock, totalCount, version]);
+    [version, commentsApi, blockPath, isTopLevelBlock, totalCount],
+  );
 
-  const noneActive = !activeSuggestion && !activeDiscussion;
+  const suggestionNodes = React.useMemo(
+    () =>
+      isTopLevelBlock && totalCount > 0
+        ? [...suggestionApi.nodes({ at: blockPath })].filter(
+            ([node]) => !node[getTransientSuggestionKey()],
+          )
+        : [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [version, suggestionApi, blockPath, isTopLevelBlock, totalCount],
+  );
 
   const sortedMergedData = [
     ...resolvedDiscussions,
@@ -121,8 +114,7 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     if (activeSuggestion) {
       activeNode = suggestionNodes.find(
         ([node]) =>
-          editor.getApi(SuggestionPlugin).suggestion.nodeId(node) ===
-          activeSuggestion.suggestionId,
+          suggestionApi.nodeId(node) === activeSuggestion.suggestionId,
       );
     }
 

@@ -485,9 +485,7 @@ export const getDiscussionIndex = (
 export const useBlockDiscussionItems = (blockPath: Path) => {
   const editor = useEditorRef();
   const discussions = usePluginOption(discussionPlugin, 'discussions');
-  // Debounced so the cached index survives keystroke bursts: rebuilds once
-  // per typing pause instead of on every editor change.
-  const version = useDebounce(useValueVersion() ?? 0, 300);
+  const version = useDebounce(useValueVersion() ?? 0);
 
   return React.useMemo(() => {
     const index = getDiscussionIndex(editor, discussions, version);
