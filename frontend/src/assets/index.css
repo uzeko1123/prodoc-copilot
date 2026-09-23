@@ -1,7 +1,5 @@
 @import './shadcn/index.css';
 @import './shadcn/typeset.css';
-@import './tiptap/_keyframe-animations.scss';
-@import './tiptap/_variables.scss';
 
 @layer base {
   * {
