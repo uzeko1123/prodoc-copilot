@@ -9,14 +9,14 @@ import {
 } from '@/components/shadcn/ui/tooltip';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
-  flip,
   getDefaultBoundingClientRect,
   getRangeBoundingClientRect,
   offset,
   useVirtualFloating,
 } from '@platejs/floating';
 import { useComposedRef } from '@udecode/cn';
-import { SparklesIcon } from 'lucide-react';
+import { ChevronDownIcon, ChevronUpIcon, SparklesIcon } from 'lucide-react';
+import { RangeApi } from 'platejs';
 import {
   useEditorMounted,
   useEditorPlugin,
@@ -33,6 +33,7 @@ export function AICursorButton() {
 
   const isFocusedLast = useFocusedLast();
   const isAIMenuClose = !usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
+  const isCursor = RangeApi.isCollapsed(selection);
 
   const floating = useVirtualFloating({
     getBoundingClientRect: () => {
@@ -42,22 +43,11 @@ export function AICursorButton() {
       }
       return getDefaultBoundingClientRect();
     },
-    middleware: [
-      offset(6),
-      flip({
-        fallbackPlacements: [
-          'top-start',
-          'top-end',
-          'bottom-start',
-          'bottom-end',
-        ],
-        padding: 6,
-      }),
-    ],
+    middleware: [offset(1)],
     placement: 'bottom',
   });
 
-  const ref = useComposedRef<HTMLButtonElement>(floating.refs.setFloating);
+  const ref = useComposedRef<HTMLDivElement>(floating.refs.setFloating);
 
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
@@ -79,34 +69,44 @@ export function AICursorButton() {
   if (!isAIMenuClose || !selection) return null;
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            ref={ref}
-            type="button"
-            size="icon-xs"
-            variant="outline"
-            aria-label="AI commands"
-            className="z-50 rounded-full opacity-50 shadow-md hover:opacity-80"
-            style={floating.style}
-            onClick={() => {
-              api.aiChat.show();
-            }}
-            onMouseDown={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <SparklesIcon className="size-3.5" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          AI commands
-          <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
-            Ctrl+Q
-          </kbd>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <div
+      ref={ref}
+      className="z-50 flex flex-col items-center"
+      style={floating.style}
+    >
+      {isCursor ? (
+        <ChevronUpIcon className="-my-1 size-3.5" />
+      ) : (
+        <ChevronDownIcon className="-my-1 size-3.5" />
+      )}
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              size="icon-xs"
+              variant="outline"
+              aria-label="AI commands"
+              className="rounded-full opacity-50 shadow-md hover:opacity-80"
+              onClick={() => {
+                api.aiChat.show();
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <SparklesIcon className="size-3.5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            AI commands
+            <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
+              Ctrl+Q
+            </kbd>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   );
 }
