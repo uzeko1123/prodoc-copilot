@@ -75,9 +75,9 @@ export function AICursorButton() {
       style={floating.style}
     >
       {isCursor ? (
-        <ChevronUpIcon className="-my-1 size-3.5" />
+        <ChevronUpIcon className="-my-0.5 size-3.5" />
       ) : (
-        <ChevronDownIcon className="-my-1 size-3.5" />
+        <ChevronDownIcon className="-my-0.5 size-3.5" />
       )}
 
       <TooltipProvider>
