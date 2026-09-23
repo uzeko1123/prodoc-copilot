@@ -52,7 +52,7 @@ export function FixedToolbarButtons() {
 
       <div className="grow" />
 
-      {!_hideMainToolbar && (
+      {!_hideMainToolbar && !readOnly && (
         <>
           <ToolbarGroup>
             <InsertToolbarButton />

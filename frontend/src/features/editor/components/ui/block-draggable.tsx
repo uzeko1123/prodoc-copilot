@@ -14,6 +14,7 @@ import { GripVertical } from 'lucide-react';
 import { getPluginByType, isType, KEYS, type TElement } from 'platejs';
 import {
   MemoizedChildren,
+  useEditorReadOnly,
   useEditorRef,
   useElement,
   usePluginOption,
@@ -30,8 +31,6 @@ export const BlockDraggable: RenderNodeWrapper = (props) => {
   const { editor, element, path } = props;
 
   const enabled = React.useMemo(() => {
-    if (editor.dom.readOnly) return false;
-
     if (path.length === 1 && !isType(editor, element, UNDRAGGABLE_KEYS)) {
       return true;
     }
@@ -70,11 +69,15 @@ export const BlockDraggable: RenderNodeWrapper = (props) => {
 
 function Draggable(props: PlateElementProps) {
   const { children, editor, element, path } = props;
+  const readOnly = useEditorReadOnly();
   const blockSelectionApi = editor.getApi(BlockSelectionPlugin).blockSelection;
 
   const { isAboutToDrag, isDragging, nodeRef, previewRef, handleRef } =
     useDraggable({
       element,
+      drop: {
+        canDrop: () => !editor.dom.readOnly,
+      },
       onDropHandler: (_, { dragItem }) => {
         const id = (dragItem as { id: string[] | string }).id;
 
@@ -145,7 +148,7 @@ function Draggable(props: PlateElementProps) {
               )}
             >
               <Button
-                ref={handleRef}
+                ref={readOnly ? undefined : handleRef}
                 variant="ghost"
                 className="absolute left-0 h-6 w-full p-0"
                 style={{ top: `${dragButtonTop + 3}px` }}
@@ -231,6 +234,7 @@ const DragHandle = React.memo(function DragHandle({
   setPreviewTop: (top: number) => void;
 }) {
   const editor = useEditorRef();
+  const readOnly = useEditorReadOnly();
   const element = useElement();
 
   return (
@@ -267,16 +271,18 @@ const DragHandle = React.memo(function DragHandle({
               selectionNodes,
             ).map(([node]) => node);
 
-            if (blockSelection.length === 0) {
-              editor.tf.blur();
-              editor.tf.collapse();
-            }
+            if (!readOnly) {
+              if (blockSelection.length === 0) {
+                editor.tf.blur();
+                editor.tf.collapse();
+              }
 
-            const elements = createDragPreviewElements(editor, blocks);
-            previewRef.current?.append(...elements);
-            previewRef.current?.classList.remove('hidden');
-            previewRef.current?.classList.add('opacity-0');
-            editor.setOption(DndPlugin, 'multiplePreviewRef', previewRef);
+              const elements = createDragPreviewElements(editor, blocks);
+              previewRef.current?.append(...elements);
+              previewRef.current?.classList.remove('hidden');
+              previewRef.current?.classList.add('opacity-0');
+              editor.setOption(DndPlugin, 'multiplePreviewRef', previewRef);
+            }
 
             editor
               .getApi(BlockSelectionPlugin)
@@ -326,7 +332,7 @@ const DragHandle = React.memo(function DragHandle({
           <GripVertical className="text-muted-foreground" />
         </div>
       </TooltipTrigger>
-      <TooltipContent>Drag to move</TooltipContent>
+      {!readOnly && <TooltipContent>Drag to move</TooltipContent>}
     </Tooltip>
   );
 });
