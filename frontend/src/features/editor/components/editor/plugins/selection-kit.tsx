@@ -75,6 +75,14 @@ function isNativeHighlightPainted(editor: PlateEditor) {
   const domSelection = root ? getSelection(root) : null;
   if (!domSelection?.anchorNode) return false;
 
+  // Fast path: this fires on every selectionchange anywhere in the app
+  // (typing in the chat textarea included), so bail with a cheap contains
+  // check before the toSlateRange DOM-to-model mapping. A native selection
+  // outside the editable can never map to a Slate range.
+  const editable = editor.api.toDOMNode(editor);
+  if (!editable) return false;
+  if (!editable.contains(domSelection.anchorNode)) return false;
+
   // Test mappability, not node containment: afterEditable slots (e.g. the
   // AI menu) can sit inside the editable yet be unmappable, meaning the
   // native highlight is already gone.

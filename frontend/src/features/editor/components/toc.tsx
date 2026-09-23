@@ -8,20 +8,19 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
-import {
-  heightToTop,
-  TocPlugin,
-  useTocSideBar,
-  useTocSideBarState,
-} from '@platejs/toc/react';
+import { useDebounce } from '@/hooks/shadcn/use-debounce';
+import { isHeading, type Heading } from '@platejs/toc';
+import { heightToTop, TocPlugin } from '@platejs/toc/react';
 import { cva } from 'class-variance-authority';
 import { ListTreeIcon } from 'lucide-react';
-import { NodeApi } from 'platejs';
+import { ElementApi, NodeApi } from 'platejs';
 import {
   useEditorMounted,
   useEditorPlugin,
   usePluginOption,
   useScrollRef,
+  useValueVersion,
+  type PlateEditor,
 } from 'platejs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -42,15 +41,49 @@ const headingItemVariants = cva(
   },
 );
 
+const headingDepth: Record<string, number> = {
+  h1: 1,
+  h2: 2,
+  h3: 3,
+  h4: 4,
+  h5: 5,
+  h6: 6,
+};
+
+const getHeadingList = (editor: PlateEditor): Heading[] => {
+  const options = editor.getOptions(TocPlugin);
+  if (options.queryHeading) return options.queryHeading(editor);
+  const headingList: Heading[] = [];
+  const values = editor.api.nodes({
+    at: [],
+    match: (n) => isHeading(n),
+  });
+  if (!values) return [];
+  for (const [node, path] of values) {
+    if (!ElementApi.isElement(node)) continue;
+    const { id, type } = node;
+    const title = NodeApi.string(node);
+    const depth = headingDepth[type];
+    if (typeof id === 'string' && title && depth) {
+      headingList.push({ id, depth, path, title, type });
+    }
+  }
+  return headingList;
+};
+
 export function ToC() {
   const { editor } = useEditorPlugin(TocPlugin);
   const editorMounted = useEditorMounted();
   const scrollRef = useScrollRef();
   const topOffset = usePluginOption(TocPlugin, 'topOffset');
 
-  const tocSideBarState = useTocSideBarState({ topOffset });
-  const { navProps, onContentClick } = useTocSideBar(tocSideBarState);
-  const { headingList } = tocSideBarState;
+  const version = useDebounce(useValueVersion() ?? 0);
+  const headingList = useMemo(
+    () => getHeadingList(editor),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [editor, version],
+  );
+
   const tocButtonRefs = useRef<Map<string, HTMLButtonElement | null>>(
     new Map(),
   );
@@ -74,15 +107,14 @@ export function ToC() {
     if (!scroll) return;
 
     const updateActiveHeadingId = () => {
+      const scrollRectTopThreshold =
+        scroll.getBoundingClientRect().top + topOffset;
       let currentHeadingId: string | null = null;
       for (const heading of headingListFiltered) {
         const node = NodeApi.get(editor, heading.path);
         const el = node ? editor.api.toDOMNode(node) : undefined;
         if (!el) continue;
-        if (
-          el.getBoundingClientRect().top <
-          scroll.getBoundingClientRect().top + topOffset
-        ) {
+        if (el.getBoundingClientRect().top < scrollRectTopThreshold) {
           currentHeadingId = heading.id;
         } else break;
       }
@@ -92,11 +124,18 @@ export function ToC() {
     };
     updateActiveHeadingId();
 
-    scroll.addEventListener('scroll', updateActiveHeadingId, {
-      passive: true,
-    });
+    let requestAnimationFrameId = 0;
+    const onScroll = () => {
+      if (requestAnimationFrameId) return;
+      requestAnimationFrameId = requestAnimationFrame(() => {
+        requestAnimationFrameId = 0;
+        updateActiveHeadingId();
+      });
+    };
+    scroll.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      scroll.removeEventListener('scroll', updateActiveHeadingId);
+      cancelAnimationFrame(requestAnimationFrameId);
+      scroll.removeEventListener('scroll', onScroll);
     };
   }, [editor, editorMounted, scrollRef, topOffset, headingListFiltered]);
 
@@ -106,21 +145,21 @@ export function ToC() {
     activeTocButton?.scrollIntoView({ block: 'nearest' });
   }, [activeHeadingId]);
 
-  const onClick = (...args: Parameters<typeof onContentClick>) => {
-    const [, item, behavior] = args;
+  const onClick = (item: Heading) => {
     const node = NodeApi.get(editor, item.path);
     const el = node ? editor.api.toDOMNode(node) : undefined;
     if (!el) return;
     scrollRef.current?.scrollTo({
-      behavior,
+      behavior: 'smooth',
       top: heightToTop(el, scrollRef) - topOffset,
     });
-
-    onContentClick(...args);
+    editor.tf.navigation.flashTarget({
+      target: { type: 'node', path: item.path },
+    });
   };
 
   return (
-    <nav {...navProps} className="h-full scroll-py-10 overflow-y-auto p-2">
+    <nav className="h-full scroll-py-10 overflow-y-auto p-2">
       {headingListFiltered.length === 0 && (
         <Empty className="h-full">
           <EmptyHeader>
@@ -143,7 +182,7 @@ export function ToC() {
             depth: heading.depth as 1 | 2 | 3,
           })}
           ref={(el) => setTocButtonRefs(heading.id, el)}
-          onClick={(e) => onClick(e, heading, 'smooth')}
+          onClick={() => onClick(heading)}
           aria-current={heading.id === activeHeadingId ? 'location' : undefined}
         >
           {heading.title}

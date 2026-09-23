@@ -8,12 +8,13 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
+import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { CommentPlugin } from '@platejs/comment/react';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { cn } from 'cn';
 import { MessagesSquareIcon } from 'lucide-react';
 import { PathApi, type Path } from 'platejs';
-import { useEditorRef, useEditorVersion, usePluginOption } from 'platejs/react';
+import { useEditorRef, usePluginOption, useValueVersion } from 'platejs/react';
 import { useEffect, useMemo, useRef } from 'react';
 import {
   getDiscussionIndex,
@@ -37,7 +38,7 @@ type CommentItem = { id: string; path: Path } & (
 export function Comment() {
   const editor = useEditorRef();
   const discussions = usePluginOption(discussionPlugin, 'discussions');
-  const version = useEditorVersion() ?? 0;
+  const version = useDebounce(useValueVersion() ?? 0);
 
   const setDiscussions = useCommentStore((state) => state.setDiscussions);
 

@@ -111,8 +111,8 @@
         "console": "integratedTerminal",
         "serverReadyAction": {
           "action": "debugWithChrome",
-          "pattern": ".",
-          "uriFormat": "http://localhost:5173/",
+          "pattern": "(http://localhost:[0-9]+/)",
+          "uriFormat": "%s",
           "killOnServerStop": true,
         },
       },

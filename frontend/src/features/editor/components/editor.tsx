@@ -59,7 +59,9 @@ function BlockSelectionRangeSync() {
     }
 
     editor.tf.select(range);
-    editor.setOption(BlockSelectionPlugin, 'selectedIds', selectedIds);
+    if (editor.getOption(BlockSelectionPlugin, 'selectedIds') !== selectedIds) {
+      editor.setOption(BlockSelectionPlugin, 'selectedIds', selectedIds);
+    }
   }, [editor, selectedIds]);
 
   return null;

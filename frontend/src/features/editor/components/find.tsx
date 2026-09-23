@@ -10,6 +10,7 @@ import {
 } from '@/components/shadcn/ui/empty';
 import { Input } from '@/components/shadcn/ui/input';
 import { Separator } from '@/components/shadcn/ui/separator';
+import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { FindReplacePlugin } from '@platejs/find-replace';
 import { SearchIcon, SearchXIcon } from 'lucide-react';
@@ -20,7 +21,7 @@ import {
   useEditorValue,
   usePluginOption,
 } from 'platejs/react';
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { findAll } from '../lib/find';
 
 export function Find() {
@@ -31,9 +32,30 @@ export function Find() {
     (state) => state.activeLeftPanelTab,
   );
 
+  const [input, setInput] = useState(search ?? '');
+  const debouncedInput = useDebounce(input);
+  const [isComposing, setIsComposing] = useState(false);
+  const lastSearchRef = useRef(search ?? '');
+
+  useEffect(() => {
+    if (isComposing) return;
+    const currentSearch = search ?? '';
+    if (debouncedInput === currentSearch) return;
+    if (lastSearchRef.current !== currentSearch) {
+      lastSearchRef.current = currentSearch;
+      setInput(currentSearch);
+      return;
+    }
+    lastSearchRef.current = debouncedInput;
+    setOption('search', debouncedInput);
+    clearFlashRange();
+    editor.api.redecorate();
+  }, [debouncedInput, isComposing, editor, search, setOption]);
+
   useEffect(() => {
     if (activeLeftPanelTab === 'find' || !search) return;
     setOption('search', '');
+    clearFlashRange();
     editor.api.redecorate();
   }, [activeLeftPanelTab, editor, search, setOption]);
 
@@ -41,11 +63,10 @@ export function Find() {
     <div className="flex h-full flex-col">
       <div className="p-2">
         <Input
-          value={search}
-          onChange={(e) => {
-            setOption('search', e.target.value);
-            editor.api.redecorate();
-          }}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
           placeholder="Search the text..."
           type="search"
         />
@@ -66,7 +87,7 @@ export function Find() {
 
 function FindMatches({ search }: { search: string }) {
   const editor = useEditorRef();
-  const editorValue = useEditorValue();
+  const editorValue = useDebounce(useEditorValue());
 
   const matches = useMemo(() => {
     if (!search) return [];
@@ -102,7 +123,7 @@ function FindMatches({ search }: { search: string }) {
       block: 'center',
       behavior: 'smooth',
     });
-    flashDomRange(domRange);
+    flashRange(domRange);
   };
 
   return (
@@ -156,7 +177,7 @@ function FindEmpty({
 
 let flashTimeout: ReturnType<typeof setTimeout> | undefined;
 
-function flashDomRange(domRange: Range) {
+function flashRange(domRange: Range) {
   CSS.highlights.delete('flash-range');
   CSS.highlights.set('flash-range', new Highlight(domRange));
 
@@ -164,4 +185,9 @@ function flashDomRange(domRange: Range) {
   flashTimeout = setTimeout(() => {
     CSS.highlights.delete('flash-range');
   }, 1600);
+}
+
+function clearFlashRange() {
+  clearTimeout(flashTimeout);
+  CSS.highlights.delete('flash-range');
 }

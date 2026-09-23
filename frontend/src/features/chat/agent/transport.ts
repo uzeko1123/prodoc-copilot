@@ -89,7 +89,7 @@ function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
       ...lastUserChatMessage.parts,
       {
         type: 'text',
-        text: `<Context>\n${JSON.stringify({ children: ctx.children, selection: ctx.selection }, undefined, 2)}\n</Context>`,
+        text: `<Context>${JSON.stringify({ children: ctx.children, selection: ctx.selection })}</Context>`,
       },
     ],
   });
