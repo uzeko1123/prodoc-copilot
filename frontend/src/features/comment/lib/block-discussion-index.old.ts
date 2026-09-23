@@ -1,6 +1,5 @@
 'use client';
 
-import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { CommentPlugin } from '@platejs/comment/react';
 import type { TResolvedSuggestion } from '@platejs/suggestion';
 import { getSuggestionKey, keyId2SuggestionId } from '@platejs/suggestion';
@@ -18,7 +17,7 @@ import {
   type TSuggestionText,
 } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import { useEditorRef, usePluginOption, useValueVersion } from 'platejs/react';
+import { useEditorRef, useEditorVersion, usePluginOption } from 'platejs/react';
 import * as React from 'react';
 import {
   discussionPlugin,
@@ -485,9 +484,7 @@ export const getDiscussionIndex = (
 export const useBlockDiscussionItems = (blockPath: Path) => {
   const editor = useEditorRef();
   const discussions = usePluginOption(discussionPlugin, 'discussions');
-  // Debounced so the cached index survives keystroke bursts: rebuilds once
-  // per typing pause instead of on every editor change.
-  const version = useDebounce(useValueVersion() ?? 0, 300);
+  const version = useEditorVersion() ?? 0;
 
   return React.useMemo(() => {
     const index = getDiscussionIndex(editor, discussions, version);
@@ -496,7 +493,6 @@ export const useBlockDiscussionItems = (blockPath: Path) => {
     return {
       resolvedDiscussions: index.discussionsByBlock.get(blockKey) ?? [],
       resolvedSuggestions: index.suggestionsByBlock.get(blockKey) ?? [],
-      version,
     };
   }, [blockPath, discussions, editor, version]);
 };

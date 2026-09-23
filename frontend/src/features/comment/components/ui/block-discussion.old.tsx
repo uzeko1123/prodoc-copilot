@@ -36,7 +36,18 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const commentsApi = editor.getApi(CommentPlugin).comment;
   const blockPath = editor.api.findPath(element) ?? [];
   const isTopLevelBlock = blockPath.length === 1;
-  const { resolvedDiscussions, resolvedSuggestions, version } =
+  const draftCommentNode = isTopLevelBlock
+    ? commentsApi.node({ at: blockPath, isDraft: true })
+    : undefined;
+  const commentNodes = isTopLevelBlock
+    ? [...commentsApi.nodes({ at: blockPath })]
+    : [];
+  const suggestionNodes = isTopLevelBlock
+    ? [
+        ...editor.getApi(SuggestionPlugin).suggestion.nodes({ at: blockPath }),
+      ].filter(([node]) => !node[getTransientSuggestionKey()])
+    : [];
+  const { resolvedDiscussions, resolvedSuggestions } =
     useBlockDiscussionItems(blockPath);
 
   const suggestionsCount = resolvedSuggestions.length;
@@ -54,44 +65,6 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const activeDiscussion =
     activeCommentId &&
     resolvedDiscussions.find((d) => d.id === activeCommentId);
-
-  // Node lookups below read the live document, so they must be keyed on the
-  // (debounced) value version — leaving them as bare render expressions
-  // would re-walk the block on every keystroke and let React Compiler
-  // serve stale results across document edits. The draft lookup also keys
-  // on activeCommentId so the draft popover opens immediately when
-  // commenting starts, without waiting for the debounce to flush.
-  const draftCommentNode = React.useMemo(
-    () =>
-      isTopLevelBlock && isCommenting
-        ? commentsApi.node({ at: blockPath, isDraft: true })
-        : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      commentsApi,
-      blockPath,
-      isTopLevelBlock,
-      isCommenting,
-      activeCommentId,
-      version,
-    ],
-  );
-
-  // Only blocks that actually carry items consume these node lists (see the
-  // early returns below), so skip the walks for the common empty block.
-  const { commentNodes, suggestionNodes } = React.useMemo(() => {
-    if (!isTopLevelBlock || totalCount === 0) {
-      return { commentNodes: [], suggestionNodes: [] };
-    }
-
-    return {
-      commentNodes: [...commentsApi.nodes({ at: blockPath })],
-      suggestionNodes: [
-        ...editor.getApi(SuggestionPlugin).suggestion.nodes({ at: blockPath }),
-      ].filter(([node]) => !node[getTransientSuggestionKey()]),
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commentsApi, editor, blockPath, isTopLevelBlock, totalCount, version]);
 
   const noneActive = !activeSuggestion && !activeDiscussion;
 
