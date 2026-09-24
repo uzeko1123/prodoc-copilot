@@ -4,6 +4,7 @@ import { Toolbar } from '@/components/shadcn/ui/toolbar';
 import {
   flip,
   offset,
+  shift,
   useFloatingToolbar,
   useFloatingToolbarState,
   type FloatingToolbarState,
@@ -40,21 +41,19 @@ export function FloatingToolbar({
     hideToolbar: isFloatingLinkOpen || isAIChatOpen,
     ...state,
     floatingOptions: {
+      placement: 'top',
       middleware: [
         offset(12),
         flip({
-          fallbackPlacements: [
-            'top',
-            'top-start',
-            'top-end',
-            'bottom',
-            'bottom-start',
-            'bottom-end',
-          ],
+          fallbackPlacements: ['bottom'],
+          padding: 12,
+        }),
+        shift({
+          mainAxis: true,
+          crossAxis: false,
           padding: 12,
         }),
       ],
-      placement: 'top',
       ...state?.floatingOptions,
     },
   });

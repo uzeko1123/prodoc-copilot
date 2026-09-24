@@ -7,6 +7,7 @@ import {
   flip,
   getDefaultBoundingClientRect,
   offset,
+  shift,
   useVirtualFloating,
 } from '@platejs/floating';
 import { getTransientSuggestionKey } from '@platejs/suggestion';
@@ -217,21 +218,19 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const floating = useVirtualFloating({
     getBoundingClientRect: () =>
       anchorElement?.getBoundingClientRect() ?? getDefaultBoundingClientRect(),
+    placement: 'bottom',
     middleware: [
       offset(12),
       flip({
-        fallbackPlacements: [
-          'bottom',
-          'bottom-start',
-          'bottom-end',
-          'top',
-          'top-start',
-          'top-end',
-        ],
+        fallbackPlacements: ['top'],
+        padding: 12,
+      }),
+      shift({
+        mainAxis: true,
+        crossAxis: false,
         padding: 12,
       }),
     ],
-    placement: 'bottom',
   });
 
   useOnClickOutside(() => setOpen(false), {

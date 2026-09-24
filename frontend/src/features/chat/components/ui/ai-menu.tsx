@@ -14,6 +14,7 @@ import {
   getDefaultBoundingClientRect,
   getRangeBoundingClientRect,
   offset,
+  shift,
   useVirtualFloating,
 } from '@platejs/floating';
 import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react';
@@ -150,21 +151,21 @@ export function AIMenu() {
       }
       return anchorElementRect ?? getDefaultBoundingClientRect();
     },
+    placement: 'bottom',
     middleware: [
       offset(12),
       flip({
-        fallbackPlacements: [
-          'bottom',
-          'bottom-start',
-          'bottom-end',
-          'top',
-          'top-start',
-          'top-end',
-        ],
+        mainAxis: true,
+        crossAxis: false,
+        fallbackPlacements: ['top'],
+        padding: 12,
+      }),
+      shift({
+        mainAxis: true,
+        crossAxis: false,
         padding: 12,
       }),
     ],
-    placement: 'bottom',
   });
 
   useOnClickOutside(() => setOpen(false), {
