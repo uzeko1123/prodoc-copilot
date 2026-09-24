@@ -9,6 +9,7 @@ import {
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
+import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { cn } from 'cn';
@@ -29,16 +30,22 @@ import {
 import { suggestionPlugin } from './editor/plugins/suggestion-kit';
 import { BlockComment } from './ui/block-discussion';
 import { BlockSuggestionCard } from './ui/block-suggestion';
+import { CommentCreateForm } from './ui/comment';
 
 type CommentItem = { id: string; path: Path } & (
   | { type: 'comment'; item: TDiscussion }
   | { type: 'suggestion'; item: ResolvedSuggestion }
+  | { type: 'draft' }
 );
 
 export function Comment() {
   const editor = useEditorRef();
   const discussions = usePluginOption(discussionPlugin, 'discussions');
   const version = useDebounce(useValueVersion() ?? 0);
+
+  const commentingBlock = usePluginOption(commentPlugin, 'commentingBlock');
+  const activeCommentId = usePluginOption(commentPlugin, 'activeId');
+  const isCommenting = activeCommentId === getDraftCommentKey();
 
   const setDiscussions = useCommentStore((state) => state.setDiscussions);
 
@@ -80,8 +87,19 @@ export function Comment() {
       });
     });
 
+    if (isCommenting && commentingBlock) {
+      const draftNode = editor
+        .getApi(CommentPlugin)
+        .comment.node({ at: [], isDraft: true });
+      commentItems.push({
+        type: 'draft',
+        id: getDraftCommentKey(),
+        path: draftNode?.[1] ?? commentingBlock,
+      });
+    }
+
     return commentItems.sort((a, b) => PathApi.compare(a.path, b.path));
-  }, [editor, discussions, version]);
+  }, [editor, discussions, version, isCommenting, commentingBlock]);
 
   return (
     <div className="flex h-full flex-col gap-2 overflow-y-auto p-2">
@@ -98,14 +116,43 @@ export function Comment() {
           </EmptyHeader>
         </Empty>
       )}
-      {commentItems.map((commentItem) => (
-        <CommentCard key={commentItem.id} commentItem={commentItem} />
-      ))}
+      {commentItems.map((commentItem) =>
+        commentItem.type === 'draft' ? (
+          <DraftCommentCard key={commentItem.id} />
+        ) : (
+          <CommentCard key={commentItem.id} commentItem={commentItem} />
+        ),
+      )}
     </div>
   );
 }
 
-function CommentCard({ commentItem }: { commentItem: CommentItem }) {
+function DraftCommentCard() {
+  const commentCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    commentCardRef.current?.scrollIntoView({
+      block: 'center',
+      behavior: 'smooth',
+    });
+  }, []);
+
+  return (
+    <Card
+      ref={commentCardRef}
+      data-active
+      className={cn('ring-primary shrink-0 p-0 ring-2')}
+    >
+      <CommentCreateForm className="p-4" />
+    </Card>
+  );
+}
+
+function CommentCard({
+  commentItem,
+}: {
+  commentItem: Exclude<CommentItem, { type: 'draft' }>;
+}) {
   const editor = useEditorRef();
   const commentCardRef = useRef<HTMLDivElement>(null);
   const activeId = usePluginOption(
