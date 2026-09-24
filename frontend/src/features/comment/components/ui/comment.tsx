@@ -247,7 +247,9 @@ export function Comment(props: {
             <div className="bg-muted absolute top-1.25 left-3 h-full w-0.5 shrink-0" />
           )}
           <div className="bg-highlight my-px w-0.5 shrink-0" />
-          {documentContent && <div className="ml-2">{documentContent}</div>}
+          {documentContent && (
+            <div className="ml-2 wrap-anywhere">{documentContent}</div>
+          )}
         </div>
       )}
 
@@ -261,6 +263,12 @@ export function Comment(props: {
               variant="comment"
               className="w-auto grow"
               onClick={() => onEditorClick?.()}
+              onKeyDown={(e) => {
+                if (isEditing && e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  onSave();
+                }
+              }}
             />
 
             {isEditing && (
@@ -268,7 +276,6 @@ export function Comment(props: {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="size-7"
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     void onCancel();
@@ -620,7 +627,7 @@ export function CommentCreateForm({
           <EditorContainer variant="comment">
             <Editor
               variant="comment"
-              className="min-h-6.25 grow pt-0.5 pr-8"
+              className="w-auto grow wrap-anywhere"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -635,7 +642,7 @@ export function CommentCreateForm({
             <Button
               size="icon"
               variant="ghost"
-              className="absolute right-0.5 bottom-0.5 ml-auto size-6 shrink-0"
+              className="ml-auto flex shrink-0 gap-1"
               disabled={!hasDiscussionDraftValue}
               onClick={(e) => {
                 e.stopPropagation();

@@ -144,8 +144,6 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
       });
       editor.setOption(commentPlugin, 'commentingBlock', null);
       useCommentStore.getState().removeDiscussionDraft(getDraftCommentKey());
-      console.log(`wasCommenting.current = ${wasCommenting.current}`);
-      console.log(`isCommenting = ${isCommenting}`);
     }
     wasCommenting.current = isCommenting;
   }, [editor, isCommenting]);
