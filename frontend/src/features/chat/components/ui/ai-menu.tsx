@@ -60,13 +60,13 @@ export function AIMenu() {
 
   const isFocusedLast = useFocusedLast();
   const open = usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
-
-  const [input, setInput] = React.useState('');
-
   const chatStatus = usePluginOptions(
     AIChatPlugin,
     (options) => options.chat?.status,
   );
+
+  const chatInput = useChatStore((state) => state.chatInput);
+  const setChatInput = useChatStore((state) => state.setChatInput);
 
   const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
     null,
@@ -96,7 +96,6 @@ export function AIMenu() {
     onOpenChange: (open) => {
       if (!open) {
         setAnchorElement(null);
-        setInput('');
       }
     },
     onOpenCursor: () => {
@@ -225,17 +224,17 @@ export function AIMenu() {
               'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
               'border-b focus-visible:ring-transparent',
             )}
-            value={input}
+            value={chatInput}
             onKeyDown={(e) => {
               if (
                 isHotkey('escape')(e) ||
-                (isHotkey('backspace')(e) && input.length === 0)
+                (isHotkey('backspace')(e) && chatInput.length === 0)
               ) {
                 e.preventDefault();
                 api.aiChat.hide();
               }
             }}
-            onValueChange={setInput}
+            onValueChange={setChatInput}
             placeholder="Ask AI anything..."
             data-plate-focus
             autoFocus
@@ -244,7 +243,7 @@ export function AIMenu() {
 
         {!isLoading && (
           <CommandList>
-            <AIMenuItems input={input} setInput={setInput} />
+            <AIMenuItems input={chatInput} setInput={setChatInput} />
           </CommandList>
         )}
       </Command>

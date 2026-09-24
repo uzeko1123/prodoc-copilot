@@ -73,6 +73,8 @@ export function Chat() {
 
   const chatMode = useChatStore((state) => state.chatMode);
   const setChatMode = useChatStore((state) => state.setChatMode);
+  const chatInput = useChatStore((state) => state.chatInput);
+  const setChatInput = useChatStore((state) => state.setChatInput);
   const chatMessages = useChatStore((state) => state.chatMessages);
   const setChatMessages = useChatStore((state) => state.setChatMessages);
 
@@ -92,7 +94,6 @@ export function Chat() {
   );
 
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
-  const [input, setInput] = React.useState('');
 
   return (
     <MessageScrollerProvider autoScroll scrollEdgeThreshold={80}>
@@ -147,9 +148,9 @@ export function Chat() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (isBusy || input.length === 0) return;
-              void editor.getApi(AIChatPlugin).aiChat.submit(input);
-              setInput('');
+              if (isBusy || chatInput.length === 0) return;
+              void editor.getApi(AIChatPlugin).aiChat.submit(chatInput);
+              setChatInput('');
             }}
             className="w-full"
           >
@@ -159,8 +160,8 @@ export function Chat() {
                 aria-label="Chat message"
                 className="h-14 min-h-14 overflow-hidden px-3 py-2.5"
                 placeholder="Chat message"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -202,7 +203,7 @@ export function Chat() {
                           className="text-xs [&_svg]:size-3.5"
                           key={item.value}
                           onSelect={() => {
-                            setInput(`/${item.value} ${input}`);
+                            setChatInput(`/${item.value} ${chatInput}`);
                           }}
                         >
                           {item.icon} {item.label}
@@ -274,7 +275,7 @@ export function Chat() {
                     type="submit"
                     variant="default"
                     size="icon-sm"
-                    disabled={isBusy || input.trim() === ''}
+                    disabled={isBusy || chatInput.trim() === ''}
                   >
                     <ArrowUpIcon />
                     <span className="sr-only">Send</span>

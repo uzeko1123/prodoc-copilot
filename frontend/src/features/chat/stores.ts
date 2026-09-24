@@ -8,9 +8,12 @@ type ChatState = {
   chatMode: ChatMode;
   setChatMode: (chatMode: ChatMode) => void;
 
+  chatInput: string;
+  setChatInput: (chatInput: string) => void;
+
   chatMessages: ChatMessage[];
   setChatMessages: (chatMessages: ChatMessage[]) => void;
-  upsertChatMessage: (message: ChatMessage) => void;
+  upsertChatMessage: (chatMessage: ChatMessage) => void;
 };
 
 export const useChatStore = create<ChatState>()(
@@ -19,6 +22,9 @@ export const useChatStore = create<ChatState>()(
       (set) => ({
         chatMode: 'chat',
         setChatMode: (chatMode) => set({ chatMode }),
+
+        chatInput: '',
+        setChatInput: (chatInput) => set({ chatInput }),
 
         chatMessages: [],
         setChatMessages: (chatMessages) => set({ chatMessages }),
