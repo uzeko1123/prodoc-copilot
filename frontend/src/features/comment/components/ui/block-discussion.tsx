@@ -1,16 +1,17 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/shadcn/ui/popover';
 import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
+import {
+  flip,
+  getDefaultBoundingClientRect,
+  offset,
+  useVirtualFloating,
+} from '@platejs/floating';
 import { getTransientSuggestionKey } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
+import { useComposedRef } from '@udecode/cn';
 import {
   MessageSquareTextIcon,
   MessagesSquareIcon,
@@ -18,9 +19,19 @@ import {
 } from 'lucide-react';
 import { PathApi, type AnyPluginConfig, type NodeEntry } from 'platejs';
 import type { PlateElementProps, RenderNodeWrapper } from 'platejs/react';
-import { useEditorRef, usePluginOption } from 'platejs/react';
+import {
+  PortalBody,
+  useEditorContainerRef,
+  useEditorMounted,
+  useEditorRef,
+  useHotkeys,
+  useOnClickOutside,
+  usePluginOption,
+  useScrollRef,
+} from 'platejs/react';
 import * as React from 'react';
 import { useBlockDiscussionItems } from '../../lib/block-discussion-index';
+import { useCommentStore } from '../../stores';
 import { commentPlugin } from '../editor/plugins/comment-kit';
 import type { TDiscussion } from '../editor/plugins/discussion-kit';
 import { suggestionPlugin } from '../editor/plugins/suggestion-kit';
@@ -108,7 +119,64 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     selected ||
     (isCommenting && !!draftCommentNode && commentingCurrent);
 
-  const anchorElement = React.useMemo(() => {
+  useHotkeys(
+    'esc',
+    () => {
+      editor.setOption(commentPlugin, 'activeId', null);
+      editor.setOption(suggestionPlugin, 'activeId', null);
+      setOpen(false);
+    },
+    {
+      enabled: open,
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+  );
+
+  const wasCommenting = React.useRef(true);
+
+  React.useEffect(() => {
+    if (wasCommenting.current && !isCommenting) {
+      editor.tf.unsetNodes(getDraftCommentKey(), {
+        at: [],
+        mode: 'lowest',
+        match: (n) => n[getDraftCommentKey()],
+      });
+      editor.setOption(commentPlugin, 'commentingBlock', null);
+      useCommentStore.getState().removeDiscussionDraft(getDraftCommentKey());
+      console.log(`wasCommenting.current = ${wasCommenting.current}`);
+      console.log(`isCommenting = ${isCommenting}`);
+    }
+    wasCommenting.current = isCommenting;
+  }, [editor, isCommenting]);
+
+  React.useEffect(() => {
+    if (!isCommenting || !commentingCurrent) return;
+
+    const onSelectionChange = () => {
+      const domSelection = window.getSelection();
+      const domEditor = editor.api.toDOMNode(editor);
+      if (
+        domSelection?.anchorNode &&
+        domEditor?.contains(domSelection.anchorNode)
+      ) {
+        editor.setOption(commentPlugin, 'activeId', null);
+        editor.setOption(suggestionPlugin, 'activeId', null);
+      }
+    };
+    document.addEventListener('selectionchange', onSelectionChange);
+    return () =>
+      document.removeEventListener('selectionchange', onSelectionChange);
+  }, [isCommenting, commentingCurrent, editor]);
+
+  const floatingRef = React.useRef<HTMLDivElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+
+  const [anchorElement, setAnchorElement] = React.useState<HTMLElement | null>(
+    null,
+  );
+
+  React.useLayoutEffect(() => {
     let activeNode: NodeEntry | undefined;
 
     if (activeSuggestion) {
@@ -130,9 +198,13 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
       }
     }
 
-    if (!activeNode) return null;
-
-    return editor.api.toDOMNode(activeNode[0])!;
+    setAnchorElement(
+      activeNode
+        ? (editor.api.toDOMNode(activeNode[0]) ?? null)
+        : open
+          ? buttonRef.current
+          : null,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     open,
@@ -144,6 +216,70 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     commentNodes,
   ]);
 
+  const floating = useVirtualFloating({
+    getBoundingClientRect: () =>
+      anchorElement?.getBoundingClientRect() ?? getDefaultBoundingClientRect(),
+    middleware: [
+      offset(12),
+      flip({
+        fallbackPlacements: [
+          'top-start',
+          'top-end',
+          'bottom-start',
+          'bottom-end',
+        ],
+        padding: 12,
+      }),
+    ],
+    placement: 'bottom',
+  });
+
+  useOnClickOutside(() => setOpen(false), {
+    refs: [floatingRef, buttonRef],
+  });
+
+  const ref = useComposedRef<HTMLDivElement>(
+    floating.refs.setFloating,
+    floatingRef,
+  );
+
+  const editorMounted = useEditorMounted();
+  const scrollRef = useScrollRef();
+  const containerRef = useEditorContainerRef();
+  const { update } = floating;
+
+  const [portalElement, setPortalElement] = React.useState<HTMLElement | null>(
+    null,
+  );
+
+  React.useEffect(() => {
+    if (!editorMounted) return;
+    setPortalElement(containerRef.current);
+  }, [editorMounted, containerRef]);
+
+  React.useEffect(() => {
+    void update();
+  }, [anchorElement, open, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted || !open) return;
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+
+    scroll.addEventListener('scroll', update, { passive: true });
+    return () => scroll.removeEventListener('scroll', update);
+  }, [editorMounted, open, scrollRef, update]);
+
+  React.useEffect(() => {
+    if (!editorMounted || !open) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => update());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [editorMounted, open, containerRef, update]);
+
   if (!isTopLevelBlock) return <>{children}</>;
 
   if (suggestionsCount + resolvedDiscussions.length === 0 && !draftCommentNode)
@@ -151,99 +287,91 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
 
   return (
     <div className="flex w-full justify-between">
-      <Popover
-        open={open}
-        onOpenChange={(_open_) => {
-          if (!_open_ && isCommenting && draftCommentNode) {
-            editor.tf.unsetNodes(getDraftCommentKey(), {
-              at: [],
-              mode: 'lowest',
-              match: (n) => n[getDraftCommentKey()],
-            });
-          }
-          setOpen(_open_);
-        }}
-      >
-        <div className="w-full">{children}</div>
-        {anchorElement && (
-          <PopoverAnchor
-            asChild
-            className="w-full"
-            virtualRef={{ current: anchorElement }}
-          />
-        )}
+      <div className="w-full">{children}</div>
 
-        <PopoverContent
-          className="max-h-[min(50dvh,calc(-24px+var(--radix-popper-available-height)))] w-95 max-w-[calc(100vw-24px)] min-w-32.5 overflow-y-auto p-0 data-[state=closed]:opacity-0"
-          onCloseAutoFocus={(e) => e.preventDefault()}
-          onOpenAutoFocus={(e) => e.preventDefault()}
-          align="center"
-          side="bottom"
-        >
-          {isCommenting ? (
-            <CommentCreateForm className="p-4" focusOnMount />
-          ) : noneActive ? (
-            sortedMergedData.map((item, index) =>
-              isResolvedSuggestion(item) ? (
-                <BlockSuggestionCard
-                  key={item.suggestionId}
-                  idx={index}
-                  isLast={index === sortedMergedData.length - 1}
-                  suggestion={item}
-                />
-              ) : (
-                <BlockComment
-                  key={item.id}
-                  discussion={item}
-                  isLast={index === sortedMergedData.length - 1}
-                />
-              ),
-            )
-          ) : (
-            <>
-              {activeSuggestion && (
-                <BlockSuggestionCard
-                  key={activeSuggestion.suggestionId}
-                  idx={0}
-                  isLast={true}
-                  suggestion={activeSuggestion}
-                />
-              )}
-
-              {activeDiscussion && (
-                <BlockComment discussion={activeDiscussion} isLast={true} />
-              )}
-            </>
-          )}
-        </PopoverContent>
-
-        {totalCount > 0 && (
-          <div className="relative left-0 size-0 select-none">
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                className="text-muted-foreground/80 hover:text-muted-foreground/80 data-[active=true]:bg-muted mt-1 ml-1 flex h-6 gap-1 px-1.5! py-0"
-                data-active={open}
-                contentEditable={false}
-              >
-                {suggestionsCount > 0 && discussionsCount === 0 && (
-                  <PencilLineIcon className="size-4 shrink-0" />
+      {open && anchorElement && (
+        <PortalBody element={portalElement ?? undefined}>
+          <div
+            ref={ref}
+            // className="max-h-[min(50dvh,calc(-24px+var(--radix-popper-available-height)))] w-95 max-w-[calc(100vw-24px)] min-w-32.5 overflow-y-auto p-0 data-[state=closed]:opacity-0"
+            className="bg-popover text-popover-foreground ring-foreground/10 z-50 flex max-h-[50%] w-95 max-w-[80%] min-w-32.5 flex-col gap-2.5 overflow-y-auto rounded-lg p-0 text-sm shadow-md ring-1 outline-hidden"
+            style={floating.style}
+          >
+            {isCommenting ? (
+              <CommentCreateForm className="p-4" focusOnMount />
+            ) : noneActive ? (
+              sortedMergedData.map((item, index) =>
+                isResolvedSuggestion(item) ? (
+                  <BlockSuggestionCard
+                    key={item.suggestionId}
+                    idx={index}
+                    isLast={index === sortedMergedData.length - 1}
+                    suggestion={item}
+                  />
+                ) : (
+                  <BlockComment
+                    key={item.id}
+                    discussion={item}
+                    isLast={index === sortedMergedData.length - 1}
+                  />
+                ),
+              )
+            ) : (
+              <>
+                {activeSuggestion && (
+                  <BlockSuggestionCard
+                    key={activeSuggestion.suggestionId}
+                    idx={0}
+                    isLast={true}
+                    suggestion={activeSuggestion}
+                  />
                 )}
 
-                {suggestionsCount === 0 && discussionsCount > 0 && (
-                  <MessageSquareTextIcon className="size-4 shrink-0" />
+                {activeDiscussion && (
+                  <BlockComment discussion={activeDiscussion} isLast={true} />
                 )}
-
-                {suggestionsCount > 0 && discussionsCount > 0 && (
-                  <MessagesSquareIcon className="size-4 shrink-0" />
-                )}
-
-                <span className="text-xs font-semibold">{totalCount}</span>
-              </Button>
-            </PopoverTrigger>
+              </>
+            )}
           </div>
-        )}
-      </Popover>
+        </PortalBody>
+      )}
+
+      {totalCount > 0 && (
+        <div className="relative left-0 size-0 select-none">
+          <Button
+            ref={buttonRef}
+            variant="ghost"
+            className="text-muted-foreground/80 hover:text-muted-foreground/80 data-[active=true]:bg-muted mt-1 ml-1 flex h-6 gap-1 px-1.5! py-0"
+            data-active={open}
+            contentEditable={false}
+            onClick={() => {
+              if (open) {
+                editor.setOption(commentPlugin, 'activeId', null);
+                editor.setOption(suggestionPlugin, 'activeId', null);
+              }
+              if (anchorElement !== buttonRef.current) {
+                setOpen(true);
+              } else {
+                setOpen(!open);
+              }
+            }}
+          >
+            {suggestionsCount > 0 && discussionsCount === 0 && (
+              <PencilLineIcon className="size-4 shrink-0" />
+            )}
+
+            {suggestionsCount === 0 && discussionsCount > 0 && (
+              <MessageSquareTextIcon className="size-4 shrink-0" />
+            )}
+
+            {suggestionsCount > 0 && discussionsCount > 0 && (
+              <MessagesSquareIcon className="size-4 shrink-0" />
+            )}
+
+            <span className="text-xs font-semibold">{totalCount}</span>
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

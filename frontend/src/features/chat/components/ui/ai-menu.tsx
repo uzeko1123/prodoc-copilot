@@ -132,6 +132,8 @@ export function AIMenu() {
     editor.setOption(AIChatPlugin, 'open', false);
   }, [chatStatus, editor]);
 
+  const floatingRef = React.useRef<HTMLDivElement>(null);
+
   const floating = useVirtualFloating({
     getBoundingClientRect: () => {
       const anchorElementRect = anchorElement?.getBoundingClientRect();
@@ -163,10 +165,13 @@ export function AIMenu() {
     placement: 'bottom',
   });
 
-  const clickOutsideRef = useOnClickOutside(() => setOpen(false));
+  useOnClickOutside(() => setOpen(false), {
+    refs: [floatingRef],
+  });
+
   const ref = useComposedRef<HTMLDivElement>(
     floating.refs.setFloating,
-    clickOutsideRef,
+    floatingRef,
   );
 
   const editorMounted = useEditorMounted();
@@ -202,7 +207,7 @@ export function AIMenu() {
   return (
     <div
       ref={ref}
-      className="z-50 border-none bg-transparent p-0 shadow-none"
+      className="z-50 flex max-h-[50%] flex-col border-none bg-transparent p-0 shadow-none"
       style={{
         ...floating.style,
         width: anchorElement.offsetWidth,

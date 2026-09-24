@@ -24,7 +24,7 @@ export function Editor() {
       <FixedToolbar className="h-10 min-h-10">
         <FixedToolbarButtons />
       </FixedToolbar>
-      <EditorContainer>
+      <EditorContainer className="scrollbar-none overflow-y-hidden">
         <EditorPrimitive ref={editorScrollRef} />
       </EditorContainer>
       <EditorValueSync />
