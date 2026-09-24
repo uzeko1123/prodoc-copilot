@@ -221,10 +221,12 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
       offset(12),
       flip({
         fallbackPlacements: [
-          'top-start',
-          'top-end',
+          'bottom',
           'bottom-start',
           'bottom-end',
+          'top',
+          'top-start',
+          'top-end',
         ],
         padding: 12,
       }),

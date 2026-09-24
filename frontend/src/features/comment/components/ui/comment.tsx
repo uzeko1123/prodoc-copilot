@@ -90,6 +90,8 @@ export function Comment(props: {
   } = props;
 
   const editor = useEditorRef();
+  const setDiscussions = useCommentStore((state) => state.setDiscussions);
+
   const userInfo = usePluginOption(discussionPlugin, 'user', comment.userId);
   const currentUserId = usePluginOption(discussionPlugin, 'currentUserId');
 
@@ -103,6 +105,7 @@ export function Comment(props: {
         return discussion;
       });
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
   };
 
   const removeDiscussion = async (id: string) => {
@@ -110,6 +113,7 @@ export function Comment(props: {
       .getOption(discussionPlugin, 'discussions')
       .filter((discussion) => discussion.id !== id);
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
   };
 
   const updateComment = async (input: {
@@ -138,6 +142,7 @@ export function Comment(props: {
         return discussion;
       });
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
   };
 
   const { tf } = useEditorPlugin(CommentPlugin);
@@ -325,6 +330,7 @@ function CommentMoreDropdown(props: {
   } = props;
 
   const editor = useEditorRef();
+  const setDiscussions = useCommentStore((state) => state.setDiscussions);
 
   const selectedEditCommentRef = React.useRef<boolean>(false);
 
@@ -358,8 +364,15 @@ function CommentMoreDropdown(props: {
 
     // Save back to session storage
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
     onRemoveComment?.();
-  }, [comment.discussionId, comment.id, editor, onRemoveComment]);
+  }, [
+    comment.discussionId,
+    comment.id,
+    editor,
+    onRemoveComment,
+    setDiscussions,
+  ]);
 
   const onEditComment = React.useCallback(() => {
     selectedEditCommentRef.current = true;
@@ -450,6 +463,7 @@ export function CommentCreateForm({
 }) {
   const editor = useEditorRef();
   const commentEditor = useCommentEditor();
+  const setDiscussions = useCommentStore((state) => state.setDiscussions);
 
   const commentId = useCommentId();
   const discussionId = discussionIdProp ?? commentId;
@@ -548,6 +562,7 @@ export function CommentCreateForm({
         .concat(updatedDiscussion);
 
       editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+      setDiscussions(updatedDiscussions);
 
       return;
     }
@@ -586,6 +601,7 @@ export function CommentCreateForm({
       ...discussions,
       newDiscussion,
     ]);
+    setDiscussions([...discussions, newDiscussion]);
 
     const id = newDiscussion.id;
 
@@ -601,7 +617,13 @@ export function CommentCreateForm({
 
     editor.setOption(commentPlugin, 'activeId', null);
     editor.setOption(commentPlugin, 'commentingBlock', null);
-  }, [editor, commentEditor.tf, discussionId, discussionDraftKey]);
+  }, [
+    editor,
+    commentEditor.tf,
+    discussionId,
+    discussionDraftKey,
+    setDiscussions,
+  ]);
 
   return (
     <div className={cn('flex w-full', className)}>

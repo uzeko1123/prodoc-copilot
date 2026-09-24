@@ -44,8 +44,10 @@ export function FloatingToolbar({
         offset(12),
         flip({
           fallbackPlacements: [
+            'top',
             'top-start',
             'top-end',
+            'bottom',
             'bottom-start',
             'bottom-end',
           ],

@@ -9,6 +9,7 @@ import {
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
+import { useMount } from '@/hooks/use-mount';
 import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
@@ -40,18 +41,16 @@ type CommentItem = { id: string; path: Path } & (
 
 export function Comment() {
   const editor = useEditorRef();
-  const discussions = usePluginOption(discussionPlugin, 'discussions');
   const version = useDebounce(useValueVersion() ?? 0);
+  const discussions = useCommentStore((state) => state.discussions);
 
   const commentingBlock = usePluginOption(commentPlugin, 'commentingBlock');
   const activeCommentId = usePluginOption(commentPlugin, 'activeId');
   const isCommenting = activeCommentId === getDraftCommentKey();
 
-  const setDiscussions = useCommentStore((state) => state.setDiscussions);
-
-  useEffect(() => {
-    setDiscussions(discussions);
-  }, [discussions, setDiscussions]);
+  useMount(() => {
+    editor.setOption(discussionPlugin, 'discussions', discussions);
+  });
 
   const commentItems = useMemo(() => {
     const discussionIndex = getDiscussionIndex(editor, discussions, version);

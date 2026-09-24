@@ -50,7 +50,7 @@ export const useChatStore = create<ChatState>()(
       {
         name: 'chat-storage',
         storage: createDebouncedJSONStorage('localStorage', {
-          debounceTime: 1000,
+          debounceTime: 500,
         }),
         partialize: (state) => ({
           chatMode: state.chatMode,
