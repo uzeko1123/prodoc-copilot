@@ -45,6 +45,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
       submit(...args);
     },
     show: () => {
+      useWorkbenchStore.getState().setActiveMainTab('chat');
       if (isRunning()) {
         setOption('open', true);
         return;

@@ -202,7 +202,7 @@ export function AIMenu() {
   return (
     <div
       ref={ref}
-      className="z-50"
+      className="z-50 border-none bg-transparent p-0 shadow-none"
       style={{
         ...floating.style,
         width: anchorElement.offsetWidth,

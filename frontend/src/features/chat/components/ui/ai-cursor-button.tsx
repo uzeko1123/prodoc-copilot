@@ -83,7 +83,7 @@ export function AICursorButton() {
   return (
     <div
       ref={ref}
-      className="z-50 flex flex-col items-center"
+      className="z-40 flex flex-col items-center"
       style={floating.style}
     >
       {isCursor ? (

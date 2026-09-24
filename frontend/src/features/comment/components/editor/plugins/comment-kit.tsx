@@ -8,6 +8,7 @@ import {
 } from '@platejs/comment';
 import type { ExtendConfig, Path } from 'platejs';
 import { toTPlatePlugin } from 'platejs/react';
+import { useCommentStore } from '../../../stores';
 import { CommentLeaf } from '../../ui/comment-node';
 import { getDiscussionClickTarget } from './discussion-kit';
 
@@ -67,6 +68,8 @@ export const commentPlugin = toTPlatePlugin<CommentConfig>(BaseCommentPlugin, {
         editor.tf.collapse();
         setOption('activeId', getDraftCommentKey());
         setOption('commentingBlock', editor.selection!.focus.path.slice(0, 1));
+        useCommentStore.getState().removeDiscussionDraft(getDraftCommentKey());
+        useWorkbenchStore.getState().setActiveMainTab('comment');
       },
     }),
   )

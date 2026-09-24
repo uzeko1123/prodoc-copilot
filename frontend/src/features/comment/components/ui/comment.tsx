@@ -42,6 +42,7 @@ import {
 } from 'platejs';
 import type { CreatePlateEditorOptions } from 'platejs/react';
 import {
+  createPlatePlugin,
   Plate,
   useEditorPlugin,
   useEditorRef,
@@ -49,6 +50,8 @@ import {
   usePluginOption,
 } from 'platejs/react';
 import * as React from 'react';
+import { useCommentStore } from '../../stores';
+import { commentPlugin } from '../editor/plugins/comment-kit';
 import {
   discussionPlugin,
   type TDiscussion,
@@ -397,6 +400,18 @@ function CommentMoreDropdown(props: {
   );
 }
 
+const softBreakPlugin = createPlatePlugin({
+  key: 'softBreak',
+  shortcuts: {
+    insertSoftBreak: {
+      keys: 'shift+enter',
+      handler: ({ editor }) => {
+        editor.tf.insertSoftBreak();
+      },
+    },
+  },
+});
+
 const useCommentEditor = (
   options: Omit<CreatePlateEditorOptions, 'plugins'> = {},
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -405,7 +420,7 @@ const useCommentEditor = (
   const commentEditor = usePlateEditor(
     {
       id: 'comment',
-      plugins: BasicMarksKit,
+      plugins: [...BasicMarksKit, softBreakPlugin],
       value: [],
       ...options,
     },
@@ -427,19 +442,26 @@ export function CommentCreateForm({
   focusOnMount?: boolean;
 }) {
   const editor = useEditorRef();
+  const commentEditor = useCommentEditor();
+
   const commentId = useCommentId();
   const discussionId = discussionIdProp ?? commentId;
-
   const userInfo = usePluginOption(discussionPlugin, 'currentUser');
-  const [commentValue, setCommentValue] = React.useState<Value | null>(null);
-  const commentContent = React.useMemo(
-    () =>
-      commentValue
-        ? NodeApi.string({ children: commentValue, type: KEYS.p })
-        : '',
-    [commentValue],
+
+  const discussionDraftKey = discussionId ?? getDraftCommentKey();
+  const discussionDraftValue = useCommentStore(
+    (state) => state.discussionDrafts[discussionDraftKey],
   );
-  const commentEditor = useCommentEditor();
+  const hasDiscussionDraftValue = React.useMemo(
+    () =>
+      discussionDraftValue
+        ? NodeApi.string({
+            children: discussionDraftValue,
+            type: KEYS.p,
+          }).trim() !== ''
+        : true,
+    [discussionDraftValue],
+  );
 
   React.useEffect(() => {
     if (commentEditor && focusOnMount) {
@@ -447,12 +469,26 @@ export function CommentCreateForm({
     }
   }, [commentEditor, focusOnMount]);
 
+  React.useEffect(() => {
+    if (!commentEditor) return;
+    if (commentEditor.api.isFocused()) return;
+
+    if (discussionDraftValue) {
+      commentEditor.tf.setValue(discussionDraftValue);
+    } else {
+      commentEditor.tf.reset();
+    }
+  }, [commentEditor, discussionDraftValue]);
+
   const onAddComment = React.useCallback(async () => {
+    const commentValue =
+      useCommentStore.getState().discussionDrafts[discussionDraftKey];
     if (!commentValue) return;
 
     const discussions = editor.getOption(discussionPlugin, 'discussions');
 
     commentEditor.tf.reset();
+    useCommentStore.getState().removeDiscussionDraft(discussionDraftKey);
 
     if (discussionId) {
       // Get existing discussion
@@ -555,7 +591,10 @@ export function CommentCreateForm({
       );
       editor.tf.unsetNodes([getDraftCommentKey()], { at: path });
     });
-  }, [commentValue, commentEditor.tf, discussionId, editor]);
+
+    editor.setOption(commentPlugin, 'activeId', null);
+    editor.setOption(commentPlugin, 'commentingBlock', null);
+  }, [editor, commentEditor.tf, discussionId, discussionDraftKey]);
 
   return (
     <div className={cn('flex w-full', className)}>
@@ -570,7 +609,11 @@ export function CommentCreateForm({
       <div className="relative flex grow gap-2">
         <Plate
           onChange={({ value }) => {
-            setCommentValue(value);
+            if (commentEditor.api.isFocused()) {
+              useCommentStore
+                .getState()
+                .upsertDiscussionDraft(discussionDraftKey, value);
+            }
           }}
           editor={commentEditor}
         >
@@ -593,7 +636,7 @@ export function CommentCreateForm({
               size="icon"
               variant="ghost"
               className="absolute right-0.5 bottom-0.5 ml-auto size-6 shrink-0"
-              disabled={commentContent.trim().length === 0}
+              disabled={!hasDiscussionDraftValue}
               onClick={(e) => {
                 e.stopPropagation();
                 onAddComment();
