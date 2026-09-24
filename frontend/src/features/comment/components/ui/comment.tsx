@@ -605,7 +605,7 @@ export function CommentCreateForm({
 
   return (
     <div className={cn('flex w-full', className)}>
-      <div className="mt-2 mr-1 shrink-0">
+      <div className="mr-1 shrink-0">
         {/* Replace to your own backend or refer to potion */}
         <Avatar className="size-5">
           <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
