@@ -204,6 +204,24 @@ export function Chat() {
                           key={item.value}
                           onSelect={() => {
                             setChatInput(`/${item.value} ${chatInput}`);
+                            if (item.chatMode === '') return;
+                            useChatStore.getState().setChatMode(item.chatMode);
+                          }}
+                        >
+                          {item.icon} {item.label}
+                        </DropdownMenuItem>
+                      )),
+                    )}
+                    <DropdownMenuSeparator />
+                    {menuStateItems.readonlyCommand.flatMap((command) =>
+                      command.items.map((item) => (
+                        <DropdownMenuItem
+                          className="text-xs [&_svg]:size-3.5"
+                          key={item.value}
+                          onSelect={() => {
+                            setChatInput(`/${item.value} ${chatInput}`);
+                            if (item.chatMode === '') return;
+                            useChatStore.getState().setChatMode(item.chatMode);
                           }}
                         >
                           {item.icon} {item.label}

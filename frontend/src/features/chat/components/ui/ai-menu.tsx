@@ -53,6 +53,7 @@ import {
   type PlateEditor,
 } from 'platejs/react';
 import * as React from 'react';
+import type { ChatMode } from '../editor/use-agent';
 import { AICommentIcon } from './ai-comment-icon';
 
 export function AIMenu() {
@@ -267,6 +268,7 @@ const aiChatItems = {
     icon: <SendIcon />,
     label: 'Send',
     value: 'send',
+    chatMode: '',
     onSelect: ({ editor, input }) => {
       void editor.getApi(AIChatPlugin).aiChat.submit(input);
     },
@@ -275,6 +277,7 @@ const aiChatItems = {
     icon: <AICommentIcon />,
     label: 'Comment',
     value: 'comment',
+    chatMode: 'comment',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('comment');
       void editor
@@ -289,6 +292,7 @@ const aiChatItems = {
     icon: <PenLine />,
     label: 'Continue writing',
     value: 'continueWrite',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -303,6 +307,7 @@ const aiChatItems = {
     icon: <SmileIcon />,
     label: 'Emojify',
     value: 'emojify',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -316,6 +321,7 @@ const aiChatItems = {
     icon: <BadgeHelp />,
     label: 'Explain',
     value: 'explain',
+    chatMode: 'chat',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
       void editor
@@ -327,6 +333,7 @@ const aiChatItems = {
     icon: <Check />,
     label: 'Fix spelling & grammar',
     value: 'fixSpelling',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -340,6 +347,7 @@ const aiChatItems = {
     icon: <BookOpenCheck />,
     label: 'Generate Markdown sample',
     value: 'generateMarkdownSample',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -358,6 +366,7 @@ const aiChatItems = {
     icon: <BookOpenCheck />,
     label: 'Generate MDX sample',
     value: 'generateMdxSample',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -374,6 +383,7 @@ const aiChatItems = {
     icon: <Wand />,
     label: 'Improve writing',
     value: 'improveWriting',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -387,6 +397,7 @@ const aiChatItems = {
     icon: <ListPlus />,
     label: 'Make longer',
     value: 'makeLonger',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -400,6 +411,7 @@ const aiChatItems = {
     icon: <ListMinus />,
     label: 'Make shorter',
     value: 'makeShorter',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -413,6 +425,7 @@ const aiChatItems = {
     icon: <FeatherIcon />,
     label: 'Simplify language',
     value: 'simplifyLanguage',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -429,6 +442,7 @@ const aiChatItems = {
     icon: <Album />,
     label: 'Summarize',
     value: 'summarize',
+    chatMode: 'chat',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
       void editor
@@ -444,6 +458,7 @@ const aiChatItems = {
     icon: React.ReactNode;
     label: string;
     value: string;
+    chatMode: ChatMode;
     component?: React.ComponentType<{ menuState: EditorChatState }>;
     filterItems?: boolean;
     items?: { label: string; value: string }[];
