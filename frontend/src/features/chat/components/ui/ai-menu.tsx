@@ -224,37 +224,35 @@ export function AIMenu() {
       >
         {isLoading ? (
           <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
-            <Loader2Icon className="size-4 animate-spin" />
-            {chatStatus === 'submitted' ? 'Editing...' : 'Thinking...'}
+            <Loader2Icon className="size-4 animate-spin" /> Working . . .
           </div>
         ) : (
-          <CommandPrimitive.Input
-            className={cn(
-              'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
-              'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-              'border-b focus-visible:ring-transparent',
-            )}
-            value={chatInput}
-            onKeyDown={(e) => {
-              if (
-                isHotkey('escape')(e) ||
-                (isHotkey('backspace')(e) && chatInput.length === 0)
-              ) {
-                e.preventDefault();
-                api.aiChat.hide();
-              }
-            }}
-            onValueChange={setChatInput}
-            placeholder="Ask AI anything..."
-            data-plate-focus
-            autoFocus
-          />
-        )}
-
-        {!isLoading && (
-          <CommandList>
-            <AIMenuItems input={chatInput} setInput={setChatInput} />
-          </CommandList>
+          <>
+            <CommandPrimitive.Input
+              className={cn(
+                'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
+                'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+                'border-b focus-visible:ring-transparent',
+              )}
+              value={chatInput}
+              onKeyDown={(e) => {
+                if (
+                  isHotkey('escape')(e) ||
+                  (isHotkey('backspace')(e) && chatInput.length === 0)
+                ) {
+                  e.preventDefault();
+                  api.aiChat.hide();
+                }
+              }}
+              onValueChange={setChatInput}
+              placeholder="Ask AI anything..."
+              data-plate-focus
+              autoFocus
+            />
+            <CommandList>
+              <AIMenuItems input={chatInput} setInput={setChatInput} />
+            </CommandList>
+          </>
         )}
       </Command>
     </div>
@@ -600,7 +598,7 @@ export function AILoadingBar() {
       )}
     >
       <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-      <span>{chatStatus === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
+      <span>Working . . .</span>
       <Button
         size="sm"
         variant="ghost"
