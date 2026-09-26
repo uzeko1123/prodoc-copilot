@@ -1,10 +1,16 @@
 import { create } from 'zustand';
 import { createDebouncedJSONStorage } from 'zustand-debounce';
 import { devtools, persist } from 'zustand/middleware';
+import type { OpenAICompatibleModel } from './agent/model-openai';
 // import type { ChatMessage } from './components/editor/use-chat';
 import type { ChatMessage, ChatMode } from './components/editor/use-agent';
 
 type ChatState = {
+  openAICompatibleModel: OpenAICompatibleModel;
+  setOpenAICompatibleModel: (
+    openAICompatibleModel: OpenAICompatibleModel,
+  ) => void;
+
   chatMode: ChatMode;
   setChatMode: (chatMode: ChatMode) => void;
 
@@ -20,6 +26,10 @@ export const useChatStore = create<ChatState>()(
   devtools(
     persist(
       (set) => ({
+        openAICompatibleModel: { baseUrl: '', apiKey: '', modelId: '' },
+        setOpenAICompatibleModel: (openAICompatibleModel) =>
+          set({ openAICompatibleModel }),
+
         chatMode: 'chat',
         setChatMode: (chatMode) => set({ chatMode }),
 
@@ -53,6 +63,7 @@ export const useChatStore = create<ChatState>()(
           debounceTime: 500,
         }),
         partialize: (state) => ({
+          openAICompatibleModel: state.openAICompatibleModel,
           chatMode: state.chatMode,
           chatMessages: state.chatMessages,
         }),

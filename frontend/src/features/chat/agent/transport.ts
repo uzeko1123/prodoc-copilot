@@ -13,7 +13,7 @@ import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../components/editor/use-agent';
 import { getInstructions } from './instructions';
-import { model } from './model-openai';
+import { getModel } from './model-openai';
 import { getChatModeTools, tools } from './tools';
 
 type Context = {
@@ -47,7 +47,7 @@ export function createAgentTransport(editor: PlateEditor) {
       const availableTools = getChatModeTools(chatMode);
 
       const result = streamText({
-        model,
+        model: getModel(),
         instructions,
         messages: await convertToModelMessages(
           createChatMessagesWithCtx(chatMessages, ctx),
