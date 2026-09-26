@@ -235,10 +235,9 @@ function Workbench() {
 
 export const Route = createFileRoute('/workbench/')({
   beforeLoad: () => {
-    const _withAuth = false;
-    if (_withAuth) {
-      void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
-    }
+    const _withAuth = true;
+    if (!_withAuth) return;
+    void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
   component: Workbench,
 });

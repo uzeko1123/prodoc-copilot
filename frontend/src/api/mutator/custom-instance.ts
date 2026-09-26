@@ -4,6 +4,7 @@ import Axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
+  withXSRFToken: true,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
 });
