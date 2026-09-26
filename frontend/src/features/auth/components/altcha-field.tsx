@@ -1,6 +1,6 @@
 import { getAuthAltchaRetrieveQueryKey } from '@/api/gen/endpoints/auth/auth';
 // Importing altcha package will introduce a new element <altcha-widget>
-import 'altcha/i18n';
+import 'altcha/i18n/zh-cn';
 import type { WidgetAttributes, WidgetMethods } from 'altcha/types';
 import type {} from 'altcha/types/react';
 import { useEffect, useRef } from 'react';

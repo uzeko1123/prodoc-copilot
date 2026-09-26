@@ -9,10 +9,8 @@ import {
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
-import { useMount } from '@/hooks/use-mount';
 import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
-import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { cn } from 'cn';
 import { MessagesSquareIcon } from 'lucide-react';
 import { PathApi, type Path } from 'platejs';
@@ -20,21 +18,19 @@ import { useEditorRef, usePluginOption, useValueVersion } from 'platejs/react';
 import { useEffect, useMemo, useRef } from 'react';
 import {
   getDiscussionIndex,
+  type ResolvedDiscussion,
   type ResolvedSuggestion,
 } from '../lib/block-discussion-index';
 import { useCommentStore } from '../stores';
 import { commentPlugin } from './editor/plugins/comment-kit';
-import {
-  discussionPlugin,
-  type TDiscussion,
-} from './editor/plugins/discussion-kit';
+import { discussionPlugin } from './editor/plugins/discussion-kit';
 import { suggestionPlugin } from './editor/plugins/suggestion-kit';
 import { BlockComment } from './ui/block-discussion';
 import { BlockSuggestionCard } from './ui/block-suggestion';
 import { CommentCreateForm } from './ui/comment';
 
 type CommentItem = { id: string; path: Path } & (
-  | { type: 'comment'; item: TDiscussion }
+  | { type: 'comment'; item: ResolvedDiscussion }
   | { type: 'suggestion'; item: ResolvedSuggestion }
   | { type: 'draft' }
 );
@@ -48,39 +44,31 @@ export function Comment() {
   const activeCommentId = usePluginOption(commentPlugin, 'activeId');
   const isCommenting = activeCommentId === getDraftCommentKey();
 
-  useMount(() => {
+  useEffect(() => {
     editor.setOption(discussionPlugin, 'discussions', discussions);
-  });
+  }, [editor, discussions]);
 
   const commentItems = useMemo(() => {
     const discussionIndex = getDiscussionIndex(editor, discussions, version);
     const commentItems: CommentItem[] = [];
 
-    discussionIndex.discussionsByBlock.forEach((discussions, key) => {
-      const blockPath = key.split(',').map(Number);
+    discussionIndex.discussionsByBlock.forEach((discussions) => {
       discussions.forEach((discussion) => {
-        const node = editor
-          .getApi(CommentPlugin)
-          .comment.node({ at: [], id: discussion.id });
         commentItems.push({
           type: 'comment',
           id: discussion.id,
-          path: node?.[1] ?? blockPath,
+          path: discussion.path,
           item: discussion,
         });
       });
     });
 
-    discussionIndex.suggestionsByBlock.forEach((suggestions, key) => {
-      const blockPath = key.split(',').map(Number);
+    discussionIndex.suggestionsByBlock.forEach((suggestions) => {
       suggestions.forEach((suggestion) => {
-        const node = editor
-          .getApi(SuggestionPlugin)
-          .suggestion.node({ at: [], id: suggestion.suggestionId });
         commentItems.push({
           type: 'suggestion',
           id: suggestion.suggestionId,
-          path: node?.[1] ?? blockPath,
+          path: suggestion.path,
           item: suggestion,
         });
       });

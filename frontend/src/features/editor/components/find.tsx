@@ -11,26 +11,16 @@ import {
 import { Input } from '@/components/shadcn/ui/input';
 import { Separator } from '@/components/shadcn/ui/separator';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
-import { useWorkbenchStore } from '@/stores/workbench';
 import { FindReplacePlugin } from '@platejs/find-replace';
 import { SearchIcon, SearchXIcon } from 'lucide-react';
 import { ElementApi, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
-import {
-  useEditorPlugin,
-  useEditorRef,
-  useEditorValue,
-  usePluginOption,
-} from 'platejs/react';
+import { useEditorRef, useEditorValue, usePluginOption } from 'platejs/react';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { findAll } from '../lib/find';
 
 export function Find() {
   const editor = useEditorRef();
-  const { setOption } = useEditorPlugin(FindReplacePlugin);
   const search = usePluginOption(FindReplacePlugin, 'search');
-  const activeLeftPanelTab = useWorkbenchStore(
-    (state) => state.activeLeftPanelTab,
-  );
 
   const [input, setInput] = useState(search ?? '');
   const debouncedInput = useDebounce(input);
@@ -47,17 +37,19 @@ export function Find() {
       return;
     }
     lastSearchRef.current = debouncedInput;
-    setOption('search', debouncedInput);
+    editor.setOption(FindReplacePlugin, 'search', debouncedInput);
     clearFlashRange();
     editor.api.redecorate();
-  }, [debouncedInput, isComposing, editor, search, setOption]);
+  }, [editor, search, isComposing, debouncedInput]);
 
   useEffect(() => {
-    if (activeLeftPanelTab === 'find' || !search) return;
-    setOption('search', '');
-    clearFlashRange();
-    editor.api.redecorate();
-  }, [activeLeftPanelTab, editor, search, setOption]);
+    return () => {
+      if (!editor.getOption(FindReplacePlugin, 'search')) return;
+      editor.setOption(FindReplacePlugin, 'search', '');
+      clearFlashRange();
+      editor.api.redecorate();
+    };
+  }, [editor]);
 
   return (
     <div className="flex h-full flex-col">
@@ -136,9 +128,9 @@ function FindMatches({ search }: { search: string }) {
         />
       )}
       <div className="flex flex-col gap-2 overflow-y-auto p-2">
-        {matches.map((match, index) => (
+        {matches.map((match) => (
           <Button
-            key={index}
+            key={getRangeKey(match.range)}
             variant="outline"
             className="h-auto p-2"
             onClick={() => onClick(match.range)}
@@ -190,4 +182,8 @@ function flashRange(domRange: Range) {
 function clearFlashRange() {
   clearTimeout(flashTimeout);
   CSS.highlights.delete('flash-range');
+}
+
+function getRangeKey(range: TRange) {
+  return `${range.anchor.path.join('.')}:${range.anchor.offset}-${range.focus.path.join('.')}:${range.focus.offset}`;
 }
