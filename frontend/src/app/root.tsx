@@ -6,7 +6,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 export const Route = createRootRoute({
   beforeLoad: () => {
-    queryClient
+    void queryClient
       .query(
         getAuthCsrfRetrieveQueryOptions({ query: { staleTime: Infinity } }),
       )

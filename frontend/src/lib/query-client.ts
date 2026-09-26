@@ -20,7 +20,10 @@ export const queryClient = new QueryClient({
       if (isAxiosError(error) && error.response?.status === 401) {
         toastErrorMessage('认证信息失效，请重新登录。');
         clearAuth();
-        router.navigate({ to: '/account/login' });
+        router.navigate({
+          to: '/account/login',
+          search: { redirect: router.state.location.href },
+        });
         return;
       }
     },
@@ -31,7 +34,10 @@ export const queryClient = new QueryClient({
         mutation.options.onError = () => undefined;
         toastErrorMessage('认证信息失效，请重新登录。');
         clearAuth();
-        router.navigate({ to: '/account/login' });
+        router.navigate({
+          to: '/account/login',
+          search: { redirect: router.state.location.href },
+        });
         return;
       }
       if (mutation.options.onError) return;

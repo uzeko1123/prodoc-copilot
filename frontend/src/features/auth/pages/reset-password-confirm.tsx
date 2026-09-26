@@ -13,9 +13,6 @@ function ResetPasswordConfirmPage() {
 }
 
 export const Route = createFileRoute('/account/reset-password-confirm')({
-  validateSearch: z.object({
-    uid: z.coerce.string(),
-    token: z.coerce.string(),
-  }).parse,
+  validateSearch: z.object({ uid: z.string(), token: z.string() }).parse,
   component: ResetPasswordConfirmPage,
 });

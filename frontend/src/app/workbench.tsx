@@ -1,3 +1,4 @@
+import { getAuthUserRetrieveQueryOptions } from '@/api/gen/endpoints/auth/auth';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   ResizableHandle,
@@ -18,7 +19,9 @@ import { EditorKit } from '@/features/editor/components/editor/editor-kit';
 import { Find } from '@/features/editor/components/find';
 import { ToC } from '@/features/editor/components/toc';
 import { useEditorStore } from '@/features/editor/stores';
+import { queryClient } from '@/lib/query-client';
 import { useWorkbenchStore } from '@/stores/workbench';
+import { noop } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { PanelRightIcon } from 'lucide-react';
 import { Plate, usePlateEditor } from 'platejs/react';
@@ -231,5 +234,11 @@ function Workbench() {
 }
 
 export const Route = createFileRoute('/workbench/')({
+  beforeLoad: () => {
+    const _withAuth = false;
+    if (_withAuth) {
+      void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
+    }
+  },
   component: Workbench,
 });

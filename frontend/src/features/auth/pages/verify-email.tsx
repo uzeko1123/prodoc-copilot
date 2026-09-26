@@ -13,8 +13,6 @@ function VerifyEmailPage() {
 }
 
 export const Route = createFileRoute('/account/verify-email')({
-  validateSearch: z.object({
-    key: z.coerce.string(),
-  }).parse,
+  validateSearch: z.object({ key: z.string() }).parse,
   component: VerifyEmailPage,
 });
