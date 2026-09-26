@@ -268,7 +268,7 @@ const aiChatItems = {
     icon: <SendIcon />,
     label: 'Send',
     value: 'send',
-    chatMode: '',
+    chatMode: null,
     onSelect: ({ editor, input }) => {
       void editor.getApi(AIChatPlugin).aiChat.submit(input);
     },
@@ -458,7 +458,7 @@ const aiChatItems = {
     icon: React.ReactNode;
     label: string;
     value: string;
-    chatMode: ChatMode;
+    chatMode: ChatMode | null;
     component?: React.ComponentType<{ menuState: EditorChatState }>;
     filterItems?: boolean;
     items?: { label: string; value: string }[];

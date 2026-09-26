@@ -204,7 +204,7 @@ export function Chat() {
                           key={item.value}
                           onSelect={() => {
                             setChatInput(`/${item.value} ${chatInput}`);
-                            if (item.chatMode === '') return;
+                            if (item.chatMode === null) return;
                             useChatStore.getState().setChatMode(item.chatMode);
                           }}
                         >
@@ -220,7 +220,7 @@ export function Chat() {
                           key={item.value}
                           onSelect={() => {
                             setChatInput(`/${item.value} ${chatInput}`);
-                            if (item.chatMode === '') return;
+                            if (item.chatMode === null) return;
                             useChatStore.getState().setChatMode(item.chatMode);
                           }}
                         >
