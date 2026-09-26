@@ -6,7 +6,7 @@ import { AIChatPlugin } from '@platejs/ai/react';
 import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
-import { applyTools, resetTools, type Tools } from '../../agent/tools';
+import { applyTools, type Tools } from '../../agent/tools';
 import { createAgentTransport } from '../../agent/transport';
 
 export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
@@ -42,10 +42,7 @@ export const useAgent = () => {
 
   React.useEffect(() => {
     const lastChatMessage = chat.messages.at(-1);
-    if (lastChatMessage?.role !== 'assistant') {
-      resetTools();
-      return;
-    }
+    if (lastChatMessage?.role !== 'assistant') return;
 
     applyTools(editor, chat, lastChatMessage);
     upsertChatMessage(lastChatMessage);

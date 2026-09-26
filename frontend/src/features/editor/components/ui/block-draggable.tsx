@@ -508,11 +508,17 @@ const calculatePreviewTop = (
   return previewElementsTopDistance;
 };
 
+const marginTopByType = new Map<string, number>();
+
 const calcDragButtonTop = (editor: PlateEditor, element: TElement): number => {
+  const cachedMarginTop = marginTopByType.get(element.type);
+  if (cachedMarginTop !== undefined) return cachedMarginTop;
+
   const child = editor.api.toDOMNode(element)!;
 
   const currentMarginTopString = window.getComputedStyle(child).marginTop;
   const currentMarginTop = Number(currentMarginTopString.replace('px', ''));
+  marginTopByType.set(element.type, currentMarginTop);
 
   return currentMarginTop;
 };

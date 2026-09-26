@@ -45,11 +45,20 @@ export function getChatModeTools(chatMode: ChatMode) {
   }
 }
 
+let currentMessageId: string | undefined;
+
 export function applyTools(
   editor: PlateEditor,
   chat: Chat,
   message: ChatMessage,
 ) {
+  if (currentMessageId !== message.id) {
+    currentMessageId = message.id;
+    resetCommentTool();
+    resetEditTool();
+    resetGenerateTool();
+  }
+
   for (const part of message.parts) {
     switch (part.type) {
       case 'tool-comment':
@@ -63,10 +72,4 @@ export function applyTools(
         break;
     }
   }
-}
-
-export function resetTools() {
-  resetCommentTool();
-  resetEditTool();
-  resetGenerateTool();
 }
