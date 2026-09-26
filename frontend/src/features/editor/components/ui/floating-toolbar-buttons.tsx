@@ -49,7 +49,7 @@ export function FloatingToolbarButtons() {
       ) : (
         <FloatingToolbarButtonsWithSelection />
       )}
-      <FloatingToolbarButtonsTools />
+      <FloatingToolbarButtonsStatic />
     </>
   );
 }
@@ -146,7 +146,7 @@ function FloatingToolbarButtonsWithBlockSelection() {
   );
 }
 
-function FloatingToolbarButtonsTools() {
+function FloatingToolbarButtonsStatic() {
   const readOnly = useEditorReadOnly();
 
   return (
