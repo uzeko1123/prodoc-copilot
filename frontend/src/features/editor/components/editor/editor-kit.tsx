@@ -17,7 +17,6 @@ import { LineHeightKit } from '@/components/shadcn/editor/plugins/line-height-ki
 import { LinkKit } from '@/components/shadcn/editor/plugins/link-kit';
 import { ListKit } from '@/components/shadcn/editor/plugins/list-kit';
 import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
-import { MathKit } from '@/components/shadcn/editor/plugins/math-kit';
 import { MediaKit } from '@/components/shadcn/editor/plugins/media-kit';
 import { MentionKit } from '@/components/shadcn/editor/plugins/mention-kit';
 import { SlashKit } from '@/components/shadcn/editor/plugins/slash-kit';
@@ -36,6 +35,7 @@ import { CursorOverlayKit } from './plugins/cursor-overlay-kit';
 import { DndKit } from './plugins/dnd-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
+import { MathKit } from './plugins/math-kit';
 import { SelectionKit } from './plugins/selection-kit';
 
 export const EditorKit = [

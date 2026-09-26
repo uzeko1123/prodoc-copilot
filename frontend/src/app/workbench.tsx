@@ -235,7 +235,7 @@ function Workbench() {
 
 export const Route = createFileRoute('/workbench/')({
   beforeLoad: () => {
-    const _withAuth = true;
+    const _withAuth = false;
     if (!_withAuth) return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },

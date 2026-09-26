@@ -170,6 +170,7 @@ export function AIMenu() {
   });
 
   useOnClickOutside(() => setOpen(false), {
+    disabled: !open,
     refs: [floatingRef],
   });
 

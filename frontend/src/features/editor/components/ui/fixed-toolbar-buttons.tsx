@@ -3,14 +3,13 @@
 import { AIToolbarButton } from '@/components/shadcn/ui/ai-toolbar-button';
 import { Button } from '@/components/shadcn/ui/button';
 import { CommentToolbarButton } from '@/components/shadcn/ui/comment-toolbar-button';
-import { EmojiToolbarButton } from '@/components/shadcn/ui/emoji-toolbar-button';
 import {
   RedoToolbarButton,
   UndoToolbarButton,
 } from '@/components/shadcn/ui/history-toolbar-button';
 import { MediaToolbarButton } from '@/components/shadcn/ui/media-toolbar-button';
 import { TableToolbarButton } from '@/components/shadcn/ui/table-toolbar-button';
-import { ToolbarGroup } from '@/components/shadcn/ui/toolbar';
+import { ToolbarGroup, ToolbarSeparator } from '@/components/shadcn/ui/toolbar';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { PanelLeftIcon, SparklesIcon } from 'lucide-react';
 import { KEYS } from 'platejs';
@@ -32,20 +31,24 @@ export function FixedToolbarButtons() {
     <div className="flex w-full">
       <ToolbarGroup>
         {!isLeftPanelOpen && (
-          <Button variant="ghost" onClick={toggleLeftPanel}>
-            <PanelLeftIcon />
-          </Button>
+          <>
+            <Button variant="ghost" onClick={toggleLeftPanel}>
+              <PanelLeftIcon />
+            </Button>
+
+            <ToolbarSeparator className="self-stretch" />
+          </>
         )}
-      </ToolbarGroup>
 
-      {!readOnly && (
-        <ToolbarGroup>
-          <UndoToolbarButton />
-          <RedoToolbarButton />
-        </ToolbarGroup>
-      )}
+        {!readOnly && (
+          <>
+            <UndoToolbarButton />
+            <RedoToolbarButton />
 
-      <ToolbarGroup>
+            <ToolbarSeparator className="self-stretch" />
+          </>
+        )}
+
         <ImportToolbarButton />
         <ExportToolbarButton />
       </ToolbarGroup>
@@ -53,38 +56,27 @@ export function FixedToolbarButtons() {
       <div className="grow" />
 
       {!_hideMainToolbar && !readOnly && (
-        <>
-          <ToolbarGroup>
-            <InsertToolbarButton />
-          </ToolbarGroup>
+        <ToolbarGroup>
+          <InsertToolbarButton />
 
-          <ToolbarGroup>
-            <TableToolbarButton />
-            <EmojiToolbarButton />
-          </ToolbarGroup>
+          <ToolbarSeparator className="self-stretch" />
 
-          <ToolbarGroup>
-            <MediaToolbarButton nodeType={KEYS.img} />
-            <MediaToolbarButton nodeType={KEYS.video} />
-            <MediaToolbarButton nodeType={KEYS.audio} />
-            <MediaToolbarButton nodeType={KEYS.file} />
-          </ToolbarGroup>
-        </>
+          <TableToolbarButton />
+          <MediaToolbarButton nodeType={KEYS.img} />
+          <MediaToolbarButton nodeType={KEYS.file} />
+        </ToolbarGroup>
       )}
 
       <div className="grow" />
 
       <ToolbarGroup>
         <CommentToolbarButton />
-      </ToolbarGroup>
-
-      <ToolbarGroup>
         <AIToolbarButton tooltip="AI commands">
           <SparklesIcon />
         </AIToolbarButton>
-      </ToolbarGroup>
 
-      <ToolbarGroup>
+        <ToolbarSeparator className="self-stretch" />
+
         <ModeToolbarButton />
       </ToolbarGroup>
     </div>
