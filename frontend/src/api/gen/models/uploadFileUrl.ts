@@ -4,6 +4,6 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface VerifyEmail {
-  key: string;
+export interface UploadFileUrl {
+  url: string;
 }

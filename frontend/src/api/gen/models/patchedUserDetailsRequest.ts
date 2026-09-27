@@ -4,15 +4,19 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface PatchedUser {
-  readonly url?: string;
+/**
+ * User model w/o password
+ */
+export interface PatchedUserDetailsRequest {
   /**
    * 必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。
+   * @minLength 1
    * @maxLength 150
    * @pattern ^[\w.@+-]+$
    */
   username?: string;
-  email?: string;
-  /** 该用户归属的组。一个用户将得到其归属的组的所有权限。 */
-  groups?: string[];
+  /** @maxLength 150 */
+  first_name?: string;
+  /** @maxLength 150 */
+  last_name?: string;
 }

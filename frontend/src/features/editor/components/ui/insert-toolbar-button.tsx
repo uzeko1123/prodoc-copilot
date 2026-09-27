@@ -14,13 +14,11 @@ import {
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import {
   FileCodeIcon,
-  FileUpIcon,
   Heading1Icon,
   Heading2Icon,
   Heading3Icon,
   Heading4Icon,
   Heading5Icon,
-  ImageIcon,
   ListIcon,
   ListOrderedIcon,
   MinusIcon,
@@ -28,7 +26,6 @@ import {
   PlusIcon,
   RadicalIcon,
   SquareIcon,
-  TableIcon,
   TableOfContentsIcon,
 } from 'lucide-react';
 import { KEYS } from 'platejs';
@@ -82,11 +79,6 @@ const groups: Group[] = [
         label: 'Heading 5',
         value: 'h5',
       },
-      {
-        icon: <MinusIcon />,
-        label: 'Divider',
-        value: KEYS.hr,
-      },
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
@@ -120,38 +112,8 @@ const groups: Group[] = [
     })),
   },
   {
-    group: 'Table & Media',
-    items: [
-      {
-        icon: <TableIcon />,
-        label: 'Table',
-        value: KEYS.table,
-      },
-      {
-        icon: <ImageIcon />,
-        label: 'Image',
-        value: KEYS.img,
-      },
-      {
-        icon: <FileUpIcon />,
-        label: 'File',
-        value: KEYS.file,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertBlock(editor, value);
-      },
-    })),
-  },
-  {
     group: 'Advanced blocks',
     items: [
-      {
-        icon: <TableOfContentsIcon />,
-        label: 'Table of contents',
-        value: KEYS.toc,
-      },
       {
         icon: <FileCodeIcon />,
         label: 'Code',
@@ -162,6 +124,16 @@ const groups: Group[] = [
         icon: <RadicalIcon />,
         label: 'Equation',
         value: KEYS.equation,
+      },
+      {
+        icon: <MinusIcon />,
+        label: 'Divider',
+        value: KEYS.hr,
+      },
+      {
+        icon: <TableOfContentsIcon />,
+        label: 'Table of contents',
+        value: KEYS.toc,
       },
     ].map((item) => ({
       ...item,

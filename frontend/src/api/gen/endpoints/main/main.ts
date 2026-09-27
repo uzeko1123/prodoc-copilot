@@ -3,9 +3,6 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
-import { customInstance } from '../../../mutator/custom-instance';
-import type { ErrorType, BodyType } from '../../../mutator/custom-instance';
-import type { Group, PatchedGroup, PatchedUser, User } from '../../models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
@@ -21,34 +18,16 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
-
-// https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
-type IfEquals<X, Y, A = X, B = never> =
-  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
-
-type WritableKeys<T> = {
-  [P in keyof T]-?: IfEquals<
-    { [Q in P]: T[P] },
-    { -readonly [Q in P]: T[P] },
-    P
-  >;
-}[keyof T];
-
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I,
-) => void
-  ? I
-  : never;
-type DistributeReadOnlyOverUnions<T> = T extends any ? NonReadonly<T> : never;
-
-type Writable<T> = Pick<T, WritableKeys<T>>;
-type NonReadonly<T> = [T] extends [UnionToIntersection<T>]
-  ? {
-      [P in keyof Writable<T>]: T[P] extends object
-        ? NonReadonly<NonNullable<T[P]>>
-        : T[P];
-    }
-  : DistributeReadOnlyOverUnions<T>;
+import { customInstance } from '../../../mutator/custom-instance';
+import type { BodyType, ErrorType } from '../../../mutator/custom-instance';
+import type {
+  Group,
+  GroupRequest,
+  PatchedGroupRequest,
+  PatchedUserRequest,
+  User,
+  UserRequest,
+} from '../../models';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -197,7 +176,7 @@ export function useMainGroupsList<
 }
 
 export const mainGroupsCreate = (
-  group: BodyType<NonReadonly<Group>>,
+  groupRequest: BodyType<GroupRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -206,12 +185,15 @@ export const mainGroupsCreate = (
       url: `/api/main/groups/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: group,
+      data: groupRequest,
       signal,
     },
     options,
   );
 };
+
+export const getMainGroupsCreateMutationKey = () =>
+  ['mainGroupsCreate'] as const;
 
 export const getMainGroupsCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -220,17 +202,17 @@ export const getMainGroupsCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainGroupsCreate>>,
     TError,
-    { data: BodyType<NonReadonly<Group>> },
+    MainGroupsCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainGroupsCreate>>,
   TError,
-  { data: BodyType<NonReadonly<Group>> },
+  MainGroupsCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainGroupsCreate'];
+  const mutationKey = getMainGroupsCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -241,7 +223,7 @@ export const getMainGroupsCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainGroupsCreate>>,
-    { data: BodyType<NonReadonly<Group>> }
+    MainGroupsCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -254,8 +236,11 @@ export const getMainGroupsCreateMutationOptions = <
 export type MainGroupsCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof mainGroupsCreate>>
 >;
-export type MainGroupsCreateMutationBody = BodyType<NonReadonly<Group>>;
+export type MainGroupsCreateMutationBody = BodyType<GroupRequest>;
 export type MainGroupsCreateMutationError = ErrorType<unknown>;
+export type MainGroupsCreateMutationVariables = {
+  data: BodyType<GroupRequest>;
+};
 
 export const useMainGroupsCreate = <
   TError = ErrorType<unknown>,
@@ -265,7 +250,7 @@ export const useMainGroupsCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainGroupsCreate>>,
       TError,
-      { data: BodyType<NonReadonly<Group>> },
+      MainGroupsCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -274,7 +259,7 @@ export const useMainGroupsCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainGroupsCreate>>,
   TError,
-  { data: BodyType<NonReadonly<Group>> },
+  MainGroupsCreateMutationVariables,
   TContext
 > => {
   return useMutation(getMainGroupsCreateMutationOptions(options), queryClient);
@@ -440,7 +425,7 @@ export function useMainGroupsRetrieve<
 
 export const mainGroupsUpdate = (
   id: number,
-  group: BodyType<NonReadonly<Group>>,
+  groupRequest: BodyType<GroupRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -449,12 +434,15 @@ export const mainGroupsUpdate = (
       url: `/api/main/groups/${id}/`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      data: group,
+      data: groupRequest,
       signal,
     },
     options,
   );
 };
+
+export const getMainGroupsUpdateMutationKey = () =>
+  ['mainGroupsUpdate'] as const;
 
 export const getMainGroupsUpdateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -463,17 +451,17 @@ export const getMainGroupsUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainGroupsUpdate>>,
     TError,
-    { id: number; data: BodyType<NonReadonly<Group>> },
+    MainGroupsUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainGroupsUpdate>>,
   TError,
-  { id: number; data: BodyType<NonReadonly<Group>> },
+  MainGroupsUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainGroupsUpdate'];
+  const mutationKey = getMainGroupsUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -484,7 +472,7 @@ export const getMainGroupsUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainGroupsUpdate>>,
-    { id: number; data: BodyType<NonReadonly<Group>> }
+    MainGroupsUpdateMutationVariables
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -497,8 +485,12 @@ export const getMainGroupsUpdateMutationOptions = <
 export type MainGroupsUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof mainGroupsUpdate>>
 >;
-export type MainGroupsUpdateMutationBody = BodyType<NonReadonly<Group>>;
+export type MainGroupsUpdateMutationBody = BodyType<GroupRequest>;
 export type MainGroupsUpdateMutationError = ErrorType<unknown>;
+export type MainGroupsUpdateMutationVariables = {
+  id: number;
+  data: BodyType<GroupRequest>;
+};
 
 export const useMainGroupsUpdate = <
   TError = ErrorType<unknown>,
@@ -508,7 +500,7 @@ export const useMainGroupsUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainGroupsUpdate>>,
       TError,
-      { id: number; data: BodyType<NonReadonly<Group>> },
+      MainGroupsUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -517,14 +509,14 @@ export const useMainGroupsUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainGroupsUpdate>>,
   TError,
-  { id: number; data: BodyType<NonReadonly<Group>> },
+  MainGroupsUpdateMutationVariables,
   TContext
 > => {
   return useMutation(getMainGroupsUpdateMutationOptions(options), queryClient);
 };
 export const mainGroupsPartialUpdate = (
   id: number,
-  patchedGroup?: BodyType<NonReadonly<PatchedGroup>>,
+  patchedGroupRequest?: BodyType<PatchedGroupRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -533,12 +525,15 @@ export const mainGroupsPartialUpdate = (
       url: `/api/main/groups/${id}/`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      data: patchedGroup,
+      data: patchedGroupRequest,
       signal,
     },
     options,
   );
 };
+
+export const getMainGroupsPartialUpdateMutationKey = () =>
+  ['mainGroupsPartialUpdate'] as const;
 
 export const getMainGroupsPartialUpdateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -547,17 +542,17 @@ export const getMainGroupsPartialUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
     TError,
-    { id: number; data?: BodyType<NonReadonly<PatchedGroup>> },
+    MainGroupsPartialUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
   TError,
-  { id: number; data?: BodyType<NonReadonly<PatchedGroup>> },
+  MainGroupsPartialUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainGroupsPartialUpdate'];
+  const mutationKey = getMainGroupsPartialUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -568,7 +563,7 @@ export const getMainGroupsPartialUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
-    { id: number; data?: BodyType<NonReadonly<PatchedGroup>> }
+    MainGroupsPartialUpdateMutationVariables
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -582,8 +577,12 @@ export type MainGroupsPartialUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof mainGroupsPartialUpdate>>
 >;
 export type MainGroupsPartialUpdateMutationBody =
-  BodyType<NonReadonly<PatchedGroup>> | undefined;
+  BodyType<PatchedGroupRequest> | undefined;
 export type MainGroupsPartialUpdateMutationError = ErrorType<unknown>;
+export type MainGroupsPartialUpdateMutationVariables = {
+  id: number;
+  data?: BodyType<PatchedGroupRequest>;
+};
 
 export const useMainGroupsPartialUpdate = <
   TError = ErrorType<unknown>,
@@ -593,7 +592,7 @@ export const useMainGroupsPartialUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
       TError,
-      { id: number; data?: BodyType<NonReadonly<PatchedGroup>> },
+      MainGroupsPartialUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -602,7 +601,7 @@ export const useMainGroupsPartialUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
   TError,
-  { id: number; data?: BodyType<NonReadonly<PatchedGroup>> },
+  MainGroupsPartialUpdateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -621,6 +620,9 @@ export const mainGroupsDestroy = (
   );
 };
 
+export const getMainGroupsDestroyMutationKey = () =>
+  ['mainGroupsDestroy'] as const;
+
 export const getMainGroupsDestroyMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -628,17 +630,17 @@ export const getMainGroupsDestroyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainGroupsDestroy>>,
     TError,
-    { id: number },
+    MainGroupsDestroyMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainGroupsDestroy>>,
   TError,
-  { id: number },
+  MainGroupsDestroyMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainGroupsDestroy'];
+  const mutationKey = getMainGroupsDestroyMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -649,7 +651,7 @@ export const getMainGroupsDestroyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainGroupsDestroy>>,
-    { id: number }
+    MainGroupsDestroyMutationVariables
   > = (props) => {
     const { id } = props ?? {};
 
@@ -664,6 +666,7 @@ export type MainGroupsDestroyMutationResult = NonNullable<
 >;
 
 export type MainGroupsDestroyMutationError = ErrorType<unknown>;
+export type MainGroupsDestroyMutationVariables = { id: number };
 
 export const useMainGroupsDestroy = <
   TError = ErrorType<unknown>,
@@ -673,7 +676,7 @@ export const useMainGroupsDestroy = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainGroupsDestroy>>,
       TError,
-      { id: number },
+      MainGroupsDestroyMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -682,7 +685,7 @@ export const useMainGroupsDestroy = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainGroupsDestroy>>,
   TError,
-  { id: number },
+  MainGroupsDestroyMutationVariables,
   TContext
 > => {
   return useMutation(getMainGroupsDestroyMutationOptions(options), queryClient);
@@ -814,7 +817,7 @@ export function useMainUsersList<
 }
 
 export const mainUsersCreate = (
-  user: BodyType<NonReadonly<User>>,
+  userRequest: BodyType<UserRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -823,12 +826,14 @@ export const mainUsersCreate = (
       url: `/api/main/users/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: user,
+      data: userRequest,
       signal,
     },
     options,
   );
 };
+
+export const getMainUsersCreateMutationKey = () => ['mainUsersCreate'] as const;
 
 export const getMainUsersCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -837,17 +842,17 @@ export const getMainUsersCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainUsersCreate>>,
     TError,
-    { data: BodyType<NonReadonly<User>> },
+    MainUsersCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainUsersCreate>>,
   TError,
-  { data: BodyType<NonReadonly<User>> },
+  MainUsersCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainUsersCreate'];
+  const mutationKey = getMainUsersCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -858,7 +863,7 @@ export const getMainUsersCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainUsersCreate>>,
-    { data: BodyType<NonReadonly<User>> }
+    MainUsersCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -871,8 +876,9 @@ export const getMainUsersCreateMutationOptions = <
 export type MainUsersCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof mainUsersCreate>>
 >;
-export type MainUsersCreateMutationBody = BodyType<NonReadonly<User>>;
+export type MainUsersCreateMutationBody = BodyType<UserRequest>;
 export type MainUsersCreateMutationError = ErrorType<unknown>;
+export type MainUsersCreateMutationVariables = { data: BodyType<UserRequest> };
 
 export const useMainUsersCreate = <
   TError = ErrorType<unknown>,
@@ -882,7 +888,7 @@ export const useMainUsersCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainUsersCreate>>,
       TError,
-      { data: BodyType<NonReadonly<User>> },
+      MainUsersCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -891,7 +897,7 @@ export const useMainUsersCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainUsersCreate>>,
   TError,
-  { data: BodyType<NonReadonly<User>> },
+  MainUsersCreateMutationVariables,
   TContext
 > => {
   return useMutation(getMainUsersCreateMutationOptions(options), queryClient);
@@ -1057,7 +1063,7 @@ export function useMainUsersRetrieve<
 
 export const mainUsersUpdate = (
   id: number,
-  user: BodyType<NonReadonly<User>>,
+  userRequest: BodyType<UserRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -1066,12 +1072,14 @@ export const mainUsersUpdate = (
       url: `/api/main/users/${id}/`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      data: user,
+      data: userRequest,
       signal,
     },
     options,
   );
 };
+
+export const getMainUsersUpdateMutationKey = () => ['mainUsersUpdate'] as const;
 
 export const getMainUsersUpdateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1080,17 +1088,17 @@ export const getMainUsersUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainUsersUpdate>>,
     TError,
-    { id: number; data: BodyType<NonReadonly<User>> },
+    MainUsersUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainUsersUpdate>>,
   TError,
-  { id: number; data: BodyType<NonReadonly<User>> },
+  MainUsersUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainUsersUpdate'];
+  const mutationKey = getMainUsersUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1101,7 +1109,7 @@ export const getMainUsersUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainUsersUpdate>>,
-    { id: number; data: BodyType<NonReadonly<User>> }
+    MainUsersUpdateMutationVariables
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -1114,8 +1122,12 @@ export const getMainUsersUpdateMutationOptions = <
 export type MainUsersUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof mainUsersUpdate>>
 >;
-export type MainUsersUpdateMutationBody = BodyType<NonReadonly<User>>;
+export type MainUsersUpdateMutationBody = BodyType<UserRequest>;
 export type MainUsersUpdateMutationError = ErrorType<unknown>;
+export type MainUsersUpdateMutationVariables = {
+  id: number;
+  data: BodyType<UserRequest>;
+};
 
 export const useMainUsersUpdate = <
   TError = ErrorType<unknown>,
@@ -1125,7 +1137,7 @@ export const useMainUsersUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainUsersUpdate>>,
       TError,
-      { id: number; data: BodyType<NonReadonly<User>> },
+      MainUsersUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1134,14 +1146,14 @@ export const useMainUsersUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainUsersUpdate>>,
   TError,
-  { id: number; data: BodyType<NonReadonly<User>> },
+  MainUsersUpdateMutationVariables,
   TContext
 > => {
   return useMutation(getMainUsersUpdateMutationOptions(options), queryClient);
 };
 export const mainUsersPartialUpdate = (
   id: number,
-  patchedUser?: BodyType<NonReadonly<PatchedUser>>,
+  patchedUserRequest?: BodyType<PatchedUserRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -1150,12 +1162,15 @@ export const mainUsersPartialUpdate = (
       url: `/api/main/users/${id}/`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      data: patchedUser,
+      data: patchedUserRequest,
       signal,
     },
     options,
   );
 };
+
+export const getMainUsersPartialUpdateMutationKey = () =>
+  ['mainUsersPartialUpdate'] as const;
 
 export const getMainUsersPartialUpdateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1164,17 +1179,17 @@ export const getMainUsersPartialUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
     TError,
-    { id: number; data?: BodyType<NonReadonly<PatchedUser>> },
+    MainUsersPartialUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
   TError,
-  { id: number; data?: BodyType<NonReadonly<PatchedUser>> },
+  MainUsersPartialUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainUsersPartialUpdate'];
+  const mutationKey = getMainUsersPartialUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1185,7 +1200,7 @@ export const getMainUsersPartialUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
-    { id: number; data?: BodyType<NonReadonly<PatchedUser>> }
+    MainUsersPartialUpdateMutationVariables
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -1199,8 +1214,12 @@ export type MainUsersPartialUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof mainUsersPartialUpdate>>
 >;
 export type MainUsersPartialUpdateMutationBody =
-  BodyType<NonReadonly<PatchedUser>> | undefined;
+  BodyType<PatchedUserRequest> | undefined;
 export type MainUsersPartialUpdateMutationError = ErrorType<unknown>;
+export type MainUsersPartialUpdateMutationVariables = {
+  id: number;
+  data?: BodyType<PatchedUserRequest>;
+};
 
 export const useMainUsersPartialUpdate = <
   TError = ErrorType<unknown>,
@@ -1210,7 +1229,7 @@ export const useMainUsersPartialUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
       TError,
-      { id: number; data?: BodyType<NonReadonly<PatchedUser>> },
+      MainUsersPartialUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1219,7 +1238,7 @@ export const useMainUsersPartialUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
   TError,
-  { id: number; data?: BodyType<NonReadonly<PatchedUser>> },
+  MainUsersPartialUpdateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -1238,6 +1257,9 @@ export const mainUsersDestroy = (
   );
 };
 
+export const getMainUsersDestroyMutationKey = () =>
+  ['mainUsersDestroy'] as const;
+
 export const getMainUsersDestroyMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -1245,17 +1267,17 @@ export const getMainUsersDestroyMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof mainUsersDestroy>>,
     TError,
-    { id: number },
+    MainUsersDestroyMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof mainUsersDestroy>>,
   TError,
-  { id: number },
+  MainUsersDestroyMutationVariables,
   TContext
 > => {
-  const mutationKey = ['mainUsersDestroy'];
+  const mutationKey = getMainUsersDestroyMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1266,7 +1288,7 @@ export const getMainUsersDestroyMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof mainUsersDestroy>>,
-    { id: number }
+    MainUsersDestroyMutationVariables
   > = (props) => {
     const { id } = props ?? {};
 
@@ -1281,6 +1303,7 @@ export type MainUsersDestroyMutationResult = NonNullable<
 >;
 
 export type MainUsersDestroyMutationError = ErrorType<unknown>;
+export type MainUsersDestroyMutationVariables = { id: number };
 
 export const useMainUsersDestroy = <
   TError = ErrorType<unknown>,
@@ -1290,7 +1313,7 @@ export const useMainUsersDestroy = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof mainUsersDestroy>>,
       TError,
-      { id: number },
+      MainUsersDestroyMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1299,7 +1322,7 @@ export const useMainUsersDestroy = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof mainUsersDestroy>>,
   TError,
-  { id: number },
+  MainUsersDestroyMutationVariables,
   TContext
 > => {
   return useMutation(getMainUsersDestroyMutationOptions(options), queryClient);

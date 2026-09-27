@@ -7,8 +7,6 @@ import {
   RedoToolbarButton,
   UndoToolbarButton,
 } from '@/components/shadcn/ui/history-toolbar-button';
-import { MediaToolbarButton } from '@/components/shadcn/ui/media-toolbar-button';
-import { TableToolbarButton } from '@/components/shadcn/ui/table-toolbar-button';
 import { ToolbarGroup, ToolbarSeparator } from '@/components/shadcn/ui/toolbar';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { PanelLeftIcon, SparklesIcon } from 'lucide-react';
@@ -17,7 +15,9 @@ import { useEditorReadOnly } from 'platejs/react';
 import { ExportToolbarButton } from './export-toolbar-button';
 import { ImportToolbarButton } from './import-toolbar-button';
 import { InsertToolbarButton } from './insert-toolbar-button';
+import { MediaToolbarButton } from './media-toolbar-button';
 import { ModeToolbarButton } from './mode-toolbar-button';
+import { TableToolbarButton } from './table-toolbar-button';
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();

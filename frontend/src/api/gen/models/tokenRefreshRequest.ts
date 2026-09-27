@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface TokenRefresh {
-  readonly access: string;
+export interface TokenRefreshRequest {
+  /** @minLength 1 */
+  refresh: string;
 }

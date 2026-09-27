@@ -7,12 +7,21 @@
 /**
  * Serializer for confirming a password reset attempt.
  */
-export interface PasswordResetConfirm {
+export interface PasswordResetConfirmRequest {
+  /** @minLength 1 */
   altcha: string;
-  /** @maxLength 128 */
+  /**
+   * @minLength 1
+   * @maxLength 128
+   */
   new_password1: string;
-  /** @maxLength 128 */
+  /**
+   * @minLength 1
+   * @maxLength 128
+   */
   new_password2: string;
+  /** @minLength 1 */
   uid: string;
+  /** @minLength 1 */
   token: string;
 }

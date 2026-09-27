@@ -7,7 +7,9 @@
 /**
  * Serializer for requesting a password reset e-mail.
  */
-export interface PasswordReset {
+export interface PasswordResetRequest {
+  /** @minLength 1 */
   altcha: string;
+  /** @minLength 1 */
   email: string;
 }

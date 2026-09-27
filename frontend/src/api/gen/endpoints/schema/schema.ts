@@ -3,15 +3,6 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
-import { customInstance } from '../../../mutator/custom-instance';
-import type { ErrorType } from '../../../mutator/custom-instance';
-import type {
-  SchemaRetrieve200Four,
-  SchemaRetrieve200One,
-  SchemaRetrieve200Three,
-  SchemaRetrieve200Two,
-  SchemaRetrieveParams,
-} from '../../models';
 import { useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
@@ -24,6 +15,15 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
+import { customInstance } from '../../../mutator/custom-instance';
+import type { ErrorType } from '../../../mutator/custom-instance';
+import type {
+  SchemaRetrieve200Four,
+  SchemaRetrieve200One,
+  SchemaRetrieve200Three,
+  SchemaRetrieve200Two,
+  SchemaRetrieveParams,
+} from '../../models';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 

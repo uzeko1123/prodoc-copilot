@@ -10,7 +10,6 @@ import {
 } from '@/components/shadcn/ui/indent-toolbar-button';
 import { LinkToolbarButton } from '@/components/shadcn/ui/link-toolbar-button';
 import { MarkToolbarButton } from '@/components/shadcn/ui/mark-toolbar-button';
-import { MoreToolbarButton } from '@/components/shadcn/ui/more-toolbar-button';
 import { SuggestionToolbarButton } from '@/components/shadcn/ui/suggestion-toolbar-button';
 import { ToolbarGroup, ToolbarSeparator } from '@/components/shadcn/ui/toolbar';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
@@ -26,12 +25,14 @@ import {
 import { KEYS } from 'platejs';
 import { useEditorReadOnly, usePluginOption } from 'platejs/react';
 import { AlignToolbarButton } from './align-toolbar-button';
+import { FontSizeResetToolbarButton } from './font-size-reset-toolbar-button';
 import { FontSizeToolbarButton } from './font-size-toolbar-button';
 import {
   BulletedListToolbarButton,
   NumberedListToolbarButton,
   TodoListToolbarButton,
 } from './list-toolbar-button';
+import { MoreToolbarButton } from './more-toolbar-button';
 import { TurnIntoToolbarButton } from './turn-into-toolbar-button';
 
 export function FloatingToolbarButtons() {
@@ -57,6 +58,7 @@ function FloatingToolbarButtonsWithSelection() {
       {!readOnly && (
         <>
           <FontSizeToolbarButton />
+          <FontSizeResetToolbarButton />
 
           <ToolbarSeparator className="self-stretch" />
 
