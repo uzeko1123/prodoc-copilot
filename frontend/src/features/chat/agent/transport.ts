@@ -1,4 +1,4 @@
-import { getSelectionText } from '@/features/chat/lib/utils';
+import { getSelectionText, sumUsage } from '@/features/chat/lib/utils';
 import { useChatStore } from '@/features/chat/stores';
 import { useCommentStore } from '@/features/comment/stores';
 import {
@@ -7,6 +7,7 @@ import {
   DefaultChatTransport,
   streamText,
   toUIMessageStream,
+  type LanguageModelUsage,
   type ToolChoice,
   type ToolSet,
 } from 'ai';
@@ -24,22 +25,31 @@ type Context = {
 };
 
 export function createAgentTransport(editor: PlateEditor) {
+  let context: Context | null = null;
+  let usage: LanguageModelUsage | undefined = undefined;
+
   return new DefaultChatTransport({
     fetch: (async (_input, init) => {
       const { ctx, messages } = JSON.parse(init?.body as string) as {
-        ctx: Context;
+        ctx?: Context;
         messages: ChatMessage[];
       };
+      if (ctx) context = ctx;
 
       const lastMessage = messages.at(-1);
-      if (lastMessage?.role === 'user') {
-        useChatStore.getState().upsertChatMessage({
-          ...lastMessage,
-          metadata: {
-            ...lastMessage.metadata,
-            selectionText: getSelectionText(editor, ctx.selection),
-          },
-        });
+      if (lastMessage) {
+        if (lastMessage.role === 'user') {
+          usage = undefined;
+          useChatStore.getState().upsertChatMessage({
+            ...lastMessage,
+            metadata: {
+              ...lastMessage.metadata,
+              selectionText: getSelectionText(editor, context?.selection),
+            },
+          });
+        } else {
+          useChatStore.getState().upsertChatMessage(lastMessage);
+        }
       }
       const chatMessages = useChatStore.getState().chatMessages;
 
@@ -51,12 +61,12 @@ export function createAgentTransport(editor: PlateEditor) {
         model: getModel(),
         instructions,
         messages: await convertToModelMessages(
-          createChatMessagesWithCtx(chatMessages, ctx),
+          createChatMessagesWithCtx(chatMessages, context),
           { tools, ignoreIncompleteToolCalls: true },
         ),
         tools: availableTools,
         toolChoice:
-          ctx.toolName && ctx.toolName in availableTools
+          ctx?.toolName && ctx.toolName in availableTools
             ? ({
                 type: 'tool',
                 toolName: ctx.toolName,
@@ -69,15 +79,21 @@ export function createAgentTransport(editor: PlateEditor) {
         stream: toUIMessageStream({
           stream: result.stream,
           tools,
-          messageMetadata: ({ part }) =>
-            part.type === 'finish' ? { usage: part.totalUsage } : undefined,
+          messageMetadata: ({ part }) => {
+            if (part.type !== 'finish') return;
+            usage = sumUsage(usage, part.totalUsage);
+            return { usage };
+          },
         }),
       });
     }) as typeof fetch,
   });
 }
 
-function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
+function createChatMessagesWithCtx(
+  chatMessages: ChatMessage[],
+  context: Context | null,
+) {
   const discussions = useCommentStore.getState().discussions;
 
   const lastUserChatMessageIndex = chatMessages.findLastIndex(
@@ -92,7 +108,11 @@ function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
       ...lastUserChatMessage.parts,
       {
         type: 'text',
-        text: `<Context>${JSON.stringify({ children: ctx.children, selection: ctx.selection, discussions })}</Context>`,
+        text: `<Context>${JSON.stringify({
+          children: context?.children,
+          selection: context?.selection,
+          discussions,
+        })}</Context>`,
       },
     ],
   });
