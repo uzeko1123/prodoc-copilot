@@ -17,7 +17,6 @@ import { ListKit } from '@/components/shadcn/editor/plugins/list-kit';
 import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
 // import { MentionKit } from '@/components/shadcn/editor/plugins/mention-kit';
 // import { SlashKit } from '@/components/shadcn/editor/plugins/slash-kit';
-import { TableKit } from '@/components/shadcn/editor/plugins/table-kit';
 // import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
 import { AIKit } from '@/features/chat/components/editor/plugins/ai-kit';
 import { CopilotKit } from '@/features/chat/components/editor/plugins/copilot-kit';
@@ -36,6 +35,7 @@ import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
 import { MathKit } from './plugins/math-kit';
 import { MediaKit } from './plugins/media-kit';
 import { SelectionKit } from './plugins/selection-kit';
+import { TableKit } from './plugins/table-kit';
 import { TocKit } from './plugins/toc-kit';
 
 export const EditorKit = [

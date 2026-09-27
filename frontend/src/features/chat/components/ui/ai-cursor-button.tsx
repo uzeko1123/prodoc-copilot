@@ -22,8 +22,6 @@ import {
   useEditorMounted,
   useEditorPlugin,
   useEditorSelection,
-  useFocusedLast,
-  usePluginOption,
   useScrollRef,
 } from 'platejs/react';
 import * as React from 'react';
@@ -32,8 +30,6 @@ export function AICursorButton() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
   const selection = useEditorSelection();
 
-  const isFocusedLast = useFocusedLast();
-  const isAIMenuClose = !usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
   const isCursor = RangeApi.isCollapsed(selection);
 
   const floating = useVirtualFloating({
@@ -78,7 +74,7 @@ export function AICursorButton() {
     return () => observer.disconnect();
   }, [editorMounted, containerRef, update]);
 
-  if (!isAIMenuClose || !selection) return null;
+  if (!selection) return null;
 
   return (
     <div

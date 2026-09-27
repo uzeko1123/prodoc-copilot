@@ -44,7 +44,6 @@ import {
   useEditorReadOnly,
   useEditorRef,
   useEditorSelection,
-  useFocusedLast,
   useHotkeys,
   useOnClickOutside,
   usePluginOption,
@@ -60,8 +59,7 @@ export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
   const selection = useEditorSelection();
 
-  const isFocusedLast = useFocusedLast();
-  const open = usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
+  const open = usePluginOption(AIChatPlugin, 'open');
   const chatStatus = usePluginOptions(
     AIChatPlugin,
     (options) => options.chat?.status,
