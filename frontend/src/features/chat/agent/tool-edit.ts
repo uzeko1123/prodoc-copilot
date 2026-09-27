@@ -2,7 +2,7 @@ import { AIChatPlugin } from '@platejs/ai/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
-import { applyEdit } from './tool-utils/suggestion';
+import { applyEdit } from './utils/suggestion';
 
 type EditToolIO = { content: string };
 

@@ -221,7 +221,7 @@ export function AIMenu() {
         shouldFilter={false}
       >
         {isLoading ? (
-          <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
+          <div className="text-muted-foreground mx-auto flex grow items-center gap-2 p-2 text-sm select-none">
             <Loader2Icon className="size-4 animate-spin" /> Working . . .
           </div>
         ) : (

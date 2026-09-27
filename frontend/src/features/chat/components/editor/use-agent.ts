@@ -50,6 +50,8 @@ export const useAgent = () => {
     if (chat.status === 'streaming' || chat.status === 'submitted') return;
     if (finishedChatMessageIdRef.current === lastChatMessage.id) return;
     finishedChatMessageIdRef.current = lastChatMessage.id;
+
+    editor.setOption(AIChatPlugin, 'toolName', null);
     editor.getApi(AIChatPlugin).aiChat.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, chat.status, chat.messages, chat.error]);
