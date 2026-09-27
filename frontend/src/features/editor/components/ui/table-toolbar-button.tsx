@@ -50,7 +50,7 @@ export function TableToolbarButton(props: DropdownMenuProps) {
 
       <DropdownMenuContent
         className="flex w-auto min-w-0 flex-col"
-        align="center"
+        align="start"
       >
         <DropdownMenuGroup>
           <DropdownMenuSub>

@@ -32,7 +32,7 @@ export function MoreToolbarButton(props: DropdownMenuProps) {
 
       <DropdownMenuContent
         className="ignore-click-outside/toolbar flex max-h-125 w-auto min-w-45 flex-col overflow-y-auto"
-        align="center"
+        align="start"
       >
         <DropdownMenuGroup>
           <DropdownMenuItem

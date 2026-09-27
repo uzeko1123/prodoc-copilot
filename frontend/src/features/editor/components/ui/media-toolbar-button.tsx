@@ -122,7 +122,7 @@ export function MediaToolbarButton({
           <DropdownMenuContent
             onClick={(e) => e.stopPropagation()}
             className="w-auto"
-            align="center"
+            align="start"
             alignOffset={-32}
           >
             <DropdownMenuGroup>
