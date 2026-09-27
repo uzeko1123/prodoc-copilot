@@ -99,7 +99,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
           />
         </Field>
         <Field>
-          <Button type="submit" form="login-form">
+          <Button type="submit" form="settings-form">
             Save changes
           </Button>
         </Field>
