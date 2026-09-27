@@ -1,5 +1,6 @@
 import { getSelectionText } from '@/features/chat/lib/utils';
 import { useChatStore } from '@/features/chat/stores';
+import { useCommentStore } from '@/features/comment/stores';
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
@@ -77,6 +78,8 @@ export function createAgentTransport(editor: PlateEditor) {
 }
 
 function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
+  const discussions = useCommentStore.getState().discussions;
+
   const lastUserChatMessageIndex = chatMessages.findLastIndex(
     (message) => message.role === 'user',
   );
@@ -89,7 +92,7 @@ function createChatMessagesWithCtx(chatMessages: ChatMessage[], ctx: Context) {
       ...lastUserChatMessage.parts,
       {
         type: 'text',
-        text: `<Context>${JSON.stringify({ children: ctx.children, selection: ctx.selection })}</Context>`,
+        text: `<Context>${JSON.stringify({ children: ctx.children, selection: ctx.selection, discussions })}</Context>`,
       },
     ],
   });

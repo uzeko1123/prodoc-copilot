@@ -13,6 +13,7 @@ import { PanelLeftIcon, SparklesIcon } from 'lucide-react';
 import { KEYS } from 'platejs';
 import { useEditorReadOnly } from 'platejs/react';
 import { ExportToolbarButton } from './export-toolbar-button';
+import { FontFamilyToolbarButton } from './font-family-toolbar-button';
 import { ImportToolbarButton } from './import-toolbar-button';
 import { InsertToolbarButton } from './insert-toolbar-button';
 import { MediaToolbarButton } from './media-toolbar-button';
@@ -24,8 +25,6 @@ export function FixedToolbarButtons() {
 
   const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
-
-  const _hideMainToolbar = false;
 
   return (
     <div className="flex w-full">
@@ -40,23 +39,25 @@ export function FixedToolbarButtons() {
           </>
         )}
 
-        {!readOnly && (
-          <>
-            <UndoToolbarButton />
-            <RedoToolbarButton />
-
-            <ToolbarSeparator className="self-stretch" />
-          </>
-        )}
-
         <ImportToolbarButton />
         <ExportToolbarButton />
+
+        <ToolbarSeparator className="self-stretch" />
+
+        <FontFamilyToolbarButton />
+
+        <ToolbarSeparator className="self-stretch" />
       </ToolbarGroup>
 
       <div className="grow" />
 
-      {!_hideMainToolbar && !readOnly && (
+      {!readOnly && (
         <ToolbarGroup>
+          <UndoToolbarButton />
+          <RedoToolbarButton />
+
+          <ToolbarSeparator className="self-stretch" />
+
           <InsertToolbarButton />
 
           <ToolbarSeparator className="self-stretch" />
@@ -70,6 +71,8 @@ export function FixedToolbarButtons() {
       <div className="grow" />
 
       <ToolbarGroup>
+        <ToolbarSeparator className="self-stretch" />
+
         <CommentToolbarButton />
         <AIToolbarButton tooltip="AI commands">
           <SparklesIcon />

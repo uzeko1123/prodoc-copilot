@@ -18,6 +18,7 @@ import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
 export function Editor() {
   const editorScrollRef = useEditorScrollRef();
+  const editorFontFamily = useEditorStore((state) => state.editorFontFamily);
 
   return (
     <div className="flex h-full flex-col">
@@ -25,7 +26,11 @@ export function Editor() {
         <FixedToolbarButtons />
       </FixedToolbar>
       <EditorContainer className="scrollbar-none overflow-y-hidden">
-        <EditorPrimitive ref={editorScrollRef} />
+        <EditorPrimitive
+          ref={editorScrollRef}
+          className="editor-font"
+          style={editorFontFamily}
+        />
       </EditorContainer>
       <EditorValueSync />
       <BlockSelectionRangeSync />

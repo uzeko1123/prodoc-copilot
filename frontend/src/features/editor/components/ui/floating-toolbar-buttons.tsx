@@ -133,11 +133,8 @@ function FloatingToolbarButtonsStatic() {
       <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Highlight">
         <HighlighterIcon />
       </MarkToolbarButton>
-
       <CommentToolbarButton />
-
       {!readOnly && <SuggestionToolbarButton />}
-
       <AIToolbarButton tooltip="AI commands">
         <SparklesIcon />
       </AIToolbarButton>

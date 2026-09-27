@@ -1,3 +1,4 @@
+@import '@fontsource-variable/noto-serif-sc';
 @import './shadcn/index.css';
 @import './shadcn/typeset.css';
 
@@ -6,6 +7,13 @@
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
+}
+
+.editor-font {
+  font-family: var(--editor-font-family-body);
+}
+.editor-font :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--editor-font-family-heading);
 }
 
 ::highlight(flash-range) {
