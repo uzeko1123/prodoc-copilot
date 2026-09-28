@@ -7,7 +7,7 @@ import { SidebarInset, SidebarProvider } from '@/components/shadcn/ui/sidebar';
 import { createFileRoute } from '@tanstack/react-router';
 import data from './dashboard/data.json';
 
-export default function IndexPage() {
+function IndexPage() {
   return (
     <SidebarProvider
       style={
