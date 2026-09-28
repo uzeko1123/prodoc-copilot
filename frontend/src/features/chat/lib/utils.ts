@@ -1,5 +1,5 @@
-import type { ToolUIPart } from 'ai';
-import { NodeApi, type TRange } from 'platejs';
+import type { LanguageModelUsage, ToolUIPart } from 'ai';
+import { NodeApi, RangeApi, type TRange } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Tools } from '../agent/tools';
 import type { ChatMode } from '../components/editor/use-agent';
@@ -12,15 +12,12 @@ export function getSelectionText(
   editor: PlateEditor,
   selection?: TRange | null,
 ) {
-  try {
-    return editor.api
-      .fragment(selection)
-      .map((node) => NodeApi.string(node).trim())
-      .filter((text) => text !== '')
-      .join('\n');
-  } catch {
-    return '';
-  }
+  if (!selection || RangeApi.isCollapsed(selection)) return '';
+  return editor.api
+    .fragment(selection)
+    .map((node) => NodeApi.string(node).trim())
+    .filter((text) => text !== '')
+    .join('\n');
 }
 
 export function getParagraphs(text: string) {
@@ -41,4 +38,45 @@ const compactFormatter = new Intl.NumberFormat('en', {
 
 export function formatTokens(count: number) {
   return compactFormatter.format(count);
+}
+
+function sumTokens(tokens1: number | undefined, tokens2: number | undefined) {
+  if (!tokens1 && !tokens2) return;
+  return (tokens1 ?? 0) + (tokens2 ?? 0);
+}
+
+export function sumUsage(
+  usage1: LanguageModelUsage | undefined,
+  usage2: LanguageModelUsage | undefined,
+): LanguageModelUsage | undefined {
+  if (!usage1 && !usage2) return;
+  return {
+    inputTokens: sumTokens(usage1?.inputTokens, usage2?.inputTokens),
+    inputTokenDetails: {
+      noCacheTokens: sumTokens(
+        usage1?.inputTokenDetails?.noCacheTokens,
+        usage2?.inputTokenDetails?.noCacheTokens,
+      ),
+      cacheReadTokens: sumTokens(
+        usage1?.inputTokenDetails?.cacheReadTokens,
+        usage2?.inputTokenDetails?.cacheReadTokens,
+      ),
+      cacheWriteTokens: sumTokens(
+        usage1?.inputTokenDetails?.cacheWriteTokens,
+        usage2?.inputTokenDetails?.cacheWriteTokens,
+      ),
+    },
+    outputTokens: sumTokens(usage1?.outputTokens, usage2?.outputTokens),
+    outputTokenDetails: {
+      textTokens: sumTokens(
+        usage1?.outputTokenDetails?.textTokens,
+        usage2?.outputTokenDetails?.textTokens,
+      ),
+      reasoningTokens: sumTokens(
+        usage1?.outputTokenDetails?.reasoningTokens,
+        usage2?.outputTokenDetails?.reasoningTokens,
+      ),
+    },
+    totalTokens: sumTokens(usage1?.totalTokens, usage2?.totalTokens),
+  };
 }

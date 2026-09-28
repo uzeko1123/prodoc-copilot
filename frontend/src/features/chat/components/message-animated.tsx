@@ -187,11 +187,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                         <AIChatEditor
                           content={
                             '```json\n' +
-                            JSON.stringify(
-                              toolPart.input,
-                              undefined,
-                              2,
-                            ).trim() +
+                            JSON.stringify(toolPart.input, undefined, 2) +
                             '\n```'
                           }
                         />
@@ -199,11 +195,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                         <AIChatEditor
                           content={
                             '```json\n' +
-                            JSON.stringify(
-                              toolPart.output,
-                              undefined,
-                              2,
-                            ).trim() +
+                            JSON.stringify(toolPart.output, undefined, 2) +
                             '\n```'
                           }
                         />

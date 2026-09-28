@@ -35,15 +35,16 @@ export const AuthCsrfRetrieveResponse = zod.object({
  * Accept the following POST parameters: username, password
  * Return the REST Framework Token Object's key.
  */
+
 export const authLoginCreateBodyEmailTwoMax = 0;
 
 export const AuthLoginCreateBody = zod.object({
-  altcha: zod.string(),
+  altcha: zod.string().min(1),
   username: zod.string().optional(),
   email: zod
     .union([zod.email(), zod.string().max(authLoginCreateBodyEmailTwoMax)])
     .optional(),
-  password: zod.string(),
+  password: zod.string().min(1),
 });
 
 export const authLoginCreateResponseUserUsernameMax = 150;
@@ -79,7 +80,7 @@ export const AuthLoginCreateResponse = zod
           .max(authLoginCreateResponseUserLastNameMax)
           .optional(),
       })
-      .describe('User model w\/o password'),
+      .describe('User model w/o password'),
   })
   .describe('Serializer for JWT authentication.');
 
@@ -99,6 +100,7 @@ export const AuthLogoutCreateResponse = zod.object({
  * Accepts the following POST parameters: new_password1, new_password2
  * Returns the success/fail message.
  */
+
 export const authPasswordChangeCreateBodyOldPasswordMax = 128;
 
 export const authPasswordChangeCreateBodyNewPassword1Max = 128;
@@ -106,10 +108,19 @@ export const authPasswordChangeCreateBodyNewPassword1Max = 128;
 export const authPasswordChangeCreateBodyNewPassword2Max = 128;
 
 export const AuthPasswordChangeCreateBody = zod.object({
-  altcha: zod.string(),
-  old_password: zod.string().max(authPasswordChangeCreateBodyOldPasswordMax),
-  new_password1: zod.string().max(authPasswordChangeCreateBodyNewPassword1Max),
-  new_password2: zod.string().max(authPasswordChangeCreateBodyNewPassword2Max),
+  altcha: zod.string().min(1),
+  old_password: zod
+    .string()
+    .min(1)
+    .max(authPasswordChangeCreateBodyOldPasswordMax),
+  new_password1: zod
+    .string()
+    .min(1)
+    .max(authPasswordChangeCreateBodyNewPassword1Max),
+  new_password2: zod
+    .string()
+    .min(1)
+    .max(authPasswordChangeCreateBodyNewPassword2Max),
 });
 
 export const AuthPasswordChangeCreateResponse = zod.object({
@@ -122,10 +133,11 @@ export const AuthPasswordChangeCreateResponse = zod.object({
  * Accepts the following POST parameters: email
  * Returns the success/fail message.
  */
+
 export const AuthPasswordResetCreateBody = zod
   .object({
-    altcha: zod.string(),
-    email: zod.email(),
+    altcha: zod.string().min(1),
+    email: zod.email().min(1),
   })
   .describe('Serializer for requesting a password reset e-mail.');
 
@@ -141,21 +153,24 @@ export const AuthPasswordResetCreateResponse = zod.object({
  *     new_password1, new_password2
  * Returns the success/fail message.
  */
+
 export const authPasswordResetConfirmCreateBodyNewPassword1Max = 128;
 
 export const authPasswordResetConfirmCreateBodyNewPassword2Max = 128;
 
 export const AuthPasswordResetConfirmCreateBody = zod
   .object({
-    altcha: zod.string(),
+    altcha: zod.string().min(1),
     new_password1: zod
       .string()
+      .min(1)
       .max(authPasswordResetConfirmCreateBodyNewPassword1Max),
     new_password2: zod
       .string()
+      .min(1)
       .max(authPasswordResetConfirmCreateBodyNewPassword2Max),
-    uid: zod.string(),
-    token: zod.string(),
+    uid: zod.string().min(1),
+    token: zod.string().min(1),
   })
   .describe('Serializer for confirming a password reset attempt.');
 
@@ -168,14 +183,15 @@ export const AuthPasswordResetConfirmCreateResponse = zod.object({
  *
  * Accepts the following POST parameters: username, email, password1, password2.
  */
+
 export const authRegistrationCreateBodyUsernameMax = 150;
 
 export const AuthRegistrationCreateBody = zod.object({
-  altcha: zod.string(),
+  altcha: zod.string().min(1),
   username: zod.string().min(1).max(authRegistrationCreateBodyUsernameMax),
-  email: zod.email(),
-  password1: zod.string(),
-  password2: zod.string(),
+  email: zod.email().min(1),
+  password1: zod.string().min(1),
+  password2: zod.string().min(1),
 });
 
 export const AuthRegistrationCreateResponse = zod.object({
@@ -187,8 +203,9 @@ export const AuthRegistrationCreateResponse = zod.object({
  *
  * Accepts the following POST parameter: email.
  */
+
 export const AuthRegistrationResendEmailCreateBody = zod.object({
-  email: zod.email(),
+  email: zod.email().min(1),
 });
 
 export const AuthRegistrationResendEmailCreateResponse = zod.object({
@@ -200,8 +217,9 @@ export const AuthRegistrationResendEmailCreateResponse = zod.object({
  *
  * Accepts the following POST parameter: key.
  */
+
 export const AuthRegistrationVerifyEmailCreateBody = zod.object({
-  key: zod.string(),
+  key: zod.string().min(1),
 });
 
 export const AuthRegistrationVerifyEmailCreateResponse = zod.object({
@@ -212,26 +230,25 @@ export const AuthRegistrationVerifyEmailCreateResponse = zod.object({
  * Takes a refresh type JSON web token and returns an access type JSON web
  * token if the refresh token is valid.
  */
+
 export const AuthTokenRefreshCreateBody = zod.object({
-  refresh: zod.string(),
+  refresh: zod.string().min(1),
 });
 
 export const AuthTokenRefreshCreateResponse = zod.object({
   access: zod.string(),
-  refresh: zod.string(),
 });
 
 /**
  * Takes a token and indicates if it is valid.  This view provides no
  * information about a token's fitness for a particular use.
  */
+
 export const AuthTokenVerifyCreateBody = zod.object({
-  token: zod.string(),
+  token: zod.string().min(1),
 });
 
-export const AuthTokenVerifyCreateResponse = zod.object({
-  token: zod.string(),
-});
+export const AuthTokenVerifyCreateResponse = zod.unknown();
 
 /**
  * Reads and updates UserModel fields
@@ -269,7 +286,7 @@ export const AuthUserRetrieveResponse = zod
       .optional(),
     last_name: zod.string().max(authUserRetrieveResponseLastNameMax).optional(),
   })
-  .describe('User model w\/o password');
+  .describe('User model w/o password');
 
 /**
  * Reads and updates UserModel fields
@@ -292,6 +309,7 @@ export const AuthUserUpdateBody = zod
   .object({
     username: zod
       .string()
+      .min(1)
       .max(authUserUpdateBodyUsernameMax)
       .regex(authUserUpdateBodyUsernameRegExp)
       .describe(
@@ -300,7 +318,7 @@ export const AuthUserUpdateBody = zod
     first_name: zod.string().max(authUserUpdateBodyFirstNameMax).optional(),
     last_name: zod.string().max(authUserUpdateBodyLastNameMax).optional(),
   })
-  .describe('User model w\/o password');
+  .describe('User model w/o password');
 
 export const authUserUpdateResponseUsernameMax = 150;
 
@@ -323,7 +341,7 @@ export const AuthUserUpdateResponse = zod
     first_name: zod.string().max(authUserUpdateResponseFirstNameMax).optional(),
     last_name: zod.string().max(authUserUpdateResponseLastNameMax).optional(),
   })
-  .describe('User model w\/o password');
+  .describe('User model w/o password');
 
 /**
  * Reads and updates UserModel fields
@@ -348,6 +366,7 @@ export const AuthUserPartialUpdateBody = zod
   .object({
     username: zod
       .string()
+      .min(1)
       .max(authUserPartialUpdateBodyUsernameMax)
       .regex(authUserPartialUpdateBodyUsernameRegExp)
       .optional()
@@ -363,7 +382,7 @@ export const AuthUserPartialUpdateBody = zod
       .max(authUserPartialUpdateBodyLastNameMax)
       .optional(),
   })
-  .describe('User model w\/o password');
+  .describe('User model w/o password');
 
 export const authUserPartialUpdateResponseUsernameMax = 150;
 
@@ -394,4 +413,4 @@ export const AuthUserPartialUpdateResponse = zod
       .max(authUserPartialUpdateResponseLastNameMax)
       .optional(),
   })
-  .describe('User model w\/o password');
+  .describe('User model w/o password');

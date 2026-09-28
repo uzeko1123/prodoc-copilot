@@ -83,7 +83,7 @@ export function ImportToolbarButton(props: DropdownMenuProps) {
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent className="w-auto" align="start">
         <DropdownMenuGroup>
           <DropdownMenuItem
             onSelect={() => {

@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "apps.auth",
     "apps.main",
+    "apps.upload",
     "apps.healthz",
 ]
 
@@ -364,7 +365,9 @@ REST_FRAMEWORK = {
 # drf-spectacular
 # https://drf-spectacular.readthedocs.io/
 
-SPECTACULAR_SETTINGS = {}  # type:ignore
+SPECTACULAR_SETTINGS = {
+    "COMPONENT_SPLIT_REQUEST": True,
+}
 
 
 # django-allauth

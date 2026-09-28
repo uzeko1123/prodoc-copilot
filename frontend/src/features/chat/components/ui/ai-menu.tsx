@@ -14,6 +14,7 @@ import {
   getDefaultBoundingClientRect,
   getRangeBoundingClientRect,
   offset,
+  shift,
   useVirtualFloating,
 } from '@platejs/floating';
 import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react';
@@ -43,7 +44,6 @@ import {
   useEditorReadOnly,
   useEditorRef,
   useEditorSelection,
-  useFocusedLast,
   useHotkeys,
   useOnClickOutside,
   usePluginOption,
@@ -52,14 +52,14 @@ import {
   type PlateEditor,
 } from 'platejs/react';
 import * as React from 'react';
+import type { ChatMode } from '../editor/use-agent';
 import { AICommentIcon } from './ai-comment-icon';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
   const selection = useEditorSelection();
 
-  const isFocusedLast = useFocusedLast();
-  const open = usePluginOption(AIChatPlugin, 'open') && isFocusedLast;
+  const open = usePluginOption(AIChatPlugin, 'open');
   const chatStatus = usePluginOptions(
     AIChatPlugin,
     (options) => options.chat?.status,
@@ -132,6 +132,8 @@ export function AIMenu() {
     editor.setOption(AIChatPlugin, 'open', false);
   }, [chatStatus, editor]);
 
+  const floatingRef = React.useRef<HTMLDivElement>(null);
+
   const floating = useVirtualFloating({
     getBoundingClientRect: () => {
       const anchorElementRect = anchorElement?.getBoundingClientRect();
@@ -148,25 +150,31 @@ export function AIMenu() {
       }
       return anchorElementRect ?? getDefaultBoundingClientRect();
     },
+    placement: 'bottom',
     middleware: [
       offset(12),
       flip({
-        fallbackPlacements: [
-          'top-start',
-          'top-end',
-          'bottom-start',
-          'bottom-end',
-        ],
+        mainAxis: true,
+        crossAxis: false,
+        fallbackPlacements: ['top'],
+        padding: 12,
+      }),
+      shift({
+        mainAxis: true,
+        crossAxis: false,
         padding: 12,
       }),
     ],
-    placement: 'bottom',
   });
 
-  const clickOutsideRef = useOnClickOutside(() => setOpen(false));
+  useOnClickOutside(() => setOpen(false), {
+    disabled: !open,
+    refs: [floatingRef],
+  });
+
   const ref = useComposedRef<HTMLDivElement>(
     floating.refs.setFloating,
-    clickOutsideRef,
+    floatingRef,
   );
 
   const editorMounted = useEditorMounted();
@@ -202,7 +210,7 @@ export function AIMenu() {
   return (
     <div
       ref={ref}
-      className="z-50 border-none bg-transparent p-0 shadow-none"
+      className="z-50 flex max-h-[50%] flex-col border-none bg-transparent p-0 shadow-none"
       style={{
         ...floating.style,
         width: anchorElement.offsetWidth,
@@ -213,38 +221,36 @@ export function AIMenu() {
         shouldFilter={false}
       >
         {isLoading ? (
-          <div className="text-muted-foreground flex grow items-center gap-2 p-2 text-sm select-none">
-            <Loader2Icon className="size-4 animate-spin" />
-            {chatStatus === 'submitted' ? 'Editing...' : 'Thinking...'}
+          <div className="text-muted-foreground mx-auto flex grow items-center gap-2 p-2 text-sm select-none">
+            <Loader2Icon className="size-4 animate-spin" /> Working . . .
           </div>
         ) : (
-          <CommandPrimitive.Input
-            className={cn(
-              'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
-              'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-              'border-b focus-visible:ring-transparent',
-            )}
-            value={chatInput}
-            onKeyDown={(e) => {
-              if (
-                isHotkey('escape')(e) ||
-                (isHotkey('backspace')(e) && chatInput.length === 0)
-              ) {
-                e.preventDefault();
-                api.aiChat.hide();
-              }
-            }}
-            onValueChange={setChatInput}
-            placeholder="Ask AI anything..."
-            data-plate-focus
-            autoFocus
-          />
-        )}
-
-        {!isLoading && (
-          <CommandList>
-            <AIMenuItems input={chatInput} setInput={setChatInput} />
-          </CommandList>
+          <>
+            <CommandPrimitive.Input
+              className={cn(
+                'border-input placeholder:text-muted-foreground dark:bg-input/30 flex h-9 w-full min-w-0 bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none md:text-sm',
+                'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
+                'border-b focus-visible:ring-transparent',
+              )}
+              value={chatInput}
+              onKeyDown={(e) => {
+                if (
+                  isHotkey('escape')(e) ||
+                  (isHotkey('backspace')(e) && chatInput.length === 0)
+                ) {
+                  e.preventDefault();
+                  api.aiChat.hide();
+                }
+              }}
+              onValueChange={setChatInput}
+              placeholder="Ask AI anything..."
+              data-plate-focus
+              autoFocus
+            />
+            <CommandList>
+              <AIMenuItems input={chatInput} setInput={setChatInput} />
+            </CommandList>
+          </>
         )}
       </Command>
     </div>
@@ -259,6 +265,7 @@ const aiChatItems = {
     icon: <SendIcon />,
     label: 'Send',
     value: 'send',
+    chatMode: null,
     onSelect: ({ editor, input }) => {
       void editor.getApi(AIChatPlugin).aiChat.submit(input);
     },
@@ -267,6 +274,7 @@ const aiChatItems = {
     icon: <AICommentIcon />,
     label: 'Comment',
     value: 'comment',
+    chatMode: 'comment',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('comment');
       void editor
@@ -281,6 +289,7 @@ const aiChatItems = {
     icon: <PenLine />,
     label: 'Continue writing',
     value: 'continueWrite',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -295,6 +304,7 @@ const aiChatItems = {
     icon: <SmileIcon />,
     label: 'Emojify',
     value: 'emojify',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -308,6 +318,7 @@ const aiChatItems = {
     icon: <BadgeHelp />,
     label: 'Explain',
     value: 'explain',
+    chatMode: 'chat',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
       void editor
@@ -319,6 +330,7 @@ const aiChatItems = {
     icon: <Check />,
     label: 'Fix spelling & grammar',
     value: 'fixSpelling',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -332,6 +344,7 @@ const aiChatItems = {
     icon: <BookOpenCheck />,
     label: 'Generate Markdown sample',
     value: 'generateMarkdownSample',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -350,6 +363,7 @@ const aiChatItems = {
     icon: <BookOpenCheck />,
     label: 'Generate MDX sample',
     value: 'generateMdxSample',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -366,6 +380,7 @@ const aiChatItems = {
     icon: <Wand />,
     label: 'Improve writing',
     value: 'improveWriting',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -379,6 +394,7 @@ const aiChatItems = {
     icon: <ListPlus />,
     label: 'Make longer',
     value: 'makeLonger',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -392,6 +408,7 @@ const aiChatItems = {
     icon: <ListMinus />,
     label: 'Make shorter',
     value: 'makeShorter',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -405,6 +422,7 @@ const aiChatItems = {
     icon: <FeatherIcon />,
     label: 'Simplify language',
     value: 'simplifyLanguage',
+    chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
@@ -421,6 +439,7 @@ const aiChatItems = {
     icon: <Album />,
     label: 'Summarize',
     value: 'summarize',
+    chatMode: 'chat',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
       void editor
@@ -436,6 +455,7 @@ const aiChatItems = {
     icon: React.ReactNode;
     label: string;
     value: string;
+    chatMode: ChatMode | null;
     component?: React.ComponentType<{ menuState: EditorChatState }>;
     filterItems?: boolean;
     items?: { label: string; value: string }[];
@@ -576,7 +596,7 @@ export function AILoadingBar() {
       )}
     >
       <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-      <span>{chatStatus === 'submitted' ? 'Thinking...' : 'Writing...'}</span>
+      <span>Working . . .</span>
       <Button
         size="sm"
         variant="ghost"

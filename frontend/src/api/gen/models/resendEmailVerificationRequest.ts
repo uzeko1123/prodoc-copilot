@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface TokenVerify {
-  token: string;
+export interface ResendEmailVerificationRequest {
+  /** @minLength 1 */
+  email: string;
 }

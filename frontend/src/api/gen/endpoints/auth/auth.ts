@@ -3,25 +3,6 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
-import { customInstance } from '../../../mutator/custom-instance';
-import type { ErrorType, BodyType } from '../../../mutator/custom-instance';
-import type {
-  AltchaChallenge,
-  Jwt,
-  Login,
-  MessageResponse,
-  PasswordChange,
-  PasswordReset,
-  PasswordResetConfirm,
-  PatchedUserDetails,
-  Register,
-  ResendEmailVerification,
-  RestAuthDetail,
-  TokenRefresh,
-  TokenVerify,
-  UserDetails,
-  VerifyEmail,
-} from '../../models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   DataTag,
@@ -37,34 +18,27 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
-
-// https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
-type IfEquals<X, Y, A = X, B = never> =
-  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? A : B;
-
-type WritableKeys<T> = {
-  [P in keyof T]-?: IfEquals<
-    { [Q in P]: T[P] },
-    { -readonly [Q in P]: T[P] },
-    P
-  >;
-}[keyof T];
-
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I,
-) => void
-  ? I
-  : never;
-type DistributeReadOnlyOverUnions<T> = T extends any ? NonReadonly<T> : never;
-
-type Writable<T> = Pick<T, WritableKeys<T>>;
-type NonReadonly<T> = [T] extends [UnionToIntersection<T>]
-  ? {
-      [P in keyof Writable<T>]: T[P] extends object
-        ? NonReadonly<NonNullable<T[P]>>
-        : T[P];
-    }
-  : DistributeReadOnlyOverUnions<T>;
+import { customInstance } from '../../../mutator/custom-instance';
+import type { BodyType, ErrorType } from '../../../mutator/custom-instance';
+import type {
+  AltchaChallenge,
+  Jwt,
+  LoginRequest,
+  MessageResponse,
+  PasswordChangeRequest,
+  PasswordResetConfirmRequest,
+  PasswordResetRequest,
+  PatchedUserDetailsRequest,
+  RegisterRequest,
+  ResendEmailVerificationRequest,
+  RestAuthDetail,
+  TokenRefresh,
+  TokenRefreshRequest,
+  TokenVerifyRequest,
+  UserDetails,
+  UserDetailsRequest,
+  VerifyEmailRequest,
+} from '../../models';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
@@ -384,7 +358,7 @@ export function useAuthCsrfRetrieve<
  * Return the REST Framework Token Object's key.
  */
 export const authLoginCreate = (
-  login: BodyType<Login>,
+  loginRequest: BodyType<LoginRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -393,12 +367,14 @@ export const authLoginCreate = (
       url: `/api/auth/login/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: login,
+      data: loginRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthLoginCreateMutationKey = () => ['authLoginCreate'] as const;
 
 export const getAuthLoginCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -407,17 +383,17 @@ export const getAuthLoginCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authLoginCreate>>,
     TError,
-    { data: BodyType<Login> },
+    AuthLoginCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authLoginCreate>>,
   TError,
-  { data: BodyType<Login> },
+  AuthLoginCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authLoginCreate'];
+  const mutationKey = getAuthLoginCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -428,7 +404,7 @@ export const getAuthLoginCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authLoginCreate>>,
-    { data: BodyType<Login> }
+    AuthLoginCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -441,8 +417,9 @@ export const getAuthLoginCreateMutationOptions = <
 export type AuthLoginCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authLoginCreate>>
 >;
-export type AuthLoginCreateMutationBody = BodyType<Login>;
+export type AuthLoginCreateMutationBody = BodyType<LoginRequest>;
 export type AuthLoginCreateMutationError = ErrorType<unknown>;
+export type AuthLoginCreateMutationVariables = { data: BodyType<LoginRequest> };
 
 export const useAuthLoginCreate = <
   TError = ErrorType<unknown>,
@@ -452,7 +429,7 @@ export const useAuthLoginCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authLoginCreate>>,
       TError,
-      { data: BodyType<Login> },
+      AuthLoginCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -461,7 +438,7 @@ export const useAuthLoginCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authLoginCreate>>,
   TError,
-  { data: BodyType<Login> },
+  AuthLoginCreateMutationVariables,
   TContext
 > => {
   return useMutation(getAuthLoginCreateMutationOptions(options), queryClient);
@@ -482,6 +459,9 @@ export const authLogoutCreate = (
   );
 };
 
+export const getAuthLogoutCreateMutationKey = () =>
+  ['authLogoutCreate'] as const;
+
 export const getAuthLogoutCreateMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -499,7 +479,7 @@ export const getAuthLogoutCreateMutationOptions = <
   void,
   TContext
 > => {
-  const mutationKey = ['authLogoutCreate'];
+  const mutationKey = getAuthLogoutCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -553,7 +533,7 @@ export const useAuthLogoutCreate = <
  * Returns the success/fail message.
  */
 export const authPasswordChangeCreate = (
-  passwordChange: BodyType<PasswordChange>,
+  passwordChangeRequest: BodyType<PasswordChangeRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -562,12 +542,15 @@ export const authPasswordChangeCreate = (
       url: `/api/auth/password/change/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: passwordChange,
+      data: passwordChangeRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthPasswordChangeCreateMutationKey = () =>
+  ['authPasswordChangeCreate'] as const;
 
 export const getAuthPasswordChangeCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -576,17 +559,17 @@ export const getAuthPasswordChangeCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authPasswordChangeCreate>>,
     TError,
-    { data: BodyType<PasswordChange> },
+    AuthPasswordChangeCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authPasswordChangeCreate>>,
   TError,
-  { data: BodyType<PasswordChange> },
+  AuthPasswordChangeCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authPasswordChangeCreate'];
+  const mutationKey = getAuthPasswordChangeCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -597,7 +580,7 @@ export const getAuthPasswordChangeCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authPasswordChangeCreate>>,
-    { data: BodyType<PasswordChange> }
+    AuthPasswordChangeCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -610,8 +593,12 @@ export const getAuthPasswordChangeCreateMutationOptions = <
 export type AuthPasswordChangeCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authPasswordChangeCreate>>
 >;
-export type AuthPasswordChangeCreateMutationBody = BodyType<PasswordChange>;
+export type AuthPasswordChangeCreateMutationBody =
+  BodyType<PasswordChangeRequest>;
 export type AuthPasswordChangeCreateMutationError = ErrorType<unknown>;
+export type AuthPasswordChangeCreateMutationVariables = {
+  data: BodyType<PasswordChangeRequest>;
+};
 
 export const useAuthPasswordChangeCreate = <
   TError = ErrorType<unknown>,
@@ -621,7 +608,7 @@ export const useAuthPasswordChangeCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authPasswordChangeCreate>>,
       TError,
-      { data: BodyType<PasswordChange> },
+      AuthPasswordChangeCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -630,7 +617,7 @@ export const useAuthPasswordChangeCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authPasswordChangeCreate>>,
   TError,
-  { data: BodyType<PasswordChange> },
+  AuthPasswordChangeCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -645,7 +632,7 @@ export const useAuthPasswordChangeCreate = <
  * Returns the success/fail message.
  */
 export const authPasswordResetCreate = (
-  passwordReset: BodyType<PasswordReset>,
+  passwordResetRequest: BodyType<PasswordResetRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -654,12 +641,15 @@ export const authPasswordResetCreate = (
       url: `/api/auth/password/reset/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: passwordReset,
+      data: passwordResetRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthPasswordResetCreateMutationKey = () =>
+  ['authPasswordResetCreate'] as const;
 
 export const getAuthPasswordResetCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -668,17 +658,17 @@ export const getAuthPasswordResetCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authPasswordResetCreate>>,
     TError,
-    { data: BodyType<PasswordReset> },
+    AuthPasswordResetCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authPasswordResetCreate>>,
   TError,
-  { data: BodyType<PasswordReset> },
+  AuthPasswordResetCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authPasswordResetCreate'];
+  const mutationKey = getAuthPasswordResetCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -689,7 +679,7 @@ export const getAuthPasswordResetCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authPasswordResetCreate>>,
-    { data: BodyType<PasswordReset> }
+    AuthPasswordResetCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -702,8 +692,12 @@ export const getAuthPasswordResetCreateMutationOptions = <
 export type AuthPasswordResetCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authPasswordResetCreate>>
 >;
-export type AuthPasswordResetCreateMutationBody = BodyType<PasswordReset>;
+export type AuthPasswordResetCreateMutationBody =
+  BodyType<PasswordResetRequest>;
 export type AuthPasswordResetCreateMutationError = ErrorType<unknown>;
+export type AuthPasswordResetCreateMutationVariables = {
+  data: BodyType<PasswordResetRequest>;
+};
 
 export const useAuthPasswordResetCreate = <
   TError = ErrorType<unknown>,
@@ -713,7 +707,7 @@ export const useAuthPasswordResetCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authPasswordResetCreate>>,
       TError,
-      { data: BodyType<PasswordReset> },
+      AuthPasswordResetCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -722,7 +716,7 @@ export const useAuthPasswordResetCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authPasswordResetCreate>>,
   TError,
-  { data: BodyType<PasswordReset> },
+  AuthPasswordResetCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -739,7 +733,7 @@ export const useAuthPasswordResetCreate = <
  * Returns the success/fail message.
  */
 export const authPasswordResetConfirmCreate = (
-  passwordResetConfirm: BodyType<PasswordResetConfirm>,
+  passwordResetConfirmRequest: BodyType<PasswordResetConfirmRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -748,12 +742,15 @@ export const authPasswordResetConfirmCreate = (
       url: `/api/auth/password/reset/confirm/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: passwordResetConfirm,
+      data: passwordResetConfirmRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthPasswordResetConfirmCreateMutationKey = () =>
+  ['authPasswordResetConfirmCreate'] as const;
 
 export const getAuthPasswordResetConfirmCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -762,17 +759,17 @@ export const getAuthPasswordResetConfirmCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authPasswordResetConfirmCreate>>,
     TError,
-    { data: BodyType<PasswordResetConfirm> },
+    AuthPasswordResetConfirmCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authPasswordResetConfirmCreate>>,
   TError,
-  { data: BodyType<PasswordResetConfirm> },
+  AuthPasswordResetConfirmCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authPasswordResetConfirmCreate'];
+  const mutationKey = getAuthPasswordResetConfirmCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -783,7 +780,7 @@ export const getAuthPasswordResetConfirmCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authPasswordResetConfirmCreate>>,
-    { data: BodyType<PasswordResetConfirm> }
+    AuthPasswordResetConfirmCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -797,8 +794,11 @@ export type AuthPasswordResetConfirmCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authPasswordResetConfirmCreate>>
 >;
 export type AuthPasswordResetConfirmCreateMutationBody =
-  BodyType<PasswordResetConfirm>;
+  BodyType<PasswordResetConfirmRequest>;
 export type AuthPasswordResetConfirmCreateMutationError = ErrorType<unknown>;
+export type AuthPasswordResetConfirmCreateMutationVariables = {
+  data: BodyType<PasswordResetConfirmRequest>;
+};
 
 export const useAuthPasswordResetConfirmCreate = <
   TError = ErrorType<unknown>,
@@ -808,7 +808,7 @@ export const useAuthPasswordResetConfirmCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authPasswordResetConfirmCreate>>,
       TError,
-      { data: BodyType<PasswordResetConfirm> },
+      AuthPasswordResetConfirmCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -817,7 +817,7 @@ export const useAuthPasswordResetConfirmCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authPasswordResetConfirmCreate>>,
   TError,
-  { data: BodyType<PasswordResetConfirm> },
+  AuthPasswordResetConfirmCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -831,7 +831,7 @@ export const useAuthPasswordResetConfirmCreate = <
  * Accepts the following POST parameters: username, email, password1, password2.
  */
 export const authRegistrationCreate = (
-  register: BodyType<Register>,
+  registerRequest: BodyType<RegisterRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -840,12 +840,15 @@ export const authRegistrationCreate = (
       url: `/api/auth/registration/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: register,
+      data: registerRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthRegistrationCreateMutationKey = () =>
+  ['authRegistrationCreate'] as const;
 
 export const getAuthRegistrationCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -854,17 +857,17 @@ export const getAuthRegistrationCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authRegistrationCreate>>,
     TError,
-    { data: BodyType<Register> },
+    AuthRegistrationCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authRegistrationCreate>>,
   TError,
-  { data: BodyType<Register> },
+  AuthRegistrationCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authRegistrationCreate'];
+  const mutationKey = getAuthRegistrationCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -875,7 +878,7 @@ export const getAuthRegistrationCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authRegistrationCreate>>,
-    { data: BodyType<Register> }
+    AuthRegistrationCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -888,8 +891,11 @@ export const getAuthRegistrationCreateMutationOptions = <
 export type AuthRegistrationCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authRegistrationCreate>>
 >;
-export type AuthRegistrationCreateMutationBody = BodyType<Register>;
+export type AuthRegistrationCreateMutationBody = BodyType<RegisterRequest>;
 export type AuthRegistrationCreateMutationError = ErrorType<unknown>;
+export type AuthRegistrationCreateMutationVariables = {
+  data: BodyType<RegisterRequest>;
+};
 
 export const useAuthRegistrationCreate = <
   TError = ErrorType<unknown>,
@@ -899,7 +905,7 @@ export const useAuthRegistrationCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authRegistrationCreate>>,
       TError,
-      { data: BodyType<Register> },
+      AuthRegistrationCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -908,7 +914,7 @@ export const useAuthRegistrationCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authRegistrationCreate>>,
   TError,
-  { data: BodyType<Register> },
+  AuthRegistrationCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -922,7 +928,7 @@ export const useAuthRegistrationCreate = <
  * Accepts the following POST parameter: email.
  */
 export const authRegistrationResendEmailCreate = (
-  resendEmailVerification: BodyType<ResendEmailVerification>,
+  resendEmailVerificationRequest: BodyType<ResendEmailVerificationRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -931,12 +937,15 @@ export const authRegistrationResendEmailCreate = (
       url: `/api/auth/registration/resend-email/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: resendEmailVerification,
+      data: resendEmailVerificationRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthRegistrationResendEmailCreateMutationKey = () =>
+  ['authRegistrationResendEmailCreate'] as const;
 
 export const getAuthRegistrationResendEmailCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -945,17 +954,17 @@ export const getAuthRegistrationResendEmailCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authRegistrationResendEmailCreate>>,
     TError,
-    { data: BodyType<ResendEmailVerification> },
+    AuthRegistrationResendEmailCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authRegistrationResendEmailCreate>>,
   TError,
-  { data: BodyType<ResendEmailVerification> },
+  AuthRegistrationResendEmailCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authRegistrationResendEmailCreate'];
+  const mutationKey = getAuthRegistrationResendEmailCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -966,7 +975,7 @@ export const getAuthRegistrationResendEmailCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authRegistrationResendEmailCreate>>,
-    { data: BodyType<ResendEmailVerification> }
+    AuthRegistrationResendEmailCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -980,8 +989,11 @@ export type AuthRegistrationResendEmailCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authRegistrationResendEmailCreate>>
 >;
 export type AuthRegistrationResendEmailCreateMutationBody =
-  BodyType<ResendEmailVerification>;
+  BodyType<ResendEmailVerificationRequest>;
 export type AuthRegistrationResendEmailCreateMutationError = ErrorType<unknown>;
+export type AuthRegistrationResendEmailCreateMutationVariables = {
+  data: BodyType<ResendEmailVerificationRequest>;
+};
 
 export const useAuthRegistrationResendEmailCreate = <
   TError = ErrorType<unknown>,
@@ -991,7 +1003,7 @@ export const useAuthRegistrationResendEmailCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authRegistrationResendEmailCreate>>,
       TError,
-      { data: BodyType<ResendEmailVerification> },
+      AuthRegistrationResendEmailCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1000,7 +1012,7 @@ export const useAuthRegistrationResendEmailCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authRegistrationResendEmailCreate>>,
   TError,
-  { data: BodyType<ResendEmailVerification> },
+  AuthRegistrationResendEmailCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -1014,7 +1026,7 @@ export const useAuthRegistrationResendEmailCreate = <
  * Accepts the following POST parameter: key.
  */
 export const authRegistrationVerifyEmailCreate = (
-  verifyEmail: BodyType<VerifyEmail>,
+  verifyEmailRequest: BodyType<VerifyEmailRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -1023,12 +1035,15 @@ export const authRegistrationVerifyEmailCreate = (
       url: `/api/auth/registration/verify-email/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: verifyEmail,
+      data: verifyEmailRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthRegistrationVerifyEmailCreateMutationKey = () =>
+  ['authRegistrationVerifyEmailCreate'] as const;
 
 export const getAuthRegistrationVerifyEmailCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1037,17 +1052,17 @@ export const getAuthRegistrationVerifyEmailCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authRegistrationVerifyEmailCreate>>,
     TError,
-    { data: BodyType<VerifyEmail> },
+    AuthRegistrationVerifyEmailCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authRegistrationVerifyEmailCreate>>,
   TError,
-  { data: BodyType<VerifyEmail> },
+  AuthRegistrationVerifyEmailCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authRegistrationVerifyEmailCreate'];
+  const mutationKey = getAuthRegistrationVerifyEmailCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1058,7 +1073,7 @@ export const getAuthRegistrationVerifyEmailCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authRegistrationVerifyEmailCreate>>,
-    { data: BodyType<VerifyEmail> }
+    AuthRegistrationVerifyEmailCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1072,8 +1087,11 @@ export type AuthRegistrationVerifyEmailCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authRegistrationVerifyEmailCreate>>
 >;
 export type AuthRegistrationVerifyEmailCreateMutationBody =
-  BodyType<VerifyEmail>;
+  BodyType<VerifyEmailRequest>;
 export type AuthRegistrationVerifyEmailCreateMutationError = ErrorType<unknown>;
+export type AuthRegistrationVerifyEmailCreateMutationVariables = {
+  data: BodyType<VerifyEmailRequest>;
+};
 
 export const useAuthRegistrationVerifyEmailCreate = <
   TError = ErrorType<unknown>,
@@ -1083,7 +1101,7 @@ export const useAuthRegistrationVerifyEmailCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authRegistrationVerifyEmailCreate>>,
       TError,
-      { data: BodyType<VerifyEmail> },
+      AuthRegistrationVerifyEmailCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1092,7 +1110,7 @@ export const useAuthRegistrationVerifyEmailCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authRegistrationVerifyEmailCreate>>,
   TError,
-  { data: BodyType<VerifyEmail> },
+  AuthRegistrationVerifyEmailCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -1105,7 +1123,7 @@ export const useAuthRegistrationVerifyEmailCreate = <
  * token if the refresh token is valid.
  */
 export const authTokenRefreshCreate = (
-  tokenRefresh: BodyType<NonReadonly<TokenRefresh>>,
+  tokenRefreshRequest: BodyType<TokenRefreshRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -1114,12 +1132,15 @@ export const authTokenRefreshCreate = (
       url: `/api/auth/token/refresh/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: tokenRefresh,
+      data: tokenRefreshRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthTokenRefreshCreateMutationKey = () =>
+  ['authTokenRefreshCreate'] as const;
 
 export const getAuthTokenRefreshCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1128,17 +1149,17 @@ export const getAuthTokenRefreshCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authTokenRefreshCreate>>,
     TError,
-    { data: BodyType<NonReadonly<TokenRefresh>> },
+    AuthTokenRefreshCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authTokenRefreshCreate>>,
   TError,
-  { data: BodyType<NonReadonly<TokenRefresh>> },
+  AuthTokenRefreshCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authTokenRefreshCreate'];
+  const mutationKey = getAuthTokenRefreshCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1149,7 +1170,7 @@ export const getAuthTokenRefreshCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authTokenRefreshCreate>>,
-    { data: BodyType<NonReadonly<TokenRefresh>> }
+    AuthTokenRefreshCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1162,10 +1183,11 @@ export const getAuthTokenRefreshCreateMutationOptions = <
 export type AuthTokenRefreshCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authTokenRefreshCreate>>
 >;
-export type AuthTokenRefreshCreateMutationBody = BodyType<
-  NonReadonly<TokenRefresh>
->;
+export type AuthTokenRefreshCreateMutationBody = BodyType<TokenRefreshRequest>;
 export type AuthTokenRefreshCreateMutationError = ErrorType<unknown>;
+export type AuthTokenRefreshCreateMutationVariables = {
+  data: BodyType<TokenRefreshRequest>;
+};
 
 export const useAuthTokenRefreshCreate = <
   TError = ErrorType<unknown>,
@@ -1175,7 +1197,7 @@ export const useAuthTokenRefreshCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authTokenRefreshCreate>>,
       TError,
-      { data: BodyType<NonReadonly<TokenRefresh>> },
+      AuthTokenRefreshCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1184,7 +1206,7 @@ export const useAuthTokenRefreshCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authTokenRefreshCreate>>,
   TError,
-  { data: BodyType<NonReadonly<TokenRefresh>> },
+  AuthTokenRefreshCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -1197,21 +1219,24 @@ export const useAuthTokenRefreshCreate = <
  * information about a token's fitness for a particular use.
  */
 export const authTokenVerifyCreate = (
-  tokenVerify: BodyType<TokenVerify>,
+  tokenVerifyRequest: BodyType<TokenVerifyRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<TokenVerify>(
+  return customInstance<void>(
     {
       url: `/api/auth/token/verify/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: tokenVerify,
+      data: tokenVerifyRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthTokenVerifyCreateMutationKey = () =>
+  ['authTokenVerifyCreate'] as const;
 
 export const getAuthTokenVerifyCreateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1220,17 +1245,17 @@ export const getAuthTokenVerifyCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authTokenVerifyCreate>>,
     TError,
-    { data: BodyType<TokenVerify> },
+    AuthTokenVerifyCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authTokenVerifyCreate>>,
   TError,
-  { data: BodyType<TokenVerify> },
+  AuthTokenVerifyCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authTokenVerifyCreate'];
+  const mutationKey = getAuthTokenVerifyCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1241,7 +1266,7 @@ export const getAuthTokenVerifyCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authTokenVerifyCreate>>,
-    { data: BodyType<TokenVerify> }
+    AuthTokenVerifyCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1254,8 +1279,11 @@ export const getAuthTokenVerifyCreateMutationOptions = <
 export type AuthTokenVerifyCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authTokenVerifyCreate>>
 >;
-export type AuthTokenVerifyCreateMutationBody = BodyType<TokenVerify>;
+export type AuthTokenVerifyCreateMutationBody = BodyType<TokenVerifyRequest>;
 export type AuthTokenVerifyCreateMutationError = ErrorType<unknown>;
+export type AuthTokenVerifyCreateMutationVariables = {
+  data: BodyType<TokenVerifyRequest>;
+};
 
 export const useAuthTokenVerifyCreate = <
   TError = ErrorType<unknown>,
@@ -1265,7 +1293,7 @@ export const useAuthTokenVerifyCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authTokenVerifyCreate>>,
       TError,
-      { data: BodyType<TokenVerify> },
+      AuthTokenVerifyCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1274,7 +1302,7 @@ export const useAuthTokenVerifyCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authTokenVerifyCreate>>,
   TError,
-  { data: BodyType<TokenVerify> },
+  AuthTokenVerifyCreateMutationVariables,
   TContext
 > => {
   return useMutation(
@@ -1445,7 +1473,7 @@ export function useAuthUserRetrieve<
  * Returns UserModel fields.
  */
 export const authUserUpdate = (
-  userDetails: BodyType<NonReadonly<UserDetails>>,
+  userDetailsRequest: BodyType<UserDetailsRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -1454,12 +1482,14 @@ export const authUserUpdate = (
       url: `/api/auth/user/`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      data: userDetails,
+      data: userDetailsRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthUserUpdateMutationKey = () => ['authUserUpdate'] as const;
 
 export const getAuthUserUpdateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1468,17 +1498,17 @@ export const getAuthUserUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authUserUpdate>>,
     TError,
-    { data: BodyType<NonReadonly<UserDetails>> },
+    AuthUserUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authUserUpdate>>,
   TError,
-  { data: BodyType<NonReadonly<UserDetails>> },
+  AuthUserUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authUserUpdate'];
+  const mutationKey = getAuthUserUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1489,7 +1519,7 @@ export const getAuthUserUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authUserUpdate>>,
-    { data: BodyType<NonReadonly<UserDetails>> }
+    AuthUserUpdateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1502,8 +1532,11 @@ export const getAuthUserUpdateMutationOptions = <
 export type AuthUserUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authUserUpdate>>
 >;
-export type AuthUserUpdateMutationBody = BodyType<NonReadonly<UserDetails>>;
+export type AuthUserUpdateMutationBody = BodyType<UserDetailsRequest>;
 export type AuthUserUpdateMutationError = ErrorType<unknown>;
+export type AuthUserUpdateMutationVariables = {
+  data: BodyType<UserDetailsRequest>;
+};
 
 export const useAuthUserUpdate = <
   TError = ErrorType<unknown>,
@@ -1513,7 +1546,7 @@ export const useAuthUserUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authUserUpdate>>,
       TError,
-      { data: BodyType<NonReadonly<UserDetails>> },
+      AuthUserUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1522,7 +1555,7 @@ export const useAuthUserUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authUserUpdate>>,
   TError,
-  { data: BodyType<NonReadonly<UserDetails>> },
+  AuthUserUpdateMutationVariables,
   TContext
 > => {
   return useMutation(getAuthUserUpdateMutationOptions(options), queryClient);
@@ -1538,7 +1571,7 @@ export const useAuthUserUpdate = <
  * Returns UserModel fields.
  */
 export const authUserPartialUpdate = (
-  patchedUserDetails?: BodyType<NonReadonly<PatchedUserDetails>>,
+  patchedUserDetailsRequest?: BodyType<PatchedUserDetailsRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
@@ -1547,12 +1580,15 @@ export const authUserPartialUpdate = (
       url: `/api/auth/user/`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      data: patchedUserDetails,
+      data: patchedUserDetailsRequest,
       signal,
     },
     options,
   );
 };
+
+export const getAuthUserPartialUpdateMutationKey = () =>
+  ['authUserPartialUpdate'] as const;
 
 export const getAuthUserPartialUpdateMutationOptions = <
   TError = ErrorType<unknown>,
@@ -1561,17 +1597,17 @@ export const getAuthUserPartialUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof authUserPartialUpdate>>,
     TError,
-    { data?: BodyType<NonReadonly<PatchedUserDetails>> },
+    AuthUserPartialUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof authUserPartialUpdate>>,
   TError,
-  { data?: BodyType<NonReadonly<PatchedUserDetails>> },
+  AuthUserPartialUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = ['authUserPartialUpdate'];
+  const mutationKey = getAuthUserPartialUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1582,7 +1618,7 @@ export const getAuthUserPartialUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof authUserPartialUpdate>>,
-    { data?: BodyType<NonReadonly<PatchedUserDetails>> }
+    AuthUserPartialUpdateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1596,8 +1632,11 @@ export type AuthUserPartialUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof authUserPartialUpdate>>
 >;
 export type AuthUserPartialUpdateMutationBody =
-  BodyType<NonReadonly<PatchedUserDetails>> | undefined;
+  BodyType<PatchedUserDetailsRequest> | undefined;
 export type AuthUserPartialUpdateMutationError = ErrorType<unknown>;
+export type AuthUserPartialUpdateMutationVariables = {
+  data?: BodyType<PatchedUserDetailsRequest>;
+};
 
 export const useAuthUserPartialUpdate = <
   TError = ErrorType<unknown>,
@@ -1607,7 +1646,7 @@ export const useAuthUserPartialUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof authUserPartialUpdate>>,
       TError,
-      { data?: BodyType<NonReadonly<PatchedUserDetails>> },
+      AuthUserPartialUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
@@ -1616,7 +1655,7 @@ export const useAuthUserPartialUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof authUserPartialUpdate>>,
   TError,
-  { data?: BodyType<NonReadonly<PatchedUserDetails>> },
+  AuthUserPartialUpdateMutationVariables,
   TContext
 > => {
   return useMutation(

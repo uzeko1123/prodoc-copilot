@@ -7,6 +7,7 @@ import {
   flip,
   getDefaultBoundingClientRect,
   offset,
+  shift,
   useVirtualFloating,
 } from '@platejs/floating';
 import { getTransientSuggestionKey } from '@platejs/suggestion';
@@ -133,38 +134,27 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     },
   );
 
-  const wasCommenting = React.useRef(false);
+  const wasCommenting = React.useRef(true);
 
   React.useEffect(() => {
     if (wasCommenting.current && !isCommenting) {
-      console.log(`1`);
       editor.tf.unsetNodes(getDraftCommentKey(), {
         at: [],
         mode: 'lowest',
         match: (n) => n[getDraftCommentKey()],
       });
-      console.log(`2`);
       editor.setOption(commentPlugin, 'commentingBlock', null);
-      console.log(`3`);
       useCommentStore.getState().removeDiscussionDraft(getDraftCommentKey());
-      console.log(`wasCommenting.current = ${wasCommenting.current}`);
-      console.log(`isCommenting = ${isCommenting}`);
     }
-    console.log(`4`);
     wasCommenting.current = isCommenting;
   }, [editor, isCommenting]);
 
   React.useEffect(() => {
     if (!isCommenting || !commentingCurrent) return;
 
-    const attachedAt = Date.now();
-
     const onSelectionChange = () => {
-      if (Date.now() - attachedAt < 250) return;
-
       const domSelection = window.getSelection();
       const domEditor = editor.api.toDOMNode(editor);
-      // Selection moved back into the document: abandon the draft session.
       if (
         domSelection?.anchorNode &&
         domEditor?.contains(domSelection.anchorNode)
@@ -177,8 +167,6 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     return () =>
       document.removeEventListener('selectionchange', onSelectionChange);
   }, [isCommenting, commentingCurrent, editor]);
-
-  // #region floating
 
   const floatingRef = React.useRef<HTMLDivElement>(null);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -230,19 +218,19 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const floating = useVirtualFloating({
     getBoundingClientRect: () =>
       anchorElement?.getBoundingClientRect() ?? getDefaultBoundingClientRect(),
+    placement: 'bottom',
     middleware: [
       offset(12),
       flip({
-        fallbackPlacements: [
-          'top-start',
-          'top-end',
-          'bottom-start',
-          'bottom-end',
-        ],
+        fallbackPlacements: ['top'],
+        padding: 12,
+      }),
+      shift({
+        mainAxis: true,
+        crossAxis: false,
         padding: 12,
       }),
     ],
-    placement: 'bottom',
   });
 
   useOnClickOutside(() => setOpen(false), {
@@ -264,8 +252,8 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
 
   React.useEffect(() => {
     if (!editorMounted) return;
-    setPortalElement(scrollRef.current);
-  }, [editorMounted, scrollRef]);
+    setPortalElement(containerRef.current);
+  }, [editorMounted, containerRef]);
 
   React.useEffect(() => {
     void update();
@@ -290,8 +278,6 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     return () => observer.disconnect();
   }, [editorMounted, open, containerRef, update]);
 
-  // #endregion
-
   if (!isTopLevelBlock) return <>{children}</>;
 
   if (suggestionsCount + resolvedDiscussions.length === 0 && !draftCommentNode)
@@ -306,7 +292,7 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
           <div
             ref={ref}
             // className="max-h-[min(50dvh,calc(-24px+var(--radix-popper-available-height)))] w-95 max-w-[calc(100vw-24px)] min-w-32.5 overflow-y-auto p-0 data-[state=closed]:opacity-0"
-            className="bg-popover text-popover-foreground ring-foreground/10 z-50 flex max-h-[min(50dvh,calc(-24px+var(--radix-popper-available-height)))] w-95 max-w-[calc(100vw-24px)] min-w-32.5 origin-(--radix-popover-content-transform-origin) flex-col gap-2.5 overflow-y-auto rounded-lg p-0 text-sm shadow-md ring-1 outline-hidden data-[state=closed]:opacity-0"
+            className="bg-popover text-popover-foreground ring-foreground/10 z-50 flex max-h-[50%] w-95 max-w-[80%] min-w-32.5 flex-col gap-2.5 overflow-y-auto rounded-lg p-0 text-sm shadow-md ring-1 outline-hidden"
             style={floating.style}
           >
             {isCommenting ? (

@@ -18,21 +18,12 @@ import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu';
 import {
   CheckIcon,
-  ChevronRightIcon,
-  Code2,
-  Columns3Icon,
-  FileCodeIcon,
   Heading1Icon,
   Heading2Icon,
   Heading3Icon,
   Heading4Icon,
   Heading5Icon,
-  Heading6Icon,
-  ListIcon,
-  ListOrderedIcon,
   PilcrowIcon,
-  QuoteIcon,
-  SquareIcon,
 } from 'lucide-react';
 import type { TElement } from 'platejs';
 import { KEYS } from 'platejs';
@@ -44,7 +35,7 @@ export const turnIntoItems = [
   {
     icon: <PilcrowIcon />,
     keywords: ['paragraph'],
-    label: 'Text',
+    label: 'Paragraph',
     value: KEYS.p,
   },
   {
@@ -76,66 +67,6 @@ export const turnIntoItems = [
     keywords: ['subtitle', 'h5'],
     label: 'Heading 5',
     value: 'h5',
-  },
-  {
-    icon: <Heading6Icon />,
-    keywords: ['subtitle', 'h6'],
-    label: 'Heading 6',
-    value: 'h6',
-  },
-  {
-    icon: <ListIcon />,
-    keywords: ['unordered', 'ul', '-'],
-    label: 'Bulleted list',
-    value: KEYS.ul,
-  },
-  {
-    icon: <ListOrderedIcon />,
-    keywords: ['ordered', 'ol', '1'],
-    label: 'Numbered list',
-    value: KEYS.ol,
-  },
-  {
-    icon: <SquareIcon />,
-    keywords: ['checklist', 'task', 'checkbox', '[]'],
-    label: 'To-do list',
-    value: KEYS.listTodo,
-  },
-  {
-    icon: <ChevronRightIcon />,
-    keywords: ['collapsible', 'expandable'],
-    label: 'Toggle list',
-    value: KEYS.toggle,
-  },
-  {
-    icon: <FileCodeIcon />,
-    keywords: ['```'],
-    label: 'Code',
-    value: KEYS.codeBlock,
-  },
-  {
-    icon: <Code2 />,
-    keywords: [
-      'code-drawing',
-      'diagram',
-      'plantuml',
-      'graphviz',
-      'flowchart',
-      'mermaid',
-    ],
-    label: 'Code Drawing',
-    value: KEYS.codeDrawing,
-  },
-  {
-    icon: <QuoteIcon />,
-    keywords: ['citation', 'blockquote', '>'],
-    label: 'Quote',
-    value: KEYS.blockquote,
-  },
-  {
-    icon: <Columns3Icon />,
-    label: '3 columns',
-    value: 'action_three_columns',
   },
 ];
 
@@ -193,8 +124,7 @@ export function TurnIntoToolbarButton(props: DropdownMenuProps) {
                   <CheckIcon />
                 </DropdownMenuItemIndicator>
               </span>
-              {icon}
-              {label}
+              {icon} {label}
             </DropdownMenuRadioItem>
           ))}
         </ToolbarMenuGroup>

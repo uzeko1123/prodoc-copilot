@@ -4,9 +4,11 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface Login {
+export interface LoginRequest {
+  /** @minLength 1 */
   altcha: string;
   username?: string;
   email?: string;
+  /** @minLength 1 */
   password: string;
 }

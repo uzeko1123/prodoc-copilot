@@ -21,6 +21,21 @@ import {
 } from 'platejs/react';
 import * as React from 'react';
 
+const item: Record<string, { icon: React.ReactNode; label: string }> = {
+  editing: {
+    icon: <FeatherIcon />,
+    label: 'Editing',
+  },
+  suggestion: {
+    icon: <PencilLineIcon />,
+    label: 'Suggestion',
+  },
+  viewing: {
+    icon: <EyeIcon />,
+    label: 'Viewing',
+  },
+};
+
 export function ModeToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
   const readOnly = useEditorReadOnly();
@@ -33,21 +48,6 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
   if (readOnly) value = 'viewing';
 
   if (isSuggesting) value = 'suggestion';
-
-  const item: Record<string, { icon: React.ReactNode; label: string }> = {
-    editing: {
-      icon: <FeatherIcon />,
-      label: 'Editing',
-    },
-    suggestion: {
-      icon: <PencilLineIcon />,
-      label: 'Suggestion',
-    },
-    viewing: {
-      icon: <EyeIcon />,
-      label: 'Viewing',
-    },
-  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>

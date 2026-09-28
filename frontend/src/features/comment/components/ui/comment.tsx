@@ -90,6 +90,8 @@ export function Comment(props: {
   } = props;
 
   const editor = useEditorRef();
+  const setDiscussions = useCommentStore((state) => state.setDiscussions);
+
   const userInfo = usePluginOption(discussionPlugin, 'user', comment.userId);
   const currentUserId = usePluginOption(discussionPlugin, 'currentUserId');
 
@@ -103,6 +105,7 @@ export function Comment(props: {
         return discussion;
       });
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
   };
 
   const removeDiscussion = async (id: string) => {
@@ -110,6 +113,7 @@ export function Comment(props: {
       .getOption(discussionPlugin, 'discussions')
       .filter((discussion) => discussion.id !== id);
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
   };
 
   const updateComment = async (input: {
@@ -138,6 +142,7 @@ export function Comment(props: {
         return discussion;
       });
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
   };
 
   const { tf } = useEditorPlugin(CommentPlugin);
@@ -247,7 +252,9 @@ export function Comment(props: {
             <div className="bg-muted absolute top-1.25 left-3 h-full w-0.5 shrink-0" />
           )}
           <div className="bg-highlight my-px w-0.5 shrink-0" />
-          {documentContent && <div className="ml-2">{documentContent}</div>}
+          {documentContent && (
+            <div className="ml-2 wrap-anywhere">{documentContent}</div>
+          )}
         </div>
       )}
 
@@ -261,6 +268,12 @@ export function Comment(props: {
               variant="comment"
               className="w-auto grow"
               onClick={() => onEditorClick?.()}
+              onKeyDown={(e) => {
+                if (isEditing && e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  onSave();
+                }
+              }}
             />
 
             {isEditing && (
@@ -268,7 +281,6 @@ export function Comment(props: {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="size-7"
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     void onCancel();
@@ -318,6 +330,7 @@ function CommentMoreDropdown(props: {
   } = props;
 
   const editor = useEditorRef();
+  const setDiscussions = useCommentStore((state) => state.setDiscussions);
 
   const selectedEditCommentRef = React.useRef<boolean>(false);
 
@@ -351,8 +364,15 @@ function CommentMoreDropdown(props: {
 
     // Save back to session storage
     editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+    setDiscussions(updatedDiscussions);
     onRemoveComment?.();
-  }, [comment.discussionId, comment.id, editor, onRemoveComment]);
+  }, [
+    comment.discussionId,
+    comment.id,
+    editor,
+    onRemoveComment,
+    setDiscussions,
+  ]);
 
   const onEditComment = React.useCallback(() => {
     selectedEditCommentRef.current = true;
@@ -443,6 +463,7 @@ export function CommentCreateForm({
 }) {
   const editor = useEditorRef();
   const commentEditor = useCommentEditor();
+  const setDiscussions = useCommentStore((state) => state.setDiscussions);
 
   const commentId = useCommentId();
   const discussionId = discussionIdProp ?? commentId;
@@ -541,6 +562,7 @@ export function CommentCreateForm({
         .concat(updatedDiscussion);
 
       editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+      setDiscussions(updatedDiscussions);
 
       return;
     }
@@ -579,6 +601,7 @@ export function CommentCreateForm({
       ...discussions,
       newDiscussion,
     ]);
+    setDiscussions([...discussions, newDiscussion]);
 
     const id = newDiscussion.id;
 
@@ -594,11 +617,17 @@ export function CommentCreateForm({
 
     editor.setOption(commentPlugin, 'activeId', null);
     editor.setOption(commentPlugin, 'commentingBlock', null);
-  }, [editor, commentEditor.tf, discussionId, discussionDraftKey]);
+  }, [
+    editor,
+    commentEditor.tf,
+    discussionId,
+    discussionDraftKey,
+    setDiscussions,
+  ]);
 
   return (
     <div className={cn('flex w-full', className)}>
-      <div className="mt-2 mr-1 shrink-0">
+      <div className="mr-1 shrink-0">
         {/* Replace to your own backend or refer to potion */}
         <Avatar className="size-5">
           <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
@@ -620,7 +649,7 @@ export function CommentCreateForm({
           <EditorContainer variant="comment">
             <Editor
               variant="comment"
-              className="min-h-6.25 grow pt-0.5 pr-8"
+              className="w-auto grow wrap-anywhere"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -635,7 +664,7 @@ export function CommentCreateForm({
             <Button
               size="icon"
               variant="ghost"
-              className="absolute right-0.5 bottom-0.5 ml-auto size-6 shrink-0"
+              className="ml-auto flex shrink-0 gap-1"
               disabled={!hasDiscussionDraftValue}
               onClick={(e) => {
                 e.stopPropagation();

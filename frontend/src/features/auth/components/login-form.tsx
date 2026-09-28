@@ -26,9 +26,10 @@ import { useAuthStore } from '../stores';
 import { Altcha } from './altcha-field';
 
 export function LoginForm({
+  redirect = '/account',
   className,
   ...props
-}: React.ComponentProps<'div'>) {
+}: React.ComponentProps<'div'> & { redirect?: string }) {
   const { control, formState, handleSubmit, setError, setValue, getValues } =
     useForm<z.infer<typeof AuthLoginCreateBody>>({
       resolver: zodResolver(AuthLoginCreateBody),
@@ -41,7 +42,7 @@ export function LoginForm({
       },
       onSuccess: (data) => {
         setUser(data.user);
-        navigate({ to: '/account', replace: true });
+        navigate({ to: redirect, replace: true });
       },
       onError: (error) => {
         const emailUnverified = (

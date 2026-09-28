@@ -13,7 +13,7 @@ export function Context({
   content: string;
   variant: 'chat' | 'message';
 }) {
-  if (!content) return;
+  if (!content) return null;
 
   return (
     <div className="flex w-full gap-1 rounded-lg border p-2">

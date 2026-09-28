@@ -4,14 +4,10 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface Register {
-  altcha: string;
+export interface PatchedGroupRequest {
   /**
    * @minLength 1
    * @maxLength 150
    */
-  username: string;
-  email: string;
-  password1: string;
-  password2: string;
+  name?: string;
 }

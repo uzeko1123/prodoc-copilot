@@ -4,6 +4,6 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface ResendEmailVerification {
-  email: string;
+export interface UploadFileRequest {
+  file: Blob;
 }

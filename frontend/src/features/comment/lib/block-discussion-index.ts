@@ -1,7 +1,11 @@
 'use client';
 
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
-import { CommentPlugin } from '@platejs/comment/react';
+import {
+  getCommentKeyId,
+  getCommentKeys,
+  getDraftCommentKey,
+} from '@platejs/comment';
 import type { TResolvedSuggestion } from '@platejs/suggestion';
 import { getSuggestionKey, keyId2SuggestionId } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
@@ -26,8 +30,13 @@ import {
 } from '../components/editor/plugins/discussion-kit';
 import type { TComment } from '../components/ui/comment';
 
+export interface ResolvedDiscussion extends TDiscussion {
+  path: Path;
+}
+
 export interface ResolvedSuggestion extends TResolvedSuggestion {
   comments: TComment[];
+  path: Path;
 }
 
 export const BLOCK_SUGGESTION_TOKEN = '__block__';
@@ -38,14 +47,14 @@ type BlockDiscussionEntry = NodeEntry<
 type SuggestionEntry = NodeEntry<TElement | TSuggestionText>;
 
 type BlockDiscussionIndex = {
-  discussionsByBlock: Map<string, TDiscussion[]>;
+  discussionsByBlock: Map<string, ResolvedDiscussion[]>;
   suggestionsByBlock: Map<string, ResolvedSuggestion[]>;
 };
 
 type BuildBlockDiscussionIndexOptions = {
   entries: BlockDiscussionEntry[];
   discussions: TDiscussion[];
-  getCommentId: (node: TCommentText) => string | undefined;
+  getCommentIds: (node: TCommentText) => string[];
   getSuggestionData: (node: TElement | TSuggestionText) =>
     | {
         createdAt: Date | number | string;
@@ -119,8 +128,7 @@ const appendByKey = <T>(map: Map<string, T[]>, key: string, value: T) => {
 
 const getBlockKey = (path: Path) => path.join(',');
 
-const getTopLevelPath = (path: Path): Path | null =>
-  path.length > 0 ? path.slice(0, 1) : null;
+const getTopLevelPath = (path: Path): Path => path.slice(0, 1);
 
 const getSuggestionIds = (
   node: TCommentText | TElement | TSuggestionText,
@@ -128,16 +136,9 @@ const getSuggestionIds = (
   getSuggestionId: BuildBlockDiscussionIndexOptions['getSuggestionId'],
 ) => {
   if (TextApi.isText(node)) {
-    const dataList = getSuggestionDataList(node as TSuggestionText);
-    const updateIds = dataList
-      .filter((data) => data.type === 'update')
-      .map((data) => data.id);
-
-    if (updateIds.length > 0) return updateIds;
-
-    const suggestionId = getSuggestionId(node as TSuggestionText);
-
-    return suggestionId ? [suggestionId] : [];
+    return getSuggestionDataList(node as TSuggestionText).map(
+      (data) => data.id,
+    );
   }
 
   if (ElementApi.isElement(node)) {
@@ -212,6 +213,7 @@ const toResolvedSuggestion = ({
   getSuggestionDataList,
   id,
   isBlockSuggestion,
+  path,
 }: {
   discussionsById: Map<string, TDiscussion>;
   entries: SuggestionEntry[];
@@ -219,6 +221,7 @@ const toResolvedSuggestion = ({
   getSuggestionDataList: BuildBlockDiscussionIndexOptions['getSuggestionDataList'];
   id: string;
   isBlockSuggestion: BuildBlockDiscussionIndexOptions['isBlockSuggestion'];
+  path: Path;
 }): ResolvedSuggestion | null => {
   const sortedEntries = [...entries].sort(([, path1], [, path2]) =>
     PathApi.isChild(path1, path2) ? -1 : 1,
@@ -315,6 +318,7 @@ const toResolvedSuggestion = ({
       suggestionId,
       type: 'update',
       userId: suggestionData.userId,
+      path,
     };
   }
 
@@ -328,6 +332,7 @@ const toResolvedSuggestion = ({
       text,
       type: 'replace',
       userId: suggestionData.userId,
+      path,
     };
   }
 
@@ -340,6 +345,7 @@ const toResolvedSuggestion = ({
       suggestionId,
       type: 'insert',
       userId: suggestionData.userId,
+      path,
     };
   }
 
@@ -352,6 +358,7 @@ const toResolvedSuggestion = ({
       text,
       type: 'remove',
       userId: suggestionData.userId,
+      path,
     };
   }
 
@@ -361,7 +368,7 @@ const toResolvedSuggestion = ({
 export const buildBlockDiscussionIndex = ({
   discussions,
   entries,
-  getCommentId,
+  getCommentIds,
   getSuggestionData,
   getSuggestionDataList,
   getSuggestionId,
@@ -369,33 +376,26 @@ export const buildBlockDiscussionIndex = ({
 }: BuildBlockDiscussionIndexOptions): BlockDiscussionIndex => {
   const commentOwnerById = new Map<string, Path>();
   const suggestionOwnerById = new Map<string, Path>();
-  const commentIds = new Set<string>();
   const suggestionEntriesById = new Map<string, SuggestionEntry[]>();
   const discussionsById = new Map(
     discussions.map((discussion) => [discussion.id, discussion]),
   );
 
   entries.forEach(([node, path]) => {
-    const blockPath = getTopLevelPath(path);
-
-    if (!blockPath) return;
+    if (path.length === 0) return;
 
     if (TextApi.isText(node)) {
-      const commentId = getCommentId(node);
-
-      if (commentId) {
-        commentIds.add(commentId);
-
+      getCommentIds(node as TCommentText).forEach((commentId) => {
         if (!commentOwnerById.has(commentId)) {
-          commentOwnerById.set(commentId, blockPath);
+          commentOwnerById.set(commentId, path);
         }
-      }
+      });
     }
 
     getSuggestionIds(node, getSuggestionDataList, getSuggestionId).forEach(
       (suggestionId) => {
         if (!suggestionOwnerById.has(suggestionId)) {
-          suggestionOwnerById.set(suggestionId, blockPath);
+          suggestionOwnerById.set(suggestionId, path);
         }
 
         appendByKey(suggestionEntriesById, suggestionId, [
@@ -406,18 +406,19 @@ export const buildBlockDiscussionIndex = ({
     );
   });
 
-  const discussionsByBlock = new Map<string, TDiscussion[]>();
+  const discussionsByBlock = new Map<string, ResolvedDiscussion[]>();
 
   discussions.forEach((discussion) => {
     const ownerPath = commentOwnerById.get(discussion.id);
 
-    if (!ownerPath || !commentIds.has(discussion.id) || discussion.isResolved) {
+    if (!ownerPath || discussion.isResolved) {
       return;
     }
 
-    appendByKey(discussionsByBlock, getBlockKey(ownerPath), {
+    appendByKey(discussionsByBlock, getBlockKey(getTopLevelPath(ownerPath)), {
       ...discussion,
       createdAt: new Date(discussion.createdAt),
+      path: ownerPath,
     });
   });
 
@@ -435,11 +436,16 @@ export const buildBlockDiscussionIndex = ({
       getSuggestionDataList,
       id: suggestionId,
       isBlockSuggestion,
+      path: ownerPath,
     });
 
     if (!resolvedSuggestion) return;
 
-    appendByKey(suggestionsByBlock, getBlockKey(ownerPath), resolvedSuggestion);
+    appendByKey(
+      suggestionsByBlock,
+      getBlockKey(getTopLevelPath(ownerPath)),
+      resolvedSuggestion,
+    );
   });
 
   return {
@@ -463,13 +469,15 @@ export const getDiscussionIndex = (
     return cached.index;
   }
 
-  const commentApi = editor.getApi(CommentPlugin).comment;
   const suggestionApi = editor.getApi(SuggestionPlugin).suggestion;
 
   const index = buildBlockDiscussionIndex({
     discussions,
     entries: [...editor.api.nodes({ at: [], mode: 'all' })],
-    getCommentId: (node) => commentApi.nodeId(node),
+    getCommentIds: (node) =>
+      getCommentKeys(node)
+        .filter((key) => key !== getDraftCommentKey())
+        .map((key) => getCommentKeyId(key)),
     getSuggestionData: (node) => suggestionApi.suggestionData(node),
     getSuggestionDataList: (node) => suggestionApi.dataList(node),
     getSuggestionId: (node) => suggestionApi.nodeId(node),

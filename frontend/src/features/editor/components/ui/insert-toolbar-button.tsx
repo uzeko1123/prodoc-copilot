@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  insertBlock,
-  insertInlineElement,
-} from '@/components/shadcn/editor/transforms';
+import { insertBlock } from '@/components/shadcn/editor/transforms';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,28 +13,19 @@ import {
 } from '@/components/shadcn/ui/toolbar';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import {
-  CalendarIcon,
-  ChevronRightIcon,
-  Code2,
-  Columns3Icon,
   FileCodeIcon,
-  FilmIcon,
   Heading1Icon,
   Heading2Icon,
   Heading3Icon,
-  ImageIcon,
-  Link2Icon,
+  Heading4Icon,
+  Heading5Icon,
   ListIcon,
   ListOrderedIcon,
   MinusIcon,
-  PenToolIcon,
   PilcrowIcon,
   PlusIcon,
-  QuoteIcon,
   RadicalIcon,
   SquareIcon,
-  SuperscriptIcon,
-  TableIcon,
   TableOfContentsIcon,
 } from 'lucide-react';
 import { KEYS } from 'platejs';
@@ -82,24 +70,14 @@ const groups: Group[] = [
         value: 'h3',
       },
       {
-        icon: <TableIcon />,
-        label: 'Table',
-        value: KEYS.table,
+        icon: <Heading4Icon />,
+        label: 'Heading 4',
+        value: 'h4',
       },
       {
-        icon: <FileCodeIcon />,
-        label: 'Code',
-        value: KEYS.codeBlock,
-      },
-      {
-        icon: <QuoteIcon />,
-        label: 'Quote',
-        value: KEYS.blockquote,
-      },
-      {
-        icon: <MinusIcon />,
-        label: 'Divider',
-        value: KEYS.hr,
+        icon: <Heading5Icon />,
+        label: 'Heading 5',
+        value: 'h5',
       },
     ].map((item) => ({
       ...item,
@@ -126,31 +104,6 @@ const groups: Group[] = [
         label: 'To-do list',
         value: KEYS.listTodo,
       },
-      {
-        icon: <ChevronRightIcon />,
-        label: 'Toggle list',
-        value: KEYS.toggle,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertBlock(editor, value);
-      },
-    })),
-  },
-  {
-    group: 'Media',
-    items: [
-      {
-        icon: <ImageIcon />,
-        label: 'Image',
-        value: KEYS.img,
-      },
-      {
-        icon: <FilmIcon />,
-        label: 'Embed',
-        value: KEYS.mediaEmbed,
-      },
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
@@ -162,14 +115,9 @@ const groups: Group[] = [
     group: 'Advanced blocks',
     items: [
       {
-        icon: <TableOfContentsIcon />,
-        label: 'Table of contents',
-        value: KEYS.toc,
-      },
-      {
-        icon: <Columns3Icon />,
-        label: '3 columns',
-        value: 'action_three_columns',
+        icon: <FileCodeIcon />,
+        label: 'Code',
+        value: KEYS.codeBlock,
       },
       {
         focusEditor: false,
@@ -178,52 +126,19 @@ const groups: Group[] = [
         value: KEYS.equation,
       },
       {
-        icon: <PenToolIcon />,
-        label: 'Excalidraw',
-        value: KEYS.excalidraw,
+        icon: <MinusIcon />,
+        label: 'Divider',
+        value: KEYS.hr,
       },
       {
-        icon: <Code2 />,
-        label: 'Code Drawing',
-        value: KEYS.codeDrawing,
+        icon: <TableOfContentsIcon />,
+        label: 'Table of contents',
+        value: KEYS.toc,
       },
     ].map((item) => ({
       ...item,
       onSelect: (editor, value) => {
         insertBlock(editor, value);
-      },
-    })),
-  },
-  {
-    group: 'Inline',
-    items: [
-      {
-        icon: <Link2Icon />,
-        label: 'Link',
-        value: KEYS.link,
-      },
-      {
-        focusEditor: true,
-        icon: <CalendarIcon />,
-        label: 'Date',
-        value: KEYS.date,
-      },
-      {
-        focusEditor: true,
-        icon: <SuperscriptIcon />,
-        label: 'Footnote',
-        value: 'action_footnote',
-      },
-      {
-        focusEditor: false,
-        icon: <RadicalIcon />,
-        label: 'Inline Equation',
-        value: KEYS.inlineEquation,
-      },
-    ].map((item) => ({
-      ...item,
-      onSelect: (editor, value) => {
-        insertInlineElement(editor, value);
       },
     })),
   },
@@ -256,8 +171,7 @@ export function InsertToolbarButton(props: DropdownMenuProps) {
                   editor.tf.focus();
                 }}
               >
-                {icon}
-                {label}
+                {icon} {label}
               </DropdownMenuItem>
             ))}
           </ToolbarMenuGroup>

@@ -6,7 +6,7 @@ import { AIChatPlugin } from '@platejs/ai/react';
 import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
-import { applyTools, resetTools, type Tools } from '../../agent/tools';
+import { applyTools, type Tools } from '../../agent/tools';
 import { createAgentTransport } from '../../agent/transport';
 
 export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
@@ -42,10 +42,7 @@ export const useAgent = () => {
 
   React.useEffect(() => {
     const lastChatMessage = chat.messages.at(-1);
-    if (lastChatMessage?.role !== 'assistant') {
-      resetTools();
-      return;
-    }
+    if (lastChatMessage?.role !== 'assistant') return;
 
     applyTools(editor, chat, lastChatMessage);
     upsertChatMessage(lastChatMessage);
@@ -53,6 +50,8 @@ export const useAgent = () => {
     if (chat.status === 'streaming' || chat.status === 'submitted') return;
     if (finishedChatMessageIdRef.current === lastChatMessage.id) return;
     finishedChatMessageIdRef.current = lastChatMessage.id;
+
+    editor.setOption(AIChatPlugin, 'toolName', null);
     editor.getApi(AIChatPlugin).aiChat.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, chat.status, chat.messages, chat.error]);

@@ -16,7 +16,7 @@ export const MainGroupsListResponse = zod.array(MainGroupsListResponseItem);
 export const mainGroupsCreateBodyNameMax = 150;
 
 export const MainGroupsCreateBody = zod.object({
-  name: zod.string().max(mainGroupsCreateBodyNameMax),
+  name: zod.string().min(1).max(mainGroupsCreateBodyNameMax),
 });
 
 export const mainGroupsCreateResponseNameMax = 150;
@@ -44,7 +44,7 @@ export const MainGroupsUpdateParams = zod.object({
 export const mainGroupsUpdateBodyNameMax = 150;
 
 export const MainGroupsUpdateBody = zod.object({
-  name: zod.string().max(mainGroupsUpdateBodyNameMax),
+  name: zod.string().min(1).max(mainGroupsUpdateBodyNameMax),
 });
 
 export const mainGroupsUpdateResponseNameMax = 150;
@@ -61,7 +61,7 @@ export const MainGroupsPartialUpdateParams = zod.object({
 export const mainGroupsPartialUpdateBodyNameMax = 150;
 
 export const MainGroupsPartialUpdateBody = zod.object({
-  name: zod.string().max(mainGroupsPartialUpdateBodyNameMax).optional(),
+  name: zod.string().min(1).max(mainGroupsPartialUpdateBodyNameMax).optional(),
 });
 
 export const mainGroupsPartialUpdateResponseNameMax = 150;
@@ -116,6 +116,7 @@ export const mainUsersCreateBodyEmailTwoMax = 0;
 export const MainUsersCreateBody = zod.object({
   username: zod
     .string()
+    .min(1)
     .max(mainUsersCreateBodyUsernameMax)
     .regex(mainUsersCreateBodyUsernameRegExp)
     .describe(
@@ -209,6 +210,7 @@ export const mainUsersUpdateBodyEmailTwoMax = 0;
 export const MainUsersUpdateBody = zod.object({
   username: zod
     .string()
+    .min(1)
     .max(mainUsersUpdateBodyUsernameMax)
     .regex(mainUsersUpdateBodyUsernameRegExp)
     .describe(
@@ -270,6 +272,7 @@ export const mainUsersPartialUpdateBodyEmailTwoMax = 0;
 export const MainUsersPartialUpdateBody = zod.object({
   username: zod
     .string()
+    .min(1)
     .max(mainUsersPartialUpdateBodyUsernameMax)
     .regex(mainUsersPartialUpdateBodyUsernameRegExp)
     .optional()

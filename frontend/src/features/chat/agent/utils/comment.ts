@@ -1,4 +1,5 @@
 import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
+import { useCommentStore } from '@/features/comment/stores';
 import { aiCommentToRange } from '@platejs/ai/react';
 import { getCommentKey, getTransientCommentKey } from '@platejs/comment';
 import { deserializeMd } from '@platejs/markdown';
@@ -42,6 +43,7 @@ export function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
   // Update discussions
   const updatedDiscussions = [...discussions, newDiscussion];
   editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+  useCommentStore.getState().setDiscussions(updatedDiscussions);
 
   // Apply comment marks to the editor
   editor.tf.withMerging(() => {
