@@ -159,66 +159,64 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
           if (part.type.startsWith('tool-')) {
             const toolPart = part as ToolUIPart<Tools>;
             return (
-              <>
-                <Collapsible
-                  key={index}
-                  defaultOpen={false}
-                  className="text-muted-foreground group w-full"
+              <Collapsible
+                key={index}
+                defaultOpen={false}
+                className="text-muted-foreground group w-full"
+              >
+                <CollapsibleTrigger
+                  className={cn(
+                    'mb-1 flex items-center gap-1.5 text-xs font-medium',
+                    toolPart.state === 'output-error' && 'text-destructive',
+                  )}
                 >
-                  <CollapsibleTrigger
-                    className={cn(
-                      'mb-1 flex items-center gap-1.5 text-xs font-medium',
-                      toolPart.state === 'output-error' && 'text-destructive',
-                    )}
-                  >
-                    {toolPart.state === 'output-available' ? (
-                      <CheckIcon className="size-3.5" />
+                  {toolPart.state === 'output-available' ? (
+                    <CheckIcon className="size-3.5" />
+                  ) : toolPart.state === 'output-error' ? (
+                    <CircleAlertIcon className="text-destructive size-3.5" />
+                  ) : (
+                    <Spinner className="size-3.5" />
+                  )}
+                  {getToolPartName(toolPart)}
+                  <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3">
+                    {toolPart.state === 'input-available' ? (
+                      <AIChatEditor
+                        content={
+                          '```json\n' +
+                          JSON.stringify(toolPart.input, undefined, 2) +
+                          '\n```'
+                        }
+                      />
+                    ) : toolPart.state === 'output-available' ? (
+                      <AIChatEditor
+                        content={
+                          '```json\n' +
+                          JSON.stringify(toolPart.output, undefined, 2) +
+                          '\n```'
+                        }
+                      />
                     ) : toolPart.state === 'output-error' ? (
-                      <CircleAlertIcon className="text-destructive size-3.5" />
-                    ) : (
-                      <Spinner className="size-3.5" />
-                    )}
-                    {getToolPartName(toolPart)}
-                    <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
+                      getParagraphs(toolPart.errorText).map(
+                        (paragraph, paragraphIndex) => (
+                          <p
+                            key={`${index}-${paragraphIndex}`}
+                            className="text-xs whitespace-pre-wrap"
+                          >
+                            {paragraph}
+                          </p>
+                        ),
+                      )
+                    ) : null}
+                  </div>
+                  <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs font-medium">
+                    Collapse
+                    <ChevronUpIcon className="size-3.5" />
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3">
-                      {toolPart.state === 'input-available' ? (
-                        <AIChatEditor
-                          content={
-                            '```json\n' +
-                            JSON.stringify(toolPart.input, undefined, 2) +
-                            '\n```'
-                          }
-                        />
-                      ) : toolPart.state === 'output-available' ? (
-                        <AIChatEditor
-                          content={
-                            '```json\n' +
-                            JSON.stringify(toolPart.output, undefined, 2) +
-                            '\n```'
-                          }
-                        />
-                      ) : toolPart.state === 'output-error' ? (
-                        getParagraphs(toolPart.errorText).map(
-                          (paragraph, paragraphIndex) => (
-                            <p
-                              key={`${index}-${paragraphIndex}`}
-                              className="text-xs whitespace-pre-wrap"
-                            >
-                              {paragraph}
-                            </p>
-                          ),
-                        )
-                      ) : null}
-                    </div>
-                    <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs font-medium">
-                      Collapse
-                      <ChevronUpIcon className="size-3.5" />
-                    </CollapsibleTrigger>
-                  </CollapsibleContent>
-                </Collapsible>
-              </>
+                </CollapsibleContent>
+              </Collapsible>
             );
           }
         })}
