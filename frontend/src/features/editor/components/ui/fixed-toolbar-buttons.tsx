@@ -13,7 +13,7 @@ import { PanelLeftIcon, SparklesIcon } from 'lucide-react';
 import { KEYS } from 'platejs';
 import { useEditorReadOnly } from 'platejs/react';
 import { ExportToolbarButton } from './export-toolbar-button';
-import { FontFamilyToolbarButton } from './font-family-toolbar-button';
+import { FontToolbarButton } from './font-toolbar-button';
 import { ImportToolbarButton } from './import-toolbar-button';
 import { InsertToolbarButton } from './insert-toolbar-button';
 import { MediaToolbarButton } from './media-toolbar-button';
@@ -44,7 +44,7 @@ export function FixedToolbarButtons() {
 
         <ToolbarSeparator className="self-stretch" />
 
-        <FontFamilyToolbarButton />
+        <FontToolbarButton />
 
         <ToolbarSeparator className="self-stretch" />
       </ToolbarGroup>

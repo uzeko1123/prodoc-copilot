@@ -56,7 +56,7 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
 
   const exportToImage = async () => {
     const canvas = await getCanvas();
-    await downloadFile(canvas.toDataURL('image/png'), 'plate.png');
+    await downloadFile(canvas.toDataURL('image/png'), 'ProDoc.png');
   };
 
   const exportToMarkdown = async () => {

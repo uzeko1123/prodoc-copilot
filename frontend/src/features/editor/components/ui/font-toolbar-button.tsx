@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
-import { useEditorStore, type FontFamily } from '@/features/editor/stores';
+import { useEditorStore, type Font } from '@/features/editor/stores';
 import { type DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { TypeIcon } from 'lucide-react';
 import * as React from 'react';
 
-export function FontFamilyToolbarButton(props: DropdownMenuProps) {
+export function FontToolbarButton(props: DropdownMenuProps) {
   const [open, setOpen] = React.useState(false);
 
   const editorFontFamily = useEditorStore((state) => state.editorFontFamily);
@@ -34,11 +34,11 @@ export function FontFamilyToolbarButton(props: DropdownMenuProps) {
       <DropdownMenuContent align="start" className="w-auto">
         <DropdownMenuLabel>Heading</DropdownMenuLabel>
         <FontFamilyDropdownMenuRadioGroup
-          value={editorFontFamily['--editor-font-family-heading']}
+          value={editorFontFamily['--editor-font-heading']}
           onValueChange={(value) =>
             setEditorFontFamily({
               ...editorFontFamily,
-              '--editor-font-family-heading': value,
+              '--editor-font-heading': value,
             })
           }
         />
@@ -47,11 +47,11 @@ export function FontFamilyToolbarButton(props: DropdownMenuProps) {
 
         <DropdownMenuLabel>Body</DropdownMenuLabel>
         <FontFamilyDropdownMenuRadioGroup
-          value={editorFontFamily['--editor-font-family-body']}
+          value={editorFontFamily['--editor-font-body']}
           onValueChange={(value) =>
             setEditorFontFamily({
               ...editorFontFamily,
-              '--editor-font-family-body': value,
+              '--editor-font-body': value,
             })
           }
         />
@@ -64,23 +64,19 @@ function FontFamilyDropdownMenuRadioGroup({
   value,
   onValueChange,
 }: {
-  value: FontFamily;
-  onValueChange: (value: FontFamily) => void;
+  value: Font;
+  onValueChange: (value: Font) => void;
 }) {
   return (
     <DropdownMenuRadioGroup
       value={value}
-      onValueChange={(value) => onValueChange(value as FontFamily)}
+      onValueChange={(value) => onValueChange(value as Font)}
     >
-      <DropdownMenuRadioItem value="'Noto Sans SC Variable', sans-serif">
-        <span style={{ fontFamily: "'Noto Sans SC Variable', sans-serif" }}>
-          Noto Sans
-        </span>
+      <DropdownMenuRadioItem value="var(--font-sans)">
+        <span style={{ fontFamily: 'var(--font-sans)' }}>Noto Sans</span>
       </DropdownMenuRadioItem>
-      <DropdownMenuRadioItem value="'Noto Serif SC Variable', serif">
-        <span style={{ fontFamily: "'Noto Serif SC Variable', serif" }}>
-          Noto Serif
-        </span>
+      <DropdownMenuRadioItem value="var(--font-serif)">
+        <span style={{ fontFamily: 'var(--font-serif)' }}>Noto Serif</span>
       </DropdownMenuRadioItem>
     </DropdownMenuRadioGroup>
   );

@@ -1,6 +1,13 @@
 @import '@fontsource-variable/noto-serif-sc';
+@import '@fontsource-variable/jetbrains-mono';
 @import './shadcn/index.css';
 @import './shadcn/typeset.css';
+
+@theme inline {
+  --font-sans: 'Noto Sans SC Variable', sans-serif;
+  --font-serif: 'Noto Serif SC Variable', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+}
 
 @layer base {
   * {
@@ -10,10 +17,11 @@
 }
 
 .editor-font {
-  font-family: var(--editor-font-family-body);
+  font-family: var(--editor-font-body);
 }
+
 .editor-font :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--editor-font-family-heading);
+  font-family: var(--editor-font-heading);
 }
 
 ::highlight(flash-range) {

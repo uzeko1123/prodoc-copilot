@@ -5,17 +5,16 @@ import { create } from 'zustand';
 import { createDebouncedJSONStorage } from 'zustand-debounce';
 import { devtools, persist } from 'zustand/middleware';
 
-export type FontFamily =
-  "'Noto Sans SC Variable', sans-serif" | "'Noto Serif SC Variable', serif";
+export type Font = 'var(--font-sans)' | 'var(--font-serif)';
 
-type EditorFontFamily = CSSProperties & {
-  '--editor-font-family-body': FontFamily;
-  '--editor-font-family-heading': FontFamily;
+type EditorFont = CSSProperties & {
+  '--editor-font-body': Font;
+  '--editor-font-heading': Font;
 };
 
 type EditorState = {
-  editorFontFamily: EditorFontFamily;
-  setEditorFontFamily: (editorFont: EditorFontFamily) => void;
+  editorFontFamily: EditorFont;
+  setEditorFontFamily: (editorFont: EditorFont) => void;
 
   value: Value;
   setValue: (value: Value) => void;
@@ -26,8 +25,8 @@ export const useEditorStore = create<EditorState>()(
     persist(
       (set) => ({
         editorFontFamily: {
-          '--editor-font-family-body': "'Noto Sans SC Variable', sans-serif",
-          '--editor-font-family-heading': "'Noto Sans SC Variable', sans-serif",
+          '--editor-font-body': 'var(--font-sans)',
+          '--editor-font-heading': 'var(--font-sans)',
         },
         setEditorFontFamily: (editorFontFamily) => set({ editorFontFamily }),
 
