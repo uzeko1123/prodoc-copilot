@@ -104,7 +104,7 @@ export function AICursorButton() {
                 e.preventDefault();
               }}
             >
-              <SparklesIcon className="size-3.5" />
+              <SparklesIcon className="text-muted-foreground size-3.5" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
