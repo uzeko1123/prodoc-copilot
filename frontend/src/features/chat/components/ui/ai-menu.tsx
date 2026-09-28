@@ -220,7 +220,7 @@ export function AIMenu() {
         className="w-full rounded-lg border shadow-md"
         shouldFilter={false}
       >
-        {!isLoading ? (
+        {isLoading ? (
           <div className="text-muted-foreground flex grow items-center justify-center gap-2 p-2 text-sm select-none">
             <Loader2Icon className="size-4 animate-spin" /> Working . . .
           </div>
