@@ -37,7 +37,7 @@ export function BulletedListToolbarButton() {
   );
 
   return (
-    <ToolbarSplitButton pressed={open}>
+    <ToolbarSplitButton tooltip="Bulleted List" pressed={open}>
       <ToolbarSplitButtonPrimary
         className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
         onClick={() => {
@@ -121,7 +121,7 @@ export function NumberedListToolbarButton() {
   );
 
   return (
-    <ToolbarSplitButton pressed={open}>
+    <ToolbarSplitButton tooltip="Numbered List" pressed={open}>
       <ToolbarSplitButtonPrimary
         className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
         onClick={() =>
@@ -204,7 +204,7 @@ export function TodoListToolbarButton(
   const { props: buttonProps } = useIndentTodoToolBarButton(state);
 
   return (
-    <ToolbarButton {...props} {...buttonProps} tooltip="Todo">
+    <ToolbarButton {...props} {...buttonProps} tooltip="Todo List">
       <ListTodoIcon />
     </ToolbarButton>
   );

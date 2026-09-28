@@ -94,6 +94,7 @@ export function MediaToolbarButton({
   return (
     <>
       <ToolbarSplitButton
+        tooltip={currentConfig.tooltip}
         onClick={() => {
           openFilePicker();
         }}

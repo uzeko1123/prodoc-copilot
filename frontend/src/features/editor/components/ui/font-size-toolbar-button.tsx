@@ -6,6 +6,11 @@ import {
   PopoverTrigger,
 } from '@/components/shadcn/ui/popover';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
 import { toUnitLess } from '@platejs/basic-styles';
 import { FontSizePlugin } from '@platejs/basic-styles/react';
 import { cn } from 'cn';
@@ -84,66 +89,71 @@ export function FontSizeToolbarButton() {
   const displayValue = isFocused ? inputValue : cursorFontSize;
 
   return (
-    <div className="bg-muted/60 flex h-7 items-center gap-1 rounded-md p-0">
-      <ToolbarButton onClick={() => handleFontSizeChange(-1)}>
-        <Minus />
-      </ToolbarButton>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="bg-muted/60 flex h-7 items-center gap-1 rounded-md p-0">
+          <ToolbarButton onClick={() => handleFontSizeChange(-1)}>
+            <Minus />
+          </ToolbarButton>
 
-      <Popover open={isFocused} modal={false}>
-        <PopoverTrigger asChild>
-          <input
-            className={cn(
-              'hover:bg-muted h-full w-10 shrink-0 bg-transparent px-1 text-center text-sm',
-            )}
-            value={displayValue}
-            onBlur={() => {
-              setIsFocused(false);
-              handleInputChange();
-            }}
-            onChange={(e) => setInputValue(e.target.value)}
-            onFocus={() => {
-              setIsFocused(true);
-              setInputValue(toUnitLess(cursorFontSize));
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleInputChange();
-                editor.tf.focus();
-              }
-            }}
-            data-plate-focus="true"
-            type="text"
-          />
-        </PopoverTrigger>
-        <PopoverContent
-          className="ignore-click-outside/toolbar w-10 px-px py-1"
-          onOpenAutoFocus={(e) => e.preventDefault()}
-        >
-          {FONT_SIZES.map((size) => (
-            <button
-              key={size}
-              className={cn(
-                'hover:bg-accent data-[highlighted=true]:bg-accent flex h-8 w-full items-center justify-center text-sm',
-              )}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                editor.tf.focus();
-                tf.fontSize.addMark(`${size}px`);
-                setIsFocused(false);
-              }}
-              data-highlighted={size === displayValue}
-              type="button"
+          <Popover open={isFocused} modal={false}>
+            <PopoverTrigger asChild>
+              <input
+                className={cn(
+                  'hover:bg-muted h-full w-10 shrink-0 bg-transparent px-1 text-center text-sm',
+                )}
+                value={displayValue}
+                onBlur={() => {
+                  setIsFocused(false);
+                  handleInputChange();
+                }}
+                onChange={(e) => setInputValue(e.target.value)}
+                onFocus={() => {
+                  setIsFocused(true);
+                  setInputValue(toUnitLess(cursorFontSize));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInputChange();
+                    editor.tf.focus();
+                  }
+                }}
+                data-plate-focus="true"
+                type="text"
+              />
+            </PopoverTrigger>
+            <PopoverContent
+              className="ignore-click-outside/toolbar w-10 px-px py-1"
+              onOpenAutoFocus={(e) => e.preventDefault()}
             >
-              {size}
-            </button>
-          ))}
-        </PopoverContent>
-      </Popover>
+              {FONT_SIZES.map((size) => (
+                <button
+                  key={size}
+                  className={cn(
+                    'hover:bg-accent data-[highlighted=true]:bg-accent flex h-8 w-full items-center justify-center text-sm',
+                  )}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    editor.tf.focus();
+                    tf.fontSize.addMark(`${size}px`);
+                    setIsFocused(false);
+                  }}
+                  data-highlighted={size === displayValue}
+                  type="button"
+                >
+                  {size}
+                </button>
+              ))}
+            </PopoverContent>
+          </Popover>
 
-      <ToolbarButton onClick={() => handleFontSizeChange(1)}>
-        <Plus />
-      </ToolbarButton>
-    </div>
+          <ToolbarButton onClick={() => handleFontSizeChange(1)}>
+            <Plus />
+          </ToolbarButton>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>Font size</TooltipContent>
+    </Tooltip>
   );
 }

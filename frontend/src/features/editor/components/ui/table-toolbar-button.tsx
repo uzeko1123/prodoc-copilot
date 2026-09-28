@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
+import { getColSpan, getRowSpan, getTableGridAbove } from '@platejs/table';
 import { TablePlugin, useTableMergeState } from '@platejs/table/react';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { cn } from 'cn';
@@ -42,6 +43,13 @@ export function TableToolbarButton(props: DropdownMenuProps) {
   const { editor, tf } = useEditorPlugin(TablePlugin);
   const [open, setOpen] = React.useState(false);
   const mergeState = useTableMergeState();
+
+  const canSplit = useEditorSelector((editor) => {
+    const cellEntries = getTableGridAbove(editor, { format: 'cell' });
+    if (cellEntries.length !== 1) return false;
+    const cell = cellEntries[0][0];
+    return getColSpan(cell) > 1 || getRowSpan(cell) > 1;
+  }, []);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
@@ -88,7 +96,7 @@ export function TableToolbarButton(props: DropdownMenuProps) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="min-w-45"
-                disabled={!mergeState.canSplit}
+                disabled={!canSplit}
                 onSelect={() => {
                   tf.table.split();
                   editor.tf.focus();
