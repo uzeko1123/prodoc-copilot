@@ -4,7 +4,7 @@ import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
-import { insertAtEndSuggestion } from './utils/suggestion';
+import { applyGenerateSuggestion } from './utils/suggestion';
 
 export type GenerateToolIO = {
   blockId: string;
@@ -82,7 +82,7 @@ function applyGenerate(editor: PlateEditor, aiGenerate: GenerateToolIO) {
   withAIBatch(
     editor,
     () => {
-      insertAtEndSuggestion(editor, range, aiGenerate.generate);
+      applyGenerateSuggestion(editor, range, aiGenerate.generate);
     },
     { split: true },
   );

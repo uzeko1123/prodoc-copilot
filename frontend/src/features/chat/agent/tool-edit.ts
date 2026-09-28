@@ -4,7 +4,7 @@ import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
-import { replaceRangeSuggestion } from './utils/suggestion';
+import { applyEditSuggestion } from './utils/suggestion';
 
 export type EditToolIO = {
   blockId: string;
@@ -83,7 +83,7 @@ function applyEdit(editor: PlateEditor, aiEdit: EditToolIO) {
   withAIBatch(
     editor,
     () => {
-      replaceRangeSuggestion(editor, range, aiEdit.edit);
+      applyEditSuggestion(editor, range, aiEdit.edit);
     },
     { split: true },
   );

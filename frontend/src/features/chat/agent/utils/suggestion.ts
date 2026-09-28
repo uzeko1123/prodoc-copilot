@@ -71,7 +71,7 @@ function insertSuggestion(
 }
 
 /** Insert markdown at the end of `range` as an insert suggestion. */
-export function insertAtEndSuggestion(
+export function applyGenerateSuggestion(
   editor: PlateEditor,
   range: TRange,
   md: string,
@@ -87,7 +87,7 @@ export function insertAtEndSuggestion(
  * collapsed range cannot be remove-marked (the mark would land on the whole
  * block), so it degrades to a pure insert.
  */
-export function replaceRangeSuggestion(
+export function applyEditSuggestion(
   editor: PlateEditor,
   range: TRange,
   md: string,
