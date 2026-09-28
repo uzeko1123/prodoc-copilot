@@ -94,20 +94,20 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
 
           <DropdownMenuRadioItem
             className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
-            value="viewing"
-          >
-            <Indicator />
-            {item.viewing.icon}
-            {item.viewing.label}
-          </DropdownMenuRadioItem>
-
-          <DropdownMenuRadioItem
-            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
             value="suggestion"
           >
             <Indicator />
             {item.suggestion.icon}
             {item.suggestion.label}
+          </DropdownMenuRadioItem>
+
+          <DropdownMenuRadioItem
+            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+            value="viewing"
+          >
+            <Indicator />
+            {item.viewing.icon}
+            {item.viewing.label}
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
