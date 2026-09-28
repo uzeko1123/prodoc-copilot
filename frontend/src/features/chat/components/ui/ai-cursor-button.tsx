@@ -110,7 +110,7 @@ export function AICursorButton() {
           <TooltipContent side="bottom">
             AI commands
             <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
-              Ctrl+Q
+              Tab
             </kbd>
           </TooltipContent>
         </Tooltip>

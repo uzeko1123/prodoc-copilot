@@ -62,28 +62,25 @@ function FloatingToolbarButtonsWithSelection() {
 
           <ToolbarSeparator className="self-stretch" />
 
-          <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold (⌘+B)">
+          <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold">
             <BoldIcon />
           </MarkToolbarButton>
-          <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic (⌘+I)">
+          <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic">
             <ItalicIcon />
           </MarkToolbarButton>
-          <MarkToolbarButton
-            nodeType={KEYS.underline}
-            tooltip="Underline (⌘+U)"
-          >
+          <MarkToolbarButton nodeType={KEYS.underline} tooltip="Underline">
             <UnderlineIcon />
           </MarkToolbarButton>
           <MarkToolbarButton
             nodeType={KEYS.strikethrough}
-            tooltip="Strikethrough (⌘+⇧+M)"
+            tooltip="Strikethrough"
           >
             <StrikethroughIcon />
           </MarkToolbarButton>
 
           <ToolbarSeparator className="self-stretch" />
 
-          <MarkToolbarButton nodeType={KEYS.code} tooltip="Code (⌘+E)">
+          <MarkToolbarButton nodeType={KEYS.code} tooltip="Code">
             <Code2Icon />
           </MarkToolbarButton>
           <InlineEquationToolbarButton />

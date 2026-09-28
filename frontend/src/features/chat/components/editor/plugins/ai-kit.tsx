@@ -28,7 +28,7 @@ export const aiChatPlugin = AIChatPlugin.extend({
     ),
     node: AIAnchorElement,
   },
-  shortcuts: { show: { keys: 'mod+q' } },
+  shortcuts: { show: { keys: 'Tab' } },
   // useHooks: useChat,
   useHooks: useAgent,
 }).extendApi(({ api, getOptions, setOption }) => {
