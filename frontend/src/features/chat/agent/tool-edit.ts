@@ -1,15 +1,10 @@
 import { withAIBatch } from '@platejs/ai';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
-import { deserializeMd } from '@platejs/markdown';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
-import {
-  insertFragmentSuggestion,
-  setSuggestionNodes,
-} from '@platejs/suggestion';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
-import { RangeApi } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
+import { replaceRangeSuggestion } from './utils/suggestion';
 
 export type EditToolIO = {
   blockId: string;
@@ -88,11 +83,7 @@ function applyEdit(editor: PlateEditor, aiEdit: EditToolIO) {
   withAIBatch(
     editor,
     () => {
-      if (aiEdit.edit.length > 0) {
-        editor.tf.select(RangeApi.end(range));
-        insertFragmentSuggestion(editor, deserializeMd(editor, aiEdit.edit));
-      }
-      setSuggestionNodes(editor, { at: range });
+      replaceRangeSuggestion(editor, range, aiEdit.edit);
     },
     { split: true },
   );

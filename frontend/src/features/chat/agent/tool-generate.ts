@@ -1,12 +1,10 @@
 import { withAIBatch } from '@platejs/ai';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
-import { deserializeMd } from '@platejs/markdown';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
-import { insertFragmentSuggestion } from '@platejs/suggestion';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
-import { RangeApi } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
+import { insertAtEndSuggestion } from './utils/suggestion';
 
 export type GenerateToolIO = {
   blockId: string;
@@ -84,11 +82,7 @@ function applyGenerate(editor: PlateEditor, aiGenerate: GenerateToolIO) {
   withAIBatch(
     editor,
     () => {
-      editor.tf.select(RangeApi.end(range));
-      insertFragmentSuggestion(
-        editor,
-        deserializeMd(editor, aiGenerate.generate),
-      );
+      insertAtEndSuggestion(editor, range, aiGenerate.generate);
     },
     { split: true },
   );
