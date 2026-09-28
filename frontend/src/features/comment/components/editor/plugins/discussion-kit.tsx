@@ -52,7 +52,7 @@ export const getDiscussionBlockClickTarget = ({
   });
 
 const avatarUrl = (seed: string) =>
-  `https://api.dicebear.com/9.x/glass/svg?seed=${seed}`;
+  `#https://api.dicebear.com/9.x/glass/svg?seed=${seed}`;
 
 const usersData: Record<
   string,

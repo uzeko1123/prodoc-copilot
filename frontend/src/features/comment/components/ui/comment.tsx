@@ -1,11 +1,6 @@
 'use client';
 
 import { BasicMarksKit } from '@/components/shadcn/editor/plugins/basic-marks-kit';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/shadcn/ui/avatar';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   DropdownMenu,
@@ -56,6 +51,7 @@ import {
   discussionPlugin,
   type TDiscussion,
 } from '../editor/plugins/discussion-kit';
+import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 
 export type TComment = {
   id: string;

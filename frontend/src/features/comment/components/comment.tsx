@@ -103,7 +103,7 @@ export function Comment() {
           </EmptyHeader>
         </Empty>
       )}
-       {commentItems.map((commentItem) =>
+      {commentItems.map((commentItem) =>
         commentItem.type === 'draft' ? (
           <DraftCommentCard key={commentItem.id} />
         ) : (
