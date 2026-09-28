@@ -67,8 +67,14 @@ export function Chat() {
     [],
   );
 
-  const chatStatus = usePluginOptions(AIChatPlugin, (o) => o.chat?.status);
-  const chatError = usePluginOptions(AIChatPlugin, (o) => o.chat?.error);
+  const chatStatus = usePluginOptions(
+    AIChatPlugin,
+    (options) => options.chat?.status,
+  );
+  const chatError = usePluginOptions(
+    AIChatPlugin,
+    (options) => options.chat?.error,
+  );
   const isBusy = chatStatus === 'submitted' || chatStatus === 'streaming';
 
   const chatMode = useChatStore((state) => state.chatMode);

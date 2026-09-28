@@ -31,11 +31,10 @@ export const aiChatPlugin = AIChatPlugin.extend({
   shortcuts: { show: { keys: 'mod+q' } },
   // useHooks: useChat,
   useHooks: useAgent,
-}).extendApi(({ api, getOption, getOptions, setOption }) => {
+}).extendApi(({ api, getOptions, setOption }) => {
   const { show, hide, submit } = api.aiChat;
 
   const isRunning = () =>
-    getOption('streaming') ||
     getOptions().chat?.status === 'streaming' ||
     getOptions().chat?.status === 'submitted';
 

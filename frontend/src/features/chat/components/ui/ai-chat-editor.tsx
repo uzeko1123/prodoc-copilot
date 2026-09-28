@@ -1,10 +1,10 @@
 'use client';
 
-import { BaseEditorKit } from '@/components/shadcn/editor/editor-base-kit';
 import { EditorStatic } from '@/components/shadcn/ui/editor-static';
 import { useAIChatEditor } from '@platejs/ai/react';
 import { createSlateEditor, type SlateEditor } from 'platejs';
 import * as React from 'react';
+import { BaseEditorKit } from '../editor/editor-base-kit';
 
 let editorStatic: SlateEditor | null = null;
 
