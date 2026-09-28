@@ -7,6 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/shadcn/ui/command';
+import { Spinner } from '@/components/shadcn/ui/spinner';
 import { useChatStore } from '@/features/chat/stores';
 import { AIChatPlugin, useEditorChat } from '@platejs/ai/react';
 import {
@@ -29,7 +30,6 @@ import {
   FeatherIcon,
   ListMinus,
   ListPlus,
-  Loader2Icon,
   PauseIcon,
   PenLine,
   SendIcon,
@@ -222,7 +222,8 @@ export function AIMenu() {
       >
         {isLoading ? (
           <div className="text-muted-foreground flex grow items-center justify-center gap-2 p-2 text-sm select-none">
-            <Loader2Icon className="size-4 animate-spin" /> Working . . .
+            <Spinner className="size-3.5" />
+            <span className="shimmer">Working . . .</span>
           </div>
         ) : (
           <>

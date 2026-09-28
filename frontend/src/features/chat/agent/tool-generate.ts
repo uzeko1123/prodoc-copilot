@@ -1,34 +1,51 @@
-import { AIChatPlugin } from '@platejs/ai/react';
+import { withAIBatch } from '@platejs/ai';
+import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
+import { deserializeMd } from '@platejs/markdown';
+import { BlockSelectionPlugin } from '@platejs/selection/react';
+import { insertFragmentSuggestion } from '@platejs/suggestion';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
+import { RangeApi } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
-import { applyGenerate } from './utils/suggestion';
 
-type GenerateToolIO = { content: string };
+export type GenerateToolIO = {
+  blockId: string;
+  content: string;
+  generate: string;
+};
 
 export type GenerateTool = {
   generate: { input: GenerateToolIO; output: GenerateToolIO };
 };
 
-const schema = jsonSchema<GenerateToolIO>({
+const generateIOSchema = jsonSchema<GenerateToolIO>({
   properties: {
+    blockId: {
+      description: 'Target block ID',
+      type: 'string',
+    },
     content: {
-      description: 'Content (markdown)',
+      description:
+        'Original text in the target block, used to locate the range (fuzzy match)',
+      type: 'string',
+    },
+    generate: {
+      description: 'New content (Markdown), inserted at the end of the range',
       type: 'string',
     },
   },
-  required: ['content'],
+  required: ['blockId', 'content', 'generate'],
   additionalProperties: false,
   type: 'object',
 });
 
 export const generateTool = tool({
-  description: 'Generate',
-  inputSchema: schema,
-  outputSchema: schema,
+  description: 'Insert new content at the end of a text range',
+  inputSchema: generateIOSchema,
+  outputSchema: generateIOSchema,
 });
 
-const applied = new Map<string, string>();
+const applied = new Set<string>();
 const output = new Set<string>();
 
 export function applyGenerateTool(
@@ -45,23 +62,36 @@ export function applyGenerateTool(
     });
   }
 
-  const content = part.input?.content;
-  if (typeof content !== 'string') return;
-  let appliedContent = applied.get(part.toolCallId) ?? '';
-  if (!content.startsWith(appliedContent)) appliedContent = '';
-  if (content === appliedContent) return;
-  applied.set(part.toolCallId, content);
+  if (part.state !== 'input-available') return;
+  if (applied.has(part.toolCallId)) return;
+  applied.add(part.toolCallId);
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'generate');
-  applyGenerate(
-    editor,
-    content.slice(appliedContent.length),
-    appliedContent === '',
-  );
+  applyGenerate(editor, part.input);
 }
 
 export function resetGenerateTool() {
   applied.clear();
   output.clear();
+}
+
+function applyGenerate(editor: PlateEditor, aiGenerate: GenerateToolIO) {
+  const range = aiCommentToRange(editor, { ...aiGenerate, comment: '' });
+
+  if (!range) return console.warn('No range found for AI generate');
+
+  withAIBatch(
+    editor,
+    () => {
+      editor.tf.select(RangeApi.end(range));
+      insertFragmentSuggestion(
+        editor,
+        deserializeMd(editor, aiGenerate.generate),
+      );
+    },
+    { split: true },
+  );
+
+  editor.getApi(BlockSelectionPlugin).blockSelection.deselect();
 }
