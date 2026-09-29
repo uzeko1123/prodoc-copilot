@@ -19,6 +19,7 @@ import {
   Heading3Icon,
   Heading4Icon,
   Heading5Icon,
+  Heading6Icon,
   ListIcon,
   ListOrderedIcon,
   MinusIcon,
@@ -78,6 +79,11 @@ const groups: Group[] = [
         icon: <Heading5Icon />,
         label: 'Heading 5',
         value: 'h5',
+      },
+      {
+        icon: <Heading6Icon />,
+        label: 'Heading 6',
+        value: 'h6',
       },
     ].map((item) => ({
       ...item,
@@ -157,7 +163,7 @@ export function InsertToolbarButton(props: DropdownMenuProps) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="flex max-h-125 w-auto min-w-0 flex-col overflow-y-auto"
+        className="flex w-auto min-w-0 flex-col overflow-y-auto"
         align="start"
       >
         {groups.map(({ group, items: nestedItems }) => (

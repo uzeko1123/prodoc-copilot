@@ -23,6 +23,7 @@ import {
   Heading3Icon,
   Heading4Icon,
   Heading5Icon,
+  Heading6Icon,
   PilcrowIcon,
 } from 'lucide-react';
 import type { TElement } from 'platejs';
@@ -67,6 +68,12 @@ export const turnIntoItems = [
     keywords: ['subtitle', 'h5'],
     label: 'Heading 5',
     value: 'h5',
+  },
+  {
+    icon: <Heading6Icon />,
+    keywords: ['subtitle', 'h6'],
+    label: 'Heading 6',
+    value: 'h6',
   },
 ];
 
