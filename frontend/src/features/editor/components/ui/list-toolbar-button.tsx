@@ -152,7 +152,9 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              <span className="font-medium">1, 2, 3, . . .</span>
+              <span className="font-medium">
+                <span className="tracking-widest">1, 2, 3, </span>. . .
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -172,7 +174,9 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              <span className="font-medium">a, b, c, . . .</span>
+              <span className="font-medium">
+                <span className="tracking-widest">a, b, c, </span>. . .
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -181,7 +185,9 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              <span className="font-medium">A, B, C, . . .</span>
+              <span className="font-medium">
+                <span className="tracking-widest">A, B, C, </span>. . .
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -190,7 +196,9 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              <span className="font-medium">i, ii, iii, . . .</span>
+              <span className="font-medium">
+                <span className="tracking-widest">i, ii, iii, </span>. . .
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -199,7 +207,9 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              <span className="font-medium">I, II, III, . . .</span>
+              <span className="font-medium">
+                <span className="tracking-widest">I, II, III, </span>. . .
+              </span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
