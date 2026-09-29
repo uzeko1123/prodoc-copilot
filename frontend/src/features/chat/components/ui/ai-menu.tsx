@@ -141,12 +141,7 @@ export function AIMenu() {
       if (selection) {
         const rangeRect = getRangeBoundingClientRect(editor, selection);
         if (rangeRect && (rangeRect.width > 0 || rangeRect.height > 0)) {
-          return new DOMRect(
-            anchorElementRect?.x ?? rangeRect.x,
-            rangeRect.y,
-            anchorElementRect?.width ?? rangeRect.width,
-            rangeRect.height,
-          );
+          return rangeRect;
         }
       }
       return anchorElementRect ?? getDefaultBoundingClientRect();
@@ -211,11 +206,8 @@ export function AIMenu() {
   return (
     <div
       ref={ref}
-      className="z-50 flex max-h-[50%] flex-col border-none bg-transparent p-0 shadow-none"
-      style={{
-        ...floating.style,
-        width: anchorElement.offsetWidth,
-      }}
+      className="z-50 flex max-h-[50%] min-w-[50%] flex-col border-none bg-transparent p-0 shadow-none"
+      style={floating.style}
     >
       <Command
         className="w-full rounded-lg border shadow-md"
