@@ -25,7 +25,7 @@ import {
 } from 'platejs/react';
 import * as React from 'react';
 
-const UNDRAGGABLE_KEYS = [KEYS.column, KEYS.tr, KEYS.td];
+const UNDRAGGABLE_KEYS = [KEYS.tr, KEYS.td];
 
 export const BlockDraggable: RenderNodeWrapper = (props) => {
   const { editor, element, path } = props;
@@ -33,18 +33,6 @@ export const BlockDraggable: RenderNodeWrapper = (props) => {
   const enabled = React.useMemo(() => {
     if (path.length === 1 && !isType(editor, element, UNDRAGGABLE_KEYS)) {
       return true;
-    }
-    if (path.length === 3 && !isType(editor, element, UNDRAGGABLE_KEYS)) {
-      const block = editor.api.some({
-        at: path,
-        match: {
-          type: editor.getType(KEYS.column),
-        },
-      });
-
-      if (block) {
-        return true;
-      }
     }
     if (path.length === 4 && !isType(editor, element, UNDRAGGABLE_KEYS)) {
       const block = editor.api.some({
@@ -88,7 +76,6 @@ function Draggable(props: PlateElementProps) {
       },
     });
 
-  const isInColumn = path.length === 3;
   const isInTable = path.length === 4;
 
   const [previewTop, setPreviewTop] = React.useState(0);
@@ -133,18 +120,11 @@ function Draggable(props: PlateElementProps) {
     >
       {!isInTable && (
         <Gutter>
-          <div
-            className={cn(
-              'slate-blockToolbarWrapper',
-              'flex h-[1.5em]',
-              isInColumn && 'h-4',
-            )}
-          >
+          <div className={cn('slate-blockToolbarWrapper', 'flex h-[1.5em]')}>
             <div
               className={cn(
                 'slate-blockToolbar relative w-4.5',
                 'pointer-events-auto mr-1 flex items-center',
-                isInColumn && 'mr-1.5',
               )}
             >
               <Button

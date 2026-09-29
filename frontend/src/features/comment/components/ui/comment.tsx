@@ -1,6 +1,5 @@
 'use client';
 
-import { BasicMarksKit } from '@/components/shadcn/editor/plugins/basic-marks-kit';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   DropdownMenu,
@@ -10,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { Editor, EditorContainer } from '@/components/shadcn/ui/editor';
+import { BasicMarksKit } from '@/features/editor/components/editor/plugins/basic-marks-kit';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
 import { cn } from 'cn';

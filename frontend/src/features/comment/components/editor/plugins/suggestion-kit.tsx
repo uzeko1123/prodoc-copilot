@@ -33,12 +33,7 @@ export type SuggestionConfig = ExtendConfig<
   }
 >;
 
-const INLINE_SUGGESTION_TARGET_PLUGINS = [
-  KEYS.date,
-  KEYS.inlineEquation,
-  KEYS.link,
-  KEYS.mention,
-];
+const INLINE_SUGGESTION_TARGET_PLUGINS = [KEYS.inlineEquation, KEYS.link];
 
 function getInlineSuggestionData(editor: PlateEditor, element: TElement) {
   const suggestionApi = editor.getApi(BaseSuggestionPlugin).suggestion;

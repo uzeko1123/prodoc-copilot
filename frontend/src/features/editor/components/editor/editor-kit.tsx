@@ -7,7 +7,7 @@ import { BlockPlaceholderKit } from '@/components/shadcn/editor/plugins/block-pl
 import { CodeBlockKit } from '@/components/shadcn/editor/plugins/code-block-kit';
 // import { ColumnKit } from '@/components/shadcn/editor/plugins/column-kit';
 // import { DateKit } from '@/components/shadcn/editor/plugins/date-kit';
-import { DocxKit } from '@/components/shadcn/editor/plugins/docx-kit';
+// import { DocxKit } from '@/components/shadcn/editor/plugins/docx-kit';
 // import { EmojiKit } from '@/components/shadcn/editor/plugins/emoji-kit';
 import { ExitBreakKit } from '@/components/shadcn/editor/plugins/exit-break-kit';
 import { FontKit } from '@/components/shadcn/editor/plugins/font-kit';
@@ -18,7 +18,7 @@ import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
 // import { SlashKit } from '@/components/shadcn/editor/plugins/slash-kit';
 // import { ToggleKit } from '@/components/shadcn/editor/plugins/toggle-kit';
 import { AIKit } from '@/features/chat/components/editor/plugins/ai-kit';
-import { CopilotKit } from '@/features/chat/components/editor/plugins/copilot-kit';
+// import { CopilotKit } from '@/features/chat/components/editor/plugins/copilot-kit';
 import { CommentKit } from '@/features/comment/components/editor/plugins/comment-kit';
 import { DiscussionKit } from '@/features/comment/components/editor/plugins/discussion-kit';
 import { SuggestionKit } from '@/features/comment/components/editor/plugins/suggestion-kit';
@@ -39,7 +39,7 @@ import { TableKit } from './plugins/table-kit';
 import { TocKit } from './plugins/toc-kit';
 
 export const EditorKit = [
-  ...CopilotKit,
+  // ...CopilotKit,
   ...AIKit,
 
   // Elements
@@ -82,7 +82,7 @@ export const EditorKit = [
   TrailingBlockPlugin,
 
   // Parsers
-  ...DocxKit,
+  // ...DocxKit,
   ...MarkdownKit,
 
   // UI

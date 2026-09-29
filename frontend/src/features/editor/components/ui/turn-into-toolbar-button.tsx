@@ -5,15 +5,15 @@ import {
   setBlockType,
 } from '@/components/shadcn/editor/transforms';
 import {
-  ToolbarButton,
-  ToolbarMenuGroup,
-} from '@/components/shadcn/ui//toolbar';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
+import {
+  ToolbarButton,
+  ToolbarMenuGroup,
+} from '@/components/shadcn/ui/toolbar';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenuItemIndicator } from '@radix-ui/react-dropdown-menu';
 import {

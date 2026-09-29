@@ -13,7 +13,6 @@ import type {
   TSuggestionText,
   WithRequiredKey,
 } from 'platejs';
-import { KEYS } from 'platejs';
 import type {
   PlateEditor,
   PlateLeafProps,
@@ -53,20 +52,17 @@ export const suggestionVariants = cva(
 );
 
 export function getBlockSuggestionWrapperClassName({
-  elementType,
   isActive,
   isHover,
   isInsert,
   isRemove,
 }: {
-  elementType?: string;
   isActive: boolean;
   isHover: boolean;
   isInsert: boolean;
   isRemove: boolean;
 }) {
   return cn(
-    elementType === KEYS.columnGroup && 'flex size-full rounded',
     suggestionVariants({
       insertActive: isInsert && (isActive || isHover),
       remove: isRemove,
@@ -258,10 +254,7 @@ export const SuggestionLineBreak: RenderNodeWrapper<AnyPluginConfig> = ({
 
   return function Component({ children }) {
     return (
-      <SuggestionLineBreakContent
-        elementType={element.type}
-        suggestionData={suggestionData}
-      >
+      <SuggestionLineBreakContent suggestionData={suggestionData}>
         {children}
       </SuggestionLineBreakContent>
     );
@@ -270,11 +263,9 @@ export const SuggestionLineBreak: RenderNodeWrapper<AnyPluginConfig> = ({
 
 export function SuggestionLineBreakContent({
   children,
-  elementType,
   suggestionData,
 }: {
   children: React.ReactNode;
-  elementType?: string;
   suggestionData: TSuggestionData;
 }) {
   const { isLineBreak, type } = suggestionData;
@@ -348,7 +339,6 @@ export function SuggestionLineBreakContent({
       ) : (
         <div
           className={getBlockSuggestionWrapperClassName({
-            elementType,
             isActive,
             isHover,
             isInsert,

@@ -1,6 +1,6 @@
 'use client';
 
-import { blockSelectionVariants } from '@/components/shadcn/ui//block-selection';
+import { blockSelectionVariants } from '@/components/shadcn/ui/block-selection';
 import { Button } from '@/components/shadcn/ui/button';
 import { useDraggable, useDropLine } from '@platejs/dnd';
 import { resizeLengthClampStatic } from '@platejs/resizable';

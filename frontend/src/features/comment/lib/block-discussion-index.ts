@@ -87,10 +87,7 @@ const discussionIndexCache = new WeakMap<
 
 const TYPE_TEXT_MAP: Record<string, (node?: TElement) => string> = {
   [KEYS.audio]: () => 'Audio',
-  [KEYS.blockquote]: () => 'Blockquote',
-  [KEYS.callout]: () => 'Callout',
   [KEYS.codeBlock]: () => 'Code Block',
-  [KEYS.column]: () => 'Column',
   [KEYS.equation]: () => 'Equation',
   [KEYS.file]: () => 'File',
   [KEYS.h1]: () => 'Heading 1',
@@ -111,7 +108,6 @@ const TYPE_TEXT_MAP: Record<string, (node?: TElement) => string> = {
   },
   [KEYS.table]: () => 'Table',
   [KEYS.toc]: () => 'Table of Contents',
-  [KEYS.toggle]: () => 'Toggle',
   [KEYS.video]: () => 'Video',
 };
 

@@ -24,7 +24,7 @@ export const BlockSelectionKit = [
     options: {
       enableContextMenu: true,
       isSelectable: (element) =>
-        !getPluginTypes(editor, [KEYS.column, KEYS.codeLine, KEYS.td]).includes(
+        !getPluginTypes(editor, [KEYS.codeLine, KEYS.td]).includes(
           element.type,
         ),
       onKeyDownSelecting: (editor, e) => {
