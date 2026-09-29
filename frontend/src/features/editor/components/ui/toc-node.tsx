@@ -55,9 +55,7 @@ export function TocElement(props: PlateElementProps) {
             </Button>
           ))
         ) : (
-          <div className="text-sm text-gray-500">
-            Create a heading to display the table of contents.
-          </div>
+          <div className="text-sm text-gray-500">创建标题后展示目录</div>
         )}
       </div>
       {props.children}

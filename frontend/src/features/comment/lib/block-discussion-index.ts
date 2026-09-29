@@ -86,29 +86,29 @@ const discussionIndexCache = new WeakMap<
 >();
 
 const TYPE_TEXT_MAP: Record<string, (node?: TElement) => string> = {
-  [KEYS.audio]: () => 'Audio',
-  [KEYS.codeBlock]: () => 'Code Block',
-  [KEYS.equation]: () => 'Equation',
-  [KEYS.file]: () => 'File',
-  [KEYS.h1]: () => 'Heading 1',
-  [KEYS.h2]: () => 'Heading 2',
-  [KEYS.h3]: () => 'Heading 3',
-  [KEYS.h4]: () => 'Heading 4',
-  [KEYS.h5]: () => 'Heading 5',
-  [KEYS.h6]: () => 'Heading 6',
-  [KEYS.hr]: () => 'Horizontal Rule',
-  [KEYS.img]: () => 'Image',
-  [KEYS.mediaEmbed]: () => 'Media',
+  [KEYS.audio]: () => '音频',
+  [KEYS.codeBlock]: () => '代码块',
+  [KEYS.equation]: () => '公式',
+  [KEYS.file]: () => '文件',
+  [KEYS.h1]: () => '标题 1',
+  [KEYS.h2]: () => '标题 2',
+  [KEYS.h3]: () => '标题 3',
+  [KEYS.h4]: () => '标题 4',
+  [KEYS.h5]: () => '标题 5',
+  [KEYS.h6]: () => '标题 6',
+  [KEYS.hr]: () => '分隔线',
+  [KEYS.img]: () => '图片',
+  [KEYS.mediaEmbed]: () => '媒体',
   [KEYS.p]: (node) => {
-    if (node?.[KEYS.listType] === KEYS.listTodo) return 'Todo List';
-    if (node?.[KEYS.listType] === KEYS.ol) return 'Ordered List';
-    if (node?.[KEYS.listType] === KEYS.ul) return 'List';
+    if (node?.[KEYS.listType] === KEYS.listTodo) return '待办列表';
+    if (node?.[KEYS.listType] === KEYS.ol) return '有序列表';
+    if (node?.[KEYS.listType] === KEYS.ul) return '列表';
 
-    return 'Paragraph';
+    return '段落';
   },
-  [KEYS.table]: () => 'Table',
-  [KEYS.toc]: () => 'Table of Contents',
-  [KEYS.video]: () => 'Video',
+  [KEYS.table]: () => '表格',
+  [KEYS.toc]: () => '目录',
+  [KEYS.video]: () => '视频',
 };
 
 const appendByKey = <T>(map: Map<string, T[]>, key: string, value: T) => {
@@ -166,11 +166,11 @@ const formatSuggestionDateText = (date: string) => {
     left.getMonth() === right.getMonth() &&
     left.getFullYear() === right.getFullYear();
 
-  if (sameDay(elementDate, today)) return 'Today';
-  if (sameDay(elementDate, yesterday)) return 'Yesterday';
-  if (sameDay(elementDate, tomorrow)) return 'Tomorrow';
+  if (sameDay(elementDate, today)) return '今天';
+  if (sameDay(elementDate, yesterday)) return '昨天';
+  if (sameDay(elementDate, tomorrow)) return '明天';
 
-  return elementDate.toLocaleDateString(undefined, {
+  return elementDate.toLocaleDateString('zh-CN', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

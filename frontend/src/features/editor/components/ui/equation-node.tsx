@@ -77,7 +77,7 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
             ) : (
               <div className="text-muted-foreground flex h-7 w-full items-center gap-2 text-sm whitespace-nowrap">
                 <RadicalIcon className="text-muted-foreground/80 size-6" />
-                <div>Add a Tex equation</div>
+                <div>输入 TeX 公式 . . .</div>
               </div>
             )}
             {lineBreakBadge}
@@ -87,7 +87,7 @@ export function EquationElement(props: PlateElementProps<TEquationElement>) {
         <EquationPopoverContent
           open={open}
           placeholder={
-            'f(x) = \\begin{cases}\n  x^2, &\\quad x > 0 \\\\\n  0, &\\quad x = 0 \\\\\n  -x^2, &\\quad x < 0\n\\end{cases}'
+            '\\text{sgn}(x) = \\begin{cases}\n  -1, & x < 0 \\\\\n   0, & x = 0 \\\\\n   1, & x > 0\n\\end{cases}'
           }
           isInline={false}
           setOpen={setOpen}
@@ -171,7 +171,7 @@ export function InlineEquationElement(
             {texExpression.length === 0 && (
               <span>
                 <RadicalIcon className="mr-1 inline-block h-4.75 w-4 py-[1.5px] align-text-bottom" />
-                New equation
+                TeX 公式
               </span>
             )}
           </div>
@@ -180,7 +180,7 @@ export function InlineEquationElement(
         <EquationPopoverContent
           className="my-auto"
           open={open}
-          placeholder="E = mc^2"
+          placeholder="e^{i\pi} + 1 = 0"
           setOpen={setOpen}
           isInline
         />
@@ -232,21 +232,24 @@ const EquationPopoverContent = ({
 
   return (
     <PopoverContent
-      className="ignore-click-outside/toolbar flex gap-2"
+      className="ignore-click-outside/toolbar flex w-80 gap-2"
       onEscapeKeyDown={(e) => {
         e.preventDefault();
       }}
       contentEditable={false}
     >
       <EquationInput
-        className={cn('max-h-[50vh] grow resize-none p-2 text-sm', className)}
+        className={cn(
+          'max-h-50 grow resize-none p-2 font-mono text-sm',
+          className,
+        )}
         state={{ isInline, open, onClose }}
         autoFocus
         {...props}
       />
 
       <Button variant="secondary" className="px-3" onClick={onClose}>
-        Done <CornerDownLeftIcon className="size-3.5" />
+        完成 <CornerDownLeftIcon className="size-3.5" />
       </Button>
     </PopoverContent>
   );

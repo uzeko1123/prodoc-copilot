@@ -3,6 +3,11 @@
 import { buttonVariants } from '@/components/shadcn/ui/button';
 import { Separator } from '@/components/shadcn/ui/separator';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
+import {
   flip,
   offset,
   shift,
@@ -139,7 +144,7 @@ export function LinkFloatingToolbar({
 
         <FloatingLinkUrlInput
           className={inputVariants()}
-          placeholder="Paste link"
+          placeholder="链接地址 . . ."
           data-plate-focus
         />
       </div>
@@ -150,7 +155,7 @@ export function LinkFloatingToolbar({
         </div>
         <input
           className={inputVariants()}
-          placeholder="Text to display"
+          placeholder="展示文本 . . ."
           data-plate-focus
           {...textInputProps}
         />
@@ -167,25 +172,37 @@ export function LinkFloatingToolbar({
         type="button"
         {...editButtonProps}
       >
-        Edit link
+        编辑链接
       </button>
 
       <Separator orientation="vertical" />
 
-      <LinkOpenButton />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div>
+            <LinkOpenButton />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>打开链接</TooltipContent>
+      </Tooltip>
 
       <Separator orientation="vertical" />
 
-      <button
-        className={buttonVariants({
-          size: 'sm',
-          variant: 'ghost',
-        })}
-        type="button"
-        {...unlinkButtonProps}
-      >
-        <Unlink width={18} />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            className={buttonVariants({
+              size: 'sm',
+              variant: 'ghost',
+            })}
+            type="button"
+            {...unlinkButtonProps}
+          >
+            <Unlink width={18} />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>删除链接</TooltipContent>
+      </Tooltip>
     </div>
   );
 
@@ -231,7 +248,6 @@ function LinkOpenButton() {
       onMouseOver={(e) => {
         e.stopPropagation();
       }}
-      aria-label="Open link in a new tab"
       target="_blank"
       rel="noopener noreferrer nofollow"
     >

@@ -25,13 +25,13 @@ export function MoreToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Insert">
+        <ToolbarButton pressed={open} tooltip="更多">
           <MoreHorizontalIcon />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="ignore-click-outside/toolbar flex max-h-125 w-auto min-w-45 flex-col overflow-y-auto"
+        className="ignore-click-outside/toolbar flex max-h-125 w-auto flex-col overflow-y-auto"
         align="start"
       >
         <DropdownMenuGroup>
@@ -44,7 +44,7 @@ export function MoreToolbarButton(props: DropdownMenuProps) {
             }}
           >
             <SuperscriptIcon />
-            Superscript
+            上标
             {/* (⌘+,) */}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -56,7 +56,7 @@ export function MoreToolbarButton(props: DropdownMenuProps) {
             }}
           >
             <SubscriptIcon />
-            Subscript
+            下标
             {/* (⌘+.) */}
           </DropdownMenuItem>
         </DropdownMenuGroup>

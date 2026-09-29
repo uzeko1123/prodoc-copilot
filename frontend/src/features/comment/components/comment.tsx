@@ -96,10 +96,8 @@ export function Comment() {
             <EmptyMedia variant="icon">
               <MessagesSquareIcon />
             </EmptyMedia>
-            <EmptyTitle>No comments</EmptyTitle>
-            <EmptyDescription>
-              Select the text in the editor to leave a comment
-            </EmptyDescription>
+            <EmptyTitle>暂无评论</EmptyTitle>
+            <EmptyDescription>在编辑器中选择内容即可发表评论</EmptyDescription>
           </EmptyHeader>
         </Empty>
       )}

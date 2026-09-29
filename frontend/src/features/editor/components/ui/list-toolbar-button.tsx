@@ -37,7 +37,7 @@ export function BulletedListToolbarButton() {
   );
 
   return (
-    <ToolbarSplitButton tooltip="Bulleted List" pressed={open}>
+    <ToolbarSplitButton tooltip="无序列表" pressed={open}>
       <ToolbarSplitButtonPrimary
         className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
         onClick={() => {
@@ -70,7 +70,7 @@ export function BulletedListToolbarButton() {
             >
               <div className="flex items-center gap-2">
                 <div className="size-2 rounded-full border border-current bg-current" />
-                Default
+                样式 1
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -82,7 +82,7 @@ export function BulletedListToolbarButton() {
             >
               <div className="flex items-center gap-2">
                 <div className="size-2 rounded-full border border-current" />
-                Circle
+                样式 2
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -94,7 +94,7 @@ export function BulletedListToolbarButton() {
             >
               <div className="flex items-center gap-2">
                 <div className="size-2 border border-current bg-current" />
-                Square
+                样式 3
               </div>
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -121,7 +121,7 @@ export function NumberedListToolbarButton() {
   );
 
   return (
-    <ToolbarSplitButton tooltip="Numbered List" pressed={open}>
+    <ToolbarSplitButton tooltip="有序列表" pressed={open}>
       <ToolbarSplitButtonPrimary
         className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
         onClick={() =>
@@ -152,7 +152,16 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              Decimal (1, 2, 3)
+              默认数字：1, 2, 3, . . .
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() =>
+                toggleList(editor, {
+                  listStyleType: ListStyleType.CjkDecimal,
+                })
+              }
+            >
+              中文数字：一、二、三、. . .
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -161,7 +170,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              Lower Alpha (a, b, c)
+              英文字母：a, b, c, . . .
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -170,7 +179,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              Upper Alpha (A, B, C)
+              英文字母：A, B, C, . . .
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -179,7 +188,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              Lower Roman (i, ii, iii)
+              罗马数字：i, ii, iii, . . .
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -188,7 +197,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              Upper Roman (I, II, III)
+              罗马数字：I, II, III, . . .
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -204,7 +213,7 @@ export function TodoListToolbarButton(
   const { props: buttonProps } = useIndentTodoToolBarButton(state);
 
   return (
-    <ToolbarButton {...props} {...buttonProps} tooltip="Todo List">
+    <ToolbarButton {...props} {...buttonProps} tooltip="待办列表">
       <ListTodoIcon />
     </ToolbarButton>
   );

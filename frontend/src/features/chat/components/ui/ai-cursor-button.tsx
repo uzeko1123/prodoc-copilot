@@ -95,7 +95,7 @@ export function AICursorButton() {
               type="button"
               size="icon-xs"
               variant="outline"
-              aria-label="AI commands"
+              aria-label="AI 指令"
               className="rounded-full opacity-50 shadow-md hover:opacity-80"
               onClick={() => {
                 api.aiChat.show();
@@ -108,7 +108,7 @@ export function AICursorButton() {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            AI commands
+            AI 指令
             <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
               Tab
             </kbd>

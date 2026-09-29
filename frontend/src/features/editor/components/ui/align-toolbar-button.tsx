@@ -54,13 +54,13 @@ export function AlignToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Align" isDropdown>
+        <ToolbarButton pressed={open} tooltip="对齐" isDropdown>
           <IconValue />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="ignore-click-outside/toolbar min-w-0"
+        className="ignore-click-outside/toolbar w-auto min-w-0"
         align="start"
       >
         <DropdownMenuRadioGroup
@@ -76,11 +76,22 @@ export function AlignToolbarButton(props: DropdownMenuProps) {
               className="data-[state=checked]:bg-accent pl-2 *:first:[span]:hidden"
               value={itemValue}
             >
-              <Icon />
+              <Icon /> {getAlignLabel(itemValue)}
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+const alignLabels: Record<string, string> = {
+  left: '左对齐',
+  center: '居中对齐',
+  right: '右对齐',
+  justify: '两端对齐',
+};
+
+function getAlignLabel(value: string): string {
+  return alignLabels[value] ?? value;
 }

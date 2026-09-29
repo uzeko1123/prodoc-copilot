@@ -55,7 +55,7 @@ export function ImportToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Import" isDropdown>
+        <ToolbarButton pressed={open} tooltip="导入" isDropdown>
           <FolderOpenIcon className="size-4" />
         </ToolbarButton>
       </DropdownMenuTrigger>
@@ -63,13 +63,13 @@ export function ImportToolbarButton(props: DropdownMenuProps) {
       <DropdownMenuContent className="w-auto" align="start">
         <DropdownMenuGroup>
           <DropdownMenuItem onSelect={openMdFilePicker}>
-            <MarkdownFileIcon /> Import from Markdown
+            <MarkdownFileIcon /> 从 Markdown 导入
           </DropdownMenuItem>
           <DropdownMenuItem disabled>
-            <WordFileIcon /> Import from Word
+            <WordFileIcon /> 从 Word 导入
           </DropdownMenuItem>
           <DropdownMenuItem disabled>
-            <PdfFileIcon /> Import from PDF
+            <PdfFileIcon /> 从 PDF 导入
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

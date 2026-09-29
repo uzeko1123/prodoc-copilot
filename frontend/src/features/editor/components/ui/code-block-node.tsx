@@ -34,8 +34,8 @@ type CodeBlockElementProps = PlateElementProps<TCodeBlockElement> & {
 };
 
 const codeBlockLanguages: { label: string; value: string }[] = [
-  { label: 'Auto', value: 'auto' },
-  { label: 'Plain Text', value: 'plaintext' },
+  { label: '自动', value: 'auto' },
+  { label: '纯文本', value: 'plaintext' },
   { label: 'ABAP', value: 'abap' },
   { label: 'Agda', value: 'agda' },
   { label: 'Arduino', value: 'arduino' },
@@ -162,7 +162,7 @@ export function CodeBlockElement({
               variant="ghost"
               className="size-6 text-xs"
               onClick={() => formatCodeBlock(editor, { element })}
-              title="Format code"
+              title="格式化代码"
             >
               <BracesIcon className="text-muted-foreground size-3.5!" />
             </Button>
@@ -220,7 +220,7 @@ function CodeBlockCombobox({
           aria-expanded={open}
           role="combobox"
         >
-          {getCodeBlockLanguageLabel(value) ?? 'Plain Text'}
+          {getCodeBlockLanguageLabel(value) ?? '纯文本'}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -232,9 +232,9 @@ function CodeBlockCombobox({
             className="h-9"
             value={searchValue}
             onValueChange={(value) => setSearchValue(value)}
-            placeholder="Search language..."
+            placeholder="搜索语言 . . ."
           />
-          <CommandEmpty>No language found.</CommandEmpty>
+          <CommandEmpty>未找到语言。</CommandEmpty>
 
           <CommandList className="h-86 overflow-y-auto">
             <CommandGroup>
@@ -305,7 +305,7 @@ function CopyButton({
       }}
       {...props}
     >
-      <span className="sr-only">Copy</span>
+      <span className="sr-only">复制</span>
       {hasCopied ? (
         <CheckIcon className="size-3!" />
       ) : (

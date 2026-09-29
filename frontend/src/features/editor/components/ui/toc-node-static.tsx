@@ -40,9 +40,7 @@ export function TocElementStatic(props: SlateElementProps) {
             </Button>
           ))
         ) : (
-          <div className="text-sm text-gray-500">
-            Create a heading to display the table of contents.
-          </div>
+          <div className="text-sm text-gray-500">创建标题后展示目录</div>
         )}
       </div>
       {props.children}
@@ -134,9 +132,7 @@ export function TocElementDocx(props: SlateElementProps) {
             </p>
           ))
         ) : (
-          <p style={{ color: '#666', fontSize: '10pt' }}>
-            Create a heading to display the table of contents.
-          </p>
+          <p style={{ color: '#666', fontSize: '10pt' }}>创建标题后展示目录</p>
         )}
       </div>
       {props.children}

@@ -48,41 +48,41 @@ type Item = {
 
 const groups: Group[] = [
   {
-    group: 'Basic blocks',
+    group: '正文 & 标题',
     items: [
       {
         icon: <PilcrowIcon />,
-        label: 'Paragraph',
+        label: '正文',
         value: KEYS.p,
       },
       {
         icon: <Heading1Icon />,
-        label: 'Heading 1',
+        label: '标题 1',
         value: 'h1',
       },
       {
         icon: <Heading2Icon />,
-        label: 'Heading 2',
+        label: '标题 2',
         value: 'h2',
       },
       {
         icon: <Heading3Icon />,
-        label: 'Heading 3',
+        label: '标题 3',
         value: 'h3',
       },
       {
         icon: <Heading4Icon />,
-        label: 'Heading 4',
+        label: '标题 4',
         value: 'h4',
       },
       {
         icon: <Heading5Icon />,
-        label: 'Heading 5',
+        label: '标题 5',
         value: 'h5',
       },
       {
         icon: <Heading6Icon />,
-        label: 'Heading 6',
+        label: '标题 6',
         value: 'h6',
       },
     ].map((item) => ({
@@ -93,21 +93,21 @@ const groups: Group[] = [
     })),
   },
   {
-    group: 'Lists',
+    group: '列表',
     items: [
       {
         icon: <ListIcon />,
-        label: 'Bulleted list',
+        label: '无序列表',
         value: KEYS.ul,
       },
       {
         icon: <ListOrderedIcon />,
-        label: 'Numbered list',
+        label: '有序列表',
         value: KEYS.ol,
       },
       {
         icon: <SquareIcon />,
-        label: 'To-do list',
+        label: '待办列表',
         value: KEYS.listTodo,
       },
     ].map((item) => ({
@@ -118,27 +118,27 @@ const groups: Group[] = [
     })),
   },
   {
-    group: 'Advanced blocks',
+    group: '高级',
     items: [
       {
         icon: <FileCodeIcon />,
-        label: 'Code',
+        label: '代码块',
         value: KEYS.codeBlock,
       },
       {
         focusEditor: false,
         icon: <RadicalIcon />,
-        label: 'Equation',
+        label: '公式块',
         value: KEYS.equation,
       },
       {
         icon: <MinusIcon />,
-        label: 'Divider',
+        label: '分隔线',
         value: KEYS.hr,
       },
       {
         icon: <TableOfContentsIcon />,
-        label: 'Table of contents',
+        label: '目录',
         value: KEYS.toc,
       },
     ].map((item) => ({
@@ -157,7 +157,7 @@ export function InsertToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Insert" isDropdown>
+        <ToolbarButton pressed={open} tooltip="插入" isDropdown>
           <PlusIcon />
         </ToolbarButton>
       </DropdownMenuTrigger>

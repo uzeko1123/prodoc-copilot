@@ -20,7 +20,7 @@ export const FileElement = withHOC(
       <PlateElement className="my-px rounded-sm" {...props}>
         <a
           className={cn(
-            'group hover:bg-muted relative m-0 flex cursor-pointer items-center rounded px-0.5 py-[3px]',
+            'group hover:bg-muted relative m-0 flex cursor-pointer items-center rounded px-0.5 py-0.75',
           )}
           contentEditable={false}
           download={name}
@@ -38,7 +38,7 @@ export const FileElement = withHOC(
             <CaptionTextarea
               className="text-left"
               readOnly={readOnly}
-              placeholder="Write a caption..."
+              placeholder="添加说明 . . ."
             />
           </Caption>
         </a>

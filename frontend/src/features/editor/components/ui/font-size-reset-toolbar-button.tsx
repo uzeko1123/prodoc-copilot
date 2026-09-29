@@ -11,7 +11,7 @@ export function FontSizeResetToolbarButton() {
 
   return (
     <ToolbarButton
-      tooltip="Reset font size"
+      tooltip="重置字号"
       onClick={() => {
         editor.tf.removeMarks(KEYS.fontSize);
         editor.tf.focus();

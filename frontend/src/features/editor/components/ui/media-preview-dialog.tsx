@@ -143,7 +143,7 @@ export function MediaPreviewDialog() {
               </button>
             </div>
             <button
-              aria-label="Download image"
+              aria-label="下载图片"
               className={cn(
                 buttonVariants({
                   variant: downloadDisabled ? 'disabled' : 'default',

@@ -22,43 +22,33 @@ const useUploadErrorToast = () => {
     switch (code) {
       case UploadErrorCode.INVALID_FILE_SIZE: {
         toast.error(
-          `The size of files ${data.files
-            .map((f) => f.name)
-            .join(', ')} is invalid`,
+          `文件大小无效: ${data.files.map((f) => f.name).join(', ')}`,
         );
 
         break;
       }
       case UploadErrorCode.INVALID_FILE_TYPE: {
         toast.error(
-          `The type of files ${data.files
-            .map((f) => f.name)
-            .join(', ')} is invalid`,
+          `文件类型无效: ${data.files.map((f) => f.name).join(', ')}`,
         );
 
         break;
       }
       case UploadErrorCode.TOO_LARGE: {
         toast.error(
-          `The size of files ${data.files
-            .map((f) => f.name)
-            .join(', ')} is too large than ${data.maxFileSize}`,
+          `文件大小超过上限 ${data.maxFileSize}: ${data.files.map((f) => f.name).join(', ')}`,
         );
 
         break;
       }
       case UploadErrorCode.TOO_LESS_FILES: {
-        toast.error(
-          `The mini um number of files is ${data.minFileCount} for ${data.fileType}`,
-        );
+        toast.error(`${data.fileType} 文件数量至少为 ${data.minFileCount}`);
 
         break;
       }
       case UploadErrorCode.TOO_MANY_FILES: {
         toast.error(
-          `The maximum number of files is ${data.maxFileCount} ${
-            data.fileType ? `for ${data.fileType}` : ''
-          }`,
+          `${data.fileType ? `${data.fileType} ` : ''}文件数量最多为 ${data.maxFileCount}`,
         );
 
         break;

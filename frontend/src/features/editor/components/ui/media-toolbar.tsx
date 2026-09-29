@@ -75,7 +75,7 @@ export function MediaToolbar({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {isEditing ? (
-          <div className="flex w-[330px] flex-col">
+          <div className="flex w-82.5 flex-col">
             <div className="flex items-center">
               <div className="text-muted-foreground flex items-center pr-1 pl-2">
                 <Link className="size-4" />
@@ -83,7 +83,7 @@ export function MediaToolbar({
 
               <FloatingMediaPrimitive.UrlInput
                 className={inputVariants()}
-                placeholder="Paste the embed link..."
+                placeholder="链接地址 . . ."
                 options={{ plugin }}
               />
             </div>
@@ -93,11 +93,11 @@ export function MediaToolbar({
             <FloatingMediaPrimitive.EditButton
               className={buttonVariants({ size: 'sm', variant: 'ghost' })}
             >
-              Edit link
+              编辑链接
             </FloatingMediaPrimitive.EditButton>
 
             <CaptionButton size="sm" variant="ghost">
-              Caption
+              添加说明
             </CaptionButton>
 
             <Separator orientation="vertical" className="mx-1 h-6" />

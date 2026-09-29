@@ -26,13 +26,13 @@ export function FontToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Font" isDropdown>
+        <ToolbarButton pressed={open} tooltip="字体" isDropdown>
           <TypeIcon />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="start" className="w-auto">
-        <DropdownMenuLabel>Heading</DropdownMenuLabel>
+        <DropdownMenuLabel>标题字体</DropdownMenuLabel>
         <FontFamilyDropdownMenuRadioGroup
           value={editorFontFamily['--editor-font-heading']}
           onValueChange={(value) =>
@@ -45,7 +45,7 @@ export function FontToolbarButton(props: DropdownMenuProps) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuLabel>Body</DropdownMenuLabel>
+        <DropdownMenuLabel>正文字体</DropdownMenuLabel>
         <FontFamilyDropdownMenuRadioGroup
           value={editorFontFamily['--editor-font-body']}
           onValueChange={(value) =>

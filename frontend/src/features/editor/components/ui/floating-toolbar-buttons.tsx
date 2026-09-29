@@ -62,25 +62,22 @@ function FloatingToolbarButtonsWithSelection() {
 
           <ToolbarSeparator className="self-stretch" />
 
-          <MarkToolbarButton nodeType={KEYS.bold} tooltip="Bold">
+          <MarkToolbarButton nodeType={KEYS.bold} tooltip="加粗">
             <BoldIcon />
           </MarkToolbarButton>
-          <MarkToolbarButton nodeType={KEYS.italic} tooltip="Italic">
+          <MarkToolbarButton nodeType={KEYS.italic} tooltip="斜体">
             <ItalicIcon />
           </MarkToolbarButton>
-          <MarkToolbarButton nodeType={KEYS.underline} tooltip="Underline">
+          <MarkToolbarButton nodeType={KEYS.underline} tooltip="下划线">
             <UnderlineIcon />
           </MarkToolbarButton>
-          <MarkToolbarButton
-            nodeType={KEYS.strikethrough}
-            tooltip="Strikethrough"
-          >
+          <MarkToolbarButton nodeType={KEYS.strikethrough} tooltip="删除线">
             <StrikethroughIcon />
           </MarkToolbarButton>
 
           <ToolbarSeparator className="self-stretch" />
 
-          <MarkToolbarButton nodeType={KEYS.code} tooltip="Code">
+          <MarkToolbarButton nodeType={KEYS.code} tooltip="行内代码">
             <Code2Icon />
           </MarkToolbarButton>
           <InlineEquationToolbarButton />
@@ -106,8 +103,8 @@ function FloatingToolbarButtonsWithBlockSelection() {
           <ToolbarSeparator className="self-stretch" />
 
           <AlignToolbarButton />
-          <OutdentToolbarButton />
           <IndentToolbarButton />
+          <OutdentToolbarButton />
 
           <ToolbarSeparator className="self-stretch" />
 
@@ -127,12 +124,12 @@ function FloatingToolbarButtonsStatic() {
 
   return (
     <>
-      <MarkToolbarButton nodeType={KEYS.highlight} tooltip="Highlight">
+      <MarkToolbarButton nodeType={KEYS.highlight} tooltip="标记">
         <HighlighterIcon />
       </MarkToolbarButton>
       <CommentToolbarButton />
       {!readOnly && <SuggestionToolbarButton />}
-      <AIToolbarButton tooltip="AI commands">
+      <AIToolbarButton tooltip="AI 指令">
         <SparklesIcon />
       </AIToolbarButton>
     </>

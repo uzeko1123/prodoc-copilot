@@ -59,7 +59,7 @@ export function Find() {
           onChange={(e) => setInput(e.target.value)}
           onCompositionStart={() => setIsComposing(true)}
           onCompositionEnd={() => setIsComposing(false)}
-          placeholder="Search the text..."
+          placeholder="检索内容 . . ."
           type="search"
         />
       </div>
@@ -68,9 +68,9 @@ export function Find() {
         <FindMatches search={search} />
       ) : (
         <FindEmpty
-          description="Type in the search box to find text in the document"
+          description="输入检索关键词以查找文档内容"
           icon={<SearchIcon />}
-          title="No search"
+          title="无检索关键词"
         />
       )}
     </div>
@@ -123,8 +123,8 @@ function FindMatches({ search }: { search: string }) {
       {matches.length === 0 && (
         <FindEmpty
           icon={<SearchXIcon />}
-          title="Not found"
-          description="No matches found, try a different keyword"
+          title="无匹配项"
+          description="未找到匹配项，请尝试其他关键词"
         />
       )}
       <div className="flex flex-col gap-2 overflow-y-auto p-2">

@@ -71,7 +71,7 @@ export function FixedToolbarButtons() {
         <ToolbarSeparator className="self-stretch" />
 
         <CommentToolbarButton />
-        <AIToolbarButton tooltip="AI commands">
+        <AIToolbarButton tooltip="AI 指令">
           <SparklesIcon />
         </AIToolbarButton>
 

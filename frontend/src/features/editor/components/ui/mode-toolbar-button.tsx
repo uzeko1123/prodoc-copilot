@@ -24,15 +24,15 @@ import * as React from 'react';
 const item: Record<string, { icon: React.ReactNode; label: string }> = {
   editing: {
     icon: <FeatherIcon />,
-    label: 'Editing',
+    label: '编辑',
   },
   suggestion: {
     icon: <PencilLineIcon />,
-    label: 'Suggestion',
+    label: '修订',
   },
   viewing: {
     icon: <EyeIcon />,
-    label: 'Viewing',
+    label: '阅读',
   },
 };
 
@@ -52,13 +52,13 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="Editing mode" isDropdown>
+        <ToolbarButton pressed={open} tooltip="选择模式" isDropdown>
           {item[value].icon}
           <span className="hidden lg:inline">{item[value].label}</span>
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="min-w-45">
+      <DropdownMenuContent align="end" className="w-auto">
         <DropdownMenuRadioGroup
           onValueChange={(newValue) => {
             if (newValue === 'viewing') {

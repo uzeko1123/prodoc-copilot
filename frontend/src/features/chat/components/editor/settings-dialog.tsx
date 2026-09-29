@@ -27,14 +27,14 @@ export function SettingsDialog() {
     <Dialog open={isSettingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-xl">Settings</DialogTitle>
+          <DialogTitle className="text-xl">设置</DialogTitle>
           <DialogDescription>
-            Configure your API keys and preferences.
+            配置模型 API（OpenAI 兼容格式）。
           </DialogDescription>
         </DialogHeader>
         <SettingsForm onClose={() => setSettingsDialogOpen(false)} />
         <p className="text-muted-foreground text-sm">
-          Not stored anywhere. Used only for current session requests.
+          所有设置均保存在本地，并且仅用于当前会话。
         </p>
       </DialogContent>
     </Dialog>
@@ -63,7 +63,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
     <form id="settings-form" onSubmit={handleSubmit}>
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="email">Base URL</FieldLabel>
+          <FieldLabel htmlFor="email">API 地址</FieldLabel>
           <Input
             value={baseUrl}
             onChange={(e) => setBaseUrl(e.target.value)}
@@ -75,19 +75,19 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="email">API Key</FieldLabel>
+          <FieldLabel htmlFor="email">API 密钥</FieldLabel>
           <Input
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             id="apiKey"
             type="text"
-            placeholder="sk-..."
+            placeholder="sk- . . ."
             autoComplete="off"
             required
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="email">Model ID</FieldLabel>
+          <FieldLabel htmlFor="email">模型 ID</FieldLabel>
           <Input
             value={modelId}
             onChange={(e) => setModelId(e.target.value)}
@@ -100,7 +100,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
         </Field>
         <Field>
           <Button type="submit" form="settings-form">
-            Save changes
+            保存更改
           </Button>
         </Field>
       </FieldGroup>

@@ -166,10 +166,8 @@ export function ToC() {
             <EmptyMedia variant="icon">
               <ListTreeIcon />
             </EmptyMedia>
-            <EmptyTitle>No headings</EmptyTitle>
-            <EmptyDescription>
-              Create a heading to display the table of contents
-            </EmptyDescription>
+            <EmptyTitle>暂无标题</EmptyTitle>
+            <EmptyDescription>创建标题后展示目录</EmptyDescription>
           </EmptyHeader>
         </Empty>
       )}

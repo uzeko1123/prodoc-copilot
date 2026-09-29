@@ -88,14 +88,13 @@ function Workbench() {
     value: useEditorStore.getState().value,
   });
 
-  const _hideFindTab = false;
   const _hideRightPanel = true;
 
   return (
     <div className="flex h-dvh flex-col">
       <Plate editor={editor}>
         <header className="flex h-12 shrink-0 items-center border-b px-4">
-          <h1 className="text-sm font-semibold">Workbench</h1>
+          <h1 className="text-sm font-semibold">工作台</h1>
         </header>
 
         <ResizablePanelGroup orientation="horizontal">
@@ -106,48 +105,31 @@ function Workbench() {
             panelRef={leftPanelRef}
             onResize={handleLeftPanelResize}
           >
-            {!_hideFindTab ? (
-              <Tabs
-                value={activeLeftPanelTab}
-                onValueChange={(value) => setActiveLeftPanelTab(value)}
-                className="h-full gap-0"
+            <Tabs
+              value={activeLeftPanelTab}
+              onValueChange={(value) => setActiveLeftPanelTab(value)}
+              className="h-full gap-0"
+            >
+              <TabsList
+                variant="line"
+                className="h-10 min-h-10 w-full border-b"
               >
-                <TabsList
-                  variant="line"
-                  className="h-10 min-h-10 w-full border-b"
-                >
-                  <TabsTrigger value="toc">ToC</TabsTrigger>
-                  <TabsTrigger value="find">Find</TabsTrigger>
-                </TabsList>
-                <TabsContent
-                  value="toc"
-                  className="min-h-0 data-[state=inactive]:hidden"
-                >
-                  <ToC />
-                </TabsContent>
-                <TabsContent
-                  value="find"
-                  className="min-h-0 data-[state=inactive]:hidden"
-                >
-                  <Find />
-                </TabsContent>
-              </Tabs>
-            ) : (
-              <Tabs value="toc" className="h-full gap-0">
-                <TabsList
-                  variant="line"
-                  className="h-10 min-h-10 w-full border-b"
-                >
-                  <TabsTrigger value="toc">ToC</TabsTrigger>
-                </TabsList>
-                <TabsContent
-                  value="toc"
-                  className="min-h-0 data-[state=inactive]:hidden"
-                >
-                  <ToC />
-                </TabsContent>
-              </Tabs>
-            )}
+                <TabsTrigger value="toc">大纲</TabsTrigger>
+                <TabsTrigger value="find">查找</TabsTrigger>
+              </TabsList>
+              <TabsContent
+                value="toc"
+                className="min-h-0 data-[state=inactive]:hidden"
+              >
+                <ToC />
+              </TabsContent>
+              <TabsContent
+                value="find"
+                className="min-h-0 data-[state=inactive]:hidden"
+              >
+                <Find />
+              </TabsContent>
+            </Tabs>
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize="50%" minSize="40%">
@@ -164,8 +146,8 @@ function Workbench() {
                 variant="line"
                 className="h-10 min-h-10 w-full border-b"
               >
-                <TabsTrigger value="chat">Chat</TabsTrigger>
-                <TabsTrigger value="comment">Comment</TabsTrigger>
+                <TabsTrigger value="chat">AI 对话</TabsTrigger>
+                <TabsTrigger value="comment">修订 & 评论</TabsTrigger>
                 {!_hideRightPanel && !isRightPanelOpen && (
                   <Button variant="ghost" onClick={toggleRightPanel}>
                     <PanelRightIcon />

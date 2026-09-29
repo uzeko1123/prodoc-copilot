@@ -141,7 +141,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
               >
                 <CollapsibleTrigger className="mb-1 flex items-center gap-1.5 text-xs font-medium">
                   <BrainIcon className="size-3.5" />
-                  Reasoning
+                  思考过程
                   <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
@@ -149,7 +149,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                     <AIChatEditor content={part.text} />
                   </div>
                   <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs">
-                    Collapse
+                    收起
                     <ChevronUpIcon className="size-3.5" />
                   </CollapsibleTrigger>
                 </CollapsibleContent>
@@ -212,7 +212,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                     ) : null}
                   </div>
                   <CollapsibleTrigger className="mt-1 flex items-center gap-1.5 text-xs">
-                    Collapse
+                    收起
                     <ChevronUpIcon className="size-3.5" />
                   </CollapsibleTrigger>
                 </CollapsibleContent>

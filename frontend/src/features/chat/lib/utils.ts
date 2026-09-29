@@ -4,8 +4,18 @@ import type { PlateEditor } from 'platejs/react';
 import type { Tools } from '../agent/tools';
 import type { ChatMode } from '../components/editor/use-agent';
 
+const chatModeNames: Record<ChatMode, string> = {
+  chat: '对话模式',
+  comment: '评论模式',
+  suggestion: '修订模式',
+  auto: '自动模式',
+};
+
 export function getChatModeName(chatMode: ChatMode) {
-  return chatMode.charAt(0).toUpperCase() + chatMode.slice(1);
+  return (
+    chatModeNames[chatMode] ??
+    chatMode.charAt(0).toUpperCase() + chatMode.slice(1)
+  );
 }
 
 export function getSelectionText(
@@ -27,17 +37,25 @@ export function getParagraphs(text: string) {
     .filter(Boolean);
 }
 
+const toolNames: Record<string, string> = {
+  comment: '评论工具',
+  edit: '编辑工具',
+  generate: '生成工具',
+};
+
 export function getToolPartName(toolPart: ToolUIPart<Tools>) {
   const toolName = toolPart.type.slice('tool-'.length);
-  return toolName.charAt(0).toUpperCase() + toolName.slice(1);
+  return (
+    toolNames[toolName] ?? toolName.charAt(0).toUpperCase() + toolName.slice(1)
+  );
 }
 
-const compactFormatter = new Intl.NumberFormat('en', {
+const tokenFormatter = new Intl.NumberFormat('en', {
   notation: 'compact',
 });
 
 export function formatTokens(count: number) {
-  return compactFormatter.format(count);
+  return tokenFormatter.format(count);
 }
 
 function sumTokens(tokens1: number | undefined, tokens2: number | undefined) {

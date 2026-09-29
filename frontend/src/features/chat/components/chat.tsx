@@ -111,11 +111,8 @@ export function Chat() {
                 <EmptyMedia variant="icon">
                   <MessageCircleDashedIcon />
                 </EmptyMedia>
-                <EmptyTitle>Morning, shadcn!</EmptyTitle>
-                <EmptyDescription>
-                  What are we working on today? Press send to start a new
-                  conversation
-                </EmptyDescription>
+                <EmptyTitle>AI 对话</EmptyTitle>
+                <EmptyDescription>发送消息以开始 AI 对话</EmptyDescription>
               </EmptyHeader>
             </Empty>
           ) : (
@@ -134,13 +131,13 @@ export function Chat() {
                   ))}
                   {chatStatus === 'error' && (
                     <p className="text-destructive whitespace-pre-wrap">
-                      {chatError?.message || 'Unknown error.'}
+                      {chatError?.message || '未知错误。'}
                     </p>
                   )}
                   {isBusy && (
                     <div className="text-muted-foreground mb-1 flex items-center gap-2 text-sm font-medium">
                       <Spinner className="size-3.5" />
-                      <span className="shimmer">Working . . .</span>
+                      <span className="shimmer">AI 工作中 . . .</span>
                     </div>
                   )}
                 </MessageScrollerContent>
@@ -163,9 +160,9 @@ export function Chat() {
             <InputGroup className="dark:has-disabled:bg-input/30 has-disabled:bg-transparent has-disabled:opacity-100">
               <InputGroupTextarea
                 ref={inputRef}
-                aria-label="Chat message"
+                aria-label="发送消息"
                 className="h-14 min-h-14 overflow-hidden px-3 py-2.5"
-                placeholder="Chat message"
+                placeholder="发送消息 . . ."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -179,9 +176,9 @@ export function Chat() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
-                      aria-label="Slash menu"
+                      aria-label="/菜单"
                       type="button"
-                      size="xs"
+                      size="sm"
                       variant="ghost"
                       className="gap-1 text-sm"
                     >
@@ -206,15 +203,23 @@ export function Chat() {
                     ).flatMap((command) =>
                       command.items.map((item) => (
                         <DropdownMenuItem
-                          className="text-xs [&_svg]:size-3.5"
+                          className="text-sm [&_svg]:size-3.5"
                           key={item.value}
                           onSelect={() => {
-                            setChatInput(`/${item.value} ${chatInput}`);
+                            setChatInput(`${item.value} ${chatInput}`);
                             if (item.chatMode === null) return;
                             useChatStore.getState().setChatMode(item.chatMode);
                           }}
                         >
-                          {item.icon} {item.label}
+                          {item.icon}
+                          <span>{item.label}</span>
+                          <div className="grow"></div>
+                          <code
+                            data-slot="command-shortcut"
+                            className="text-muted-foreground"
+                          >
+                            {item.value}
+                          </code>
                         </DropdownMenuItem>
                       )),
                     )}
@@ -222,21 +227,29 @@ export function Chat() {
                     {menuStateItems.readonlyCommand.flatMap((command) =>
                       command.items.map((item) => (
                         <DropdownMenuItem
-                          className="text-xs [&_svg]:size-3.5"
+                          className="text-sm [&_svg]:size-3.5"
                           key={item.value}
                           onSelect={() => {
-                            setChatInput(`/${item.value} ${chatInput}`);
+                            setChatInput(`${item.value} ${chatInput}`);
                             if (item.chatMode === null) return;
                             useChatStore.getState().setChatMode(item.chatMode);
                           }}
                         >
-                          {item.icon} {item.label}
+                          {item.icon}
+                          <span>{item.label}</span>
+                          <div className="grow"></div>
+                          <code
+                            data-slot="command-shortcut"
+                            className="text-muted-foreground"
+                          >
+                            {item.value}
+                          </code>
                         </DropdownMenuItem>
                       )),
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="text-xs"
+                      className="text-sm"
                       onSelect={() => {
                         editor.getApi(AIChatPlugin).aiChat.reset({
                           undo: false,
@@ -245,16 +258,16 @@ export function Chat() {
                       }}
                     >
                       <RotateCwIcon className="size-3.5" />
-                      Reset
+                      重置对话
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="text-xs"
+                      className="text-sm"
                       onSelect={() => {
                         setSettingsDialogOpen(true);
                       }}
                     >
                       <WrenchIcon className="size-3.5" />
-                      Settings
+                      设置
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -262,11 +275,11 @@ export function Chat() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
-                      aria-label="Select mode"
+                      aria-label="选择模式"
                       type="button"
-                      size="xs"
+                      size="sm"
                       variant="ghost"
-                      className="text-xs"
+                      className="text-sm"
                     >
                       <ChatModeIcon chatMode={chatMode} />
                       {getChatModeName(chatMode)}
@@ -283,7 +296,7 @@ export function Chat() {
                     >
                       {availableChatModes.map((chatMode) => (
                         <DropdownMenuRadioItem
-                          className="text-xs"
+                          className="text-sm"
                           key={chatMode}
                           value={chatMode}
                         >
@@ -302,7 +315,7 @@ export function Chat() {
                     disabled={isBusy || chatInput.trim() === ''}
                   >
                     <ArrowUpIcon />
-                    <span className="sr-only">Send</span>
+                    <span className="sr-only">发送</span>
                   </InputGroupButton>
                 ) : (
                   <InputGroupButton
@@ -312,7 +325,7 @@ export function Chat() {
                     onClick={() => editor.getApi(AIChatPlugin).aiChat.stop()}
                   >
                     <SquareIcon />
-                    <span className="sr-only">Stop</span>
+                    <span className="sr-only">停止</span>
                   </InputGroupButton>
                 )}
               </InputGroupAddon>

@@ -120,10 +120,7 @@ export const VideoElement = withHOC(
           </Resizable>
 
           <Caption style={{ width }} align={align}>
-            <CaptionTextarea
-              readOnly={readOnly}
-              placeholder="Write a caption..."
-            />
+            <CaptionTextarea readOnly={readOnly} placeholder="添加说明 . . ." />
           </Caption>
         </figure>
         {props.children}

@@ -67,7 +67,7 @@ export const ImageElement = withHOC(
                 onFocus={(e) => {
                   e.preventDefault();
                 }}
-                placeholder="Write a caption..."
+                placeholder="添加说明 . . ."
               />
             </Caption>
           </figure>

@@ -17,6 +17,18 @@ import {
 } from '../editor/plugins/discussion-kit';
 import { Comment, CommentCreateForm, formatCommentDate } from './comment';
 
+// 行内格式属性的中文映射
+const MARK_LABELS: Record<string, string> = {
+  bold: '加粗',
+  code: '代码',
+  highlight: '高亮',
+  italic: '斜体',
+  strikethrough: '删除线',
+  subscript: '下标',
+  superscript: '上标',
+  underline: '下划线',
+};
+
 export function BlockSuggestionCard({
   idx,
   isLast,
@@ -45,22 +57,22 @@ export function BlockSuggestionCard({
   const [hovering, setHovering] = React.useState(false);
 
   const suggestionText2Array = (text: string) => {
-    if (text === BLOCK_SUGGESTION_TOKEN) return ['line breaks'];
+    if (text === BLOCK_SUGGESTION_TOKEN) return ['换行'];
 
     return text.split(BLOCK_SUGGESTION_TOKEN).filter(Boolean);
   };
 
   const getRemoveSummaryItems = (text: string) => {
     const items = suggestionText2Array(text).map((item) => {
-      if (item === 'column_group') return 'Column';
-      if (item === 'code_block') return 'Code Block';
+      if (item === 'column_group') return '分栏';
+      if (item === 'code_block') return '代码块';
 
       return item;
     });
 
-    if (items.includes('Table')) return ['Table'];
-    if (items.includes('Code Block')) return ['Code Block'];
-    if (items.includes('Column')) return ['Column'];
+    if (items.includes('表格')) return ['表格'];
+    if (items.includes('代码块')) return ['代码块'];
+    if (items.includes('分栏')) return ['分栏'];
 
     return items;
   };
@@ -96,7 +108,7 @@ export function BlockSuggestionCard({
             {suggestion.type === 'remove' &&
               getRemoveSummaryItems(suggestion.text!).map((text, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">Delete:</span>
+                  <span className="text-muted-foreground text-sm">删除：</span>
 
                   <span key={index} className="text-sm">
                     {text}
@@ -107,10 +119,10 @@ export function BlockSuggestionCard({
             {suggestion.type === 'insert' &&
               suggestionText2Array(suggestion.newText!).map((text, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">Add:</span>
+                  <span className="text-muted-foreground text-sm">添加：</span>
 
                   <span key={index} className="text-sm">
-                    {text || 'line breaks'}
+                    {text || '换行'}
                   </span>
                 </div>
               ))}
@@ -124,8 +136,8 @@ export function BlockSuggestionCard({
                         key={index}
                         className="text-brand/80 flex items-start gap-2"
                       >
-                        <span className="text-sm">with:</span>
-                        <span className="text-sm">{text || 'line breaks'}</span>
+                        <span className="text-sm">为：</span>
+                        <span className="text-sm">{text || '换行'}</span>
                       </div>
                     </React.Fragment>
                   ),
@@ -135,9 +147,9 @@ export function BlockSuggestionCard({
                   <React.Fragment key={index}>
                     <div key={index} className="flex items-start gap-2">
                       <span className="text-muted-foreground text-sm">
-                        {index === 0 ? 'Replace:' : 'Delete:'}
+                        {index === 0 ? '替换：' : '删除：'}
                       </span>
-                      <span className="text-sm">{text || 'line breaks'}</span>
+                      <span className="text-sm">{text || '换行'}</span>
                     </div>
                   </React.Fragment>
                 ))}
@@ -148,12 +160,19 @@ export function BlockSuggestionCard({
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground text-sm">
                   {Object.keys(suggestion.properties).map((key) => (
-                    <span key={key}>Un{key}</span>
+                    // 不翻译：未命中中文映射时回退原有英文显示
+                    <span key={key}>
+                      {MARK_LABELS[key]
+                        ? `取消${MARK_LABELS[key]}`
+                        : `Un${key}`}
+                    </span>
                   ))}
 
                   {Object.keys(suggestion.newProperties).map((key) => (
+                    // 不翻译：未命中中文映射时回退原有英文显示
                     <span key={key}>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                      {MARK_LABELS[key] ??
+                        key.charAt(0).toUpperCase() + key.slice(1)}
                     </span>
                   ))}
                 </span>

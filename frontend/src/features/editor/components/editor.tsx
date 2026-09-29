@@ -28,7 +28,7 @@ export function Editor() {
       <EditorContainer className="scrollbar-none overflow-y-hidden">
         <EditorPrimitive
           ref={editorScrollRef}
-          className="editor-font"
+          className="editor-font sm:px-[max(64px,calc(50%-350px))]"
           style={editorFontFamily}
         />
       </EditorContainer>

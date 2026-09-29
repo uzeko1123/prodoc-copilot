@@ -153,7 +153,7 @@ export function FontSizeToolbarButton() {
           </ToolbarButton>
         </div>
       </TooltipTrigger>
-      <TooltipContent>Font size</TooltipContent>
+      <TooltipContent>字号</TooltipContent>
     </Tooltip>
   );
 }

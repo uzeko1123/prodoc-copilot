@@ -205,7 +205,7 @@ export function Comment(props: {
           <span className="mr-1">
             {formatCommentDate(new Date(comment.createdAt))}
           </span>
-          {comment.isEdited && <span>(edited)</span>}
+          {comment.isEdited && <span>（已编辑）</span>}
         </div>
 
         {isMyComment && (hovering || dropdownOpen) && (
@@ -331,8 +331,7 @@ function CommentMoreDropdown(props: {
   const selectedEditCommentRef = React.useRef<boolean>(false);
 
   const onDeleteComment = React.useCallback(() => {
-    if (!comment.id)
-      return alert('You are operating too quickly, please try again later.');
+    if (!comment.id) return alert('操作过快，请稍后再试。');
 
     // Find and update the discussion
     const updatedDiscussions = editor
@@ -373,8 +372,7 @@ function CommentMoreDropdown(props: {
   const onEditComment = React.useCallback(() => {
     selectedEditCommentRef.current = true;
 
-    if (!comment.id)
-      return alert('You are operating too quickly, please try again later.');
+    if (!comment.id) return alert('操作过快，请稍后再试。');
 
     setEditingId(comment.id);
   }, [comment.id, setEditingId]);
@@ -404,11 +402,11 @@ function CommentMoreDropdown(props: {
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={onEditComment}>
             <PencilIcon className="size-4" />
-            Edit comment
+            编辑评论
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onDeleteComment}>
             <TrashIcon className="size-4" />
-            Delete comment
+            删除评论
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
@@ -652,7 +650,7 @@ export function CommentCreateForm({
                   onAddComment();
                 }
               }}
-              placeholder="Reply..."
+              placeholder="添加评论 . . ."
               autoComplete="off"
               autoFocus={autoFocus}
             />
@@ -686,14 +684,14 @@ export const formatCommentDate = (date: Date) => {
   const diffDays = differenceInDays(now, date);
 
   if (diffMinutes < 60) {
-    return `${diffMinutes}m`;
+    return `${diffMinutes} 分钟前`;
   }
   if (diffHours < 24) {
-    return `${diffHours}h`;
+    return `${diffHours} 小时前`;
   }
-  if (diffDays < 2) {
-    return `${diffDays}d`;
+  if (diffDays < 7) {
+    return `${diffDays} 天前`;
   }
 
-  return format(date, 'MM/dd/yyyy');
+  return format(date, 'yyyy年M月d日');
 };

@@ -24,7 +24,6 @@ import { cn } from 'cn';
 import {
   Album,
   BadgeHelp,
-  BookOpenCheck,
   Check,
   FeatherIcon,
   ListMinus,
@@ -32,7 +31,6 @@ import {
   PauseIcon,
   PenLine,
   SendIcon,
-  SmileIcon,
   Wand,
 } from 'lucide-react';
 import { isHotkey, type NodeEntry } from 'platejs';
@@ -223,7 +221,7 @@ export function AIMenu() {
         {isLoading ? (
           <div className="text-muted-foreground flex grow items-center justify-center gap-2 p-2 text-sm select-none">
             <Spinner className="size-3.5" />
-            <span className="shimmer">Working . . .</span>
+            <span className="shimmer">AI 工作中 . . .</span>
           </div>
         ) : (
           <>
@@ -244,7 +242,7 @@ export function AIMenu() {
                 }
               }}
               onValueChange={setChatInput}
-              placeholder="Ask AI anything..."
+              placeholder="发送 AI 指令 . . ."
               data-plate-focus
               autoFocus
             />
@@ -264,8 +262,8 @@ type EditorChatState =
 const aiChatItems = {
   send: {
     icon: <SendIcon />,
-    label: 'Send',
-    value: 'send',
+    label: '直接发送',
+    value: '/',
     chatMode: null,
     onSelect: ({ editor, input }) => {
       void editor.getApi(AIChatPlugin).aiChat.submit(input);
@@ -273,8 +271,8 @@ const aiChatItems = {
   },
   comment: {
     icon: <AICommentIcon />,
-    label: 'Comment',
-    value: 'comment',
+    label: '评论',
+    value: '/comment',
     chatMode: 'comment',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('comment');
@@ -288,8 +286,8 @@ const aiChatItems = {
   },
   continueWrite: {
     icon: <PenLine />,
-    label: 'Continue writing',
-    value: 'continueWrite',
+    label: '续写',
+    value: '/continueWrite',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
@@ -301,24 +299,10 @@ const aiChatItems = {
         });
     },
   },
-  emojify: {
-    icon: <SmileIcon />,
-    label: 'Emojify',
-    value: 'emojify',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/emojify ${input}` : '/emojify', {
-          toolName: 'edit',
-        });
-    },
-  },
   explain: {
     icon: <BadgeHelp />,
-    label: 'Explain',
-    value: 'explain',
+    label: '解释',
+    value: '/explain',
     chatMode: 'chat',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
@@ -329,8 +313,8 @@ const aiChatItems = {
   },
   fixSpelling: {
     icon: <Check />,
-    label: 'Fix spelling & grammar',
-    value: 'fixSpelling',
+    label: '语法校对',
+    value: '/fixSpelling',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
@@ -341,46 +325,10 @@ const aiChatItems = {
         });
     },
   },
-  generateMarkdownSample: {
-    icon: <BookOpenCheck />,
-    label: 'Generate Markdown sample',
-    value: 'generateMarkdownSample',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(
-          input
-            ? `/generateMarkdownSample ${input}`
-            : '/generateMarkdownSample',
-          {
-            toolName: 'generate',
-          },
-        );
-    },
-  },
-  generateMdxSample: {
-    icon: <BookOpenCheck />,
-    label: 'Generate MDX sample',
-    value: 'generateMdxSample',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(
-          input ? `/generateMdxSample ${input}` : '/generateMdxSample',
-          {
-            toolName: 'generate',
-          },
-        );
-    },
-  },
   improveWriting: {
     icon: <Wand />,
-    label: 'Improve writing',
-    value: 'improveWriting',
+    label: '润色',
+    value: '/improveWriting',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
@@ -393,8 +341,8 @@ const aiChatItems = {
   },
   makeLonger: {
     icon: <ListPlus />,
-    label: 'Make longer',
-    value: 'makeLonger',
+    label: '扩展',
+    value: '/makeLonger',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
@@ -407,8 +355,8 @@ const aiChatItems = {
   },
   makeShorter: {
     icon: <ListMinus />,
-    label: 'Make shorter',
-    value: 'makeShorter',
+    label: '缩减',
+    value: '/makeShorter',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
@@ -421,8 +369,8 @@ const aiChatItems = {
   },
   simplifyLanguage: {
     icon: <FeatherIcon />,
-    label: 'Simplify language',
-    value: 'simplifyLanguage',
+    label: '简化语言',
+    value: '/simplifyLanguage',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
@@ -438,8 +386,8 @@ const aiChatItems = {
   },
   summarize: {
     icon: <Album />,
-    label: 'Summarize',
-    value: 'summarize',
+    label: '总结',
+    value: '/summarize',
     chatMode: 'chat',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('chat');
@@ -486,31 +434,26 @@ export const menuStateItems: Record<
   ],
   cursorCommand: [
     {
-      items: [
-        aiChatItems.generateMdxSample,
-        aiChatItems.generateMarkdownSample,
-        aiChatItems.continueWrite,
-      ],
-      heading: 'Cursor Command',
+      items: [aiChatItems.continueWrite],
+      heading: '创建 & 写作',
     },
   ],
   selectionCommand: [
     {
       items: [
         aiChatItems.improveWriting,
-        aiChatItems.emojify,
         aiChatItems.makeLonger,
         aiChatItems.makeShorter,
         aiChatItems.fixSpelling,
         aiChatItems.simplifyLanguage,
       ],
-      heading: 'Selection Command',
+      heading: '编辑 & 校对',
     },
   ],
   readonlyCommand: [
     {
       items: [aiChatItems.comment, aiChatItems.explain, aiChatItems.summarize],
-      heading: 'Readonly Command',
+      heading: '对话 & 评论',
     },
   ],
 };
@@ -559,6 +502,17 @@ export const AIMenuItems = ({
               >
                 {menuItem.icon}
                 <span>{menuItem.label}</span>
+                {menuItem.value !== '/' && (
+                  <>
+                    <div className="grow" />
+                    <code
+                      className="text-muted-foreground"
+                      data-slot="command-shortcut"
+                    >
+                      {menuItem.value}
+                    </code>
+                  </>
+                )}
               </CommandItem>
             ))}
           </CommandGroup>
@@ -597,7 +551,7 @@ export function AILoadingBar() {
       )}
     >
       <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-      <span>Working . . .</span>
+      <span>AI 工作中 . . .</span>
       <Button
         size="sm"
         variant="ghost"
@@ -605,7 +559,7 @@ export function AILoadingBar() {
         onClick={() => api.aiChat.stop()}
       >
         <PauseIcon className="h-4 w-4" />
-        Stop
+        停止
         <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
           Esc
         </kbd>
