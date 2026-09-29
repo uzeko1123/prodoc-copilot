@@ -27,7 +27,7 @@ const suggestionPlugin = SuggestionPlugin as WithRequiredKey<SuggestionConfig>;
 
 export const suggestionVariants = cva(
   cn(
-    'text-blue-700 underline underline-offset-4 transition-colors duration-200',
+    'text-blue-900 underline underline-offset-4 transition-colors duration-200',
   ),
   {
     defaultVariants: {
@@ -42,7 +42,7 @@ export const suggestionVariants = cva(
       },
       remove: {
         false: '',
-        true: 'text-red-700 line-through',
+        true: 'text-red-900 line-through',
       },
       removeActive: {
         false: '',
