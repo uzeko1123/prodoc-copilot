@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { Editor, EditorContainer } from '@/components/shadcn/ui/editor';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BasicMarksKit } from '@/features/editor/components/editor/plugins/basic-marks-kit';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
@@ -51,7 +52,6 @@ import {
   discussionPlugin,
   type TDiscussion,
 } from '../editor/plugins/discussion-kit';
-import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 
 export type TComment = {
   id: string;

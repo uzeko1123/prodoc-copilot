@@ -10,15 +10,15 @@ import { BaseFontKit } from '@/components/shadcn/editor/plugins/font-base-kit';
 import { BaseLinkKit } from '@/components/shadcn/editor/plugins/link-base-kit';
 import { BaseListKit } from '@/components/shadcn/editor/plugins/list-base-kit';
 import { MarkdownKit } from '@/components/shadcn/editor/plugins/markdown-kit';
-import { BaseMathKit } from '@/components/shadcn/editor/plugins/math-base-kit';
 import { BaseMediaKit } from '@/components/shadcn/editor/plugins/media-base-kit';
 // import { BaseMentionKit } from '@/components/shadcn/editor/plugins/mention-base-kit';
 import { BaseSuggestionKit } from '@/components/shadcn/editor/plugins/suggestion-base-kit';
-import { BaseTocKit } from '@/components/shadcn/editor/plugins/toc-base-kit';
 // import { BaseToggleKit } from '@/components/shadcn/editor/plugins/toggle-base-kit';
 import { BaseBasicBlocksKit } from './plugins/basic-blocks-base-kit';
 import { BaseBasicMarksKit } from './plugins/basic-marks-base-kit';
+import { BaseMathKit } from './plugins/math-base-kit';
 import { BaseTableKit } from './plugins/table-base-kit';
+import { BaseTocKit } from './plugins/toc-base-kit';
 
 export const BaseEditorKit = [
   ...BaseBasicBlocksKit,

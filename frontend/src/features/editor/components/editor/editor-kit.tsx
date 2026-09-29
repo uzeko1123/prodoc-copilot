@@ -2,9 +2,7 @@
 
 import { AlignKit } from '@/components/shadcn/editor/plugins/align-kit';
 import { AutoformatKit } from '@/components/shadcn/editor/plugins/autoformat-kit';
-import { BlockPlaceholderKit } from '@/components/shadcn/editor/plugins/block-placeholder-kit';
 // import { CalloutKit } from '@/components/shadcn/editor/plugins/callout-kit';
-import { CodeBlockKit } from '@/components/shadcn/editor/plugins/code-block-kit';
 // import { ColumnKit } from '@/components/shadcn/editor/plugins/column-kit';
 // import { DateKit } from '@/components/shadcn/editor/plugins/date-kit';
 // import { DocxKit } from '@/components/shadcn/editor/plugins/docx-kit';
@@ -26,7 +24,9 @@ import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
 import { BasicBlocksKit } from './plugins/basic-blocks-kit';
 import { BasicMarksKit } from './plugins/basic-marks-kit';
+import { BlockPlaceholderKit } from './plugins/block-placeholder-kit';
 import { BlockSelectionKit } from './plugins/block-selection-kit';
+import { CodeBlockKit } from './plugins/code-block-kit';
 import { CursorOverlayKit } from './plugins/cursor-overlay-kit';
 import { DndKit } from './plugins/dnd-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';

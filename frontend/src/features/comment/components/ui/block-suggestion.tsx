@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { CheckIcon, XIcon } from 'lucide-react';
@@ -14,7 +15,6 @@ import {
   discussionPlugin,
   type TDiscussion,
 } from '../editor/plugins/discussion-kit';
-import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 import { Comment, CommentCreateForm, formatCommentDate } from './comment';
 
 export function BlockSuggestionCard({

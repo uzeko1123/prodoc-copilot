@@ -5,7 +5,6 @@ import {
   Editor as EditorPrimitive,
 } from '@/components/shadcn/ui/editor';
 import { FixedToolbar } from '@/components/shadcn/ui/fixed-toolbar';
-import { useEditorStore } from '@/features/editor/stores';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
   useEditorRef,
@@ -14,6 +13,7 @@ import {
   usePluginOption,
 } from 'platejs/react';
 import { useEffect } from 'react';
+import { useEditorStore } from '../stores';
 import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
 export function Editor() {

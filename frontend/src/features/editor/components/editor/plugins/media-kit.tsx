@@ -1,12 +1,5 @@
 'use client';
 
-import { AudioElement } from '@/components/shadcn/ui/media-audio-node';
-import { MediaEmbedElement } from '@/components/shadcn/ui/media-embed-node';
-import { FileElement } from '@/components/shadcn/ui/media-file-node';
-import { ImageElement } from '@/components/shadcn/ui/media-image-node';
-import { MediaPreviewDialog } from '@/components/shadcn/ui/media-preview-dialog';
-import { MediaUploadToast } from '@/components/shadcn/ui/media-upload-toast';
-import { VideoElement } from '@/components/shadcn/ui/media-video-node';
 import { CaptionPlugin } from '@platejs/caption/react';
 import {
   AudioPlugin,
@@ -17,7 +10,14 @@ import {
   VideoPlugin,
 } from '@platejs/media/react';
 import { KEYS } from 'platejs';
+import { AudioElement } from '../../ui/media-audio-node';
+import { MediaEmbedElement } from '../../ui/media-embed-node';
+import { FileElement } from '../../ui/media-file-node';
+import { ImageElement } from '../../ui/media-image-node';
 import { PlaceholderElement } from '../../ui/media-placeholder-node';
+import { MediaPreviewDialog } from '../../ui/media-preview-dialog';
+import { MediaUploadToast } from '../../ui/media-upload-toast';
+import { VideoElement } from '../../ui/media-video-node';
 
 export const MediaKit = [
   ImagePlugin.configure({

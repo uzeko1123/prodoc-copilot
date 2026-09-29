@@ -2,18 +2,15 @@
 
 import { AIToolbarButton } from '@/components/shadcn/ui/ai-toolbar-button';
 import { Button } from '@/components/shadcn/ui/button';
-import { CommentToolbarButton } from '@/components/shadcn/ui/comment-toolbar-button';
-import {
-  RedoToolbarButton,
-  UndoToolbarButton,
-} from '@/components/shadcn/ui/history-toolbar-button';
 import { ToolbarGroup, ToolbarSeparator } from '@/components/shadcn/ui/toolbar';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { PanelLeftIcon, SparklesIcon } from 'lucide-react';
 import { KEYS } from 'platejs';
 import { useEditorReadOnly } from 'platejs/react';
+import { CommentToolbarButton } from './comment-toolbar-button';
 import { ExportToolbarButton } from './export-toolbar-button';
 import { FontToolbarButton } from './font-toolbar-button';
+import { RedoToolbarButton, UndoToolbarButton } from './history-toolbar-button';
 import { ImportToolbarButton } from './import-toolbar-button';
 import { InsertToolbarButton } from './insert-toolbar-button';
 import { MediaToolbarButton } from './media-toolbar-button';

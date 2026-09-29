@@ -10,10 +10,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
-import { useEditorStore, type Font } from '@/features/editor/stores';
 import { type DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { TypeIcon } from 'lucide-react';
 import * as React from 'react';
+import { useEditorStore, type Font } from '../../stores';
 
 export function FontToolbarButton(props: DropdownMenuProps) {
   const [open, setOpen] = React.useState(false);

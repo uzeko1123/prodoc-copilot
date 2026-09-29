@@ -2,15 +2,7 @@
 
 // import * as React from 'react';
 import { AIToolbarButton } from '@/components/shadcn/ui/ai-toolbar-button';
-import { CommentToolbarButton } from '@/components/shadcn/ui/comment-toolbar-button';
-import { InlineEquationToolbarButton } from '@/components/shadcn/ui/equation-toolbar-button';
-import {
-  IndentToolbarButton,
-  OutdentToolbarButton,
-} from '@/components/shadcn/ui/indent-toolbar-button';
-import { LinkToolbarButton } from '@/components/shadcn/ui/link-toolbar-button';
 import { MarkToolbarButton } from '@/components/shadcn/ui/mark-toolbar-button';
-import { SuggestionToolbarButton } from '@/components/shadcn/ui/suggestion-toolbar-button';
 import { ToolbarGroup, ToolbarSeparator } from '@/components/shadcn/ui/toolbar';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
@@ -25,14 +17,22 @@ import {
 import { KEYS } from 'platejs';
 import { useEditorReadOnly, usePluginOption } from 'platejs/react';
 import { AlignToolbarButton } from './align-toolbar-button';
+import { CommentToolbarButton } from './comment-toolbar-button';
+import { InlineEquationToolbarButton } from './equation-toolbar-button';
 import { FontSizeResetToolbarButton } from './font-size-reset-toolbar-button';
 import { FontSizeToolbarButton } from './font-size-toolbar-button';
+import {
+  IndentToolbarButton,
+  OutdentToolbarButton,
+} from './indent-toolbar-button';
+import { LinkToolbarButton } from './link-toolbar-button';
 import {
   BulletedListToolbarButton,
   NumberedListToolbarButton,
   TodoListToolbarButton,
 } from './list-toolbar-button';
 import { MoreToolbarButton } from './more-toolbar-button';
+import { SuggestionToolbarButton } from './suggestion-toolbar-button';
 import { TurnIntoToolbarButton } from './turn-into-toolbar-button';
 
 export function FloatingToolbarButtons() {

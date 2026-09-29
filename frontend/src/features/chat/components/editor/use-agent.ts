@@ -1,6 +1,5 @@
 'use client';
 
-import { useChatStore } from '@/features/chat/stores';
 import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { AIChatPlugin } from '@platejs/ai/react';
 import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
@@ -8,6 +7,7 @@ import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
 import { applyTools, type Tools } from '../../agent/tools';
 import { createAgentTransport } from '../../agent/transport';
+import { useChatStore } from '../../stores';
 
 export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
 export type ChatMode = (typeof chatModes)[number];

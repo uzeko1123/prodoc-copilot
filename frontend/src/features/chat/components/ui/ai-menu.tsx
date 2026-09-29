@@ -7,8 +7,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/shadcn/ui/command';
-import { Spinner } from '@/components/shadcn/ui/spinner';
-import { useChatStore } from '@/features/chat/stores';
+import { Spinner } from '@/components/ui/spinner';
 import { AIChatPlugin, useEditorChat } from '@platejs/ai/react';
 import {
   flip,
@@ -52,6 +51,7 @@ import {
   type PlateEditor,
 } from 'platejs/react';
 import * as React from 'react';
+import { useChatStore } from '../../stores';
 import type { ChatMode } from '../editor/use-agent';
 import { AICommentIcon } from './ai-comment-icon';
 

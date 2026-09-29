@@ -7,8 +7,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/shadcn/ui/collapsible';
 import { Message, MessageContent } from '@/components/shadcn/ui/message';
-import { MessageScrollerItem } from '@/components/shadcn/ui/message-scroller';
-import { Spinner } from '@/components/shadcn/ui/spinner';
+import { Spinner } from '@/components/ui/spinner';
 import type { MessageAnimationPreset } from '@/lib/shadcn/message-animations';
 import { MESSAGE_ANIMATIONS } from '@/lib/shadcn/message-animations';
 import type { ToolUIPart } from 'ai';
@@ -29,6 +28,7 @@ import { formatTokens, getParagraphs, getToolPartName } from '../lib/utils';
 import { Context } from './context';
 import type { ChatMessage } from './editor/use-agent';
 import { AIChatEditor } from './ui/ai-chat-editor';
+import { MessageScrollerItem } from './ui/message-scroller';
 
 const MotionMessageScrollerItem = motion.create(MessageScrollerItem);
 

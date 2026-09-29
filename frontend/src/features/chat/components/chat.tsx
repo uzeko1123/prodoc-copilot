@@ -23,14 +23,7 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from '@/components/shadcn/ui/input-group';
-import {
-  MessageScroller,
-  MessageScrollerButton,
-  MessageScrollerContent,
-  MessageScrollerProvider,
-  MessageScrollerViewport,
-} from '@/components/shadcn/ui/message-scroller';
-import { Spinner } from '@/components/shadcn/ui/spinner';
+import { Spinner } from '@/components/ui/spinner';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
@@ -58,6 +51,13 @@ import { chatModes, type ChatMode } from './editor/use-agent';
 import { MessageAnimated } from './message-animated';
 import { AICommentIcon } from './ui/ai-comment-icon';
 import { menuStateItems } from './ui/ai-menu';
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from './ui/message-scroller';
 
 export function Chat() {
   const editor = useEditorRef();

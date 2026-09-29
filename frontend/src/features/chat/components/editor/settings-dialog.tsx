@@ -2,15 +2,15 @@
 
 /* DEMO ONLY, DO NOT USE IN PRODUCTION */
 import { Button } from '@/components/shadcn/ui/button';
+import { Field, FieldGroup, FieldLabel } from '@/components/shadcn/ui/field';
+import { Input } from '@/components/shadcn/ui/input';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/shadcn/ui/dialog';
-import { Field, FieldGroup, FieldLabel } from '@/components/shadcn/ui/field';
-import { Input } from '@/components/shadcn/ui/input';
+} from '@/components/ui/dialog';
 import { useWorkbenchStore } from '@/stores/workbench';
 import * as React from 'react';
 import { useChatStore } from '../../stores';

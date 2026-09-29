@@ -1,5 +1,3 @@
-import { getSelectionText, sumUsage } from '@/features/chat/lib/utils';
-import { useChatStore } from '@/features/chat/stores';
 import { useCommentStore } from '@/features/comment/stores';
 import {
   convertToModelMessages,
@@ -14,6 +12,8 @@ import {
 import type { TRange, Value } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../components/editor/use-agent';
+import { getSelectionText, sumUsage } from '../lib/utils';
+import { useChatStore } from '../stores';
 import { getInstructions } from './instructions';
 import { getModel } from './model-openai';
 import { getChatModeTools, tools } from './tools';
