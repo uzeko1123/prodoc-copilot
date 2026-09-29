@@ -4,7 +4,7 @@ import { BlockSelection } from '@/components/shadcn/ui/block-selection';
 import { aiChatPlugin } from '@/features/chat/components/editor/plugins/ai-kit';
 import { AIChatPlugin } from '@platejs/ai/react';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
-import { getPluginTypes, isHotkey, KEYS } from 'platejs';
+import { getMatch, getPluginTypes, isHotkey, KEYS } from 'platejs';
 
 export const hasSelectableClass = ({
   attributes,
@@ -40,6 +40,20 @@ export const BlockSelectionKit = [
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return <BlockSelection {...(props as any)} />;
+      },
+    },
+  })).overrideEditor(({ editor, api: { nodes } }) => ({
+    api: {
+      nodes(options) {
+        const selected = nodes(options);
+        if (!Array.isArray(selected)) return selected;
+        const match = getMatch(editor, options);
+        const matched = match
+          ? selected.filter(([node, path]) => match(node, path))
+          : selected;
+        return (function* () {
+          yield* matched;
+        })();
       },
     },
   })),

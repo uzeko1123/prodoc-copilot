@@ -49,13 +49,14 @@ export function FloatingToolbar({
     ...state,
     floatingOptions: {
       getBoundingClientRect: () => {
-        if (isBlockSelected && !editor.api.isExpanded()) {
+        if (isBlockSelected) {
           const blockRects = editor
             .getApi(BlockSelectionPlugin)
             .blockSelection.getNodes({ sort: true })
             .map(([node]) =>
-              editor.api.toDOMNode(node)!.getBoundingClientRect(),
-            );
+              editor.api.toDOMNode(node)?.getBoundingClientRect(),
+            )
+            .filter((rect) => !!rect);
           if (blockRects.length > 0) {
             return { ...mergeClientRects(blockRects), width: 0 };
           }
@@ -89,6 +90,7 @@ export function FloatingToolbar({
     ...(isBlockSelected && {
       selectionExpanded: true,
       selectionText: floatingToolbarState.selectionText || ' ',
+      waitForCollapsedSelection: false,
     }),
   });
 

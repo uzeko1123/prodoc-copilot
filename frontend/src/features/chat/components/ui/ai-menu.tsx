@@ -22,16 +22,19 @@ import { useComposedRef } from '@udecode/cn';
 import { Command as CommandPrimitive } from 'cmdk';
 import { cn } from 'cn';
 import {
-  Album,
-  BadgeHelp,
-  Check,
+  BadgeQuestionMarkIcon,
   FeatherIcon,
-  ListMinus,
-  ListPlus,
+  GraduationCapIcon,
+  LanguagesIcon,
+  ListMinusIcon,
+  ListPlusIcon,
+  ListTreeIcon,
   PauseIcon,
-  PenLine,
+  PencilSparklesIcon,
   SendIcon,
-  Wand,
+  SpellCheckIcon,
+  SummaryIcon,
+  WandSparklesIcon,
 } from 'lucide-react';
 import { isHotkey, type NodeEntry } from 'platejs';
 import {
@@ -256,52 +259,153 @@ export function AIMenu() {
   );
 }
 
-type EditorChatState =
-  'sendCommand' | 'cursorCommand' | 'selectionCommand' | 'readonlyCommand';
+type EditorChatState = 'cursorCommand' | 'selectionCommand' | 'readonlyCommand';
 
 const aiChatItems = {
-  send: {
-    icon: <SendIcon />,
-    label: '直接发送',
-    value: '/',
-    chatMode: null,
-    onSelect: ({ editor, input }) => {
-      void editor.getApi(AIChatPlugin).aiChat.submit(input);
-    },
-  },
-  comment: {
-    icon: <AICommentIcon />,
-    label: '评论',
-    value: '/comment',
-    chatMode: 'comment',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('comment');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/comment ${input}` : '/comment', {
-          mode: 'insert',
-          toolName: 'comment',
-        });
-    },
-  },
-  continueWrite: {
-    icon: <PenLine />,
-    label: '续写',
-    value: '/continueWrite',
+  continue: {
+    icon: <PencilSparklesIcon />,
+    label: '自动续写',
+    value: '/continue',
     chatMode: 'suggestion',
     onSelect: ({ editor, input }) => {
       useChatStore.getState().setChatMode('suggestion');
       void editor
         .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/continueWrite ${input}` : '/continueWrite', {
+        .aiChat.submit(input ? `/continue ${input}` : '/continue', {
           mode: 'insert',
           toolName: 'generate',
         });
     },
   },
+  outline: {
+    icon: <ListTreeIcon />,
+    label: '生成大纲',
+    value: '/outline',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/outline ${input}` : '/outline', {
+          mode: 'insert',
+          toolName: 'generate',
+        });
+    },
+  },
+  polish: {
+    icon: <WandSparklesIcon />,
+    label: '智能润色',
+    value: '/polish',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/polish ${input}` : '/polish', {
+          toolName: 'edit',
+        });
+    },
+  },
+  fix: {
+    icon: <SpellCheckIcon />,
+    label: '语法校对',
+    value: '/fix',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/fix ${input}` : '/fix', {
+          toolName: 'edit',
+        });
+    },
+  },
+  expand: {
+    icon: <ListPlusIcon />,
+    label: '扩写内容',
+    value: '/expand',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/expand ${input}` : '/expand', {
+          toolName: 'edit',
+        });
+    },
+  },
+  shorten: {
+    icon: <ListMinusIcon />,
+    label: '精简内容',
+    value: '/shorten',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/shorten ${input}` : '/shorten', {
+          toolName: 'edit',
+        });
+    },
+  },
+  formal: {
+    icon: <GraduationCapIcon />,
+    label: '书面用语',
+    value: '/formal',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/formal ${input}` : '/formal', {
+          toolName: 'edit',
+        });
+    },
+  },
+  simplify: {
+    icon: <FeatherIcon />,
+    label: '通俗用语',
+    value: '/simplify',
+    chatMode: 'suggestion',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('suggestion');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/simplify ${input}` : '/simplify', {
+          toolName: 'edit',
+        });
+    },
+  },
+  review: {
+    icon: <AICommentIcon />,
+    label: '智能评阅',
+    value: '/review',
+    chatMode: 'review',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('review');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/review ${input}` : '/review', {
+          mode: 'insert',
+          toolName: 'comment',
+        });
+    },
+  },
+  translate: {
+    icon: <LanguagesIcon />,
+    label: '双语互译',
+    value: '/translate',
+    chatMode: 'chat',
+    onSelect: ({ editor, input }) => {
+      useChatStore.getState().setChatMode('chat');
+      void editor
+        .getApi(AIChatPlugin)
+        .aiChat.submit(input ? `/translate ${input}` : '/translate');
+    },
+  },
   explain: {
-    icon: <BadgeHelp />,
-    label: '解释',
+    icon: <BadgeQuestionMarkIcon />,
+    label: '深度解释',
     value: '/explain',
     chatMode: 'chat',
     onSelect: ({ editor, input }) => {
@@ -311,82 +415,9 @@ const aiChatItems = {
         .aiChat.submit(input ? `/explain ${input}` : '/explain');
     },
   },
-  fixSpelling: {
-    icon: <Check />,
-    label: '语法校对',
-    value: '/fixSpelling',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/fixSpelling ${input}` : '/fixSpelling', {
-          toolName: 'edit',
-        });
-    },
-  },
-  improveWriting: {
-    icon: <Wand />,
-    label: '润色',
-    value: '/improveWriting',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/improveWriting ${input}` : '/improveWriting', {
-          toolName: 'edit',
-        });
-    },
-  },
-  makeLonger: {
-    icon: <ListPlus />,
-    label: '扩展',
-    value: '/makeLonger',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/makeLonger ${input}` : '/makeLonger', {
-          toolName: 'edit',
-        });
-    },
-  },
-  makeShorter: {
-    icon: <ListMinus />,
-    label: '缩减',
-    value: '/makeShorter',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(input ? `/makeShorter ${input}` : '/makeShorter', {
-          toolName: 'edit',
-        });
-    },
-  },
-  simplifyLanguage: {
-    icon: <FeatherIcon />,
-    label: '简化语言',
-    value: '/simplifyLanguage',
-    chatMode: 'suggestion',
-    onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('suggestion');
-      void editor
-        .getApi(AIChatPlugin)
-        .aiChat.submit(
-          input ? `/simplifyLanguage ${input}` : '/simplifyLanguage',
-          {
-            toolName: 'edit',
-          },
-        );
-    },
-  },
   summarize: {
-    icon: <Album />,
-    label: '总结',
+    icon: <SummaryIcon />,
+    label: '提炼总结',
     value: '/summarize',
     chatMode: 'chat',
     onSelect: ({ editor, input }) => {
@@ -427,32 +458,33 @@ export const menuStateItems: Record<
     heading?: string;
   }[]
 > = {
-  sendCommand: [
-    {
-      items: [aiChatItems.send],
-    },
-  ],
   cursorCommand: [
     {
-      items: [aiChatItems.continueWrite],
-      heading: '创建 & 写作',
+      items: [aiChatItems.continue, aiChatItems.outline],
+      heading: '内容生成',
     },
   ],
   selectionCommand: [
     {
       items: [
-        aiChatItems.improveWriting,
-        aiChatItems.makeLonger,
-        aiChatItems.makeShorter,
-        aiChatItems.fixSpelling,
-        aiChatItems.simplifyLanguage,
+        aiChatItems.polish,
+        aiChatItems.fix,
+        aiChatItems.expand,
+        aiChatItems.shorten,
+        aiChatItems.formal,
+        aiChatItems.simplify,
       ],
-      heading: '编辑 & 校对',
+      heading: '文档编辑',
     },
   ],
   readonlyCommand: [
     {
-      items: [aiChatItems.comment, aiChatItems.explain, aiChatItems.summarize],
+      items: [
+        aiChatItems.review,
+        aiChatItems.translate,
+        aiChatItems.explain,
+        aiChatItems.summarize,
+      ],
       heading: '对话 & 评论',
     },
   ],
@@ -472,15 +504,28 @@ export const AIMenuItems = ({
   const menuStates = React.useMemo(() => {
     return (
       readOnly
-        ? ['sendCommand', 'readonlyCommand']
+        ? ['readonlyCommand']
         : isSelecting
-          ? ['sendCommand', 'selectionCommand', 'readonlyCommand']
-          : ['sendCommand', 'cursorCommand', 'readonlyCommand']
+          ? ['selectionCommand', 'readonlyCommand']
+          : ['cursorCommand', 'readonlyCommand']
     ) as EditorChatState[];
   }, [readOnly, isSelecting]);
 
   return (
     <>
+      <CommandGroup>
+        <CommandItem
+          className="[&_svg]:text-muted-foreground"
+          value="/"
+          onSelect={() => {
+            void editor.getApi(AIChatPlugin).aiChat.submit(input);
+            setInput('');
+          }}
+        >
+          <SendIcon />
+          <span>直接发送</span>
+        </CommandItem>
+      </CommandGroup>
       {menuStates.map((menuState, menuStateIndex) =>
         menuStateItems[menuState].map((group, index) => (
           <CommandGroup
@@ -506,7 +551,7 @@ export const AIMenuItems = ({
                   <>
                     <div className="grow" />
                     <code
-                      className="text-muted-foreground"
+                      className="text-muted-foreground text-xs font-medium"
                       data-slot="command-shortcut"
                     >
                       {menuItem.value}

@@ -28,10 +28,12 @@ import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
+  FileTextIcon,
   MessageCircleDashedIcon,
   MessagesCircleIcon,
   PencilSparklesIcon,
   RotateCwIcon,
+  SectionIcon,
   SparklesIcon,
   SquareIcon,
   SquareSlashIcon,
@@ -197,33 +199,36 @@ export function Chat() {
                       inputRef.current?.focus();
                     }}
                   >
-                    {(selectionText.length > 0
-                      ? menuStateItems.selectionCommand
-                      : menuStateItems.cursorCommand
-                    ).flatMap((command) =>
-                      command.items.map((item) => (
-                        <DropdownMenuItem
-                          className="text-sm [&_svg]:size-3.5"
-                          key={item.value}
-                          onSelect={() => {
-                            setChatInput(`${item.value} ${chatInput}`);
-                            if (item.chatMode === null) return;
-                            useChatStore.getState().setChatMode(item.chatMode);
-                          }}
-                        >
-                          {item.icon}
-                          <span>{item.label}</span>
-                          <div className="grow"></div>
-                          <code
-                            data-slot="command-shortcut"
-                            className="text-muted-foreground"
-                          >
-                            {item.value}
-                          </code>
-                        </DropdownMenuItem>
-                      )),
+                    {!readOnly && (
+                      <>
+                        {(selectionText.length > 0
+                          ? menuStateItems.selectionCommand
+                          : menuStateItems.cursorCommand
+                        ).flatMap((command) =>
+                          command.items.map((item) => (
+                            <DropdownMenuItem
+                              className="text-sm [&_svg]:size-3.5"
+                              key={item.value}
+                              onSelect={() => {
+                                setChatInput(`${item.value} ${chatInput}`);
+                                if (item.chatMode === null) return;
+                                useChatStore
+                                  .getState()
+                                  .setChatMode(item.chatMode);
+                              }}
+                            >
+                              {item.icon}
+                              <span>{item.label}</span>
+                              <div className="grow"></div>
+                              <code className="text-muted-foreground text-xs font-medium">
+                                {item.value}
+                              </code>
+                            </DropdownMenuItem>
+                          )),
+                        )}
+                        <DropdownMenuSeparator />
+                      </>
                     )}
-                    <DropdownMenuSeparator />
                     {menuStateItems.readonlyCommand.flatMap((command) =>
                       command.items.map((item) => (
                         <DropdownMenuItem
@@ -238,15 +243,39 @@ export function Chat() {
                           {item.icon}
                           <span>{item.label}</span>
                           <div className="grow"></div>
-                          <code
-                            data-slot="command-shortcut"
-                            className="text-muted-foreground"
-                          >
+                          <code className="text-muted-foreground text-xs font-medium">
                             {item.value}
                           </code>
                         </DropdownMenuItem>
                       )),
                     )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-sm [&_svg]:size-3.5"
+                      onSelect={() => {
+                        setChatInput(`/section ${chatInput}`);
+                      }}
+                    >
+                      <SectionIcon />
+                      <span>选择章节</span>
+                      <div className="grow"></div>
+                      <code className="text-muted-foreground text-xs font-medium">
+                        /section
+                      </code>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-sm [&_svg]:size-3.5"
+                      onSelect={() => {
+                        setChatInput(`/section ${chatInput}`);
+                      }}
+                    >
+                      <FileTextIcon />
+                      <span>选择全文</span>
+                      <div className="grow"></div>
+                      <code className="text-muted-foreground text-xs font-medium">
+                        /fulltext
+                      </code>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="text-sm"

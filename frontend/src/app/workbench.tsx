@@ -88,14 +88,17 @@ function Workbench() {
     value: useEditorStore.getState().value,
   });
 
+  const _hideHeader = true;
   const _hideRightPanel = true;
 
   return (
     <div className="flex h-dvh flex-col">
       <Plate editor={editor}>
-        <header className="flex h-12 shrink-0 items-center border-b px-4">
-          <h1 className="text-sm font-semibold">工作台</h1>
-        </header>
+        {!_hideHeader && (
+          <header className="flex h-12 shrink-0 items-center border-b px-4">
+            <h1 className="text-sm font-semibold">工作台</h1>
+          </header>
+        )}
 
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
