@@ -104,7 +104,7 @@ export function Chat() {
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
 
   return (
-    <MessageScrollerProvider autoScroll scrollEdgeThreshold={80}>
+    <MessageScrollerProvider autoScroll scrollEdgeThreshold={12}>
       <Card className="flex h-full flex-col gap-0 rounded-none ring-0">
         <CardContent className="flex-1 overflow-hidden p-0">
           {chatMessages.length === 0 ? (
