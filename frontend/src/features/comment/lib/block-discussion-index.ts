@@ -28,7 +28,7 @@ import {
   discussionPlugin,
   type TDiscussion,
 } from '../components/editor/plugins/discussion-kit';
-import type { TComment } from '../components/ui/comment';
+import { formatCommentDate, type TComment } from '../components/ui/comment';
 
 export interface ResolvedDiscussion extends TDiscussion {
   path: Path;
@@ -98,13 +98,12 @@ const TYPE_TEXT_MAP: Record<string, (node?: TElement) => string> = {
   [KEYS.h6]: () => '标题 6',
   [KEYS.hr]: () => '分隔线',
   [KEYS.img]: () => '图片',
-  [KEYS.mediaEmbed]: () => '媒体',
   [KEYS.p]: (node) => {
     if (node?.[KEYS.listType] === KEYS.listTodo) return '待办列表';
-    if (node?.[KEYS.listType] === KEYS.ol) return '有序列表';
-    if (node?.[KEYS.listType] === KEYS.ul) return '列表';
+    if (node?.[KEYS.listType] === KEYS.ol) return '编号列表';
+    if (node?.[KEYS.listType] === KEYS.ul) return '符号列表';
 
-    return '段落';
+    return '正文';
   },
   [KEYS.table]: () => '表格',
   [KEYS.toc]: () => '目录',
@@ -151,30 +150,7 @@ const suggestionTypeText = (node: TElement) =>
 
 const formatSuggestionDateText = (date: string) => {
   const elementDate = new Date(date);
-
-  if (Number.isNaN(elementDate.getTime())) return date;
-
-  const today = new Date();
-  const yesterday = new Date(today);
-  const tomorrow = new Date(today);
-
-  yesterday.setDate(today.getDate() - 1);
-  tomorrow.setDate(today.getDate() + 1);
-
-  const sameDay = (left: Date, right: Date) =>
-    left.getDate() === right.getDate() &&
-    left.getMonth() === right.getMonth() &&
-    left.getFullYear() === right.getFullYear();
-
-  if (sameDay(elementDate, today)) return '今天';
-  if (sameDay(elementDate, yesterday)) return '昨天';
-  if (sameDay(elementDate, tomorrow)) return '明天';
-
-  return elementDate.toLocaleDateString('zh-CN', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  return formatCommentDate(elementDate);
 };
 
 const getInlineSuggestionElementText = (node: TElement) => {

@@ -97,12 +97,12 @@ const groups: Group[] = [
     items: [
       {
         icon: <ListIcon />,
-        label: '无序列表',
+        label: '符号列表',
         value: KEYS.ul,
       },
       {
         icon: <ListOrderedIcon />,
-        label: '有序列表',
+        label: '编号列表',
         value: KEYS.ol,
       },
       {

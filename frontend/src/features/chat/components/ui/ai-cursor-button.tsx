@@ -40,8 +40,8 @@ export function AICursorButton() {
       }
       return getDefaultBoundingClientRect();
     },
-    middleware: [offset(1)],
     placement: 'bottom',
+    middleware: [offset(1)],
   });
 
   const ref = useComposedRef<HTMLDivElement>(floating.refs.setFloating);

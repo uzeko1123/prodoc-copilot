@@ -108,8 +108,8 @@ function FloatingToolbarButtonsWithBlockSelection() {
 
           <ToolbarSeparator className="self-stretch" />
 
-          <NumberedListToolbarButton />
           <BulletedListToolbarButton />
+          <NumberedListToolbarButton />
           <TodoListToolbarButton />
 
           <ToolbarSeparator className="self-stretch" />

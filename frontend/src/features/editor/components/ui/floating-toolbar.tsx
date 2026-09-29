@@ -3,12 +3,15 @@
 import { Toolbar } from '@/components/shadcn/ui/toolbar';
 import {
   flip,
+  getSelectionBoundingClientRect,
+  mergeClientRects,
   offset,
   shift,
   useFloatingToolbar,
   useFloatingToolbarState,
   type FloatingToolbarState,
 } from '@platejs/floating';
+import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { useComposedRef } from '@udecode/cn';
 import { cn } from 'cn';
 import { KEYS } from 'platejs';
@@ -16,6 +19,7 @@ import {
   useEditorContainerRef,
   useEditorId,
   useEditorMounted,
+  useEditorRef,
   useEventEditorValue,
   usePluginOption,
   useScrollRef,
@@ -30,10 +34,13 @@ export function FloatingToolbar({
 }: React.ComponentProps<typeof Toolbar> & {
   state?: FloatingToolbarState;
 }) {
+  const editor = useEditorRef();
   const editorId = useEditorId();
   const focusedEditorId = useEventEditorValue('focus');
   const isFloatingLinkOpen = !!usePluginOption({ key: KEYS.link }, 'mode');
   const isAIChatOpen = usePluginOption({ key: KEYS.aiChat }, 'open');
+  const selectedBlockIds = usePluginOption(BlockSelectionPlugin, 'selectedIds');
+  const isBlockSelected = !!selectedBlockIds && selectedBlockIds.size > 0;
 
   const floatingToolbarState = useFloatingToolbarState({
     editorId,
@@ -41,6 +48,20 @@ export function FloatingToolbar({
     hideToolbar: isFloatingLinkOpen || isAIChatOpen,
     ...state,
     floatingOptions: {
+      getBoundingClientRect: () => {
+        if (isBlockSelected && !editor.api.isExpanded()) {
+          const blockRects = editor
+            .getApi(BlockSelectionPlugin)
+            .blockSelection.getNodes({ sort: true })
+            .map(([node]) =>
+              editor.api.toDOMNode(node)!.getBoundingClientRect(),
+            );
+          if (blockRects.length > 0) {
+            return { ...mergeClientRects(blockRects), width: 0 };
+          }
+        }
+        return getSelectionBoundingClientRect(editor);
+      },
       placement: 'top',
       middleware: [
         offset(12),
@@ -63,7 +84,13 @@ export function FloatingToolbar({
     hidden,
     props: rootProps,
     ref: floatingRef,
-  } = useFloatingToolbar(floatingToolbarState);
+  } = useFloatingToolbar({
+    ...floatingToolbarState,
+    ...(isBlockSelected && {
+      selectionExpanded: true,
+      selectionText: floatingToolbarState.selectionText || ' ',
+    }),
+  });
 
   const ref = useComposedRef<HTMLDivElement>(props.ref, floatingRef);
 

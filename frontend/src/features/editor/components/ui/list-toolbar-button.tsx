@@ -37,7 +37,7 @@ export function BulletedListToolbarButton() {
   );
 
   return (
-    <ToolbarSplitButton tooltip="无序列表" pressed={open}>
+    <ToolbarSplitButton tooltip="符号列表" pressed={open}>
       <ToolbarSplitButtonPrimary
         className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
         onClick={() => {
@@ -68,9 +68,9 @@ export function BulletedListToolbarButton() {
                 })
               }
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="size-2 rounded-full border border-current bg-current" />
-                样式 1
+                实心圆
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -80,9 +80,9 @@ export function BulletedListToolbarButton() {
                 })
               }
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="size-2 rounded-full border border-current" />
-                样式 2
+                空心圆
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -92,9 +92,9 @@ export function BulletedListToolbarButton() {
                 })
               }
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="size-2 border border-current bg-current" />
-                样式 3
+                方块
               </div>
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -121,7 +121,7 @@ export function NumberedListToolbarButton() {
   );
 
   return (
-    <ToolbarSplitButton tooltip="有序列表" pressed={open}>
+    <ToolbarSplitButton tooltip="编号列表" pressed={open}>
       <ToolbarSplitButtonPrimary
         className="data-[state=on]:bg-accent data-[state=on]:text-accent-foreground"
         onClick={() =>
@@ -152,7 +152,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              默认数字：1, 2, 3, . . .
+              <span className="font-medium">1, 2, 3, . . .</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -161,7 +161,9 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              中文数字：一、二、三、. . .
+              <span className="font-medium">
+                <span className="tracking-tighter">一、二、三、</span>. . .
+              </span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -170,7 +172,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              英文字母：a, b, c, . . .
+              <span className="font-medium">a, b, c, . . .</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -179,7 +181,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              英文字母：A, B, C, . . .
+              <span className="font-medium">A, B, C, . . .</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -188,7 +190,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              罗马数字：i, ii, iii, . . .
+              <span className="font-medium">i, ii, iii, . . .</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() =>
@@ -197,7 +199,7 @@ export function NumberedListToolbarButton() {
                 })
               }
             >
-              罗马数字：I, II, III, . . .
+              <span className="font-medium">I, II, III, . . .</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

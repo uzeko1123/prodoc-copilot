@@ -4,7 +4,22 @@ import { Button } from '@/components/shadcn/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
-import { CheckIcon, XIcon } from 'lucide-react';
+import {
+  ALargeSmallIcon,
+  BoldIcon,
+  CheckIcon,
+  Code2Icon,
+  CornerDownLeftIcon,
+  HighlighterIcon,
+  ItalicIcon,
+  MinusIcon,
+  PlusIcon,
+  StrikethroughIcon,
+  SubscriptIcon,
+  SuperscriptIcon,
+  UnderlineIcon,
+  XIcon,
+} from 'lucide-react';
 import { useEditorPlugin, usePluginOption } from 'platejs/react';
 import * as React from 'react';
 import {
@@ -16,18 +31,6 @@ import {
   type TDiscussion,
 } from '../editor/plugins/discussion-kit';
 import { Comment, CommentCreateForm, formatCommentDate } from './comment';
-
-// 行内格式属性的中文映射
-const MARK_LABELS: Record<string, string> = {
-  bold: '加粗',
-  code: '代码',
-  highlight: '高亮',
-  italic: '斜体',
-  strikethrough: '删除线',
-  subscript: '下标',
-  superscript: '上标',
-  underline: '下划线',
-};
 
 export function BlockSuggestionCard({
   idx,
@@ -57,14 +60,14 @@ export function BlockSuggestionCard({
   const [hovering, setHovering] = React.useState(false);
 
   const suggestionText2Array = (text: string) => {
-    if (text === BLOCK_SUGGESTION_TOKEN) return ['换行'];
+    if (text === BLOCK_SUGGESTION_TOKEN)
+      return [<CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />];
 
     return text.split(BLOCK_SUGGESTION_TOKEN).filter(Boolean);
   };
 
   const getRemoveSummaryItems = (text: string) => {
     const items = suggestionText2Array(text).map((item) => {
-      if (item === 'column_group') return '分栏';
       if (item === 'code_block') return '代码块';
 
       return item;
@@ -72,7 +75,6 @@ export function BlockSuggestionCard({
 
     if (items.includes('表格')) return ['表格'];
     if (items.includes('代码块')) return ['代码块'];
-    if (items.includes('分栏')) return ['分栏'];
 
     return items;
   };
@@ -107,9 +109,11 @@ export function BlockSuggestionCard({
           <div className="flex flex-col gap-2">
             {suggestion.type === 'remove' &&
               getRemoveSummaryItems(suggestion.text!).map((text, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">删除：</span>
-
+                <div
+                  key={index}
+                  className="flex items-start gap-2 text-red-900"
+                >
+                  <MinusIcon className="my-0.5 size-4 shrink-0" />
                   <span key={index} className="text-sm">
                     {text}
                   </span>
@@ -118,61 +122,71 @@ export function BlockSuggestionCard({
 
             {suggestion.type === 'insert' &&
               suggestionText2Array(suggestion.newText!).map((text, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span className="text-muted-foreground text-sm">添加：</span>
-
+                <div
+                  key={index}
+                  className="flex items-start gap-2 text-blue-900"
+                >
+                  <PlusIcon className="my-0.5 size-4 shrink-0" />
                   <span key={index} className="text-sm">
-                    {text || '换行'}
+                    {text || (
+                      <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
+                    )}
                   </span>
                 </div>
               ))}
 
             {suggestion.type === 'replace' && (
               <div className="flex flex-col gap-2">
+                {suggestionText2Array(suggestion.text!).map((text, index) => (
+                  <React.Fragment key={index}>
+                    <div
+                      key={index}
+                      className="flex items-start gap-2 text-red-900"
+                    >
+                      <MinusIcon className="my-0.5 size-4 shrink-0" />
+                      <span className="text-sm">
+                        {text || (
+                          <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
+                        )}
+                      </span>
+                    </div>
+                  </React.Fragment>
+                ))}
+
                 {suggestionText2Array(suggestion.newText!).map(
                   (text, index) => (
                     <React.Fragment key={index}>
                       <div
                         key={index}
-                        className="text-brand/80 flex items-start gap-2"
+                        className="flex items-start gap-2 text-blue-900"
                       >
-                        <span className="text-sm">为：</span>
-                        <span className="text-sm">{text || '换行'}</span>
+                        <PlusIcon className="my-0.5 size-4 shrink-0" />
+                        <span className="text-sm">
+                          {text || (
+                            <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
+                          )}
+                        </span>
                       </div>
                     </React.Fragment>
                   ),
                 )}
-
-                {suggestionText2Array(suggestion.text!).map((text, index) => (
-                  <React.Fragment key={index}>
-                    <div key={index} className="flex items-start gap-2">
-                      <span className="text-muted-foreground text-sm">
-                        {index === 0 ? '替换：' : '删除：'}
-                      </span>
-                      <span className="text-sm">{text || '换行'}</span>
-                    </div>
-                  </React.Fragment>
-                ))}
               </div>
             )}
 
             {suggestion.type === 'update' && (
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">
+              <div className="flex items-start gap-2">
+                <span className="flex shrink-0 gap-1">
                   {Object.keys(suggestion.properties).map((key) => (
-                    // 不翻译：未命中中文映射时回退原有英文显示
-                    <span key={key}>
-                      {MARK_LABELS[key]
-                        ? `取消${MARK_LABELS[key]}`
-                        : `Un${key}`}
+                    <span key={key} className="flex shrink-0 text-red-900">
+                      <MinusIcon className="my-1 size-3" />
+                      <MarkIcon mark={key} />
                     </span>
                   ))}
 
                   {Object.keys(suggestion.newProperties).map((key) => (
-                    // 不翻译：未命中中文映射时回退原有英文显示
-                    <span key={key}>
-                      {MARK_LABELS[key] ??
-                        key.charAt(0).toUpperCase() + key.slice(1)}
+                    <span key={key} className="flex shrink-0 text-blue-900">
+                      <PlusIcon className="my-1 size-3" />
+                      <MarkIcon mark={key} />
                     </span>
                   ))}
                 </span>
@@ -226,3 +240,28 @@ export function BlockSuggestionCard({
 export const isResolvedSuggestion = (
   suggestion: ResolvedSuggestion | TDiscussion,
 ): suggestion is ResolvedSuggestion => 'suggestionId' in suggestion;
+
+function MarkIcon({ mark }: { mark: string }) {
+  const markIcons = {
+    fontSize: ALargeSmallIcon,
+    bold: BoldIcon,
+    italic: ItalicIcon,
+    underline: UnderlineIcon,
+    strikethrough: StrikethroughIcon,
+    code: Code2Icon,
+    subscript: SubscriptIcon,
+    superscript: SuperscriptIcon,
+    highlight: HighlighterIcon,
+  };
+  const Icon = markIcons[mark as keyof typeof markIcons];
+
+  if (!Icon) {
+    return (
+      <span className="text-sm font-medium">
+        {mark.charAt(0).toUpperCase() + mark.slice(1)}
+      </span>
+    );
+  }
+
+  return <Icon className="my-0.5 size-4" />;
+}
