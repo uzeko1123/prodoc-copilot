@@ -1,16 +1,15 @@
-'use client';
-
 // import * as React from 'react';
+
 import { inlineSuggestionVariants } from '@/features/comment/lib/suggestion';
 import { getLinkAttributes } from '@platejs/link';
 import { cn } from 'cn';
 import type { TLinkElement } from 'platejs';
-import type { PlateElementProps } from 'platejs/react';
-import { PlateElement } from 'platejs/react';
+import type { SlateElementProps } from 'platejs/static';
+import { SlateElement } from 'platejs/static';
 
-export function LinkElement(props: PlateElementProps<TLinkElement>) {
+export function LinkElementStatic(props: SlateElementProps<TLinkElement>) {
   return (
-    <PlateElement
+    <SlateElement
       {...props}
       as="a"
       className={cn(
@@ -20,14 +19,9 @@ export function LinkElement(props: PlateElementProps<TLinkElement>) {
       attributes={{
         ...props.attributes,
         ...getLinkAttributes(props.editor, props.element),
-        onMouseOver: (e) => {
-          e.stopPropagation();
-        },
-        target: '_blank',
-        rel: 'noopener noreferrer nofollow',
       }}
     >
       {props.children}
-    </PlateElement>
+    </SlateElement>
   );
 }

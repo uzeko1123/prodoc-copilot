@@ -107,12 +107,7 @@ export function AICursorButton() {
               <SparklesIcon className="text-muted-foreground size-3.5" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
-            AI 指令
-            <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
-              Tab
-            </kbd>
-          </TooltipContent>
+          <TooltipContent side="bottom">AI 指令</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </div>

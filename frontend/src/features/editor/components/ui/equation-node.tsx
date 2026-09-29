@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/shadcn/ui/popover';
-import { inlineSuggestionVariants } from '@/lib/shadcn/suggestion';
+import { inlineSuggestionVariants } from '@/features/comment/lib/suggestion';
 import { useEquationElement, useEquationInput } from '@platejs/math/react';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { cn } from 'cn';

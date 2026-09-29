@@ -37,15 +37,15 @@ export const suggestionVariants = cva(
     variants: {
       insertActive: {
         false: '',
-        true: 'bg-blue-100',
+        true: '',
       },
       remove: {
         false: '',
-        true: 'text-red-900 line-through',
+        true: 'text-red-900',
       },
       removeActive: {
         false: '',
-        true: 'bg-red-100',
+        true: '',
       },
     },
   },

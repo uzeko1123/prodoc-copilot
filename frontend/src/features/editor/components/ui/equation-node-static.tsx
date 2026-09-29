@@ -1,6 +1,6 @@
 // import * as React from 'react';
 
-import { inlineSuggestionVariants } from '@/lib/shadcn/suggestion';
+import { inlineSuggestionVariants } from '@/features/comment/lib/suggestion';
 import { getEquationHtml } from '@platejs/math';
 import { cn } from 'cn';
 import { RadicalIcon } from 'lucide-react';
