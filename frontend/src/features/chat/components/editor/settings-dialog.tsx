@@ -70,7 +70,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
             id="baseUrl"
             type="text"
             placeholder="https://api.openai.com/v1"
-            autoComplete="baseUrl"
+            autoComplete="off"
             required
           />
         </Field>
@@ -80,9 +80,9 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             id="apiKey"
-            type="password"
+            type="text"
             placeholder="sk-..."
-            autoComplete="apiKey"
+            autoComplete="off"
             required
           />
         </Field>
@@ -94,7 +94,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
             id="modelId"
             type="text"
             placeholder="gpt-5"
-            autoComplete="modelId"
+            autoComplete="off"
             required
           />
         </Field>
