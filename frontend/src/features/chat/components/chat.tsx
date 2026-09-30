@@ -201,10 +201,7 @@ export function Chat() {
                   >
                     {!readOnly && (
                       <>
-                        {(selectionText.length > 0
-                          ? menuStateItems.selectionCommand
-                          : menuStateItems.cursorCommand
-                        ).flatMap((command) =>
+                        {menuStateItems.cursorCommand.flatMap((command) =>
                           command.items.map((item) => (
                             <DropdownMenuItem
                               className="text-sm [&_svg]:size-3.5"
@@ -219,13 +216,39 @@ export function Chat() {
                             >
                               {item.icon}
                               <span>{item.label}</span>
-                              <div className="grow"></div>
+                              <div className="grow" />
                               <code className="text-muted-foreground text-xs font-medium">
                                 {item.value}
                               </code>
                             </DropdownMenuItem>
                           )),
                         )}
+
+                        <DropdownMenuSeparator />
+
+                        {menuStateItems.selectionCommand.flatMap((command) =>
+                          command.items.map((item) => (
+                            <DropdownMenuItem
+                              className="text-sm [&_svg]:size-3.5"
+                              key={item.value}
+                              onSelect={() => {
+                                setChatInput(`${item.value} ${chatInput}`);
+                                if (item.chatMode === null) return;
+                                useChatStore
+                                  .getState()
+                                  .setChatMode(item.chatMode);
+                              }}
+                            >
+                              {item.icon}
+                              <span>{item.label}</span>
+                              <div className="grow" />
+                              <code className="text-muted-foreground text-xs font-medium">
+                                {item.value}
+                              </code>
+                            </DropdownMenuItem>
+                          )),
+                        )}
+
                         <DropdownMenuSeparator />
                       </>
                     )}
@@ -242,14 +265,16 @@ export function Chat() {
                         >
                           {item.icon}
                           <span>{item.label}</span>
-                          <div className="grow"></div>
+                          <div className="grow" />
                           <code className="text-muted-foreground text-xs font-medium">
                             {item.value}
                           </code>
                         </DropdownMenuItem>
                       )),
                     )}
+
                     <DropdownMenuSeparator />
+
                     <DropdownMenuItem
                       className="text-sm [&_svg]:size-3.5"
                       onSelect={() => {
@@ -258,7 +283,7 @@ export function Chat() {
                     >
                       <SectionIcon />
                       <span>选择章节</span>
-                      <div className="grow"></div>
+                      <div className="grow" />
                       <code className="text-muted-foreground text-xs font-medium">
                         /section
                       </code>
@@ -271,12 +296,14 @@ export function Chat() {
                     >
                       <FileTextIcon />
                       <span>选择全文</span>
-                      <div className="grow"></div>
+                      <div className="grow" />
                       <code className="text-muted-foreground text-xs font-medium">
                         /fulltext
                       </code>
                     </DropdownMenuItem>
+
                     <DropdownMenuSeparator />
+
                     <DropdownMenuItem
                       className="text-sm"
                       onSelect={() => {
@@ -300,7 +327,9 @@ export function Chat() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <div className="grow"></div>
+
+                <div className="grow" />
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <InputGroupButton
