@@ -108,7 +108,7 @@ export function BlockSuggestionCard({
             {suggestion.createdByAI && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <AvatarBadge className="size-3 [&>svg]:size-2.5">
+                  <AvatarBadge className="bg-white text-purple-800">
                     <SparklesIcon />
                   </AvatarBadge>
                 </TooltipTrigger>
