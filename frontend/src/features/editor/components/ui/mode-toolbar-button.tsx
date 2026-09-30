@@ -8,27 +8,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
-import { SuggestionPlugin } from '@platejs/suggestion/react';
 import {
   DropdownMenuItemIndicator,
   type DropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu';
-import { CheckIcon, EyeIcon, FeatherIcon, PencilLineIcon } from 'lucide-react';
-import {
-  useEditorReadOnly,
-  useEditorRef,
-  usePluginOption,
-} from 'platejs/react';
+import { CheckIcon, EyeIcon, PencilIcon } from 'lucide-react';
+import { useEditorReadOnly, useEditorRef } from 'platejs/react';
 import * as React from 'react';
 
 const item: Record<string, { icon: React.ReactNode; label: string }> = {
   editing: {
-    icon: <FeatherIcon />,
+    icon: <PencilIcon />,
     label: '编辑',
-  },
-  suggestion: {
-    icon: <PencilLineIcon />,
-    label: '修订',
   },
   viewing: {
     icon: <EyeIcon />,
@@ -41,13 +32,7 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
   const readOnly = useEditorReadOnly();
   const [open, setOpen] = React.useState(false);
 
-  const isSuggesting = usePluginOption(SuggestionPlugin, 'isSuggesting');
-
-  let value = 'editing';
-
-  if (readOnly) value = 'viewing';
-
-  if (isSuggesting) value = 'suggestion';
+  const value = readOnly ? 'viewing' : 'editing';
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
@@ -62,24 +47,13 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
         <DropdownMenuRadioGroup
           onValueChange={(newValue) => {
             if (newValue === 'viewing') {
-              editor.setOption(SuggestionPlugin, 'isSuggesting', false);
               editor.store.setReadOnly(true);
               editor.tf.focus();
               return;
             }
-
-            if (newValue === 'suggestion') {
-              editor.setOption(SuggestionPlugin, 'isSuggesting', true);
-              editor.store.setReadOnly(false);
-              editor.tf.focus();
-              return;
-            }
-
             if (newValue === 'editing') {
-              editor.setOption(SuggestionPlugin, 'isSuggesting', false);
               editor.store.setReadOnly(false);
               editor.tf.focus();
-              return;
             }
           }}
           value={value}
@@ -90,14 +64,6 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
           >
             <Indicator />
             {item.editing.icon} {item.editing.label}
-          </DropdownMenuRadioItem>
-
-          <DropdownMenuRadioItem
-            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
-            value="suggestion"
-          >
-            <Indicator />
-            {item.suggestion.icon} {item.suggestion.label}
           </DropdownMenuRadioItem>
 
           <DropdownMenuRadioItem

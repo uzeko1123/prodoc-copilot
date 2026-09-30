@@ -32,103 +32,89 @@ import {
   TodoListToolbarButton,
 } from './list-toolbar-button';
 import { MoreToolbarButton } from './more-toolbar-button';
-import { SuggestionToolbarButton } from './suggestion-toolbar-button';
 import { TurnIntoToolbarButton } from './turn-into-toolbar-button';
 
 export function FloatingToolbarButtons() {
+  const readOnly = useEditorReadOnly();
   const selectedBlockIds = usePluginOption(BlockSelectionPlugin, 'selectedIds');
 
   return (
     <ToolbarGroup>
-      {selectedBlockIds && selectedBlockIds.size > 0 ? (
-        <FloatingToolbarButtonsWithBlockSelection />
-      ) : (
-        <FloatingToolbarButtonsWithSelection />
-      )}
+      {!readOnly &&
+        (selectedBlockIds && selectedBlockIds.size > 0 ? (
+          <FloatingToolbarButtonsWithBlockSelection />
+        ) : (
+          <FloatingToolbarButtonsWithSelection />
+        ))}
       <FloatingToolbarButtonsStatic />
     </ToolbarGroup>
   );
 }
 
 function FloatingToolbarButtonsWithSelection() {
-  const readOnly = useEditorReadOnly();
-
   return (
     <>
-      {!readOnly && (
-        <>
-          <FontSizeToolbarButton />
-          <FontSizeResetToolbarButton />
+      <FontSizeToolbarButton />
+      <FontSizeResetToolbarButton />
 
-          <ToolbarSeparator className="self-stretch" />
+      <ToolbarSeparator className="self-stretch" />
 
-          <MarkToolbarButton nodeType={KEYS.bold} tooltip="加粗">
-            <BoldIcon />
-          </MarkToolbarButton>
-          <MarkToolbarButton nodeType={KEYS.italic} tooltip="斜体">
-            <ItalicIcon />
-          </MarkToolbarButton>
-          <MarkToolbarButton nodeType={KEYS.underline} tooltip="下划线">
-            <UnderlineIcon />
-          </MarkToolbarButton>
-          <MarkToolbarButton nodeType={KEYS.strikethrough} tooltip="删除线">
-            <StrikethroughIcon />
-          </MarkToolbarButton>
+      <MarkToolbarButton nodeType={KEYS.bold} tooltip="加粗">
+        <BoldIcon />
+      </MarkToolbarButton>
+      <MarkToolbarButton nodeType={KEYS.italic} tooltip="斜体">
+        <ItalicIcon />
+      </MarkToolbarButton>
+      <MarkToolbarButton nodeType={KEYS.underline} tooltip="下划线">
+        <UnderlineIcon />
+      </MarkToolbarButton>
+      <MarkToolbarButton nodeType={KEYS.strikethrough} tooltip="删除线">
+        <StrikethroughIcon />
+      </MarkToolbarButton>
 
-          <ToolbarSeparator className="self-stretch" />
+      <ToolbarSeparator className="self-stretch" />
 
-          <MarkToolbarButton nodeType={KEYS.code} tooltip="行内代码">
-            <Code2Icon />
-          </MarkToolbarButton>
-          <InlineEquationToolbarButton />
-          <LinkToolbarButton />
-          <MoreToolbarButton />
+      <MarkToolbarButton nodeType={KEYS.code} tooltip="行内代码">
+        <Code2Icon />
+      </MarkToolbarButton>
+      <InlineEquationToolbarButton />
+      <LinkToolbarButton />
+      <MoreToolbarButton />
 
-          <ToolbarSeparator className="self-stretch" />
-        </>
-      )}
+      <ToolbarSeparator className="self-stretch" />
     </>
   );
 }
 
 function FloatingToolbarButtonsWithBlockSelection() {
-  const readOnly = useEditorReadOnly();
-
   return (
     <>
-      {!readOnly && (
-        <>
-          <TurnIntoToolbarButton />
+      <TurnIntoToolbarButton />
 
-          <ToolbarSeparator className="self-stretch" />
+      <ToolbarSeparator className="self-stretch" />
 
-          <AlignToolbarButton />
-          <IndentToolbarButton />
-          <OutdentToolbarButton />
+      <AlignToolbarButton />
+      <IndentToolbarButton />
+      <OutdentToolbarButton />
 
-          <ToolbarSeparator className="self-stretch" />
+      <ToolbarSeparator className="self-stretch" />
 
-          <BulletedListToolbarButton />
-          <NumberedListToolbarButton />
-          <TodoListToolbarButton />
+      <BulletedListToolbarButton />
+      <NumberedListToolbarButton />
+      <TodoListToolbarButton />
 
-          <ToolbarSeparator className="self-stretch" />
-        </>
-      )}
+      <ToolbarSeparator className="self-stretch" />
     </>
   );
 }
 
 function FloatingToolbarButtonsStatic() {
-  const readOnly = useEditorReadOnly();
-
   return (
     <>
       <MarkToolbarButton nodeType={KEYS.highlight} tooltip="标记">
         <HighlighterIcon />
       </MarkToolbarButton>
       <CommentToolbarButton />
-      {!readOnly && <SuggestionToolbarButton />}
       <AIToolbarButton tooltip="AI 指令">
         <SparklesIcon />
       </AIToolbarButton>
