@@ -150,7 +150,7 @@ function Workbench() {
                 className="h-10 min-h-10 w-full border-b"
               >
                 <TabsTrigger value="chat">AI 对话</TabsTrigger>
-                <TabsTrigger value="comment">修订 & 评论</TabsTrigger>
+                <TabsTrigger value="comment">评论 & 修订</TabsTrigger>
                 {!_hideRightPanel && !isRightPanelOpen && (
                   <Button variant="ghost" onClick={toggleRightPanel}>
                     <PanelRightIcon />
