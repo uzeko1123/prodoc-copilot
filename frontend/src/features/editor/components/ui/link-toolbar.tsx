@@ -32,7 +32,6 @@ import {
   useEditorRef,
   useEditorSelection,
   useFormInputProps,
-  usePluginOption,
   useScrollRef,
 } from 'platejs/react';
 import * as React from 'react';
@@ -50,19 +49,13 @@ export function LinkFloatingToolbar({
 }: {
   state?: LinkFloatingToolbarState;
 }) {
-  const activeCommentId = usePluginOption({ key: KEYS.comment }, 'activeId');
-  const activeSuggestionId = usePluginOption(
-    { key: KEYS.suggestion },
-    'activeId',
-  );
-
   const floatingOptions: UseVirtualFloatingOptions = React.useMemo(
     () => ({
-      placement: activeSuggestionId || activeCommentId ? 'top' : 'bottom',
+      placement: 'top',
       middleware: [
         offset(8),
         flip({
-          fallbackPlacements: ['bottom', 'top'],
+          fallbackPlacements: ['bottom'],
           padding: 12,
         }),
         shift({
@@ -72,7 +65,7 @@ export function LinkFloatingToolbar({
         }),
       ],
     }),
-    [activeCommentId, activeSuggestionId],
+    [],
   );
 
   const insertState = useFloatingLinkInsertState({
