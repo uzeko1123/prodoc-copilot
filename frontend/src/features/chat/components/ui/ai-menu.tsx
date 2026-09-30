@@ -372,9 +372,9 @@ const aiChatItems = {
     icon: <AICommentIcon />,
     label: '智能评阅',
     value: '/review',
-    chatMode: 'review',
+    chatMode: 'comment',
     onSelect: ({ editor, input }) => {
-      useChatStore.getState().setChatMode('review');
+      useChatStore.getState().setChatMode('comment');
       void editor
         .getApi(AIChatPlugin)
         .aiChat.submit(input ? `/review ${input}` : '/review', {

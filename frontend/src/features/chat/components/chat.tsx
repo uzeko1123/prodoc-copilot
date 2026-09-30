@@ -266,7 +266,7 @@ export function Chat() {
                     <DropdownMenuItem
                       className="text-sm [&_svg]:size-3.5"
                       onSelect={() => {
-                        setChatInput(`/section ${chatInput}`);
+                        setChatInput(`/fulltext ${chatInput}`);
                       }}
                     >
                       <FileTextIcon />

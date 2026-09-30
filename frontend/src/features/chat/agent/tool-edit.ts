@@ -19,17 +19,18 @@ export type EditTool = {
 const editToolIOSchema = jsonSchema<EditToolIO>({
   properties: {
     blockId: {
-      description: 'Target block ID',
+      description:
+        '目标块 ID，即 Context 文档树（children）中目标块节点的 id 属性值',
       type: 'string',
     },
     content: {
       description:
-        'Original text in the target block, used to locate the range (fuzzy match)',
+        '定位用的原文片段（纯文本，须与文档逐字一致）：在目标块的纯文本中匹配此内容以确定操作范围，先精确匹配、再模糊匹配，取首次出现的位置；多个片段之间以空行分隔时，各片段依次在目标块之后的兄弟块中匹配，共同构成一个连续范围（此时取第一段所在块的 id 作为 blockId）',
       type: 'string',
     },
     edit: {
       description:
-        'Full replacement text (Markdown); empty string deletes the range',
+        '替换后的完整文本（Markdown 语法）：仅替换定位到的范围，前后不会自动补空格或换行，所需的空格或换行符须按需自行写入；空字符串表示删除定位到的范围',
       type: 'string',
     },
   },
@@ -39,7 +40,8 @@ const editToolIOSchema = jsonSchema<EditToolIO>({
 });
 
 export const editTool = tool({
-  description: 'Replace or delete a text range in the document',
+  description:
+    '编辑工具（edit）：替换或删除文档中的一段文本。blockId 选定目标块，content 在该块内定位范围，edit 为替换后的完整文本（Markdown），空字符串表示删除该范围',
   inputSchema: editToolIOSchema,
   outputSchema: editToolIOSchema,
 });
