@@ -62,22 +62,23 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
         <DropdownMenuRadioGroup
           onValueChange={(newValue) => {
             if (newValue === 'viewing') {
+              editor.setOption(SuggestionPlugin, 'isSuggesting', false);
               editor.store.setReadOnly(true);
-
+              editor.tf.focus();
               return;
             }
-            editor.store.setReadOnly(false);
 
             if (newValue === 'suggestion') {
               editor.setOption(SuggestionPlugin, 'isSuggesting', true);
-
+              editor.store.setReadOnly(false);
+              editor.tf.focus();
               return;
             }
-            editor.setOption(SuggestionPlugin, 'isSuggesting', false);
 
             if (newValue === 'editing') {
+              editor.setOption(SuggestionPlugin, 'isSuggesting', false);
+              editor.store.setReadOnly(false);
               editor.tf.focus();
-
               return;
             }
           }}
