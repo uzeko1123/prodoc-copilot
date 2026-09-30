@@ -22,7 +22,7 @@ const headingItemVariants = cva(
 
 export function TocElementStatic(props: SlateElementProps) {
   const { editor } = props;
-  const headingList = getHeadingList(editor);
+  const headingList = getHeadingList(editor).filter((item) => item.depth <= 3);
 
   return (
     <SlateElement {...props} className="mb-1 p-0">
@@ -95,7 +95,7 @@ const getHeadingList = (editor?: SlateEditor) => {
  */
 export function TocElementDocx(props: SlateElementProps) {
   const { editor } = props;
-  const headingList = getHeadingList(editor);
+  const headingList = getHeadingList(editor).filter((item) => item.depth <= 3);
 
   const depthIndent: Record<number, string> = {
     1: '0',

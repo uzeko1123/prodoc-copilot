@@ -28,7 +28,8 @@ export function TocElement(props: PlateElementProps) {
   const editorMounted = useEditorMounted();
   const state = useTocElementState();
   const { props: btnProps } = useTocElement(state);
-  const { activeContentId, headingList } = state;
+  const { activeContentId } = state;
+  const headingList = state.headingList.filter((item) => item.depth <= 3);
 
   return (
     <PlateElement

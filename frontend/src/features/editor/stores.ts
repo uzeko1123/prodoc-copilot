@@ -1,9 +1,9 @@
-import { value } from '@/mock/editor-value';
 import type { Value } from 'platejs';
 import type { CSSProperties } from 'react';
 import { create } from 'zustand';
 import { createDebouncedJSONStorage } from 'zustand-debounce';
 import { devtools, persist } from 'zustand/middleware';
+import { value } from './data/value';
 
 export type Font = 'var(--font-sans)' | 'var(--font-serif)';
 

@@ -6,7 +6,7 @@
 @theme inline {
   --font-sans: 'Noto Sans SC Variable', sans-serif;
   --font-serif: 'Noto Serif SC Variable', serif;
-  --font-mono: 'JetBrains Mono Variable', monospace;
+  --font-mono: 'JetBrains Mono Variable', var(--font-sans);
 }
 
 @layer base {

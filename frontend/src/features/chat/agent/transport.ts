@@ -14,8 +14,8 @@ import type { PlateEditor } from 'platejs/react';
 import type { ChatMessage } from '../components/editor/use-agent';
 import { getSelectionText, sumUsage } from '../lib/utils';
 import { useChatStore } from '../stores';
-import { getInstructions } from './instructions';
 import { getModel } from './model-openai';
+import { prompts } from './prompts/prompts';
 import { getChatModeTools, tools } from './tools';
 
 type Context = {
@@ -54,7 +54,8 @@ export function createAgentTransport(editor: PlateEditor) {
       const chatMessages = useChatStore.getState().chatMessages;
 
       const chatMode = useChatStore.getState().chatMode;
-      const instructions = getInstructions(chatMode);
+      const instructions =
+        prompts.instructions[chatMode] ?? prompts.instructions.auto;
       const availableTools = getChatModeTools(chatMode);
 
       const result = streamText({

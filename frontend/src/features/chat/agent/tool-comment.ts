@@ -8,6 +8,7 @@ import { jsonSchema, tool, type ToolUIPart } from 'ai';
 import { KEYS, nanoid, NodeApi, TextApi, type TNode } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
+import { prompts } from './prompts/prompts';
 
 export type CommentToolIO = {
   blockId: string;
@@ -22,17 +23,15 @@ export type CommentTool = {
 const commentToolIOSchema = jsonSchema<CommentToolIO>({
   properties: {
     blockId: {
-      description:
-        '目标块 ID，即 Context 文档树（children）中目标块节点的 id 属性值',
+      description: prompts.tools.comment.schema.blockId,
       type: 'string',
     },
     content: {
-      description:
-        '定位用的原文片段（纯文本，须与文档逐字一致）：在目标块的纯文本中匹配此内容以确定操作范围，先精确匹配、再模糊匹配，取首次出现的位置；多个片段之间以空行分隔时，各片段依次在目标块之后的兄弟块中匹配，共同构成一个连续范围（此时取第一段所在块的 id 作为 blockId）',
+      description: prompts.tools.comment.schema.content,
       type: 'string',
     },
     comment: {
-      description: '评论内容（纯文本，不使用 Markdown 语法）',
+      description: prompts.tools.comment.schema.comment,
       type: 'string',
     },
   },
@@ -42,8 +41,7 @@ const commentToolIOSchema = jsonSchema<CommentToolIO>({
 });
 
 export const commentTool = tool({
-  description:
-    '评论工具（comment）：为文档中的一段文本附加一条评论。blockId 选定目标块，content 在该块内定位范围，comment 为评论内容（纯文本）',
+  description: prompts.tools.comment.description,
   inputSchema: commentToolIOSchema,
   outputSchema: commentToolIOSchema,
 });

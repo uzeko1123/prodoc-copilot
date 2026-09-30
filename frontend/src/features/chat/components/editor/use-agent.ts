@@ -9,7 +9,7 @@ import { applyTools, type Tools } from '../../agent/tools';
 import { createAgentTransport } from '../../agent/transport';
 import { useChatStore } from '../../stores';
 
-export const chatModes = ['chat', 'comment', 'suggestion', 'auto'];
+export const chatModes = ['chat', 'comment', 'suggestion', 'auto'] as const;
 export type ChatMode = (typeof chatModes)[number];
 
 type MetaData = {

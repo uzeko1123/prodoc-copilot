@@ -1,9 +1,9 @@
-import { discussionsData } from '@/mock/comment-discussions';
 import { type Value } from 'platejs';
 import { create } from 'zustand';
 import { createDebouncedJSONStorage } from 'zustand-debounce';
 import { devtools, persist } from 'zustand/middleware';
 import type { TDiscussion } from './components/editor/plugins/discussion-kit';
+import { discussionsData } from './data/discussions';
 
 type CommentState = {
   discussionDrafts: Record<string, Value>;
