@@ -1,5 +1,4 @@
 import type { Value } from 'platejs';
-import type { CSSProperties } from 'react';
 import { create } from 'zustand';
 import { createDebouncedJSONStorage } from 'zustand-debounce';
 import { devtools, persist } from 'zustand/middleware';
@@ -7,14 +6,19 @@ import { value } from './data/value';
 
 export type Font = 'var(--font-sans)' | 'var(--font-serif)';
 
-type EditorFont = CSSProperties & {
+type EditorFont = {
   '--editor-font-body': Font;
   '--editor-font-heading': Font;
 };
 
+export type TextIndent = '0em' | '2em' | '4em';
+
 type EditorState = {
   editorFontFamily: EditorFont;
   setEditorFontFamily: (editorFont: EditorFont) => void;
+
+  editorTextIndent: TextIndent;
+  setEditorTextIndent: (editorTextIndent: TextIndent) => void;
 
   value: Value;
   setValue: (value: Value) => void;
@@ -30,6 +34,9 @@ export const useEditorStore = create<EditorState>()(
         },
         setEditorFontFamily: (editorFontFamily) => set({ editorFontFamily }),
 
+        editorTextIndent: '2em',
+        setEditorTextIndent: (editorTextIndent) => set({ editorTextIndent }),
+
         value: value,
         setValue: (value) => set({ value }),
       }),
@@ -40,6 +47,7 @@ export const useEditorStore = create<EditorState>()(
         }),
         partialize: (state) => ({
           editorFontFamily: state.editorFontFamily,
+          editorTextIndent: state.editorTextIndent,
           value: state.value,
         }),
       },

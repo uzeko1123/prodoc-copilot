@@ -12,13 +12,14 @@ import {
   useEditorValue,
   usePluginOption,
 } from 'platejs/react';
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { useEditorStore } from '../stores';
 import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
 export function Editor() {
   const editorScrollRef = useEditorScrollRef();
   const editorFontFamily = useEditorStore((state) => state.editorFontFamily);
+  const editorTextIndent = useEditorStore((state) => state.editorTextIndent);
 
   return (
     <div className="flex h-full flex-col">
@@ -29,7 +30,12 @@ export function Editor() {
         <EditorPrimitive
           ref={editorScrollRef}
           className="editor-font sm:px-[clamp(64px,calc(50%-350px),160px)]"
-          style={editorFontFamily}
+          style={
+            {
+              ...editorFontFamily,
+              '--editor-text-indent': editorTextIndent,
+            } as CSSProperties
+          }
         />
       </EditorContainer>
       <EditorValueSync />

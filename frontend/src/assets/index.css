@@ -24,6 +24,16 @@
   font-family: var(--editor-font-heading);
 }
 
+.editor-font .slate-p {
+  text-indent: var(--editor-text-indent);
+}
+
+.editor-font .slate-p[role='listitem'],
+.editor-font .slate-p li,
+.editor-font table .slate-p {
+  text-indent: 0;
+}
+
 ::highlight(flash-range) {
   background-color: var(--color-highlight);
 }

@@ -16,6 +16,7 @@ import { InsertToolbarButton } from './insert-toolbar-button';
 import { MediaToolbarButton } from './media-toolbar-button';
 import { ModeToolbarButton } from './mode-toolbar-button';
 import { TableToolbarButton } from './table-toolbar-button';
+import { TextIndentToolbarButton } from './text-indent-toolbar-button';
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
@@ -42,6 +43,7 @@ export function FixedToolbarButtons() {
         <ToolbarSeparator className="self-stretch" />
 
         <FontToolbarButton />
+        <TextIndentToolbarButton />
 
         <ToolbarSeparator className="self-stretch" />
       </ToolbarGroup>
