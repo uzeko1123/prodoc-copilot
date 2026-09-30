@@ -9,7 +9,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { Editor, EditorContainer } from '@/components/shadcn/ui/editor';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import { BasicMarksKit } from '@/features/editor/components/editor/plugins/basic-marks-kit';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
@@ -25,6 +35,7 @@ import {
   CheckIcon,
   MoreHorizontalIcon,
   PencilIcon,
+  SparklesIcon,
   TrashIcon,
   XIcon,
 } from 'lucide-react';
@@ -61,7 +72,6 @@ export type TComment = {
   isEdited: boolean;
   userId: string;
   createdByAI?: boolean;
-  editedAfterAI?: boolean;
 };
 
 export function Comment(props: {
@@ -195,6 +205,16 @@ export function Comment(props: {
         <Avatar className="size-5">
           <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
           <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
+          {comment.createdByAI && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AvatarBadge className="size-3 [&>svg]:size-2.5">
+                  <SparklesIcon />
+                </AvatarBadge>
+              </TooltipTrigger>
+              <TooltipContent>由 AI 生成</TooltipContent>
+            </Tooltip>
+          )}
         </Avatar>
         <h4 className="mx-2 text-sm leading-none font-semibold">
           {/* Replace to your own backend or refer to potion */}

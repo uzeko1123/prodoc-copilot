@@ -98,6 +98,7 @@ export const value = normalizeStaticValue([
         suggestion_ai_continue: {
           id: 'ai_continue',
           createdAt: T_CONTINUE,
+          createdByAI: true,
           type: 'insert',
           userId: 'alice',
         },
@@ -194,6 +195,7 @@ export const value = normalizeStaticValue([
         suggestion_ai_polish: {
           id: 'ai_polish',
           createdAt: T_POLISH,
+          createdByAI: true,
           type: 'remove',
           userId: 'alice',
         },
@@ -204,6 +206,7 @@ export const value = normalizeStaticValue([
         suggestion_ai_polish: {
           id: 'ai_polish',
           createdAt: T_POLISH,
+          createdByAI: true,
           type: 'insert',
           userId: 'alice',
         },

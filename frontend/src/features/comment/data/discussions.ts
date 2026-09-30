@@ -36,7 +36,6 @@ export const discussionsData: TDiscussion[] = [
       '据团队观察，启用智能评阅后，文档的平均返工次数减少了一半。',
     isResolved: false,
     userId: 'alice',
-    createdByAI: true,
   },
   // 多人讨论：演示评论的回复与协作
   {

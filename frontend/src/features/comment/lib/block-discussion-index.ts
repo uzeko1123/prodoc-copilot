@@ -37,6 +37,7 @@ export interface ResolvedDiscussion extends TDiscussion {
 export interface ResolvedSuggestion extends TResolvedSuggestion {
   comments: TComment[];
   path: Path;
+  createdByAI?: boolean;
 }
 
 export const BLOCK_SUGGESTION_TOKEN = '__block__';
@@ -64,6 +65,7 @@ type BuildBlockDiscussionIndexOptions = {
         properties?: Record<string, unknown>;
         type: 'insert' | 'remove' | 'update';
         userId: string;
+        createdByAI?: boolean;
       }
     | undefined;
   getSuggestionDataList: (node: TSuggestionText) => Array<{
@@ -71,6 +73,7 @@ type BuildBlockDiscussionIndexOptions = {
     newProperties?: Record<string, unknown>;
     properties?: Record<string, unknown>;
     type: 'insert' | 'remove' | 'update';
+    createdByAI?: boolean;
   }>;
   getSuggestionId: (node: TElement | TSuggestionText) => string | undefined;
   isBlockSuggestion: (node: TElement | TSuggestionText) => boolean;
@@ -205,11 +208,14 @@ const toResolvedSuggestion = ({
   let text = '';
   let properties: Record<string, unknown> = {};
   let newProperties: Record<string, unknown> = {};
+  let createdByAI = false;
 
   sortedEntries.forEach(([node]) => {
     if (TextApi.isText(node)) {
       getSuggestionDataList(node as TSuggestionText).forEach((data) => {
         if (data.id !== id) return;
+
+        createdByAI ||= data.createdByAI === true;
 
         switch (data.type) {
           case 'insert': {
@@ -237,6 +243,8 @@ const toResolvedSuggestion = ({
     const suggestionData = getSuggestionData(node);
 
     if (suggestionData?.id !== keyId2SuggestionId(id)) return;
+
+    createdByAI ||= suggestionData.createdByAI === true;
 
     const inlineSuggestionText = getInlineSuggestionElementText(node);
 
@@ -274,6 +282,8 @@ const toResolvedSuggestion = ({
 
   if (!suggestionData) return null;
 
+  createdByAI ||= suggestionData.createdByAI === true;
+
   const keyId = getSuggestionKey(id);
   const comments = discussionsById.get(id)?.comments ?? [];
   const createdAt = new Date(suggestionData.createdAt);
@@ -291,6 +301,7 @@ const toResolvedSuggestion = ({
       type: 'update',
       userId: suggestionData.userId,
       path,
+      createdByAI,
     };
   }
 
@@ -305,6 +316,7 @@ const toResolvedSuggestion = ({
       type: 'replace',
       userId: suggestionData.userId,
       path,
+      createdByAI,
     };
   }
 
@@ -318,6 +330,7 @@ const toResolvedSuggestion = ({
       type: 'insert',
       userId: suggestionData.userId,
       path,
+      createdByAI,
     };
   }
 
@@ -331,6 +344,7 @@ const toResolvedSuggestion = ({
       type: 'remove',
       userId: suggestionData.userId,
       path,
+      createdByAI,
     };
   }
 

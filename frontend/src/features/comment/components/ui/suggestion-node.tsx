@@ -2,6 +2,7 @@
 'use client';
 
 import { voidRemoveSuggestionOverlayVariants } from '@/components/shadcn/ui/suggestion-node-static';
+import type { TSuggestionData } from '@/features/comment/lib/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { cva } from 'class-variance-authority';
 import { cn } from 'cn';
@@ -9,7 +10,6 @@ import { CornerDownLeftIcon } from 'lucide-react';
 import type {
   AnyPluginConfig,
   TElement,
-  TSuggestionData,
   TSuggestionText,
   WithRequiredKey,
 } from 'platejs';

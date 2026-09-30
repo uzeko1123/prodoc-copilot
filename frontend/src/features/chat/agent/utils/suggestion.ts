@@ -1,5 +1,6 @@
 // @generated-by-ai
 
+import type { TSuggestionData } from '@/features/comment/lib/suggestion';
 import { deserializeMd } from '@platejs/markdown';
 import {
   BaseSuggestionPlugin,
@@ -11,7 +12,6 @@ import type {
   Descendant,
   TInlineSuggestionData,
   TRange,
-  TSuggestionData,
   TSuggestionElement,
   TSuggestionText,
   TText,
@@ -109,6 +109,7 @@ function insertSuggestion(
     type: 'insert',
     userId:
       editor.getOptions(BaseSuggestionPlugin).currentUserId ?? 'anonymous',
+    createdByAI: true,
   };
   const key = getSuggestionKey(data.id);
 

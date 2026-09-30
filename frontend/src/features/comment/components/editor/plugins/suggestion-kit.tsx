@@ -9,11 +9,11 @@ import type {
   ExtendConfig,
   TElement,
   TInlineSuggestionData,
-  TSuggestionData,
   TSuggestionText,
 } from 'platejs';
 import { KEYS, TextApi, TrailingBlockPlugin } from 'platejs';
 import { toTPlatePlugin, type PlateEditor } from 'platejs/react';
+import type { TSuggestionData } from '../../../lib/suggestion';
 import {
   SuggestionLeaf,
   SuggestionLineBreak,

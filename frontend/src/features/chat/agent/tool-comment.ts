@@ -95,6 +95,7 @@ function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
     discussionId,
     isEdited: false,
     userId: editor.getOption(discussionPlugin, 'currentUserId'),
+    createdByAI: true,
   };
 
   // Create a new discussion

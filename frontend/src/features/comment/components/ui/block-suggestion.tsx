@@ -1,7 +1,17 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/shadcn/ui/tooltip';
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import {
@@ -14,6 +24,7 @@ import {
   ItalicIcon,
   MinusIcon,
   PlusIcon,
+  SparklesIcon,
   StrikethroughIcon,
   SubscriptIcon,
   SuperscriptIcon,
@@ -94,6 +105,16 @@ export function BlockSuggestionCard({
           <Avatar className="size-5">
             <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
             <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
+            {suggestion.createdByAI && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <AvatarBadge className="size-3 [&>svg]:size-2.5">
+                    <SparklesIcon />
+                  </AvatarBadge>
+                </TooltipTrigger>
+                <TooltipContent>由 AI 生成</TooltipContent>
+              </Tooltip>
+            )}
           </Avatar>
           <h4 className="mx-2 text-sm leading-none font-semibold">
             {userInfo?.name}
