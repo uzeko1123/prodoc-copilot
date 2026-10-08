@@ -14,12 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BasicMarksKit } from '@/features/editor/components/editor/plugins/basic-marks-kit';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
@@ -205,21 +200,20 @@ export function Comment(props: {
         <Avatar className="size-5">
           <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
           <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
-          {comment.createdByAI && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <AvatarBadge className="bg-white text-purple-800">
-                  <SparklesIcon />
-                </AvatarBadge>
-              </TooltipTrigger>
-              <TooltipContent>由 AI 生成</TooltipContent>
-            </Tooltip>
-          )}
         </Avatar>
         <h4 className="mx-2 text-sm leading-none font-semibold">
           {/* Replace to your own backend or refer to potion */}
           {userInfo?.name}
         </h4>
+
+        {comment.createdByAI && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <SparklesIcon className="text-primary mr-2 size-3" />
+            </TooltipTrigger>
+            <TooltipContent>由 AI 生成</TooltipContent>
+          </Tooltip>
+        )}
 
         <div className="text-muted-foreground/80 text-xs leading-none">
           <span className="mr-1">
@@ -227,7 +221,6 @@ export function Comment(props: {
           </span>
           {comment.isEdited && <span>（已编辑）</span>}
         </div>
-
         {isMyComment && (hovering || dropdownOpen) && (
           <div className="absolute top-0 right-0 flex space-x-1">
             {index === 0 && (

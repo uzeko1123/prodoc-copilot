@@ -6,12 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import {
@@ -105,20 +100,20 @@ export function BlockSuggestionCard({
           <Avatar className="size-5">
             <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
             <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
-            {suggestion.createdByAI && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <AvatarBadge className="bg-white text-purple-800">
-                    <SparklesIcon />
-                  </AvatarBadge>
-                </TooltipTrigger>
-                <TooltipContent>由 AI 生成</TooltipContent>
-              </Tooltip>
-            )}
           </Avatar>
           <h4 className="mx-2 text-sm leading-none font-semibold">
             {userInfo?.name}
           </h4>
+
+          {suggestion.createdByAI && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SparklesIcon className="text-primary mr-2 size-3" />
+              </TooltipTrigger>
+              <TooltipContent>由 AI 生成</TooltipContent>
+            </Tooltip>
+          )}
+
           <div className="text-muted-foreground/80 text-xs leading-none">
             <span className="mr-1">
               {formatCommentDate(new Date(suggestion.createdAt))}
