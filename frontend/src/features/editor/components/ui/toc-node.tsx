@@ -11,10 +11,10 @@ const headingItemVariants = cva(
   'block h-auto w-full cursor-pointer truncate rounded-none px-0.5 py-1.5 text-left font-medium underline decoration-[0.5px] underline-offset-4',
   {
     variants: {
-      active: {
-        false: 'text-muted-foreground hover:bg-accent hover:text-foreground',
-        true: 'bg-accent text-foreground decoration-foreground',
-      },
+      // active: {
+      //   false: 'text-muted-foreground hover:bg-accent hover:text-foreground',
+      //   true: 'bg-accent text-foreground decoration-foreground',
+      // },
       depth: {
         1: 'pl-0.5',
         2: 'pl-[26px]',
@@ -44,7 +44,7 @@ export function TocElement(props: PlateElementProps) {
               key={item.id}
               variant="ghost"
               className={headingItemVariants({
-                active: item.id === activeContentId,
+                // active: item.id === activeContentId,
                 depth: item.depth as 1 | 2 | 3,
               })}
               onClick={(e) => btnProps.onClick(e, item, 'smooth')}

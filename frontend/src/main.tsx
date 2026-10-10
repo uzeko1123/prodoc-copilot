@@ -16,7 +16,6 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <div className="hidden">{__VERSION__}</div>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>

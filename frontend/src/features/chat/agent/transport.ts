@@ -85,6 +85,11 @@ export function createAgentTransport(editor: PlateEditor) {
             usage = sumUsage(usage, part.totalUsage);
             return { usage };
           },
+          onError: (error) => {
+            if (error instanceof Error) return error.message;
+            if (typeof error === 'string') return error;
+            return String(error);
+          },
         }),
       });
     }) as typeof fetch,
