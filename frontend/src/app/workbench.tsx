@@ -88,8 +88,8 @@ function Workbench() {
     value: useEditorStore.getState().value,
   });
 
-  const _hideHeader = true;
-  const _hideRightPanel = true;
+  const _hideHeader = false;
+  const _hideRightPanel = false;
 
   return (
     <div className="flex h-dvh flex-col">
@@ -220,7 +220,7 @@ function Workbench() {
 
 export const Route = createFileRoute('/workbench/')({
   beforeLoad: () => {
-    const _withAuth = false;
+    const _withAuth = true;
     if (!_withAuth) return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
