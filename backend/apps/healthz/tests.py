@@ -6,7 +6,7 @@ from channels.testing import WebsocketCommunicator
 from django.http import JsonResponse, StreamingHttpResponse
 from django.test import AsyncClient, Client
 
-from . import consumers
+from .consumers import HealthzWebsocketConsumer
 
 
 def test_api_healthz_view(client: Client):
@@ -35,7 +35,7 @@ async def test_events_healthz_view(async_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_websocket_healthz_view():
     communicator = WebsocketCommunicator(
-        consumers.HealthzWebsocketConsumer.as_asgi(), "/ws/healthz"
+        HealthzWebsocketConsumer.as_asgi(), "/ws/healthz"
     )
     connected, _ = await communicator.connect(timeout=5)
     assert connected

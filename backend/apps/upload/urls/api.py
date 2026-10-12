@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .. import views
+from ..views import UploadAPIView
 
 urlpatterns = [
-    path("", views.UploadAPIView.as_view(), name="upload"),
+    path("", UploadAPIView.as_view(), name="upload"),
 ]

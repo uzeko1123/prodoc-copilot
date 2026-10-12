@@ -26,7 +26,7 @@ import { useAuthStore } from '../stores';
 import { Altcha } from './altcha-field';
 
 export function LoginForm({
-  redirect = '/account',
+  redirect = '/dashboard',
   className,
   ...props
 }: React.ComponentProps<'div'> & { redirect?: string }) {

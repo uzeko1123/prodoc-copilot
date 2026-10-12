@@ -8,7 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from . import serializers
+from .serializers import UploadFileSerializer, UploadFileUrlSerializer
 
 
 def file_md5(file: File) -> str:
@@ -23,8 +23,8 @@ class UploadAPIView(APIView):
     permission_classes = ()
 
     @extend_schema(
-        request={"multipart/form-data": serializers.UploadFileSerializer},
-        responses={200: serializers.UploadFileUrlSerializer},
+        request={"multipart/form-data": UploadFileSerializer},
+        responses={200: UploadFileUrlSerializer},
     )
     def post(self, request: Request):
         file = request.data["file"]

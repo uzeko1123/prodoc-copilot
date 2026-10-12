@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from ..responses import MessageResponse
 from ..serializers import MessageResponseSerializer
-from . import serializers
+from .serializers import AltchaChallengeSerializer
 
 
 class CSRFTokenAPIView(APIView):
@@ -27,7 +27,7 @@ class AltchaAPIView(APIView):
     permission_classes = ()
     throttle_classes = ()
 
-    @extend_schema(responses={200: serializers.AltchaChallengeSerializer})
+    @extend_schema(responses={200: AltchaChallengeSerializer})
     def get(self, request):
         challenge = create_challenge(
             algorithm=settings.ALTCHA_ALGORITHM,

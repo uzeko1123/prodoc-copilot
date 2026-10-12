@@ -19,7 +19,7 @@ from dj_rest_auth.serializers import (
 from django.conf import settings
 from rest_framework import serializers
 
-from . import fields
+from .fields import AltchaField
 
 
 def _password_reset_url_generator(request, user, temp_key):
@@ -45,7 +45,7 @@ class AltchaChallengeSerializer(serializers.Serializer):
 
 
 class AltchaMixin(serializers.Serializer):
-    altcha = fields.AltchaField(write_only=True)
+    altcha = AltchaField(write_only=True)
 
     def validate(self, attrs: dict):
         attrs = super().validate(attrs)

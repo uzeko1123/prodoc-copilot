@@ -1,7 +1,7 @@
 from django.urls import re_path
 
-from . import consumers
+from .consumers import HealthzWebsocketConsumer
 
 websocket_urlpatterns = [
-    re_path(r"$", consumers.HealthzWebsocketConsumer.as_asgi()),  # type: ignore[arg-type]
+    re_path(r"$", HealthzWebsocketConsumer.as_asgi()),  # type: ignore[arg-type]
 ]

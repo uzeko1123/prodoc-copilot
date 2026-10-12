@@ -1,11 +1,11 @@
-import { AppSidebar } from '@/components/shadcn/app-sidebar';
-import { ChartAreaInteractive } from '@/components/shadcn/chart-area-interactive';
-import { DataTable } from '@/components/shadcn/data-table';
-import { SectionCards } from '@/components/shadcn/section-cards';
-import { SiteHeader } from '@/components/shadcn/site-header';
+import { getAuthUserRetrieveQueryOptions } from '@/api/gen/endpoints/auth/auth';
 import { SidebarInset, SidebarProvider } from '@/components/shadcn/ui/sidebar';
+import { AppSidebar } from '@/features/dashboard/components/app-sidebar';
+import { SiteHeader } from '@/features/dashboard/components/site-header';
+import { TaskList } from '@/features/dashboard/components/task-list';
+import { queryClient } from '@/lib/query-client';
+import { noop } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import data from './dashboard/data.json';
 
 function IndexPage() {
   return (
@@ -23,11 +23,9 @@ function IndexPage() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
               <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
+                <TaskList />
               </div>
-              <DataTable data={data} />
             </div>
           </div>
         </div>
@@ -37,5 +35,10 @@ function IndexPage() {
 }
 
 export const Route = createFileRoute('/dashboard/')({
+  beforeLoad: () => {
+    const _withAuth = false;
+    if (!_withAuth) return;
+    void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
+  },
   component: IndexPage,
 });
