@@ -36,6 +36,6 @@ function IndexPage() {
   );
 }
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/dashboard/')({
   component: IndexPage,
 });
