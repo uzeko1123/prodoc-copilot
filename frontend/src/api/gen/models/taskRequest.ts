@@ -10,5 +10,4 @@ export interface TaskRequest {
    * @maxLength 255
    */
   name: string;
-  document: string;
 }

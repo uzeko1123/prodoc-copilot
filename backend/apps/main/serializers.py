@@ -14,9 +14,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "stage",
             "creator",
             "reviewer",
-            "document",
             "created_at",
             "updated_at",
+            "document",
         )
         read_only_fields = (
             "id",
@@ -25,6 +25,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "reviewer",
             "created_at",
             "updated_at",
+            "document",
         )
 
 

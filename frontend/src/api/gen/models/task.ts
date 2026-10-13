@@ -13,7 +13,7 @@ export interface Task {
   readonly creator: number;
   /** @nullable */
   readonly reviewer: number | null;
-  document: string;
   readonly created_at: string;
   readonly updated_at: string;
+  readonly document: string;
 }

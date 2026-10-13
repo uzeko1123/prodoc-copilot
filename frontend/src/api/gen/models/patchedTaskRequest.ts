@@ -10,5 +10,4 @@ export interface PatchedTaskRequest {
    * @maxLength 255
    */
   name?: string;
-  document?: string;
 }

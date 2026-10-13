@@ -380,9 +380,9 @@ export const MainTasksListResponseItem = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 export const MainTasksListResponse = zod.array(MainTasksListResponseItem);
 
@@ -390,7 +390,6 @@ export const mainTasksCreateBodyNameMax = 255;
 
 export const MainTasksCreateBody = zod.object({
   name: zod.string().min(1).max(mainTasksCreateBodyNameMax),
-  document: zod.uuid(),
 });
 
 export const mainTasksCreateResponseNameMax = 255;
@@ -405,9 +404,9 @@ export const MainTasksCreateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksRetrieveParams = zod.object({
@@ -426,9 +425,9 @@ export const MainTasksRetrieveResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksUpdateParams = zod.object({
@@ -439,7 +438,6 @@ export const mainTasksUpdateBodyNameMax = 255;
 
 export const MainTasksUpdateBody = zod.object({
   name: zod.string().min(1).max(mainTasksUpdateBodyNameMax),
-  document: zod.uuid(),
 });
 
 export const mainTasksUpdateResponseNameMax = 255;
@@ -454,9 +452,9 @@ export const MainTasksUpdateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksPartialUpdateParams = zod.object({
@@ -467,7 +465,6 @@ export const mainTasksPartialUpdateBodyNameMax = 255;
 
 export const MainTasksPartialUpdateBody = zod.object({
   name: zod.string().min(1).max(mainTasksPartialUpdateBodyNameMax).optional(),
-  document: zod.uuid().optional(),
 });
 
 export const mainTasksPartialUpdateResponseNameMax = 255;
@@ -482,9 +479,9 @@ export const MainTasksPartialUpdateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksDestroyParams = zod.object({
@@ -509,9 +506,9 @@ export const MainTasksApproveCreateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksResubmitCreateParams = zod.object({
@@ -530,9 +527,9 @@ export const MainTasksResubmitCreateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksSendBackCreateParams = zod.object({
@@ -551,9 +548,9 @@ export const MainTasksSendBackCreateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
 
 export const MainTasksSubmitCreateParams = zod.object({
@@ -576,7 +573,7 @@ export const MainTasksSubmitCreateResponse = zod.object({
     ),
   creator: zod.int(),
   reviewer: zod.int().nullable(),
-  document: zod.uuid(),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
+  document: zod.uuid(),
 });
