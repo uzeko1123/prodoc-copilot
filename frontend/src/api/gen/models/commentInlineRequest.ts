@@ -4,8 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface Group {
-  readonly url: string;
-  /** @maxLength 150 */
-  name: string;
+export interface CommentInlineRequest {
+  key: string;
+  content_rich: unknown;
 }

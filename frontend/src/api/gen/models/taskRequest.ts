@@ -4,10 +4,11 @@
  * OpenAPI spec version: 0.0.0
  */
 
-export interface PatchedGroupRequest {
+export interface TaskRequest {
   /**
    * @minLength 1
-   * @maxLength 150
+   * @maxLength 255
    */
-  name?: string;
+  name: string;
+  document: string;
 }

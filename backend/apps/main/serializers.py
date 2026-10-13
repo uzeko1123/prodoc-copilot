@@ -81,10 +81,10 @@ class DiscussionSerializer(serializers.ModelSerializer):
             "document_content",
             "is_resolved",
             "user",
-            "comments",
-            "comment",
             "created_at",
             "updated_at",
+            "comments",
+            "comment",
         )
         read_only_fields = ("id", "user", "created_at", "updated_at")
 

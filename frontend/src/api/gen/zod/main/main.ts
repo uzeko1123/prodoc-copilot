@@ -5,324 +5,578 @@
  */
 import * as zod from 'zod';
 
-export const mainGroupsListResponseNameMax = 150;
-
-export const MainGroupsListResponseItem = zod.object({
-  url: zod.url(),
-  name: zod.string().max(mainGroupsListResponseNameMax),
+export const MainCommentsListResponseItem = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
+  is_edited: zod.boolean(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
-export const MainGroupsListResponse = zod.array(MainGroupsListResponseItem);
+export const MainCommentsListResponse = zod.array(MainCommentsListResponseItem);
 
-export const mainGroupsCreateBodyNameMax = 150;
-
-export const MainGroupsCreateBody = zod.object({
-  name: zod.string().min(1).max(mainGroupsCreateBodyNameMax),
-});
-
-export const mainGroupsCreateResponseNameMax = 150;
-
-export const MainGroupsCreateResponse = zod.object({
-  url: zod.url(),
-  name: zod.string().max(mainGroupsCreateResponseNameMax),
+export const MainCommentsCreateBody = zod.object({
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
 });
 
-export const MainGroupsRetrieveParams = zod.object({
-  id: zod.int().describe('标识此 组 的 唯一整数值。'),
+export const MainCommentsCreateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
+  is_edited: zod.boolean(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
-export const mainGroupsRetrieveResponseNameMax = 150;
-
-export const MainGroupsRetrieveResponse = zod.object({
-  url: zod.url(),
-  name: zod.string().max(mainGroupsRetrieveResponseNameMax),
+export const MainCommentsRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 comment 的 UUID 字符串。'),
 });
 
-export const MainGroupsUpdateParams = zod.object({
-  id: zod.int().describe('标识此 组 的 唯一整数值。'),
+export const MainCommentsRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
+  is_edited: zod.boolean(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
-export const mainGroupsUpdateBodyNameMax = 150;
-
-export const MainGroupsUpdateBody = zod.object({
-  name: zod.string().min(1).max(mainGroupsUpdateBodyNameMax),
+export const MainCommentsUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 comment 的 UUID 字符串。'),
 });
 
-export const mainGroupsUpdateResponseNameMax = 150;
-
-export const MainGroupsUpdateResponse = zod.object({
-  url: zod.url(),
-  name: zod.string().max(mainGroupsUpdateResponseNameMax),
+export const MainCommentsUpdateBody = zod.object({
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
 });
 
-export const MainGroupsPartialUpdateParams = zod.object({
-  id: zod.int().describe('标识此 组 的 唯一整数值。'),
+export const MainCommentsUpdateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
+  is_edited: zod.boolean(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
-export const mainGroupsPartialUpdateBodyNameMax = 150;
-
-export const MainGroupsPartialUpdateBody = zod.object({
-  name: zod.string().min(1).max(mainGroupsPartialUpdateBodyNameMax).optional(),
+export const MainCommentsPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 comment 的 UUID 字符串。'),
 });
 
-export const mainGroupsPartialUpdateResponseNameMax = 150;
-
-export const MainGroupsPartialUpdateResponse = zod.object({
-  url: zod.url(),
-  name: zod.string().max(mainGroupsPartialUpdateResponseNameMax),
+export const MainCommentsPartialUpdateBody = zod.object({
+  key: zod.uuid().optional(),
+  discussion: zod.uuid().optional(),
+  content_rich: zod.unknown().optional(),
 });
 
-export const MainGroupsDestroyParams = zod.object({
-  id: zod.int().describe('标识此 组 的 唯一整数值。'),
+export const MainCommentsPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  discussion: zod.uuid(),
+  content_rich: zod.unknown(),
+  is_edited: zod.boolean(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
-export const MainGroupsDestroyResponse = zod.void();
-
-export const mainUsersListResponseUsernameMax = 150;
-
-export const mainUsersListResponseUsernameRegExp = new RegExp('^[\\w.@+-]+$');
-export const mainUsersListResponseEmailOneMax = 254;
-
-export const mainUsersListResponseEmailTwoMax = 0;
-
-export const MainUsersListResponseItem = zod.object({
-  url: zod.url(),
-  username: zod
-    .string()
-    .max(mainUsersListResponseUsernameMax)
-    .regex(mainUsersListResponseUsernameRegExp)
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersListResponseEmailOneMax),
-      zod.string().max(mainUsersListResponseEmailTwoMax),
-    ])
-    .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
-});
-export const MainUsersListResponse = zod.array(MainUsersListResponseItem);
-
-export const mainUsersCreateBodyUsernameMax = 150;
-
-export const mainUsersCreateBodyUsernameRegExp = new RegExp('^[\\w.@+-]+$');
-export const mainUsersCreateBodyEmailOneMax = 254;
-
-export const mainUsersCreateBodyEmailTwoMax = 0;
-
-export const MainUsersCreateBody = zod.object({
-  username: zod
-    .string()
-    .min(1)
-    .max(mainUsersCreateBodyUsernameMax)
-    .regex(mainUsersCreateBodyUsernameRegExp)
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersCreateBodyEmailOneMax),
-      zod.string().max(mainUsersCreateBodyEmailTwoMax),
-    ])
-    .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
+export const MainCommentsDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 comment 的 UUID 字符串。'),
 });
 
-export const mainUsersCreateResponseUsernameMax = 150;
+export const MainCommentsDestroyResponse = zod.void();
 
-export const mainUsersCreateResponseUsernameRegExp = new RegExp('^[\\w.@+-]+$');
-export const mainUsersCreateResponseEmailOneMax = 254;
-
-export const mainUsersCreateResponseEmailTwoMax = 0;
-
-export const MainUsersCreateResponse = zod.object({
-  url: zod.url(),
-  username: zod
-    .string()
-    .max(mainUsersCreateResponseUsernameMax)
-    .regex(mainUsersCreateResponseUsernameRegExp)
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersCreateResponseEmailOneMax),
-      zod.string().max(mainUsersCreateResponseEmailTwoMax),
-    ])
-    .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
+export const MainDiscussionsListResponseItem = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+  comments: zod.array(
+    zod.object({
+      id: zod.uuid(),
+      key: zod.uuid(),
+      discussion: zod.uuid(),
+      content_rich: zod.unknown(),
+      is_edited: zod.boolean(),
+      user: zod.int(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+  ),
 });
-
-export const MainUsersRetrieveParams = zod.object({
-  id: zod.int().describe('标识此 用户 的 唯一整数值。'),
-});
-
-export const mainUsersRetrieveResponseUsernameMax = 150;
-
-export const mainUsersRetrieveResponseUsernameRegExp = new RegExp(
-  '^[\\w.@+-]+$',
+export const MainDiscussionsListResponse = zod.array(
+  MainDiscussionsListResponseItem,
 );
-export const mainUsersRetrieveResponseEmailOneMax = 254;
 
-export const mainUsersRetrieveResponseEmailTwoMax = 0;
+export const MainDiscussionsCreateBody = zod.object({
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  comment: zod.object({
+    key: zod.uuid(),
+    content_rich: zod.unknown(),
+  }),
+});
 
-export const MainUsersRetrieveResponse = zod.object({
-  url: zod.url(),
-  username: zod
-    .string()
-    .max(mainUsersRetrieveResponseUsernameMax)
-    .regex(mainUsersRetrieveResponseUsernameRegExp)
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersRetrieveResponseEmailOneMax),
-      zod.string().max(mainUsersRetrieveResponseEmailTwoMax),
-    ])
+export const MainDiscussionsCreateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+  comments: zod.array(
+    zod.object({
+      id: zod.uuid(),
+      key: zod.uuid(),
+      discussion: zod.uuid(),
+      content_rich: zod.unknown(),
+      is_edited: zod.boolean(),
+      user: zod.int(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+  ),
+});
+
+export const MainDiscussionsRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
+});
+
+export const MainDiscussionsRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+  comments: zod.array(
+    zod.object({
+      id: zod.uuid(),
+      key: zod.uuid(),
+      discussion: zod.uuid(),
+      content_rich: zod.unknown(),
+      is_edited: zod.boolean(),
+      user: zod.int(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+  ),
+});
+
+export const MainDiscussionsUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
+});
+
+export const MainDiscussionsUpdateBody = zod.object({
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  comment: zod.object({
+    key: zod.uuid(),
+    content_rich: zod.unknown(),
+  }),
+});
+
+export const MainDiscussionsUpdateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+  comments: zod.array(
+    zod.object({
+      id: zod.uuid(),
+      key: zod.uuid(),
+      discussion: zod.uuid(),
+      content_rich: zod.unknown(),
+      is_edited: zod.boolean(),
+      user: zod.int(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+  ),
+});
+
+export const MainDiscussionsPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
+});
+
+export const MainDiscussionsPartialUpdateBody = zod.object({
+  key: zod.uuid().optional(),
+  document: zod.uuid().optional(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  comment: zod
+    .object({
+      key: zod.uuid(),
+      content_rich: zod.unknown(),
+    })
     .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
 });
 
-export const MainUsersUpdateParams = zod.object({
-  id: zod.int().describe('标识此 用户 的 唯一整数值。'),
+export const MainDiscussionsPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.uuid(),
+  document: zod.uuid(),
+  document_content: zod.string().optional(),
+  is_resolved: zod.boolean().optional(),
+  user: zod.int(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+  comments: zod.array(
+    zod.object({
+      id: zod.uuid(),
+      key: zod.uuid(),
+      discussion: zod.uuid(),
+      content_rich: zod.unknown(),
+      is_edited: zod.boolean(),
+      user: zod.int(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+  ),
 });
 
-export const mainUsersUpdateBodyUsernameMax = 150;
-
-export const mainUsersUpdateBodyUsernameRegExp = new RegExp('^[\\w.@+-]+$');
-export const mainUsersUpdateBodyEmailOneMax = 254;
-
-export const mainUsersUpdateBodyEmailTwoMax = 0;
-
-export const MainUsersUpdateBody = zod.object({
-  username: zod
-    .string()
-    .min(1)
-    .max(mainUsersUpdateBodyUsernameMax)
-    .regex(mainUsersUpdateBodyUsernameRegExp)
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersUpdateBodyEmailOneMax),
-      zod.string().max(mainUsersUpdateBodyEmailTwoMax),
-    ])
-    .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
+export const MainDiscussionsDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
 });
 
-export const mainUsersUpdateResponseUsernameMax = 150;
+export const MainDiscussionsDestroyResponse = zod.void();
 
-export const mainUsersUpdateResponseUsernameRegExp = new RegExp('^[\\w.@+-]+$');
-export const mainUsersUpdateResponseEmailOneMax = 254;
+export const mainDocumentsListResponseTitleMax = 255;
 
-export const mainUsersUpdateResponseEmailTwoMax = 0;
-
-export const MainUsersUpdateResponse = zod.object({
-  url: zod.url(),
-  username: zod
-    .string()
-    .max(mainUsersUpdateResponseUsernameMax)
-    .regex(mainUsersUpdateResponseUsernameRegExp)
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersUpdateResponseEmailOneMax),
-      zod.string().max(mainUsersUpdateResponseEmailTwoMax),
-    ])
-    .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
+export const MainDocumentsListResponseItem = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  title: zod.string().max(mainDocumentsListResponseTitleMax).optional(),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
-
-export const MainUsersPartialUpdateParams = zod.object({
-  id: zod.int().describe('标识此 用户 的 唯一整数值。'),
-});
-
-export const mainUsersPartialUpdateBodyUsernameMax = 150;
-
-export const mainUsersPartialUpdateBodyUsernameRegExp = new RegExp(
-  '^[\\w.@+-]+$',
+export const MainDocumentsListResponse = zod.array(
+  MainDocumentsListResponseItem,
 );
-export const mainUsersPartialUpdateBodyEmailOneMax = 254;
 
-export const mainUsersPartialUpdateBodyEmailTwoMax = 0;
+export const mainDocumentsCreateBodyTitleMax = 255;
 
-export const MainUsersPartialUpdateBody = zod.object({
-  username: zod
+export const MainDocumentsCreateBody = zod.object({
+  title: zod.string().max(mainDocumentsCreateBodyTitleMax).optional(),
+  value: zod.unknown(),
+});
+
+export const mainDocumentsCreateResponseTitleMax = 255;
+
+export const MainDocumentsCreateResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  title: zod.string().max(mainDocumentsCreateResponseTitleMax).optional(),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainDocumentsRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 document 的 UUID 字符串。'),
+});
+
+export const mainDocumentsRetrieveResponseTitleMax = 255;
+
+export const MainDocumentsRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  title: zod.string().max(mainDocumentsRetrieveResponseTitleMax).optional(),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainDocumentsUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 document 的 UUID 字符串。'),
+});
+
+export const mainDocumentsUpdateBodyTitleMax = 255;
+
+export const MainDocumentsUpdateBody = zod.object({
+  title: zod.string().max(mainDocumentsUpdateBodyTitleMax).optional(),
+  value: zod.unknown(),
+});
+
+export const mainDocumentsUpdateResponseTitleMax = 255;
+
+export const MainDocumentsUpdateResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  title: zod.string().max(mainDocumentsUpdateResponseTitleMax).optional(),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainDocumentsPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 document 的 UUID 字符串。'),
+});
+
+export const mainDocumentsPartialUpdateBodyTitleMax = 255;
+
+export const MainDocumentsPartialUpdateBody = zod.object({
+  title: zod.string().max(mainDocumentsPartialUpdateBodyTitleMax).optional(),
+  value: zod.unknown().optional(),
+});
+
+export const mainDocumentsPartialUpdateResponseTitleMax = 255;
+
+export const MainDocumentsPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  title: zod
     .string()
-    .min(1)
-    .max(mainUsersPartialUpdateBodyUsernameMax)
-    .regex(mainUsersPartialUpdateBodyUsernameRegExp)
-    .optional()
-    .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
-    ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersPartialUpdateBodyEmailOneMax),
-      zod.string().max(mainUsersPartialUpdateBodyEmailTwoMax),
-    ])
+    .max(mainDocumentsPartialUpdateResponseTitleMax)
     .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
-export const mainUsersPartialUpdateResponseUsernameMax = 150;
+export const MainDocumentsDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 document 的 UUID 字符串。'),
+});
 
-export const mainUsersPartialUpdateResponseUsernameRegExp = new RegExp(
-  '^[\\w.@+-]+$',
-);
-export const mainUsersPartialUpdateResponseEmailOneMax = 254;
+export const MainDocumentsDestroyResponse = zod.void();
 
-export const mainUsersPartialUpdateResponseEmailTwoMax = 0;
+export const mainTasksListResponseNameMax = 255;
 
-export const MainUsersPartialUpdateResponse = zod.object({
-  url: zod.url(),
-  username: zod
-    .string()
-    .max(mainUsersPartialUpdateResponseUsernameMax)
-    .regex(mainUsersPartialUpdateResponseUsernameRegExp)
+export const MainTasksListResponseItem = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksListResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
     .describe(
-      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  email: zod
-    .union([
-      zod.email().max(mainUsersPartialUpdateResponseEmailOneMax),
-      zod.string().max(mainUsersPartialUpdateResponseEmailTwoMax),
-    ])
-    .optional(),
-  groups: zod
-    .array(zod.url())
-    .optional()
-    .describe('该用户归属的组。一个用户将得到其归属的组的所有权限。'),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+export const MainTasksListResponse = zod.array(MainTasksListResponseItem);
+
+export const mainTasksCreateBodyNameMax = 255;
+
+export const MainTasksCreateBody = zod.object({
+  name: zod.string().min(1).max(mainTasksCreateBodyNameMax),
+  document: zod.uuid(),
 });
 
-export const MainUsersDestroyParams = zod.object({
-  id: zod.int().describe('标识此 用户 的 唯一整数值。'),
+export const mainTasksCreateResponseNameMax = 255;
+
+export const MainTasksCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksCreateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
-export const MainUsersDestroyResponse = zod.void();
+export const MainTasksRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const mainTasksRetrieveResponseNameMax = 255;
+
+export const MainTasksRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksRetrieveResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTasksUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const mainTasksUpdateBodyNameMax = 255;
+
+export const MainTasksUpdateBody = zod.object({
+  name: zod.string().min(1).max(mainTasksUpdateBodyNameMax),
+  document: zod.uuid(),
+});
+
+export const mainTasksUpdateResponseNameMax = 255;
+
+export const MainTasksUpdateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksUpdateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTasksPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const mainTasksPartialUpdateBodyNameMax = 255;
+
+export const MainTasksPartialUpdateBody = zod.object({
+  name: zod.string().min(1).max(mainTasksPartialUpdateBodyNameMax).optional(),
+  document: zod.uuid().optional(),
+});
+
+export const mainTasksPartialUpdateResponseNameMax = 255;
+
+export const MainTasksPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksPartialUpdateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTasksDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const MainTasksDestroyResponse = zod.void();
+
+export const MainTasksApproveCreateParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const mainTasksApproveCreateResponseNameMax = 255;
+
+export const MainTasksApproveCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksApproveCreateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTasksResubmitCreateParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const mainTasksResubmitCreateResponseNameMax = 255;
+
+export const MainTasksResubmitCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksResubmitCreateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTasksSendBackCreateParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const mainTasksSendBackCreateResponseNameMax = 255;
+
+export const MainTasksSendBackCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksSendBackCreateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTasksSubmitCreateParams = zod.object({
+  id: zod.uuid().describe('标识此 task 的 UUID 字符串。'),
+});
+
+export const MainTasksSubmitCreateBody = zod.object({
+  reviewer: zod.int(),
+});
+
+export const mainTasksSubmitCreateResponseNameMax = 255;
+
+export const MainTasksSubmitCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTasksSubmitCreateResponseNameMax),
+  stage: zod
+    .enum(['editing', 'review', 'revision', 'final'])
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+  creator: zod.int(),
+  reviewer: zod.int().nullable(),
+  document: zod.uuid(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});

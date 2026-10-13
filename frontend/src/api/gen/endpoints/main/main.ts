@@ -21,12 +21,19 @@ import type {
 import { customInstance } from '../../../mutator/custom-instance';
 import type { BodyType, ErrorType } from '../../../mutator/custom-instance';
 import type {
-  Group,
-  GroupRequest,
-  PatchedGroupRequest,
-  PatchedUserRequest,
-  User,
-  UserRequest,
+  Comment,
+  CommentRequest,
+  Discussion,
+  DiscussionRequest,
+  Document,
+  DocumentRequest,
+  PatchedCommentRequest,
+  PatchedDiscussionRequest,
+  PatchedDocumentRequest,
+  PatchedTaskRequest,
+  Task,
+  TaskRequest,
+  TaskSubmitRequest,
 } from '../../models';
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
@@ -49,62 +56,66 @@ const withQueryKey = <T extends object, K>(
   return result;
 };
 
-export const mainGroupsList = (
+export const mainCommentsList = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<Group[]>(
-    { url: `/api/main/groups/`, method: 'GET', signal },
+  return customInstance<Comment[]>(
+    { url: `/api/main/comments/`, method: 'GET', signal },
     options,
   );
 };
 
-export const getMainGroupsListQueryKey = () => {
-  return [`/api/main/groups/`] as const;
+export const getMainCommentsListQueryKey = () => {
+  return [`/api/main/comments/`] as const;
 };
 
-export const getMainGroupsListQueryOptions = <
-  TData = Awaited<ReturnType<typeof mainGroupsList>>,
+export const getMainCommentsListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof mainGroupsList>>, TError, TData>
+    UseQueryOptions<Awaited<ReturnType<typeof mainCommentsList>>, TError, TData>
   >;
   request?: SecondParameter<typeof customInstance>;
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainGroupsListQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getMainCommentsListQueryKey();
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof mainGroupsList>>> = ({
-    signal,
-  }) => mainGroupsList(requestOptions, signal);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainCommentsList>>
+  > = ({ signal }) => mainCommentsList(requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof mainGroupsList>>,
+    Awaited<ReturnType<typeof mainCommentsList>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type MainGroupsListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof mainGroupsList>>
+export type MainCommentsListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainCommentsList>>
 >;
-export type MainGroupsListQueryError = ErrorType<unknown>;
+export type MainCommentsListQueryError = ErrorType<unknown>;
 
-export function useMainGroupsList<
-  TData = Awaited<ReturnType<typeof mainGroupsList>>,
+export function useMainCommentsList<
+  TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainGroupsList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainCommentsList>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainGroupsList>>,
+          Awaited<ReturnType<typeof mainCommentsList>>,
           TError,
-          Awaited<ReturnType<typeof mainGroupsList>>
+          Awaited<ReturnType<typeof mainCommentsList>>
         >,
         'initialData'
       >;
@@ -114,19 +125,23 @@ export function useMainGroupsList<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainGroupsList<
-  TData = Awaited<ReturnType<typeof mainGroupsList>>,
+export function useMainCommentsList<
+  TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainGroupsList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainCommentsList>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainGroupsList>>,
+          Awaited<ReturnType<typeof mainCommentsList>>,
           TError,
-          Awaited<ReturnType<typeof mainGroupsList>>
+          Awaited<ReturnType<typeof mainCommentsList>>
         >,
         'initialData'
       >;
@@ -136,13 +151,17 @@ export function useMainGroupsList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainGroupsList<
-  TData = Awaited<ReturnType<typeof mainGroupsList>>,
+export function useMainCommentsList<
+  TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainGroupsList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainCommentsList>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof customInstance>;
   },
@@ -151,13 +170,17 @@ export function useMainGroupsList<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useMainGroupsList<
-  TData = Awaited<ReturnType<typeof mainGroupsList>>,
+export function useMainCommentsList<
+  TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainGroupsList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainCommentsList>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof customInstance>;
   },
@@ -165,7 +188,7 @@ export function useMainGroupsList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainGroupsListQueryOptions(options);
+  const queryOptions = getMainCommentsListQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -175,44 +198,44 @@ export function useMainGroupsList<
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-export const mainGroupsCreate = (
-  groupRequest: BodyType<GroupRequest>,
+export const mainCommentsCreate = (
+  commentRequest: BodyType<CommentRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<Group>(
+  return customInstance<Comment>(
     {
-      url: `/api/main/groups/`,
+      url: `/api/main/comments/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: groupRequest,
+      data: commentRequest,
       signal,
     },
     options,
   );
 };
 
-export const getMainGroupsCreateMutationKey = () =>
-  ['mainGroupsCreate'] as const;
+export const getMainCommentsCreateMutationKey = () =>
+  ['mainCommentsCreate'] as const;
 
-export const getMainGroupsCreateMutationOptions = <
+export const getMainCommentsCreateMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainGroupsCreate>>,
+    Awaited<ReturnType<typeof mainCommentsCreate>>,
     TError,
-    MainGroupsCreateMutationVariables,
+    MainCommentsCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof mainGroupsCreate>>,
+  Awaited<ReturnType<typeof mainCommentsCreate>>,
   TError,
-  MainGroupsCreateMutationVariables,
+  MainCommentsCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = getMainGroupsCreateMutationKey();
+  const mutationKey = getMainCommentsCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -222,72 +245,75 @@ export const getMainGroupsCreateMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainGroupsCreate>>,
-    MainGroupsCreateMutationVariables
+    Awaited<ReturnType<typeof mainCommentsCreate>>,
+    MainCommentsCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
-    return mainGroupsCreate(data, requestOptions);
+    return mainCommentsCreate(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type MainGroupsCreateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainGroupsCreate>>
+export type MainCommentsCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainCommentsCreate>>
 >;
-export type MainGroupsCreateMutationBody = BodyType<GroupRequest>;
-export type MainGroupsCreateMutationError = ErrorType<unknown>;
-export type MainGroupsCreateMutationVariables = {
-  data: BodyType<GroupRequest>;
+export type MainCommentsCreateMutationBody = BodyType<CommentRequest>;
+export type MainCommentsCreateMutationError = ErrorType<unknown>;
+export type MainCommentsCreateMutationVariables = {
+  data: BodyType<CommentRequest>;
 };
 
-export const useMainGroupsCreate = <
+export const useMainCommentsCreate = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainGroupsCreate>>,
+      Awaited<ReturnType<typeof mainCommentsCreate>>,
       TError,
-      MainGroupsCreateMutationVariables,
+      MainCommentsCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof mainGroupsCreate>>,
+  Awaited<ReturnType<typeof mainCommentsCreate>>,
   TError,
-  MainGroupsCreateMutationVariables,
+  MainCommentsCreateMutationVariables,
   TContext
 > => {
-  return useMutation(getMainGroupsCreateMutationOptions(options), queryClient);
+  return useMutation(
+    getMainCommentsCreateMutationOptions(options),
+    queryClient,
+  );
 };
-export const mainGroupsRetrieve = (
-  id: number,
+export const mainCommentsRetrieve = (
+  id: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<Group>(
-    { url: `/api/main/groups/${id}/`, method: 'GET', signal },
+  return customInstance<Comment>(
+    { url: `/api/main/comments/${id}/`, method: 'GET', signal },
     options,
   );
 };
 
-export const getMainGroupsRetrieveQueryKey = (id: number) => {
-  return [`/api/main/groups/${id}/`] as const;
+export const getMainCommentsRetrieveQueryKey = (id: string) => {
+  return [`/api/main/comments/${id}/`] as const;
 };
 
-export const getMainGroupsRetrieveQueryOptions = <
-  TData = Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+export const getMainCommentsRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainCommentsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+        Awaited<ReturnType<typeof mainCommentsRetrieve>>,
         TError,
         TData
       >
@@ -297,11 +323,12 @@ export const getMainGroupsRetrieveQueryOptions = <
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainGroupsRetrieveQueryKey(id);
+  const queryKey =
+    queryOptions?.queryKey ?? getMainCommentsRetrieveQueryKey(id);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof mainGroupsRetrieve>>
-  > = ({ signal }) => mainGroupsRetrieve(id, requestOptions, signal);
+    Awaited<ReturnType<typeof mainCommentsRetrieve>>
+  > = ({ signal }) => mainCommentsRetrieve(id, requestOptions, signal);
 
   return {
     queryKey,
@@ -309,35 +336,35 @@ export const getMainGroupsRetrieveQueryOptions = <
     enabled: id !== null && id !== undefined,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+    Awaited<ReturnType<typeof mainCommentsRetrieve>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type MainGroupsRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof mainGroupsRetrieve>>
+export type MainCommentsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainCommentsRetrieve>>
 >;
-export type MainGroupsRetrieveQueryError = ErrorType<unknown>;
+export type MainCommentsRetrieveQueryError = ErrorType<unknown>;
 
-export function useMainGroupsRetrieve<
-  TData = Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+export function useMainCommentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainCommentsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+        Awaited<ReturnType<typeof mainCommentsRetrieve>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+          Awaited<ReturnType<typeof mainCommentsRetrieve>>,
           TError,
-          Awaited<ReturnType<typeof mainGroupsRetrieve>>
+          Awaited<ReturnType<typeof mainCommentsRetrieve>>
         >,
         'initialData'
       >;
@@ -347,24 +374,24 @@ export function useMainGroupsRetrieve<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainGroupsRetrieve<
-  TData = Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+export function useMainCommentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainCommentsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+        Awaited<ReturnType<typeof mainCommentsRetrieve>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+          Awaited<ReturnType<typeof mainCommentsRetrieve>>,
           TError,
-          Awaited<ReturnType<typeof mainGroupsRetrieve>>
+          Awaited<ReturnType<typeof mainCommentsRetrieve>>
         >,
         'initialData'
       >;
@@ -374,15 +401,15 @@ export function useMainGroupsRetrieve<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainGroupsRetrieve<
-  TData = Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+export function useMainCommentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainCommentsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+        Awaited<ReturnType<typeof mainCommentsRetrieve>>,
         TError,
         TData
       >
@@ -394,15 +421,15 @@ export function useMainGroupsRetrieve<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useMainGroupsRetrieve<
-  TData = Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+export function useMainCommentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainCommentsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainGroupsRetrieve>>,
+        Awaited<ReturnType<typeof mainCommentsRetrieve>>,
         TError,
         TData
       >
@@ -413,7 +440,7 @@ export function useMainGroupsRetrieve<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainGroupsRetrieveQueryOptions(id, options);
+  const queryOptions = getMainCommentsRetrieveQueryOptions(id, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -423,45 +450,45 @@ export function useMainGroupsRetrieve<
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-export const mainGroupsUpdate = (
-  id: number,
-  groupRequest: BodyType<GroupRequest>,
+export const mainCommentsUpdate = (
+  id: string,
+  commentRequest: BodyType<CommentRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<Group>(
+  return customInstance<Comment>(
     {
-      url: `/api/main/groups/${id}/`,
+      url: `/api/main/comments/${id}/`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      data: groupRequest,
+      data: commentRequest,
       signal,
     },
     options,
   );
 };
 
-export const getMainGroupsUpdateMutationKey = () =>
-  ['mainGroupsUpdate'] as const;
+export const getMainCommentsUpdateMutationKey = () =>
+  ['mainCommentsUpdate'] as const;
 
-export const getMainGroupsUpdateMutationOptions = <
+export const getMainCommentsUpdateMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainGroupsUpdate>>,
+    Awaited<ReturnType<typeof mainCommentsUpdate>>,
     TError,
-    MainGroupsUpdateMutationVariables,
+    MainCommentsUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof mainGroupsUpdate>>,
+  Awaited<ReturnType<typeof mainCommentsUpdate>>,
   TError,
-  MainGroupsUpdateMutationVariables,
+  MainCommentsUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = getMainGroupsUpdateMutationKey();
+  const mutationKey = getMainCommentsUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -471,176 +498,179 @@ export const getMainGroupsUpdateMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainGroupsUpdate>>,
-    MainGroupsUpdateMutationVariables
+    Awaited<ReturnType<typeof mainCommentsUpdate>>,
+    MainCommentsUpdateMutationVariables
   > = (props) => {
     const { id, data } = props ?? {};
 
-    return mainGroupsUpdate(id, data, requestOptions);
+    return mainCommentsUpdate(id, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type MainGroupsUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainGroupsUpdate>>
+export type MainCommentsUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainCommentsUpdate>>
 >;
-export type MainGroupsUpdateMutationBody = BodyType<GroupRequest>;
-export type MainGroupsUpdateMutationError = ErrorType<unknown>;
-export type MainGroupsUpdateMutationVariables = {
-  id: number;
-  data: BodyType<GroupRequest>;
+export type MainCommentsUpdateMutationBody = BodyType<CommentRequest>;
+export type MainCommentsUpdateMutationError = ErrorType<unknown>;
+export type MainCommentsUpdateMutationVariables = {
+  id: string;
+  data: BodyType<CommentRequest>;
 };
 
-export const useMainGroupsUpdate = <
+export const useMainCommentsUpdate = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainGroupsUpdate>>,
+      Awaited<ReturnType<typeof mainCommentsUpdate>>,
       TError,
-      MainGroupsUpdateMutationVariables,
+      MainCommentsUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof mainGroupsUpdate>>,
+  Awaited<ReturnType<typeof mainCommentsUpdate>>,
   TError,
-  MainGroupsUpdateMutationVariables,
-  TContext
-> => {
-  return useMutation(getMainGroupsUpdateMutationOptions(options), queryClient);
-};
-export const mainGroupsPartialUpdate = (
-  id: number,
-  patchedGroupRequest?: BodyType<PatchedGroupRequest>,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<Group>(
-    {
-      url: `/api/main/groups/${id}/`,
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      data: patchedGroupRequest,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getMainGroupsPartialUpdateMutationKey = () =>
-  ['mainGroupsPartialUpdate'] as const;
-
-export const getMainGroupsPartialUpdateMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
-    TError,
-    MainGroupsPartialUpdateMutationVariables,
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
-  TError,
-  MainGroupsPartialUpdateMutationVariables,
-  TContext
-> => {
-  const mutationKey = getMainGroupsPartialUpdateMutationKey();
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
-    MainGroupsPartialUpdateMutationVariables
-  > = (props) => {
-    const { id, data } = props ?? {};
-
-    return mainGroupsPartialUpdate(id, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type MainGroupsPartialUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainGroupsPartialUpdate>>
->;
-export type MainGroupsPartialUpdateMutationBody =
-  BodyType<PatchedGroupRequest> | undefined;
-export type MainGroupsPartialUpdateMutationError = ErrorType<unknown>;
-export type MainGroupsPartialUpdateMutationVariables = {
-  id: number;
-  data?: BodyType<PatchedGroupRequest>;
-};
-
-export const useMainGroupsPartialUpdate = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
-      TError,
-      MainGroupsPartialUpdateMutationVariables,
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof mainGroupsPartialUpdate>>,
-  TError,
-  MainGroupsPartialUpdateMutationVariables,
+  MainCommentsUpdateMutationVariables,
   TContext
 > => {
   return useMutation(
-    getMainGroupsPartialUpdateMutationOptions(options),
+    getMainCommentsUpdateMutationOptions(options),
     queryClient,
   );
 };
-export const mainGroupsDestroy = (
-  id: number,
+export const mainCommentsPartialUpdate = (
+  id: string,
+  patchedCommentRequest?: BodyType<PatchedCommentRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Comment>(
+    {
+      url: `/api/main/comments/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedCommentRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainCommentsPartialUpdateMutationKey = () =>
+  ['mainCommentsPartialUpdate'] as const;
+
+export const getMainCommentsPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainCommentsPartialUpdate>>,
+    TError,
+    MainCommentsPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainCommentsPartialUpdate>>,
+  TError,
+  MainCommentsPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainCommentsPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainCommentsPartialUpdate>>,
+    MainCommentsPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainCommentsPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainCommentsPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainCommentsPartialUpdate>>
+>;
+export type MainCommentsPartialUpdateMutationBody =
+  BodyType<PatchedCommentRequest> | undefined;
+export type MainCommentsPartialUpdateMutationError = ErrorType<unknown>;
+export type MainCommentsPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedCommentRequest>;
+};
+
+export const useMainCommentsPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainCommentsPartialUpdate>>,
+      TError,
+      MainCommentsPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainCommentsPartialUpdate>>,
+  TError,
+  MainCommentsPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainCommentsPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainCommentsDestroy = (
+  id: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/api/main/groups/${id}/`, method: 'DELETE', signal },
+    { url: `/api/main/comments/${id}/`, method: 'DELETE', signal },
     options,
   );
 };
 
-export const getMainGroupsDestroyMutationKey = () =>
-  ['mainGroupsDestroy'] as const;
+export const getMainCommentsDestroyMutationKey = () =>
+  ['mainCommentsDestroy'] as const;
 
-export const getMainGroupsDestroyMutationOptions = <
+export const getMainCommentsDestroyMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainGroupsDestroy>>,
+    Awaited<ReturnType<typeof mainCommentsDestroy>>,
     TError,
-    MainGroupsDestroyMutationVariables,
+    MainCommentsDestroyMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof mainGroupsDestroy>>,
+  Awaited<ReturnType<typeof mainCommentsDestroy>>,
   TError,
-  MainGroupsDestroyMutationVariables,
+  MainCommentsDestroyMutationVariables,
   TContext
 > => {
-  const mutationKey = getMainGroupsDestroyMutationKey();
+  const mutationKey = getMainCommentsDestroyMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -650,102 +680,113 @@ export const getMainGroupsDestroyMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainGroupsDestroy>>,
-    MainGroupsDestroyMutationVariables
+    Awaited<ReturnType<typeof mainCommentsDestroy>>,
+    MainCommentsDestroyMutationVariables
   > = (props) => {
     const { id } = props ?? {};
 
-    return mainGroupsDestroy(id, requestOptions);
+    return mainCommentsDestroy(id, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type MainGroupsDestroyMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainGroupsDestroy>>
+export type MainCommentsDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainCommentsDestroy>>
 >;
 
-export type MainGroupsDestroyMutationError = ErrorType<unknown>;
-export type MainGroupsDestroyMutationVariables = { id: number };
+export type MainCommentsDestroyMutationError = ErrorType<unknown>;
+export type MainCommentsDestroyMutationVariables = { id: string };
 
-export const useMainGroupsDestroy = <
+export const useMainCommentsDestroy = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainGroupsDestroy>>,
+      Awaited<ReturnType<typeof mainCommentsDestroy>>,
       TError,
-      MainGroupsDestroyMutationVariables,
+      MainCommentsDestroyMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof mainGroupsDestroy>>,
+  Awaited<ReturnType<typeof mainCommentsDestroy>>,
   TError,
-  MainGroupsDestroyMutationVariables,
+  MainCommentsDestroyMutationVariables,
   TContext
 > => {
-  return useMutation(getMainGroupsDestroyMutationOptions(options), queryClient);
+  return useMutation(
+    getMainCommentsDestroyMutationOptions(options),
+    queryClient,
+  );
 };
-export const mainUsersList = (
+export const mainDiscussionsList = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<User[]>(
-    { url: `/api/main/users/`, method: 'GET', signal },
+  return customInstance<Discussion[]>(
+    { url: `/api/main/discussions/`, method: 'GET', signal },
     options,
   );
 };
 
-export const getMainUsersListQueryKey = () => {
-  return [`/api/main/users/`] as const;
+export const getMainDiscussionsListQueryKey = () => {
+  return [`/api/main/discussions/`] as const;
 };
 
-export const getMainUsersListQueryOptions = <
-  TData = Awaited<ReturnType<typeof mainUsersList>>,
+export const getMainDiscussionsListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(options?: {
   query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof mainUsersList>>, TError, TData>
+    UseQueryOptions<
+      Awaited<ReturnType<typeof mainDiscussionsList>>,
+      TError,
+      TData
+    >
   >;
   request?: SecondParameter<typeof customInstance>;
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainUsersListQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getMainDiscussionsListQueryKey();
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof mainUsersList>>> = ({
-    signal,
-  }) => mainUsersList(requestOptions, signal);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainDiscussionsList>>
+  > = ({ signal }) => mainDiscussionsList(requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof mainUsersList>>,
+    Awaited<ReturnType<typeof mainDiscussionsList>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type MainUsersListQueryResult = NonNullable<
-  Awaited<ReturnType<typeof mainUsersList>>
+export type MainDiscussionsListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainDiscussionsList>>
 >;
-export type MainUsersListQueryError = ErrorType<unknown>;
+export type MainDiscussionsListQueryError = ErrorType<unknown>;
 
-export function useMainUsersList<
-  TData = Awaited<ReturnType<typeof mainUsersList>>,
+export function useMainDiscussionsList<
+  TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
   options: {
     query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainUsersList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDiscussionsList>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainUsersList>>,
+          Awaited<ReturnType<typeof mainDiscussionsList>>,
           TError,
-          Awaited<ReturnType<typeof mainUsersList>>
+          Awaited<ReturnType<typeof mainDiscussionsList>>
         >,
         'initialData'
       >;
@@ -755,19 +796,23 @@ export function useMainUsersList<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainUsersList<
-  TData = Awaited<ReturnType<typeof mainUsersList>>,
+export function useMainDiscussionsList<
+  TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainUsersList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDiscussionsList>>,
+        TError,
+        TData
+      >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainUsersList>>,
+          Awaited<ReturnType<typeof mainDiscussionsList>>,
           TError,
-          Awaited<ReturnType<typeof mainUsersList>>
+          Awaited<ReturnType<typeof mainDiscussionsList>>
         >,
         'initialData'
       >;
@@ -777,13 +822,17 @@ export function useMainUsersList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainUsersList<
-  TData = Awaited<ReturnType<typeof mainUsersList>>,
+export function useMainDiscussionsList<
+  TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainUsersList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDiscussionsList>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof customInstance>;
   },
@@ -792,13 +841,17 @@ export function useMainUsersList<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useMainUsersList<
-  TData = Awaited<ReturnType<typeof mainUsersList>>,
+export function useMainDiscussionsList<
+  TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
   options?: {
     query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof mainUsersList>>, TError, TData>
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDiscussionsList>>,
+        TError,
+        TData
+      >
     >;
     request?: SecondParameter<typeof customInstance>;
   },
@@ -806,7 +859,7 @@ export function useMainUsersList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainUsersListQueryOptions(options);
+  const queryOptions = getMainDiscussionsListQueryOptions(options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -816,43 +869,44 @@ export function useMainUsersList<
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-export const mainUsersCreate = (
-  userRequest: BodyType<UserRequest>,
+export const mainDiscussionsCreate = (
+  discussionRequest: BodyType<DiscussionRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<User>(
+  return customInstance<Discussion>(
     {
-      url: `/api/main/users/`,
+      url: `/api/main/discussions/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: userRequest,
+      data: discussionRequest,
       signal,
     },
     options,
   );
 };
 
-export const getMainUsersCreateMutationKey = () => ['mainUsersCreate'] as const;
+export const getMainDiscussionsCreateMutationKey = () =>
+  ['mainDiscussionsCreate'] as const;
 
-export const getMainUsersCreateMutationOptions = <
+export const getMainDiscussionsCreateMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainUsersCreate>>,
+    Awaited<ReturnType<typeof mainDiscussionsCreate>>,
     TError,
-    MainUsersCreateMutationVariables,
+    MainDiscussionsCreateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof mainUsersCreate>>,
+  Awaited<ReturnType<typeof mainDiscussionsCreate>>,
   TError,
-  MainUsersCreateMutationVariables,
+  MainDiscussionsCreateMutationVariables,
   TContext
 > => {
-  const mutationKey = getMainUsersCreateMutationKey();
+  const mutationKey = getMainDiscussionsCreateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -862,70 +916,75 @@ export const getMainUsersCreateMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainUsersCreate>>,
-    MainUsersCreateMutationVariables
+    Awaited<ReturnType<typeof mainDiscussionsCreate>>,
+    MainDiscussionsCreateMutationVariables
   > = (props) => {
     const { data } = props ?? {};
 
-    return mainUsersCreate(data, requestOptions);
+    return mainDiscussionsCreate(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type MainUsersCreateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainUsersCreate>>
+export type MainDiscussionsCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDiscussionsCreate>>
 >;
-export type MainUsersCreateMutationBody = BodyType<UserRequest>;
-export type MainUsersCreateMutationError = ErrorType<unknown>;
-export type MainUsersCreateMutationVariables = { data: BodyType<UserRequest> };
+export type MainDiscussionsCreateMutationBody = BodyType<DiscussionRequest>;
+export type MainDiscussionsCreateMutationError = ErrorType<unknown>;
+export type MainDiscussionsCreateMutationVariables = {
+  data: BodyType<DiscussionRequest>;
+};
 
-export const useMainUsersCreate = <
+export const useMainDiscussionsCreate = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainUsersCreate>>,
+      Awaited<ReturnType<typeof mainDiscussionsCreate>>,
       TError,
-      MainUsersCreateMutationVariables,
+      MainDiscussionsCreateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof mainUsersCreate>>,
+  Awaited<ReturnType<typeof mainDiscussionsCreate>>,
   TError,
-  MainUsersCreateMutationVariables,
+  MainDiscussionsCreateMutationVariables,
   TContext
 > => {
-  return useMutation(getMainUsersCreateMutationOptions(options), queryClient);
+  return useMutation(
+    getMainDiscussionsCreateMutationOptions(options),
+    queryClient,
+  );
 };
-export const mainUsersRetrieve = (
-  id: number,
+export const mainDiscussionsRetrieve = (
+  id: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<User>(
-    { url: `/api/main/users/${id}/`, method: 'GET', signal },
+  return customInstance<Discussion>(
+    { url: `/api/main/discussions/${id}/`, method: 'GET', signal },
     options,
   );
 };
 
-export const getMainUsersRetrieveQueryKey = (id: number) => {
-  return [`/api/main/users/${id}/`] as const;
+export const getMainDiscussionsRetrieveQueryKey = (id: string) => {
+  return [`/api/main/discussions/${id}/`] as const;
 };
 
-export const getMainUsersRetrieveQueryOptions = <
-  TData = Awaited<ReturnType<typeof mainUsersRetrieve>>,
+export const getMainDiscussionsRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainUsersRetrieve>>,
+        Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
         TError,
         TData
       >
@@ -935,11 +994,12 @@ export const getMainUsersRetrieveQueryOptions = <
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainUsersRetrieveQueryKey(id);
+  const queryKey =
+    queryOptions?.queryKey ?? getMainDiscussionsRetrieveQueryKey(id);
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof mainUsersRetrieve>>
-  > = ({ signal }) => mainUsersRetrieve(id, requestOptions, signal);
+    Awaited<ReturnType<typeof mainDiscussionsRetrieve>>
+  > = ({ signal }) => mainDiscussionsRetrieve(id, requestOptions, signal);
 
   return {
     queryKey,
@@ -947,35 +1007,35 @@ export const getMainUsersRetrieveQueryOptions = <
     enabled: id !== null && id !== undefined,
     ...queryOptions,
   } as UseQueryOptions<
-    Awaited<ReturnType<typeof mainUsersRetrieve>>,
+    Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type MainUsersRetrieveQueryResult = NonNullable<
-  Awaited<ReturnType<typeof mainUsersRetrieve>>
+export type MainDiscussionsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainDiscussionsRetrieve>>
 >;
-export type MainUsersRetrieveQueryError = ErrorType<unknown>;
+export type MainDiscussionsRetrieveQueryError = ErrorType<unknown>;
 
-export function useMainUsersRetrieve<
-  TData = Awaited<ReturnType<typeof mainUsersRetrieve>>,
+export function useMainDiscussionsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainUsersRetrieve>>,
+        Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainUsersRetrieve>>,
+          Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
           TError,
-          Awaited<ReturnType<typeof mainUsersRetrieve>>
+          Awaited<ReturnType<typeof mainDiscussionsRetrieve>>
         >,
         'initialData'
       >;
@@ -985,24 +1045,24 @@ export function useMainUsersRetrieve<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainUsersRetrieve<
-  TData = Awaited<ReturnType<typeof mainUsersRetrieve>>,
+export function useMainDiscussionsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainUsersRetrieve>>,
+        Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof mainUsersRetrieve>>,
+          Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
           TError,
-          Awaited<ReturnType<typeof mainUsersRetrieve>>
+          Awaited<ReturnType<typeof mainDiscussionsRetrieve>>
         >,
         'initialData'
       >;
@@ -1012,15 +1072,15 @@ export function useMainUsersRetrieve<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useMainUsersRetrieve<
-  TData = Awaited<ReturnType<typeof mainUsersRetrieve>>,
+export function useMainDiscussionsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainUsersRetrieve>>,
+        Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
         TError,
         TData
       >
@@ -1032,15 +1092,15 @@ export function useMainUsersRetrieve<
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 
-export function useMainUsersRetrieve<
-  TData = Awaited<ReturnType<typeof mainUsersRetrieve>>,
+export function useMainDiscussionsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
   TError = ErrorType<unknown>,
 >(
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof mainUsersRetrieve>>,
+        Awaited<ReturnType<typeof mainDiscussionsRetrieve>>,
         TError,
         TData
       >
@@ -1051,7 +1111,7 @@ export function useMainUsersRetrieve<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainUsersRetrieveQueryOptions(id, options);
+  const queryOptions = getMainDiscussionsRetrieveQueryOptions(id, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -1061,44 +1121,45 @@ export function useMainUsersRetrieve<
   return withQueryKey(query, queryOptions.queryKey);
 }
 
-export const mainUsersUpdate = (
-  id: number,
-  userRequest: BodyType<UserRequest>,
+export const mainDiscussionsUpdate = (
+  id: string,
+  discussionRequest: BodyType<DiscussionRequest>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
-  return customInstance<User>(
+  return customInstance<Discussion>(
     {
-      url: `/api/main/users/${id}/`,
+      url: `/api/main/discussions/${id}/`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      data: userRequest,
+      data: discussionRequest,
       signal,
     },
     options,
   );
 };
 
-export const getMainUsersUpdateMutationKey = () => ['mainUsersUpdate'] as const;
+export const getMainDiscussionsUpdateMutationKey = () =>
+  ['mainDiscussionsUpdate'] as const;
 
-export const getMainUsersUpdateMutationOptions = <
+export const getMainDiscussionsUpdateMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainUsersUpdate>>,
+    Awaited<ReturnType<typeof mainDiscussionsUpdate>>,
     TError,
-    MainUsersUpdateMutationVariables,
+    MainDiscussionsUpdateMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof mainUsersUpdate>>,
+  Awaited<ReturnType<typeof mainDiscussionsUpdate>>,
   TError,
-  MainUsersUpdateMutationVariables,
+  MainDiscussionsUpdateMutationVariables,
   TContext
 > => {
-  const mutationKey = getMainUsersUpdateMutationKey();
+  const mutationKey = getMainDiscussionsUpdateMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1108,176 +1169,179 @@ export const getMainUsersUpdateMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainUsersUpdate>>,
-    MainUsersUpdateMutationVariables
+    Awaited<ReturnType<typeof mainDiscussionsUpdate>>,
+    MainDiscussionsUpdateMutationVariables
   > = (props) => {
     const { id, data } = props ?? {};
 
-    return mainUsersUpdate(id, data, requestOptions);
+    return mainDiscussionsUpdate(id, data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type MainUsersUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainUsersUpdate>>
+export type MainDiscussionsUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDiscussionsUpdate>>
 >;
-export type MainUsersUpdateMutationBody = BodyType<UserRequest>;
-export type MainUsersUpdateMutationError = ErrorType<unknown>;
-export type MainUsersUpdateMutationVariables = {
-  id: number;
-  data: BodyType<UserRequest>;
+export type MainDiscussionsUpdateMutationBody = BodyType<DiscussionRequest>;
+export type MainDiscussionsUpdateMutationError = ErrorType<unknown>;
+export type MainDiscussionsUpdateMutationVariables = {
+  id: string;
+  data: BodyType<DiscussionRequest>;
 };
 
-export const useMainUsersUpdate = <
+export const useMainDiscussionsUpdate = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainUsersUpdate>>,
+      Awaited<ReturnType<typeof mainDiscussionsUpdate>>,
       TError,
-      MainUsersUpdateMutationVariables,
+      MainDiscussionsUpdateMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof mainUsersUpdate>>,
+  Awaited<ReturnType<typeof mainDiscussionsUpdate>>,
   TError,
-  MainUsersUpdateMutationVariables,
-  TContext
-> => {
-  return useMutation(getMainUsersUpdateMutationOptions(options), queryClient);
-};
-export const mainUsersPartialUpdate = (
-  id: number,
-  patchedUserRequest?: BodyType<PatchedUserRequest>,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal,
-) => {
-  return customInstance<User>(
-    {
-      url: `/api/main/users/${id}/`,
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      data: patchedUserRequest,
-      signal,
-    },
-    options,
-  );
-};
-
-export const getMainUsersPartialUpdateMutationKey = () =>
-  ['mainUsersPartialUpdate'] as const;
-
-export const getMainUsersPartialUpdateMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
-    TError,
-    MainUsersPartialUpdateMutationVariables,
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
-  TError,
-  MainUsersPartialUpdateMutationVariables,
-  TContext
-> => {
-  const mutationKey = getMainUsersPartialUpdateMutationKey();
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
-    MainUsersPartialUpdateMutationVariables
-  > = (props) => {
-    const { id, data } = props ?? {};
-
-    return mainUsersPartialUpdate(id, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type MainUsersPartialUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainUsersPartialUpdate>>
->;
-export type MainUsersPartialUpdateMutationBody =
-  BodyType<PatchedUserRequest> | undefined;
-export type MainUsersPartialUpdateMutationError = ErrorType<unknown>;
-export type MainUsersPartialUpdateMutationVariables = {
-  id: number;
-  data?: BodyType<PatchedUserRequest>;
-};
-
-export const useMainUsersPartialUpdate = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
-      TError,
-      MainUsersPartialUpdateMutationVariables,
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstance>;
-  },
-  queryClient?: QueryClient,
-): UseMutationResult<
-  Awaited<ReturnType<typeof mainUsersPartialUpdate>>,
-  TError,
-  MainUsersPartialUpdateMutationVariables,
+  MainDiscussionsUpdateMutationVariables,
   TContext
 > => {
   return useMutation(
-    getMainUsersPartialUpdateMutationOptions(options),
+    getMainDiscussionsUpdateMutationOptions(options),
     queryClient,
   );
 };
-export const mainUsersDestroy = (
-  id: number,
+export const mainDiscussionsPartialUpdate = (
+  id: string,
+  patchedDiscussionRequest?: BodyType<PatchedDiscussionRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Discussion>(
+    {
+      url: `/api/main/discussions/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedDiscussionRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainDiscussionsPartialUpdateMutationKey = () =>
+  ['mainDiscussionsPartialUpdate'] as const;
+
+export const getMainDiscussionsPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainDiscussionsPartialUpdate>>,
+    TError,
+    MainDiscussionsPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainDiscussionsPartialUpdate>>,
+  TError,
+  MainDiscussionsPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainDiscussionsPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainDiscussionsPartialUpdate>>,
+    MainDiscussionsPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainDiscussionsPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainDiscussionsPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDiscussionsPartialUpdate>>
+>;
+export type MainDiscussionsPartialUpdateMutationBody =
+  BodyType<PatchedDiscussionRequest> | undefined;
+export type MainDiscussionsPartialUpdateMutationError = ErrorType<unknown>;
+export type MainDiscussionsPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedDiscussionRequest>;
+};
+
+export const useMainDiscussionsPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainDiscussionsPartialUpdate>>,
+      TError,
+      MainDiscussionsPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainDiscussionsPartialUpdate>>,
+  TError,
+  MainDiscussionsPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainDiscussionsPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainDiscussionsDestroy = (
+  id: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<void>(
-    { url: `/api/main/users/${id}/`, method: 'DELETE', signal },
+    { url: `/api/main/discussions/${id}/`, method: 'DELETE', signal },
     options,
   );
 };
 
-export const getMainUsersDestroyMutationKey = () =>
-  ['mainUsersDestroy'] as const;
+export const getMainDiscussionsDestroyMutationKey = () =>
+  ['mainDiscussionsDestroy'] as const;
 
-export const getMainUsersDestroyMutationOptions = <
+export const getMainDiscussionsDestroyMutationOptions = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof mainUsersDestroy>>,
+    Awaited<ReturnType<typeof mainDiscussionsDestroy>>,
     TError,
-    MainUsersDestroyMutationVariables,
+    MainDiscussionsDestroyMutationVariables,
     TContext
   >;
   request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof mainUsersDestroy>>,
+  Awaited<ReturnType<typeof mainDiscussionsDestroy>>,
   TError,
-  MainUsersDestroyMutationVariables,
+  MainDiscussionsDestroyMutationVariables,
   TContext
 > => {
-  const mutationKey = getMainUsersDestroyMutationKey();
+  const mutationKey = getMainDiscussionsDestroyMutationKey();
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -1287,43 +1351,1700 @@ export const getMainUsersDestroyMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof mainUsersDestroy>>,
-    MainUsersDestroyMutationVariables
+    Awaited<ReturnType<typeof mainDiscussionsDestroy>>,
+    MainDiscussionsDestroyMutationVariables
   > = (props) => {
     const { id } = props ?? {};
 
-    return mainUsersDestroy(id, requestOptions);
+    return mainDiscussionsDestroy(id, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type MainUsersDestroyMutationResult = NonNullable<
-  Awaited<ReturnType<typeof mainUsersDestroy>>
+export type MainDiscussionsDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDiscussionsDestroy>>
 >;
 
-export type MainUsersDestroyMutationError = ErrorType<unknown>;
-export type MainUsersDestroyMutationVariables = { id: number };
+export type MainDiscussionsDestroyMutationError = ErrorType<unknown>;
+export type MainDiscussionsDestroyMutationVariables = { id: string };
 
-export const useMainUsersDestroy = <
+export const useMainDiscussionsDestroy = <
   TError = ErrorType<unknown>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof mainUsersDestroy>>,
+      Awaited<ReturnType<typeof mainDiscussionsDestroy>>,
       TError,
-      MainUsersDestroyMutationVariables,
+      MainDiscussionsDestroyMutationVariables,
       TContext
     >;
     request?: SecondParameter<typeof customInstance>;
   },
   queryClient?: QueryClient,
 ): UseMutationResult<
-  Awaited<ReturnType<typeof mainUsersDestroy>>,
+  Awaited<ReturnType<typeof mainDiscussionsDestroy>>,
   TError,
-  MainUsersDestroyMutationVariables,
+  MainDiscussionsDestroyMutationVariables,
   TContext
 > => {
-  return useMutation(getMainUsersDestroyMutationOptions(options), queryClient);
+  return useMutation(
+    getMainDiscussionsDestroyMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainDocumentsList = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Document[]>(
+    { url: `/api/main/documents/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainDocumentsListQueryKey = () => {
+  return [`/api/main/documents/`] as const;
+};
+
+export const getMainDocumentsListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainDocumentsList>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof mainDocumentsList>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainDocumentsListQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainDocumentsList>>
+  > = ({ signal }) => mainDocumentsList(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainDocumentsList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainDocumentsListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainDocumentsList>>
+>;
+export type MainDocumentsListQueryError = ErrorType<unknown>;
+
+export function useMainDocumentsList<
+  TData = Awaited<ReturnType<typeof mainDocumentsList>>,
+  TError = ErrorType<unknown>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainDocumentsList>>,
+          TError,
+          Awaited<ReturnType<typeof mainDocumentsList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainDocumentsList<
+  TData = Awaited<ReturnType<typeof mainDocumentsList>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainDocumentsList>>,
+          TError,
+          Awaited<ReturnType<typeof mainDocumentsList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainDocumentsList<
+  TData = Awaited<ReturnType<typeof mainDocumentsList>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainDocumentsList<
+  TData = Awaited<ReturnType<typeof mainDocumentsList>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainDocumentsListQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainDocumentsCreate = (
+  documentRequest: BodyType<DocumentRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Document>(
+    {
+      url: `/api/main/documents/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: documentRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainDocumentsCreateMutationKey = () =>
+  ['mainDocumentsCreate'] as const;
+
+export const getMainDocumentsCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainDocumentsCreate>>,
+    TError,
+    MainDocumentsCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainDocumentsCreate>>,
+  TError,
+  MainDocumentsCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainDocumentsCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainDocumentsCreate>>,
+    MainDocumentsCreateMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mainDocumentsCreate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainDocumentsCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDocumentsCreate>>
+>;
+export type MainDocumentsCreateMutationBody = BodyType<DocumentRequest>;
+export type MainDocumentsCreateMutationError = ErrorType<unknown>;
+export type MainDocumentsCreateMutationVariables = {
+  data: BodyType<DocumentRequest>;
+};
+
+export const useMainDocumentsCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainDocumentsCreate>>,
+      TError,
+      MainDocumentsCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainDocumentsCreate>>,
+  TError,
+  MainDocumentsCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainDocumentsCreateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainDocumentsRetrieve = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Document>(
+    { url: `/api/main/documents/${id}/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainDocumentsRetrieveQueryKey = (id: string) => {
+  return [`/api/main/documents/${id}/`] as const;
+};
+
+export const getMainDocumentsRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getMainDocumentsRetrieveQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainDocumentsRetrieve>>
+  > = ({ signal }) => mainDocumentsRetrieve(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainDocumentsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainDocumentsRetrieve>>
+>;
+export type MainDocumentsRetrieveQueryError = ErrorType<unknown>;
+
+export function useMainDocumentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainDocumentsRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainDocumentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainDocumentsRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainDocumentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainDocumentsRetrieve<
+  TData = Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainDocumentsRetrieveQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainDocumentsUpdate = (
+  id: string,
+  documentRequest: BodyType<DocumentRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Document>(
+    {
+      url: `/api/main/documents/${id}/`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: documentRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainDocumentsUpdateMutationKey = () =>
+  ['mainDocumentsUpdate'] as const;
+
+export const getMainDocumentsUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainDocumentsUpdate>>,
+    TError,
+    MainDocumentsUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainDocumentsUpdate>>,
+  TError,
+  MainDocumentsUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainDocumentsUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainDocumentsUpdate>>,
+    MainDocumentsUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainDocumentsUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainDocumentsUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDocumentsUpdate>>
+>;
+export type MainDocumentsUpdateMutationBody = BodyType<DocumentRequest>;
+export type MainDocumentsUpdateMutationError = ErrorType<unknown>;
+export type MainDocumentsUpdateMutationVariables = {
+  id: string;
+  data: BodyType<DocumentRequest>;
+};
+
+export const useMainDocumentsUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainDocumentsUpdate>>,
+      TError,
+      MainDocumentsUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainDocumentsUpdate>>,
+  TError,
+  MainDocumentsUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainDocumentsUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainDocumentsPartialUpdate = (
+  id: string,
+  patchedDocumentRequest?: BodyType<PatchedDocumentRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Document>(
+    {
+      url: `/api/main/documents/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedDocumentRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainDocumentsPartialUpdateMutationKey = () =>
+  ['mainDocumentsPartialUpdate'] as const;
+
+export const getMainDocumentsPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainDocumentsPartialUpdate>>,
+    TError,
+    MainDocumentsPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainDocumentsPartialUpdate>>,
+  TError,
+  MainDocumentsPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainDocumentsPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainDocumentsPartialUpdate>>,
+    MainDocumentsPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainDocumentsPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainDocumentsPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDocumentsPartialUpdate>>
+>;
+export type MainDocumentsPartialUpdateMutationBody =
+  BodyType<PatchedDocumentRequest> | undefined;
+export type MainDocumentsPartialUpdateMutationError = ErrorType<unknown>;
+export type MainDocumentsPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedDocumentRequest>;
+};
+
+export const useMainDocumentsPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainDocumentsPartialUpdate>>,
+      TError,
+      MainDocumentsPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainDocumentsPartialUpdate>>,
+  TError,
+  MainDocumentsPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainDocumentsPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainDocumentsDestroy = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/main/documents/${id}/`, method: 'DELETE', signal },
+    options,
+  );
+};
+
+export const getMainDocumentsDestroyMutationKey = () =>
+  ['mainDocumentsDestroy'] as const;
+
+export const getMainDocumentsDestroyMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainDocumentsDestroy>>,
+    TError,
+    MainDocumentsDestroyMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainDocumentsDestroy>>,
+  TError,
+  MainDocumentsDestroyMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainDocumentsDestroyMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainDocumentsDestroy>>,
+    MainDocumentsDestroyMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainDocumentsDestroy(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainDocumentsDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainDocumentsDestroy>>
+>;
+
+export type MainDocumentsDestroyMutationError = ErrorType<unknown>;
+export type MainDocumentsDestroyMutationVariables = { id: string };
+
+export const useMainDocumentsDestroy = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainDocumentsDestroy>>,
+      TError,
+      MainDocumentsDestroyMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainDocumentsDestroy>>,
+  TError,
+  MainDocumentsDestroyMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainDocumentsDestroyMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainTasksList = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task[]>(
+    { url: `/api/main/tasks/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainTasksListQueryKey = () => {
+  return [`/api/main/tasks/`] as const;
+};
+
+export const getMainTasksListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainTasksList>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainTasksListQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof mainTasksList>>> = ({
+    signal,
+  }) => mainTasksList(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainTasksList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainTasksListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksList>>
+>;
+export type MainTasksListQueryError = ErrorType<unknown>;
+
+export function useMainTasksList<
+  TData = Awaited<ReturnType<typeof mainTasksList>>,
+  TError = ErrorType<unknown>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainTasksList>>,
+          TError,
+          Awaited<ReturnType<typeof mainTasksList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainTasksList<
+  TData = Awaited<ReturnType<typeof mainTasksList>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainTasksList>>,
+          TError,
+          Awaited<ReturnType<typeof mainTasksList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainTasksList<
+  TData = Awaited<ReturnType<typeof mainTasksList>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainTasksList<
+  TData = Awaited<ReturnType<typeof mainTasksList>>,
+  TError = ErrorType<unknown>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainTasksListQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainTasksCreate = (
+  taskRequest: BodyType<TaskRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    {
+      url: `/api/main/tasks/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: taskRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainTasksCreateMutationKey = () => ['mainTasksCreate'] as const;
+
+export const getMainTasksCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksCreate>>,
+    TError,
+    MainTasksCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksCreate>>,
+  TError,
+  MainTasksCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksCreate>>,
+    MainTasksCreateMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mainTasksCreate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksCreate>>
+>;
+export type MainTasksCreateMutationBody = BodyType<TaskRequest>;
+export type MainTasksCreateMutationError = ErrorType<unknown>;
+export type MainTasksCreateMutationVariables = { data: BodyType<TaskRequest> };
+
+export const useMainTasksCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksCreate>>,
+      TError,
+      MainTasksCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksCreate>>,
+  TError,
+  MainTasksCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainTasksCreateMutationOptions(options), queryClient);
+};
+export const mainTasksRetrieve = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    { url: `/api/main/tasks/${id}/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainTasksRetrieveQueryKey = (id: string) => {
+  return [`/api/main/tasks/${id}/`] as const;
+};
+
+export const getMainTasksRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainTasksRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainTasksRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainTasksRetrieveQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainTasksRetrieve>>
+  > = ({ signal }) => mainTasksRetrieve(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainTasksRetrieve>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainTasksRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksRetrieve>>
+>;
+export type MainTasksRetrieveQueryError = ErrorType<unknown>;
+
+export function useMainTasksRetrieve<
+  TData = Awaited<ReturnType<typeof mainTasksRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainTasksRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainTasksRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainTasksRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainTasksRetrieve<
+  TData = Awaited<ReturnType<typeof mainTasksRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainTasksRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainTasksRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainTasksRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainTasksRetrieve<
+  TData = Awaited<ReturnType<typeof mainTasksRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainTasksRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainTasksRetrieve<
+  TData = Awaited<ReturnType<typeof mainTasksRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainTasksRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainTasksRetrieveQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainTasksUpdate = (
+  id: string,
+  taskRequest: BodyType<TaskRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    {
+      url: `/api/main/tasks/${id}/`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: taskRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainTasksUpdateMutationKey = () => ['mainTasksUpdate'] as const;
+
+export const getMainTasksUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksUpdate>>,
+    TError,
+    MainTasksUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksUpdate>>,
+  TError,
+  MainTasksUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksUpdate>>,
+    MainTasksUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainTasksUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksUpdate>>
+>;
+export type MainTasksUpdateMutationBody = BodyType<TaskRequest>;
+export type MainTasksUpdateMutationError = ErrorType<unknown>;
+export type MainTasksUpdateMutationVariables = {
+  id: string;
+  data: BodyType<TaskRequest>;
+};
+
+export const useMainTasksUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksUpdate>>,
+      TError,
+      MainTasksUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksUpdate>>,
+  TError,
+  MainTasksUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainTasksUpdateMutationOptions(options), queryClient);
+};
+export const mainTasksPartialUpdate = (
+  id: string,
+  patchedTaskRequest?: BodyType<PatchedTaskRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    {
+      url: `/api/main/tasks/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedTaskRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainTasksPartialUpdateMutationKey = () =>
+  ['mainTasksPartialUpdate'] as const;
+
+export const getMainTasksPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksPartialUpdate>>,
+    TError,
+    MainTasksPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksPartialUpdate>>,
+  TError,
+  MainTasksPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksPartialUpdate>>,
+    MainTasksPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainTasksPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksPartialUpdate>>
+>;
+export type MainTasksPartialUpdateMutationBody =
+  BodyType<PatchedTaskRequest> | undefined;
+export type MainTasksPartialUpdateMutationError = ErrorType<unknown>;
+export type MainTasksPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedTaskRequest>;
+};
+
+export const useMainTasksPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksPartialUpdate>>,
+      TError,
+      MainTasksPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksPartialUpdate>>,
+  TError,
+  MainTasksPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainTasksPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainTasksDestroy = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/main/tasks/${id}/`, method: 'DELETE', signal },
+    options,
+  );
+};
+
+export const getMainTasksDestroyMutationKey = () =>
+  ['mainTasksDestroy'] as const;
+
+export const getMainTasksDestroyMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksDestroy>>,
+    TError,
+    MainTasksDestroyMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksDestroy>>,
+  TError,
+  MainTasksDestroyMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksDestroyMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksDestroy>>,
+    MainTasksDestroyMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainTasksDestroy(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksDestroy>>
+>;
+
+export type MainTasksDestroyMutationError = ErrorType<unknown>;
+export type MainTasksDestroyMutationVariables = { id: string };
+
+export const useMainTasksDestroy = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksDestroy>>,
+      TError,
+      MainTasksDestroyMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksDestroy>>,
+  TError,
+  MainTasksDestroyMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainTasksDestroyMutationOptions(options), queryClient);
+};
+export const mainTasksApproveCreate = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    { url: `/api/main/tasks/${id}/approve/`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getMainTasksApproveCreateMutationKey = () =>
+  ['mainTasksApproveCreate'] as const;
+
+export const getMainTasksApproveCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksApproveCreate>>,
+    TError,
+    MainTasksApproveCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksApproveCreate>>,
+  TError,
+  MainTasksApproveCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksApproveCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksApproveCreate>>,
+    MainTasksApproveCreateMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainTasksApproveCreate(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksApproveCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksApproveCreate>>
+>;
+
+export type MainTasksApproveCreateMutationError = ErrorType<unknown>;
+export type MainTasksApproveCreateMutationVariables = { id: string };
+
+export const useMainTasksApproveCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksApproveCreate>>,
+      TError,
+      MainTasksApproveCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksApproveCreate>>,
+  TError,
+  MainTasksApproveCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainTasksApproveCreateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainTasksResubmitCreate = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    { url: `/api/main/tasks/${id}/resubmit/`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getMainTasksResubmitCreateMutationKey = () =>
+  ['mainTasksResubmitCreate'] as const;
+
+export const getMainTasksResubmitCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksResubmitCreate>>,
+    TError,
+    MainTasksResubmitCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksResubmitCreate>>,
+  TError,
+  MainTasksResubmitCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksResubmitCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksResubmitCreate>>,
+    MainTasksResubmitCreateMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainTasksResubmitCreate(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksResubmitCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksResubmitCreate>>
+>;
+
+export type MainTasksResubmitCreateMutationError = ErrorType<unknown>;
+export type MainTasksResubmitCreateMutationVariables = { id: string };
+
+export const useMainTasksResubmitCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksResubmitCreate>>,
+      TError,
+      MainTasksResubmitCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksResubmitCreate>>,
+  TError,
+  MainTasksResubmitCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainTasksResubmitCreateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainTasksSendBackCreate = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    { url: `/api/main/tasks/${id}/send_back/`, method: 'POST', signal },
+    options,
+  );
+};
+
+export const getMainTasksSendBackCreateMutationKey = () =>
+  ['mainTasksSendBackCreate'] as const;
+
+export const getMainTasksSendBackCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksSendBackCreate>>,
+    TError,
+    MainTasksSendBackCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksSendBackCreate>>,
+  TError,
+  MainTasksSendBackCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksSendBackCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksSendBackCreate>>,
+    MainTasksSendBackCreateMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainTasksSendBackCreate(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksSendBackCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksSendBackCreate>>
+>;
+
+export type MainTasksSendBackCreateMutationError = ErrorType<unknown>;
+export type MainTasksSendBackCreateMutationVariables = { id: string };
+
+export const useMainTasksSendBackCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksSendBackCreate>>,
+      TError,
+      MainTasksSendBackCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksSendBackCreate>>,
+  TError,
+  MainTasksSendBackCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainTasksSendBackCreateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainTasksSubmitCreate = (
+  id: string,
+  taskSubmitRequest: BodyType<TaskSubmitRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Task>(
+    {
+      url: `/api/main/tasks/${id}/submit/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: taskSubmitRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainTasksSubmitCreateMutationKey = () =>
+  ['mainTasksSubmitCreate'] as const;
+
+export const getMainTasksSubmitCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainTasksSubmitCreate>>,
+    TError,
+    MainTasksSubmitCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainTasksSubmitCreate>>,
+  TError,
+  MainTasksSubmitCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainTasksSubmitCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainTasksSubmitCreate>>,
+    MainTasksSubmitCreateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainTasksSubmitCreate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainTasksSubmitCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainTasksSubmitCreate>>
+>;
+export type MainTasksSubmitCreateMutationBody = BodyType<TaskSubmitRequest>;
+export type MainTasksSubmitCreateMutationError = ErrorType<unknown>;
+export type MainTasksSubmitCreateMutationVariables = {
+  id: string;
+  data: BodyType<TaskSubmitRequest>;
+};
+
+export const useMainTasksSubmitCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainTasksSubmitCreate>>,
+      TError,
+      MainTasksSubmitCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainTasksSubmitCreate>>,
+  TError,
+  MainTasksSubmitCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainTasksSubmitCreateMutationOptions(options),
+    queryClient,
+  );
 };
