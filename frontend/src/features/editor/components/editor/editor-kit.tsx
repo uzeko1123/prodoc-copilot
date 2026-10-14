@@ -28,6 +28,7 @@ import { BlockSelectionKit } from './plugins/block-selection-kit';
 import { CodeBlockKit } from './plugins/code-block-kit';
 import { CursorOverlayKit } from './plugins/cursor-overlay-kit';
 import { DndKit } from './plugins/dnd-kit';
+import { DocumentKit } from './plugins/document-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
 import { LinkKit } from './plugins/link-kit';
@@ -91,6 +92,9 @@ export const EditorKit = [
 
   // Find
   ...FindReplaceKit,
+
+  // Document
+  ...DocumentKit,
 ];
 
 export type MyEditor = TPlateEditor<Value, (typeof EditorKit)[number]>;

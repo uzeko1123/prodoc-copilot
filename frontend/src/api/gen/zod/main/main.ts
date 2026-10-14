@@ -5,6 +5,10 @@
  */
 import * as zod from 'zod';
 
+export const MainCommentsListQueryParams = zod.object({
+  discussion: zod.uuid().optional(),
+});
+
 export const MainCommentsListResponseItem = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
@@ -96,6 +100,10 @@ export const MainCommentsDestroyParams = zod.object({
 });
 
 export const MainCommentsDestroyResponse = zod.void();
+
+export const MainDiscussionsListQueryParams = zod.object({
+  document: zod.uuid().optional(),
+});
 
 export const MainDiscussionsListResponseItem = zod.object({
   id: zod.uuid(),
@@ -267,6 +275,10 @@ export const MainDiscussionsDestroyParams = zod.object({
 });
 
 export const MainDiscussionsDestroyResponse = zod.void();
+
+export const MainDocumentsListQueryParams = zod.object({
+  task: zod.uuid().optional(),
+});
 
 export const mainDocumentsListResponseTitleMax = 255;
 

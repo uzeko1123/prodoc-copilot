@@ -19,12 +19,12 @@ import { Input } from '@/components/shadcn/ui/input';
 import { useCountdown } from '@/hooks/use-countdown';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
+import { queryClient } from '@/lib/query-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { cn } from 'cn';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { clearAuth } from '../lib/clear-auth';
 import { Altcha } from './altcha-field';
 
 const RESET_PASSWORD_CONFIRM_COUNTDOWN = 3;
@@ -56,7 +56,7 @@ export function ResetPasswordConfirmForm({
         setValue('altcha', '');
       },
       onSuccess: () => {
-        clearAuth();
+        queryClient.clear();
         startCountdown(RESET_PASSWORD_CONFIRM_COUNTDOWN);
       },
       onError: (error) => {

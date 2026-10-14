@@ -1,4 +1,4 @@
-import { useCommentStore } from '@/features/comment/stores';
+import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
@@ -62,7 +62,7 @@ export function createAgentTransport(editor: PlateEditor) {
         model: getModel(),
         instructions,
         messages: await convertToModelMessages(
-          createChatMessagesWithCtx(chatMessages, context),
+          createChatMessagesWithCtx(editor, chatMessages, context),
           { tools, ignoreIncompleteToolCalls: true },
         ),
         tools: availableTools,
@@ -97,10 +97,11 @@ export function createAgentTransport(editor: PlateEditor) {
 }
 
 function createChatMessagesWithCtx(
+  editor: PlateEditor,
   chatMessages: ChatMessage[],
   context: Context | null,
 ) {
-  const discussions = useCommentStore.getState().discussions;
+  const discussions = editor.getOption(discussionPlugin, 'discussions');
 
   const lastUserChatMessageIndex = chatMessages.findLastIndex(
     (message) => message.role === 'user',

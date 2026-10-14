@@ -1,4 +1,7 @@
-import { useAuthLoginCreate } from '@/api/gen/endpoints/auth/auth';
+import {
+  getAuthUserRetrieveQueryKey,
+  useAuthLoginCreate,
+} from '@/api/gen/endpoints/auth/auth';
 import { AuthLoginCreateBody } from '@/api/gen/zod/auth/auth';
 import { Button } from '@/components/shadcn/ui/button';
 import {
@@ -17,12 +20,12 @@ import {
 import { Input } from '@/components/shadcn/ui/input';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
+import { queryClient } from '@/lib/query-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { cn } from 'cn';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useAuthStore } from '../stores';
 import { Altcha } from './altcha-field';
 
 export function LoginForm({
@@ -37,14 +40,12 @@ export function LoginForm({
 
   const { mutate, isPending, isSuccess } = useAuthLoginCreate({
     mutation: {
-      onSettled: () => {
-        setValue('altcha', '');
-      },
       onSuccess: (data) => {
-        setUser(data.user);
+        queryClient.setQueryData(getAuthUserRetrieveQueryKey(), data.user);
         navigate({ to: redirect, replace: true });
       },
       onError: (error) => {
+        setValue('altcha', '');
         const emailUnverified = (
           error.response?.data as { non_field_errors?: string[] } | undefined
         )?.non_field_errors?.includes('邮箱未验证。'); // HACK
@@ -60,8 +61,6 @@ export function LoginForm({
       },
     },
   });
-
-  const setUser = useAuthStore((state) => state.setUser);
 
   const navigate = useNavigate();
 

@@ -7,7 +7,7 @@ import { queryClient } from '@/lib/query-client';
 import { noop } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 
-function IndexPage() {
+function DashboardPage() {
   return (
     <SidebarProvider
       style={
@@ -36,9 +36,9 @@ function IndexPage() {
 
 export const Route = createFileRoute('/dashboard/')({
   beforeLoad: () => {
-    const _withAuth = false;
+    const _withAuth = true;
     if (!_withAuth) return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
-  component: IndexPage,
+  component: DashboardPage,
 });

@@ -20,4 +20,6 @@ export interface UserDetails {
   first_name?: string;
   /** @maxLength 150 */
   last_name?: string;
+  full_name?: string;
+  avatar?: string;
 }

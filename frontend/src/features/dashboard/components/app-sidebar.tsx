@@ -1,45 +1,28 @@
-import { NavSecondary } from '@/components/shadcn/nav-secondary';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/shadcn/ui/sidebar';
+import { UserMenu } from '@/features/auth/components/user-menu';
 import {
-  CircleHelpIcon,
-  CommandIcon,
-  ListIcon,
-  Settings2Icon,
+  BookOpenIcon,
+  CheckCheckIcon,
+  CirclePlusIcon,
+  DatabaseIcon,
+  FormIcon,
+  LayoutDashboardIcon,
+  PaletteIcon,
+  PencilIcon,
+  PencilSparklesIcon,
+  ScaleIcon,
 } from 'lucide-react';
 import * as React from 'react';
-import { NavMain } from './nav-main';
-import { NavUser } from './nav-user';
-
-// 后续功能扩展：在 navMain / navSecondary 数组中添加导航项即可
-const data = {
-  navMain: [
-    {
-      title: '任务',
-      url: '/dashboard',
-      icon: <ListIcon />,
-    },
-  ],
-  navSecondary: [
-    {
-      title: '设置',
-      url: '#',
-      icon: <Settings2Icon />,
-    },
-    {
-      title: '帮助',
-      url: '#',
-      icon: <CircleHelpIcon />,
-    },
-  ],
-};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -47,24 +30,112 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+            <a
+              href="/"
+              className="flex items-center gap-2 self-center p-1.5 font-bold"
             >
-              <a href="#">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">ProDoc Copilot</span>
-              </a>
-            </SidebarMenuButton>
+              <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+                <PencilSparklesIcon className="size-3.5" />
+              </div>
+              ProDoc Copilot
+            </a>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="/dashboard">
+                  <LayoutDashboardIcon /> 总览
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <CirclePlusIcon /> 快速创建
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>任务列表</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <PencilIcon /> 编辑 / 修改
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <CheckCheckIcon /> 评阅 / 审核
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>模板 & 指南</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <FormIcon /> 文档模板
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <BookOpenIcon /> 写作指南
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>知识库</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <ScaleIcon /> 标准规范
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <PaletteIcon /> 风格参考
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a href="#">
+                  <DatabaseIcon /> 事实来源
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <UserMenu side="top" className="w-full" />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

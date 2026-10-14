@@ -16,10 +16,14 @@ from dj_rest_auth.serializers import (
 from dj_rest_auth.serializers import (
     PasswordResetSerializer as PasswordResetSerializer_,
 )
+from dj_rest_auth.serializers import (
+    UserDetailsSerializer as UserDetailsSerializer_,
+)
 from django.conf import settings
 from rest_framework import serializers
 
 from .fields import AltchaField
+from .models import UserProfile
 
 
 def _password_reset_url_generator(request, user, temp_key):
@@ -72,3 +76,22 @@ class PasswordResetSerializer(AltchaMixin, PasswordResetSerializer_):
 
 class PasswordResetConfirmSerializer(AltchaMixin, PasswordResetConfirmSerializer_):
     pass
+
+
+class UserDetailsSerializer(UserDetailsSerializer_):
+    full_name = serializers.CharField(
+        source="profile.full_name", required=False, allow_blank=True
+    )
+    avatar = serializers.URLField(
+        source="profile.avatar", required=False, allow_blank=True
+    )
+
+    class Meta(UserDetailsSerializer_.Meta):
+        fields = (*UserDetailsSerializer_.Meta.fields, "full_name", "avatar")
+
+    def update(self, instance, validated_data):
+        profile = validated_data.pop("profile", None)
+        user = super().update(instance, validated_data)
+        if profile is not None:
+            UserProfile.objects.update_or_create(user=user, defaults=profile)
+        return user

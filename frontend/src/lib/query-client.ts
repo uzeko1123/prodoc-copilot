@@ -1,4 +1,3 @@
-import { clearAuth } from '@/features/auth/lib/clear-auth';
 import { toastErrorMessage } from '@/lib/error-message';
 import { router } from '@/lib/router';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
@@ -19,7 +18,7 @@ function redirectToLogin() {
       replace: true,
     })
     .finally(() => {
-      clearAuth();
+      queryClient.clear();
       redirectingToLogin = false;
     });
 }

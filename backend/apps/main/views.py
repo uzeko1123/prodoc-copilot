@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -95,15 +96,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.select_related("task")
     serializer_class = DocumentSerializer
     permission_classes = (DocumentPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("task",)
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Document.objects.filter(
+        return Document.objects.filter(
             Q(task__creator=user) | Q(task__reviewer=user)
         ).select_related("task")
-        if task_id := self.request.query_params.get("task"):
-            queryset = queryset.filter(task_id=task_id)
-        return queryset
 
     def perform_create(self, serializer):
         raise MethodNotAllowed("POST")
@@ -120,15 +120,14 @@ class DiscussionViewSet(viewsets.ModelViewSet):
     queryset = Discussion.objects.select_related("document__task")
     serializer_class = DiscussionSerializer
     permission_classes = (DiscussionPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("document",)
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Discussion.objects.filter(
+        return Discussion.objects.filter(
             Q(document__task__creator=user) | Q(document__task__reviewer=user)
         ).select_related("document__task")
-        if document_id := self.request.query_params.get("document"):
-            queryset = queryset.filter(document_id=document_id)
-        return queryset
 
     def perform_create(self, serializer):
         document = serializer.validated_data["document"]
@@ -149,16 +148,15 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.select_related("discussion__document__task")
     serializer_class = CommentSerializer
     permission_classes = (CommentPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("discussion",)
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Comment.objects.filter(
+        return Comment.objects.filter(
             Q(discussion__document__task__creator=user)
             | Q(discussion__document__task__reviewer=user)
         ).select_related("discussion__document__task")
-        if discussion_id := self.request.query_params.get("discussion"):
-            queryset = queryset.filter(discussion_id=discussion_id)
-        return queryset
 
     def perform_create(self, serializer):
         discussion = serializer.validated_data["discussion"]

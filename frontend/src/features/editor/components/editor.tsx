@@ -1,10 +1,13 @@
 'use client';
 
+import { mainDocumentsPartialUpdate } from '@/api/gen/endpoints/main/main';
 import {
   EditorContainer,
   Editor as EditorPrimitive,
 } from '@/components/shadcn/ui/editor';
 import { FixedToolbar } from '@/components/shadcn/ui/fixed-toolbar';
+import { useDebounce } from '@/hooks/shadcn/use-debounce';
+import { toastErrorMessage } from '@/lib/error-message';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
   useEditorRef,
@@ -12,14 +15,20 @@ import {
   useEditorValue,
   usePluginOption,
 } from 'platejs/react';
-import { useEffect, type CSSProperties } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import { useEditorStore } from '../stores';
+import { DocumentPlugin } from './editor/plugins/document-kit';
 import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
-export function Editor() {
+export function Editor({ documentId }: { documentId: string }) {
+  const editor = useEditorRef();
   const editorScrollRef = useEditorScrollRef();
   const editorFontFamily = useEditorStore((state) => state.editorFontFamily);
   const editorTextIndent = useEditorStore((state) => state.editorTextIndent);
+
+  useEffect(() => {
+    editor.setOption(DocumentPlugin, 'documentId', documentId);
+  }, [editor, documentId]);
 
   return (
     <div className="flex h-full flex-col">
@@ -45,12 +54,41 @@ export function Editor() {
 }
 
 function EditorValueSync() {
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+
   const value = useEditorValue();
-  const setValue = useEditorStore((state) => state.setValue);
+  const debouncedValue = useDebounce(value, 1500);
+  const latestValueRef = useRef(value);
+  const savedValueRef = useRef(value);
+
+  const initial = useRef(true);
 
   useEffect(() => {
-    setValue(value);
-  }, [setValue, value]);
+    latestValueRef.current = value;
+  }, [value]);
+
+  useEffect(() => {
+    if (!documentId) return;
+    if (initial.current) {
+      initial.current = false;
+      return;
+    }
+    savedValueRef.current = debouncedValue;
+    mainDocumentsPartialUpdate(documentId, {
+      value: savedValueRef.current,
+    }).catch(toastErrorMessage);
+  }, [documentId, debouncedValue]);
+
+  useEffect(() => {
+    return () => {
+      if (!documentId) return;
+      if (latestValueRef.current !== savedValueRef.current) {
+        mainDocumentsPartialUpdate(documentId, {
+          value: latestValueRef.current,
+        }).catch(toastErrorMessage);
+      }
+    };
+  }, [documentId]);
 
   return null;
 }

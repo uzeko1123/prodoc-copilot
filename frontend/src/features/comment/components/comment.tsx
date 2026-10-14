@@ -21,7 +21,6 @@ import {
   type ResolvedDiscussion,
   type ResolvedSuggestion,
 } from '../lib/block-discussion-index';
-import { useCommentStore } from '../stores';
 import { commentPlugin } from './editor/plugins/comment-kit';
 import { discussionPlugin } from './editor/plugins/discussion-kit';
 import { suggestionPlugin } from './editor/plugins/suggestion-kit';
@@ -38,15 +37,11 @@ type CommentItem = { id: string; path: Path } & (
 export function Comment() {
   const editor = useEditorRef();
   const version = useDebounce(useValueVersion() ?? 0);
-  const discussions = useCommentStore((state) => state.discussions);
+  const discussions = usePluginOption(discussionPlugin, 'discussions');
 
   const commentingBlock = usePluginOption(commentPlugin, 'commentingBlock');
   const activeCommentId = usePluginOption(commentPlugin, 'activeId');
   const isCommenting = activeCommentId === getDraftCommentKey();
-
-  useEffect(() => {
-    editor.setOption(discussionPlugin, 'discussions', discussions);
-  }, [editor, discussions]);
 
   const commentItems = useMemo(() => {
     const discussionIndex = getDiscussionIndex(editor, discussions, version);

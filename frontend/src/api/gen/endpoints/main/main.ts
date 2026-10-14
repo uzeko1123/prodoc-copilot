@@ -27,6 +27,9 @@ import type {
   DiscussionRequest,
   Document,
   DocumentRequest,
+  MainCommentsListParams,
+  MainDiscussionsListParams,
+  MainDocumentsListParams,
   PatchedCommentRequest,
   PatchedDiscussionRequest,
   PatchedDocumentRequest,
@@ -57,35 +60,46 @@ const withQueryKey = <T extends object, K>(
 };
 
 export const mainCommentsList = (
+  params?: MainCommentsListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<Comment[]>(
-    { url: `/api/main/comments/`, method: 'GET', signal },
+    { url: `/api/main/comments/`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getMainCommentsListQueryKey = () => {
-  return [`/api/main/comments/`] as const;
+export const getMainCommentsListQueryKey = (
+  params?: MainCommentsListParams,
+) => {
+  return [`/api/main/comments/`, ...(params ? [params] : [])] as const;
 };
 
 export const getMainCommentsListQueryOptions = <
   TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof mainCommentsList>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
+>(
+  params?: MainCommentsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainCommentsList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainCommentsListQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getMainCommentsListQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof mainCommentsList>>
-  > = ({ signal }) => mainCommentsList(requestOptions, signal);
+  > = ({ signal }) => mainCommentsList(params, requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof mainCommentsList>>,
@@ -103,6 +117,7 @@ export function useMainCommentsList<
   TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | MainCommentsListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -129,6 +144,7 @@ export function useMainCommentsList<
   TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainCommentsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -155,6 +171,7 @@ export function useMainCommentsList<
   TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainCommentsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -174,6 +191,7 @@ export function useMainCommentsList<
   TData = Awaited<ReturnType<typeof mainCommentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainCommentsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -188,7 +206,7 @@ export function useMainCommentsList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainCommentsListQueryOptions(options);
+  const queryOptions = getMainCommentsListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -724,39 +742,46 @@ export const useMainCommentsDestroy = <
   );
 };
 export const mainDiscussionsList = (
+  params?: MainDiscussionsListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<Discussion[]>(
-    { url: `/api/main/discussions/`, method: 'GET', signal },
+    { url: `/api/main/discussions/`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getMainDiscussionsListQueryKey = () => {
-  return [`/api/main/discussions/`] as const;
+export const getMainDiscussionsListQueryKey = (
+  params?: MainDiscussionsListParams,
+) => {
+  return [`/api/main/discussions/`, ...(params ? [params] : [])] as const;
 };
 
 export const getMainDiscussionsListQueryOptions = <
   TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof mainDiscussionsList>>,
-      TError,
-      TData
-    >
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
+>(
+  params?: MainDiscussionsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDiscussionsList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainDiscussionsListQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getMainDiscussionsListQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof mainDiscussionsList>>
-  > = ({ signal }) => mainDiscussionsList(requestOptions, signal);
+  > = ({ signal }) => mainDiscussionsList(params, requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof mainDiscussionsList>>,
@@ -774,6 +799,7 @@ export function useMainDiscussionsList<
   TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | MainDiscussionsListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -800,6 +826,7 @@ export function useMainDiscussionsList<
   TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainDiscussionsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -826,6 +853,7 @@ export function useMainDiscussionsList<
   TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainDiscussionsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -845,6 +873,7 @@ export function useMainDiscussionsList<
   TData = Awaited<ReturnType<typeof mainDiscussionsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainDiscussionsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -859,7 +888,7 @@ export function useMainDiscussionsList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainDiscussionsListQueryOptions(options);
+  const queryOptions = getMainDiscussionsListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -1395,39 +1424,46 @@ export const useMainDiscussionsDestroy = <
   );
 };
 export const mainDocumentsList = (
+  params?: MainDocumentsListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<Document[]>(
-    { url: `/api/main/documents/`, method: 'GET', signal },
+    { url: `/api/main/documents/`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getMainDocumentsListQueryKey = () => {
-  return [`/api/main/documents/`] as const;
+export const getMainDocumentsListQueryKey = (
+  params?: MainDocumentsListParams,
+) => {
+  return [`/api/main/documents/`, ...(params ? [params] : [])] as const;
 };
 
 export const getMainDocumentsListQueryOptions = <
   TData = Awaited<ReturnType<typeof mainDocumentsList>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof mainDocumentsList>>,
-      TError,
-      TData
-    >
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
+>(
+  params?: MainDocumentsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainDocumentsList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainDocumentsListQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getMainDocumentsListQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof mainDocumentsList>>
-  > = ({ signal }) => mainDocumentsList(requestOptions, signal);
+  > = ({ signal }) => mainDocumentsList(params, requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof mainDocumentsList>>,
@@ -1445,6 +1481,7 @@ export function useMainDocumentsList<
   TData = Awaited<ReturnType<typeof mainDocumentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | MainDocumentsListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -1471,6 +1508,7 @@ export function useMainDocumentsList<
   TData = Awaited<ReturnType<typeof mainDocumentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainDocumentsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1497,6 +1535,7 @@ export function useMainDocumentsList<
   TData = Awaited<ReturnType<typeof mainDocumentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainDocumentsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1516,6 +1555,7 @@ export function useMainDocumentsList<
   TData = Awaited<ReturnType<typeof mainDocumentsList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainDocumentsListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -1530,7 +1570,7 @@ export function useMainDocumentsList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainDocumentsListQueryOptions(options);
+  const queryOptions = getMainDocumentsListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

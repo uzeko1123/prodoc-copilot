@@ -56,6 +56,8 @@ export const authLoginCreateResponseUserFirstNameMax = 150;
 
 export const authLoginCreateResponseUserLastNameMax = 150;
 
+export const authLoginCreateResponseUserAvatarTwoMax = 0;
+
 export const AuthLoginCreateResponse = zod
   .object({
     access: zod.string(),
@@ -78,6 +80,13 @@ export const AuthLoginCreateResponse = zod
         last_name: zod
           .string()
           .max(authLoginCreateResponseUserLastNameMax)
+          .optional(),
+        full_name: zod.string().optional(),
+        avatar: zod
+          .union([
+            zod.url(),
+            zod.string().max(authLoginCreateResponseUserAvatarTwoMax),
+          ])
           .optional(),
       })
       .describe('User model w/o password'),
@@ -269,6 +278,8 @@ export const authUserRetrieveResponseFirstNameMax = 150;
 
 export const authUserRetrieveResponseLastNameMax = 150;
 
+export const authUserRetrieveResponseAvatarTwoMax = 0;
+
 export const AuthUserRetrieveResponse = zod
   .object({
     pk: zod.int(),
@@ -285,6 +296,13 @@ export const AuthUserRetrieveResponse = zod
       .max(authUserRetrieveResponseFirstNameMax)
       .optional(),
     last_name: zod.string().max(authUserRetrieveResponseLastNameMax).optional(),
+    full_name: zod.string().optional(),
+    avatar: zod
+      .union([
+        zod.url(),
+        zod.string().max(authUserRetrieveResponseAvatarTwoMax),
+      ])
+      .optional(),
   })
   .describe('User model w/o password');
 
@@ -305,6 +323,8 @@ export const authUserUpdateBodyFirstNameMax = 150;
 
 export const authUserUpdateBodyLastNameMax = 150;
 
+export const authUserUpdateBodyAvatarTwoMax = 0;
+
 export const AuthUserUpdateBody = zod
   .object({
     username: zod
@@ -317,6 +337,10 @@ export const AuthUserUpdateBody = zod
       ),
     first_name: zod.string().max(authUserUpdateBodyFirstNameMax).optional(),
     last_name: zod.string().max(authUserUpdateBodyLastNameMax).optional(),
+    full_name: zod.string().optional(),
+    avatar: zod
+      .union([zod.url(), zod.string().max(authUserUpdateBodyAvatarTwoMax)])
+      .optional(),
   })
   .describe('User model w/o password');
 
@@ -326,6 +350,8 @@ export const authUserUpdateResponseUsernameRegExp = new RegExp('^[\\w.@+-]+$');
 export const authUserUpdateResponseFirstNameMax = 150;
 
 export const authUserUpdateResponseLastNameMax = 150;
+
+export const authUserUpdateResponseAvatarTwoMax = 0;
 
 export const AuthUserUpdateResponse = zod
   .object({
@@ -340,6 +366,10 @@ export const AuthUserUpdateResponse = zod
     email: zod.email(),
     first_name: zod.string().max(authUserUpdateResponseFirstNameMax).optional(),
     last_name: zod.string().max(authUserUpdateResponseLastNameMax).optional(),
+    full_name: zod.string().optional(),
+    avatar: zod
+      .union([zod.url(), zod.string().max(authUserUpdateResponseAvatarTwoMax)])
+      .optional(),
   })
   .describe('User model w/o password');
 
@@ -362,6 +392,8 @@ export const authUserPartialUpdateBodyFirstNameMax = 150;
 
 export const authUserPartialUpdateBodyLastNameMax = 150;
 
+export const authUserPartialUpdateBodyAvatarTwoMax = 0;
+
 export const AuthUserPartialUpdateBody = zod
   .object({
     username: zod
@@ -381,6 +413,13 @@ export const AuthUserPartialUpdateBody = zod
       .string()
       .max(authUserPartialUpdateBodyLastNameMax)
       .optional(),
+    full_name: zod.string().optional(),
+    avatar: zod
+      .union([
+        zod.url(),
+        zod.string().max(authUserPartialUpdateBodyAvatarTwoMax),
+      ])
+      .optional(),
   })
   .describe('User model w/o password');
 
@@ -392,6 +431,8 @@ export const authUserPartialUpdateResponseUsernameRegExp = new RegExp(
 export const authUserPartialUpdateResponseFirstNameMax = 150;
 
 export const authUserPartialUpdateResponseLastNameMax = 150;
+
+export const authUserPartialUpdateResponseAvatarTwoMax = 0;
 
 export const AuthUserPartialUpdateResponse = zod
   .object({
@@ -411,6 +452,13 @@ export const AuthUserPartialUpdateResponse = zod
     last_name: zod
       .string()
       .max(authUserPartialUpdateResponseLastNameMax)
+      .optional(),
+    full_name: zod.string().optional(),
+    avatar: zod
+      .union([
+        zod.url(),
+        zod.string().max(authUserPartialUpdateResponseAvatarTwoMax),
+      ])
       .optional(),
   })
   .describe('User model w/o password');

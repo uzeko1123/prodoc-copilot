@@ -1,5 +1,6 @@
 'use client';
 
+import { mainDocumentsPartialUpdate } from '@/api/gen/endpoints/main/main';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,11 +10,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
+import { toastErrorMessage } from '@/lib/error-message';
 import { MarkdownPlugin } from '@platejs/markdown';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
-import { SaveIcon } from 'lucide-react';
-import { useEditorRef } from 'platejs/react';
+import { CloudUploadIcon, SaveIcon } from 'lucide-react';
+import {
+  useEditorReadOnly,
+  useEditorRef,
+  useEditorValue,
+  usePluginOption,
+} from 'platejs/react';
 import * as React from 'react';
+import { toast } from 'sonner';
+import { DocumentPlugin } from '../editor/plugins/document-kit';
 import {
   ImageFileIcon,
   MarkdownFileIcon,
@@ -23,6 +32,10 @@ import {
 
 export function ExportToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
+  const value = useEditorValue();
+  const readOnly = useEditorReadOnly();
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+
   const [open, setOpen] = React.useState(false);
 
   const getCanvas = async () => {
@@ -65,6 +78,13 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
     await downloadFile(url, 'ProDoc.md');
   };
 
+  const syncToBackend = async () => {
+    if (!documentId) return;
+    await mainDocumentsPartialUpdate(documentId, { value })
+      .then(() => toast.success('已保存至云端'))
+      .catch(toastErrorMessage);
+  };
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
@@ -75,6 +95,16 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
 
       <DropdownMenuContent className="w-auto" align="start">
         <DropdownMenuGroup>
+          {!readOnly && (
+            <>
+              <DropdownMenuItem disabled={readOnly} onSelect={syncToBackend}>
+                <CloudUploadIcon /> 保存至云端
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+            </>
+          )}
+
           <DropdownMenuItem onSelect={exportToMarkdown}>
             <MarkdownFileIcon /> 导出为 Markdown
           </DropdownMenuItem>
@@ -86,6 +116,7 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
+
           <DropdownMenuItem onSelect={exportToImage}>
             <ImageFileIcon /> 导出为图片
           </DropdownMenuItem>

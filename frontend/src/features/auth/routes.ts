@@ -1,7 +1,6 @@
-import { index, route } from '@tanstack/virtual-file-routes';
+import { route } from '@tanstack/virtual-file-routes';
 
 export const authRoutes = route('/account', [
-  index('features/auth/pages/index.tsx'),
   route('/login', 'features/auth/pages/login.tsx'),
   route('/logout', 'features/auth/pages/logout.tsx'),
   route('/signup', 'features/auth/pages/signup.tsx'),

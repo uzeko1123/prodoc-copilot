@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './app/root'
 import { Route as appIndexRouteImport } from './app/index'
-import { Route as featuresAuthPagesIndexRouteImport } from './features/auth/pages/index'
 import { Route as featuresAuthPagesChangePasswordRouteImport } from './features/auth/pages/change-password'
 import { Route as featuresAuthPagesLoginRouteImport } from './features/auth/pages/login'
 import { Route as featuresAuthPagesLogoutRouteImport } from './features/auth/pages/logout'
@@ -25,11 +24,6 @@ import { Route as appWorkbenchRouteImport } from './app/workbench'
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const featuresAuthPagesIndexRoute = featuresAuthPagesIndexRouteImport.update({
-  id: '/account/',
-  path: '/account/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const featuresAuthPagesChangePasswordRoute =
@@ -83,15 +77,14 @@ const appDashboardRoute = appDashboardRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const appWorkbenchRoute = appWorkbenchRouteImport.update({
-  id: '/workbench/',
-  path: '/workbench/',
+  id: '/workbench/$taskId/',
+  path: '/workbench/$taskId/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
   '/dashboard/': typeof appDashboardRoute
-  '/workbench/': typeof appWorkbenchRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -100,12 +93,11 @@ export interface FileRoutesByFullPath {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
-  '/account/': typeof featuresAuthPagesIndexRoute
+  '/workbench/$taskId/': typeof appWorkbenchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
   '/dashboard': typeof appDashboardRoute
-  '/workbench': typeof appWorkbenchRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -114,13 +106,12 @@ export interface FileRoutesByTo {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
-  '/account': typeof featuresAuthPagesIndexRoute
+  '/workbench/$taskId': typeof appWorkbenchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof appIndexRoute
   '/dashboard/': typeof appDashboardRoute
-  '/workbench/': typeof appWorkbenchRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -129,14 +120,13 @@ export interface FileRoutesById {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
-  '/account/': typeof featuresAuthPagesIndexRoute
+  '/workbench/$taskId/': typeof appWorkbenchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/dashboard/'
-    | '/workbench/'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -145,12 +135,11 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/account/'
+    | '/workbench/$taskId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/dashboard'
-    | '/workbench'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -159,12 +148,11 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/account'
+    | '/workbench/$taskId'
   id:
     | '__root__'
     | '/'
     | '/dashboard/'
-    | '/workbench/'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -173,13 +161,12 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/account/'
+    | '/workbench/$taskId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   appIndexRoute: typeof appIndexRoute
   appDashboardRoute: typeof appDashboardRoute
-  appWorkbenchRoute: typeof appWorkbenchRoute
   featuresAuthPagesChangePasswordRoute: typeof featuresAuthPagesChangePasswordRoute
   featuresAuthPagesLoginRoute: typeof featuresAuthPagesLoginRoute
   featuresAuthPagesLogoutRoute: typeof featuresAuthPagesLogoutRoute
@@ -188,7 +175,7 @@ export interface RootRouteChildren {
   featuresAuthPagesResetPasswordConfirmRoute: typeof featuresAuthPagesResetPasswordConfirmRoute
   featuresAuthPagesSignupRoute: typeof featuresAuthPagesSignupRoute
   featuresAuthPagesVerifyEmailRoute: typeof featuresAuthPagesVerifyEmailRoute
-  featuresAuthPagesIndexRoute: typeof featuresAuthPagesIndexRoute
+  appWorkbenchRoute: typeof appWorkbenchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -198,13 +185,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/account/': {
-      id: '/account/'
-      path: '/account'
-      fullPath: '/account/'
-      preLoaderRoute: typeof featuresAuthPagesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/change-password': {
@@ -270,10 +250,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/workbench/': {
-      id: '/workbench/'
-      path: '/workbench'
-      fullPath: '/workbench/'
+    '/workbench/$taskId/': {
+      id: '/workbench/$taskId/'
+      path: '/workbench/$taskId'
+      fullPath: '/workbench/$taskId/'
       preLoaderRoute: typeof appWorkbenchRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -283,7 +263,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   appIndexRoute: appIndexRoute,
   appDashboardRoute: appDashboardRoute,
-  appWorkbenchRoute: appWorkbenchRoute,
   featuresAuthPagesChangePasswordRoute: featuresAuthPagesChangePasswordRoute,
   featuresAuthPagesLoginRoute: featuresAuthPagesLoginRoute,
   featuresAuthPagesLogoutRoute: featuresAuthPagesLogoutRoute,
@@ -293,7 +272,7 @@ const rootRouteChildren: RootRouteChildren = {
     featuresAuthPagesResetPasswordConfirmRoute,
   featuresAuthPagesSignupRoute: featuresAuthPagesSignupRoute,
   featuresAuthPagesVerifyEmailRoute: featuresAuthPagesVerifyEmailRoute,
-  featuresAuthPagesIndexRoute: featuresAuthPagesIndexRoute,
+  appWorkbenchRoute: appWorkbenchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
