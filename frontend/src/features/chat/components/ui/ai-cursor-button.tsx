@@ -22,6 +22,7 @@ import {
   useEditorMounted,
   useEditorPlugin,
   useEditorSelection,
+  useEditorSelector,
   useScrollRef,
 } from 'platejs/react';
 import * as React from 'react';
@@ -30,12 +31,12 @@ export function AICursorButton() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
   const selection = useEditorSelection();
 
-  const isCursor = RangeApi.isCollapsed(selection);
+  const isCursor = RangeApi.isCollapsed(editor.selection);
 
   const floating = useVirtualFloating({
     getBoundingClientRect: () => {
-      if (selection) {
-        const rangeRect = getRangeBoundingClientRect(editor, selection);
+      if (editor.selection) {
+        const rangeRect = getRangeBoundingClientRect(editor, editor.selection);
         if (rangeRect) return rangeRect;
       }
       return getDefaultBoundingClientRect();
@@ -51,9 +52,7 @@ export function AICursorButton() {
   const containerRef = useEditorContainerRef();
   const { update } = floating;
 
-  React.useEffect(() => {
-    void update();
-  }, [selection, update]);
+  useEditorSelector(() => void update(), [update]);
 
   React.useEffect(() => {
     if (!editorMounted) return;

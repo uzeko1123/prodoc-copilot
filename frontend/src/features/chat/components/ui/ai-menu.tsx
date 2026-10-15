@@ -43,7 +43,7 @@ import {
   useEditorPlugin,
   useEditorReadOnly,
   useEditorRef,
-  useEditorSelection,
+  useEditorSelector,
   useHotkeys,
   useOnClickOutside,
   usePluginOption,
@@ -58,7 +58,6 @@ import { AICommentIcon } from './ai-comment-icon';
 
 export function AIMenu() {
   const { api, editor } = useEditorPlugin(AIChatPlugin);
-  const selection = useEditorSelection();
 
   const open = usePluginOption(AIChatPlugin, 'open');
   const chatStatus = usePluginOptions(
@@ -138,8 +137,8 @@ export function AIMenu() {
   const floating = useVirtualFloating({
     getBoundingClientRect: () => {
       const anchorElementRect = anchorElement?.getBoundingClientRect();
-      if (selection) {
-        const rangeRect = getRangeBoundingClientRect(editor, selection);
+      if (editor.selection) {
+        const rangeRect = getRangeBoundingClientRect(editor, editor.selection);
         if (rangeRect && (rangeRect.width > 0 || rangeRect.height > 0)) {
           return rangeRect;
         }
@@ -178,9 +177,11 @@ export function AIMenu() {
   const containerRef = useEditorContainerRef();
   const { update } = floating;
 
+  useEditorSelector(() => void update(), [update]);
+
   React.useEffect(() => {
     void update();
-  }, [anchorElement, selection, open, update]);
+  }, [anchorElement, open, update]);
 
   React.useEffect(() => {
     if (!editorMounted) return;
