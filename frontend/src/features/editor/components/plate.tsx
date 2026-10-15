@@ -5,7 +5,9 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Pending } from '@/components/pending';
 import type { Value } from 'platejs';
 import { Plate as PlatePrimitive, usePlateEditor } from 'platejs/react';
+import { useEffect } from 'react';
 import { EditorKit } from './editor/editor-kit';
+import { DocumentPlugin } from './editor/plugins/document-kit';
 
 export function Plate({
   documentId,
@@ -40,6 +42,10 @@ function PlateComponent({
     { plugins: EditorKit, value: (document?.value as Value) ?? [] },
     [documentId],
   );
+
+  useEffect(() => {
+    editor.setOption(DocumentPlugin, 'documentId', documentId);
+  }, [editor, documentId]);
 
   if (isPending || !document) return <Pending message="文档加载中 . . ." />;
 

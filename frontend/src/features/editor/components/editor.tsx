@@ -20,15 +20,10 @@ import { useEditorStore } from '../stores';
 import { DocumentPlugin } from './editor/plugins/document-kit';
 import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
-export function Editor({ documentId }: { documentId: string }) {
-  const editor = useEditorRef();
+export function Editor() {
   const editorScrollRef = useEditorScrollRef();
   const editorFontFamily = useEditorStore((state) => state.editorFontFamily);
   const editorTextIndent = useEditorStore((state) => state.editorTextIndent);
-
-  useEffect(() => {
-    editor.setOption(DocumentPlugin, 'documentId', documentId);
-  }, [editor, documentId]);
 
   return (
     <div className="flex h-full flex-col">

@@ -29,6 +29,17 @@ import { useEffect, useRef } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 
 function Workbench() {
+  return (
+    <ErrorBoundary message="任务加载失败">
+      <WorkbenchPage />
+    </ErrorBoundary>
+  );
+}
+
+function WorkbenchPage() {
+  const { taskId } = Route.useParams();
+  const { data: task, isPending } = useMainTasksRetrieve(taskId);
+
   const leftPanelRef = useRef<PanelImperativeHandle>(null);
   const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
   const setIsLeftPanelOpen = useWorkbenchStore(
@@ -91,9 +102,11 @@ function Workbench() {
   const _hideHeader = false;
   const _hideRightPanel = false;
 
+  if (isPending || !task) return <Pending message="任务加载中 . . ." />;
+
   return (
     <div className="flex h-dvh flex-col">
-      <Plate editor={editor}>
+      <Plate documentId={task.document} readOnly={false}>
         {!_hideHeader && (
           <header className="flex h-12 shrink-0 items-center border-b px-4">
             <h1 className="text-sm font-semibold">工作台</h1>
@@ -218,7 +231,7 @@ function Workbench() {
   );
 }
 
-export const Route = createFileRoute('/workbench/')({
+export const Route = createFileRoute('/workbench/$taskId/')({
   beforeLoad: () => {
     const _withAuth = true;
     if (!_withAuth) return;
