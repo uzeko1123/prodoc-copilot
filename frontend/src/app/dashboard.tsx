@@ -36,8 +36,6 @@ function DashboardPage() {
 
 export const Route = createFileRoute('/dashboard/')({
   beforeLoad: () => {
-    const _withAuth = true;
-    if (!_withAuth) return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
   component: DashboardPage,
