@@ -1,4 +1,7 @@
 import { getAuthUserRetrieveQueryOptions } from '@/api/gen/endpoints/auth/auth';
+import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
+import { ErrorBoundary } from '@/components/error-boundary';
+import { Pending } from '@/components/pending';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   ResizableHandle,
@@ -11,20 +14,19 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/shadcn/ui/tabs';
+import { UserMenu } from '@/features/auth/components/user-menu';
 import { Chat } from '@/features/chat/components/chat';
 import { SettingsDialog } from '@/features/chat/components/editor/settings-dialog';
 import { Comment } from '@/features/comment/components/comment';
 import { Editor } from '@/features/editor/components/editor';
-import { EditorKit } from '@/features/editor/components/editor/editor-kit';
 import { Find } from '@/features/editor/components/find';
+import { Plate } from '@/features/editor/components/plate';
 import { ToC } from '@/features/editor/components/toc';
-import { useEditorStore } from '@/features/editor/stores';
 import { queryClient } from '@/lib/query-client';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { noop } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { PanelRightIcon } from 'lucide-react';
-import { Plate, usePlateEditor } from 'platejs/react';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { ArrowLeftIcon, PanelRightIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 
@@ -94,11 +96,6 @@ function WorkbenchPage() {
     (state) => state.setActiveRightPanelTab,
   );
 
-  const editor = usePlateEditor({
-    plugins: EditorKit,
-    value: useEditorStore.getState().value,
-  });
-
   const _hideHeader = false;
   const _hideRightPanel = false;
 
@@ -106,10 +103,16 @@ function WorkbenchPage() {
 
   return (
     <div className="flex h-dvh flex-col">
-      <Plate documentId={task.document} readOnly={false}>
+      <Plate task={task}>
         {!_hideHeader && (
-          <header className="flex h-12 shrink-0 items-center border-b px-4">
-            <h1 className="text-sm font-semibold">工作台</h1>
+          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
+            <Button variant="ghost" size="icon-sm" asChild>
+              <Link to="/dashboard">
+                <ArrowLeftIcon />
+              </Link>
+            </Button>
+            <h1 className="text-sm font-semibold">{task.name}</h1>
+            <UserMenu className="ml-auto py-1" />
           </header>
         )}
 
@@ -180,7 +183,7 @@ function WorkbenchPage() {
                 value="comment"
                 className="min-h-0 data-[state=inactive]:hidden"
               >
-                <Comment />
+                <Comment task={task} />
               </TabsContent>
             </Tabs>
           </ResizablePanel>

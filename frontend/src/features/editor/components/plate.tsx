@@ -1,6 +1,7 @@
 'use client';
 
 import { useMainDocumentsRetrieve } from '@/api/gen/endpoints/main/main';
+import type { Task } from '@/api/gen/models';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Pending } from '@/components/pending';
 import type { Value } from 'platejs';
@@ -10,32 +11,27 @@ import { EditorKit } from './editor/editor-kit';
 import { DocumentPlugin } from './editor/plugins/document-kit';
 
 export function Plate({
-  documentId,
-  readOnly,
+  task,
   children,
 }: {
-  documentId: string;
-  readOnly: boolean;
+  task: Task;
   children: React.ReactNode;
 }) {
   return (
     <ErrorBoundary message="文档加载失败">
-      <PlateComponent documentId={documentId} readOnly={readOnly}>
-        {children}
-      </PlateComponent>
+      <PlateComponent task={task}>{children}</PlateComponent>
     </ErrorBoundary>
   );
 }
 
 function PlateComponent({
-  documentId,
-  readOnly,
+  task,
   children,
 }: {
-  documentId: string;
-  readOnly: boolean;
+  task: Task;
   children: React.ReactNode;
 }) {
+  const documentId = task.document;
   const { data: document, isPending } = useMainDocumentsRetrieve(documentId);
 
   const editor = usePlateEditor(
@@ -50,7 +46,7 @@ function PlateComponent({
   if (isPending || !document) return <Pending message="文档加载中 . . ." />;
 
   return (
-    <PlatePrimitive editor={editor} readOnly={readOnly}>
+    <PlatePrimitive editor={editor} readOnly={false}>
       {children}
     </PlatePrimitive>
   );
