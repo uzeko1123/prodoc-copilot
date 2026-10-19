@@ -3,6 +3,14 @@ import { z } from 'zod';
 import { FormPageTemplate } from '../components/form-page-template';
 import { ResendEmailForm } from '../components/resend-email-form';
 
+export const Route = createFileRoute('/account/resend-email')({
+  validateSearch: z.object({
+    email: z.email(),
+    resend: z.coerce.boolean().optional(),
+  }).parse,
+  component: ResendEmailPage,
+});
+
 function ResendEmailPage() {
   const { email, resend } = Route.useSearch();
   return (
@@ -11,11 +19,3 @@ function ResendEmailPage() {
     </FormPageTemplate>
   );
 }
-
-export const Route = createFileRoute('/account/resend-email')({
-  validateSearch: z.object({
-    email: z.email(),
-    resend: z.coerce.boolean().optional(),
-  }).parse,
-  component: ResendEmailPage,
-});

@@ -3,6 +3,11 @@ import { z } from 'zod';
 import { FormPageTemplate } from '../components/form-page-template';
 import { ResetPasswordConfirmForm } from '../components/reset-password-confirm-form';
 
+export const Route = createFileRoute('/account/reset-password-confirm')({
+  validateSearch: z.object({ uid: z.string(), token: z.string() }).parse,
+  component: ResetPasswordConfirmPage,
+});
+
 function ResetPasswordConfirmPage() {
   const { uid, token } = Route.useSearch();
   return (
@@ -11,8 +16,3 @@ function ResetPasswordConfirmPage() {
     </FormPageTemplate>
   );
 }
-
-export const Route = createFileRoute('/account/reset-password-confirm')({
-  validateSearch: z.object({ uid: z.string(), token: z.string() }).parse,
-  component: ResetPasswordConfirmPage,
-});

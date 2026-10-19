@@ -30,15 +30,22 @@ import { ArrowLeftIcon, PanelRightIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 
-function Workbench() {
+export const Route = createFileRoute('/workbench/$taskId/')({
+  beforeLoad: () => {
+    void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
+  },
+  component: WorkbenchPage,
+});
+
+function WorkbenchPage() {
   return (
     <ErrorBoundary message="任务加载失败">
-      <WorkbenchPage />
+      <Workbench />
     </ErrorBoundary>
   );
 }
 
-function WorkbenchPage() {
+function Workbench() {
   const { taskId } = Route.useParams();
   const { data: task, isPending } = useMainTasksRetrieve(taskId);
 
@@ -233,10 +240,3 @@ function WorkbenchPage() {
     </div>
   );
 }
-
-export const Route = createFileRoute('/workbench/$taskId/')({
-  beforeLoad: () => {
-    void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
-  },
-  component: Workbench,
-});

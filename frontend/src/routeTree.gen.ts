@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './app/root'
 import { Route as appIndexRouteImport } from './app/index'
+import { Route as appDashboardRouteImport } from './app/dashboard'
 import { Route as featuresAuthPagesChangePasswordRouteImport } from './features/auth/pages/change-password'
 import { Route as featuresAuthPagesLoginRouteImport } from './features/auth/pages/login'
 import { Route as featuresAuthPagesLogoutRouteImport } from './features/auth/pages/logout'
@@ -18,12 +19,18 @@ import { Route as featuresAuthPagesResetPasswordRouteImport } from './features/a
 import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './features/auth/pages/reset-password-confirm'
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
-import { Route as appDashboardRouteImport } from './app/dashboard'
+import { Route as featuresDashboardPagesIndexRouteImport } from './features/dashboard/pages/index'
+import { Route as featuresDashboardPagesNullRouteImport } from './features/dashboard/pages/null'
 import { Route as appWorkbenchRouteImport } from './app/workbench'
 
 const appIndexRoute = appIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appDashboardRoute = appDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const featuresAuthPagesChangePasswordRoute =
@@ -71,11 +78,18 @@ const featuresAuthPagesVerifyEmailRoute =
     path: '/account/verify-email',
     getParentRoute: () => rootRouteImport,
   } as any)
-const appDashboardRoute = appDashboardRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const featuresDashboardPagesIndexRoute =
+  featuresDashboardPagesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appDashboardRoute,
+  } as any)
+const featuresDashboardPagesNullRoute =
+  featuresDashboardPagesNullRouteImport.update({
+    id: '/null',
+    path: '/null',
+    getParentRoute: () => appDashboardRoute,
+  } as any)
 const appWorkbenchRoute = appWorkbenchRouteImport.update({
   id: '/workbench/$taskId/',
   path: '/workbench/$taskId/',
@@ -84,7 +98,7 @@ const appWorkbenchRoute = appWorkbenchRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof appIndexRoute
-  '/dashboard/': typeof appDashboardRoute
+  '/dashboard': typeof appDashboardRouteWithChildren
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -93,11 +107,12 @@ export interface FileRoutesByFullPath {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/null': typeof featuresDashboardPagesNullRoute
+  '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
-  '/dashboard': typeof appDashboardRoute
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -106,12 +121,14 @@ export interface FileRoutesByTo {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/null': typeof featuresDashboardPagesNullRoute
+  '/dashboard': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId': typeof appWorkbenchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof appIndexRoute
-  '/dashboard/': typeof appDashboardRoute
+  '/dashboard': typeof appDashboardRouteWithChildren
   '/account/change-password': typeof featuresAuthPagesChangePasswordRoute
   '/account/login': typeof featuresAuthPagesLoginRoute
   '/account/logout': typeof featuresAuthPagesLogoutRoute
@@ -120,24 +137,13 @@ export interface FileRoutesById {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/null': typeof featuresDashboardPagesNullRoute
+  '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/dashboard/'
-    | '/account/change-password'
-    | '/account/login'
-    | '/account/logout'
-    | '/account/resend-email'
-    | '/account/reset-password'
-    | '/account/reset-password-confirm'
-    | '/account/signup'
-    | '/account/verify-email'
-    | '/workbench/$taskId/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
     | '/'
     | '/dashboard'
     | '/account/change-password'
@@ -148,11 +154,12 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/workbench/$taskId'
-  id:
-    | '__root__'
-    | '/'
+    | '/dashboard/null'
     | '/dashboard/'
+    | '/workbench/$taskId/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
     | '/account/change-password'
     | '/account/login'
     | '/account/logout'
@@ -161,12 +168,29 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/null'
+    | '/dashboard'
+    | '/workbench/$taskId'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/account/change-password'
+    | '/account/login'
+    | '/account/logout'
+    | '/account/resend-email'
+    | '/account/reset-password'
+    | '/account/reset-password-confirm'
+    | '/account/signup'
+    | '/account/verify-email'
+    | '/dashboard/null'
+    | '/dashboard/'
     | '/workbench/$taskId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   appIndexRoute: typeof appIndexRoute
-  appDashboardRoute: typeof appDashboardRoute
+  appDashboardRoute: typeof appDashboardRouteWithChildren
   featuresAuthPagesChangePasswordRoute: typeof featuresAuthPagesChangePasswordRoute
   featuresAuthPagesLoginRoute: typeof featuresAuthPagesLoginRoute
   featuresAuthPagesLogoutRoute: typeof featuresAuthPagesLogoutRoute
@@ -185,6 +209,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof appDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account/change-password': {
@@ -245,10 +276,17 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/': {
       id: '/dashboard/'
-      path: '/dashboard'
+      path: '/'
       fullPath: '/dashboard/'
-      preLoaderRoute: typeof appDashboardRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof featuresDashboardPagesIndexRouteImport
+      parentRoute: typeof appDashboardRoute
+    }
+    '/dashboard/null': {
+      id: '/dashboard/null'
+      path: '/null'
+      fullPath: '/dashboard/null'
+      preLoaderRoute: typeof featuresDashboardPagesNullRouteImport
+      parentRoute: typeof appDashboardRoute
     }
     '/workbench/$taskId/': {
       id: '/workbench/$taskId/'
@@ -260,9 +298,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface appDashboardRouteChildren {
+  featuresDashboardPagesNullRoute: typeof featuresDashboardPagesNullRoute
+  featuresDashboardPagesIndexRoute: typeof featuresDashboardPagesIndexRoute
+}
+
+const appDashboardRouteChildren: appDashboardRouteChildren = {
+  featuresDashboardPagesNullRoute: featuresDashboardPagesNullRoute,
+  featuresDashboardPagesIndexRoute: featuresDashboardPagesIndexRoute,
+}
+
+const appDashboardRouteWithChildren = appDashboardRoute._addFileChildren(
+  appDashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   appIndexRoute: appIndexRoute,
-  appDashboardRoute: appDashboardRoute,
+  appDashboardRoute: appDashboardRouteWithChildren,
   featuresAuthPagesChangePasswordRoute: featuresAuthPagesChangePasswordRoute,
   featuresAuthPagesLoginRoute: featuresAuthPagesLoginRoute,
   featuresAuthPagesLogoutRoute: featuresAuthPagesLogoutRoute,

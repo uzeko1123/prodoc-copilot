@@ -7,6 +7,10 @@ import { SidebarInset, SidebarProvider } from '@/components/shadcn/ui/sidebar';
 import { createFileRoute } from '@tanstack/react-router';
 import data from './dashboard/data.json';
 
+export const Route = createFileRoute('/')({
+  component: IndexPage,
+});
+
 function IndexPage() {
   return (
     <SidebarProvider
@@ -35,7 +39,3 @@ function IndexPage() {
     </SidebarProvider>
   );
 }
-
-export const Route = createFileRoute('/')({
-  component: IndexPage,
-});

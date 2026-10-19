@@ -2,6 +2,10 @@ import { createFileRoute } from '@tanstack/react-router';
 import { FormPageTemplate } from '../components/form-page-template';
 import { SignupForm } from '../components/signup-form';
 
+export const Route = createFileRoute('/account/signup')({
+  component: SignupPage,
+});
+
 function SignupPage() {
   return (
     <FormPageTemplate>
@@ -9,7 +13,3 @@ function SignupPage() {
     </FormPageTemplate>
   );
 }
-
-export const Route = createFileRoute('/account/signup')({
-  component: SignupPage,
-});

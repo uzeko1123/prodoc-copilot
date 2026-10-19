@@ -3,6 +3,11 @@ import { z } from 'zod';
 import { FormPageTemplate } from '../components/form-page-template';
 import { VerifyEmailInfo } from '../components/verify-email-info';
 
+export const Route = createFileRoute('/account/verify-email')({
+  validateSearch: z.object({ key: z.string() }).parse,
+  component: VerifyEmailPage,
+});
+
 function VerifyEmailPage() {
   const { key } = Route.useSearch();
   return (
@@ -11,8 +16,3 @@ function VerifyEmailPage() {
     </FormPageTemplate>
   );
 }
-
-export const Route = createFileRoute('/account/verify-email')({
-  validateSearch: z.object({ key: z.string() }).parse,
-  component: VerifyEmailPage,
-});
