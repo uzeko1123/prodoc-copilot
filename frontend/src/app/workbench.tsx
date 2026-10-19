@@ -1,7 +1,7 @@
 import { getAuthUserRetrieveQueryOptions } from '@/api/gen/endpoints/auth/auth';
 import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
+import { DefaultPending } from '@/components/default-pending';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { Pending } from '@/components/pending';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   ResizableHandle,

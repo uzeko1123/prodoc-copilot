@@ -2,8 +2,8 @@
 
 import { useMainDocumentsRetrieve } from '@/api/gen/endpoints/main/main';
 import type { Task } from '@/api/gen/models';
+import { DefaultPending } from '@/components/default-pending';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { Pending } from '@/components/pending';
 import type { Value } from 'platejs';
 import { Plate as PlatePrimitive, usePlateEditor } from 'platejs/react';
 import { useEffect } from 'react';
@@ -43,7 +43,8 @@ function PlateComponent({
     editor.setOption(DocumentPlugin, 'documentId', documentId);
   }, [editor, documentId]);
 
-  if (isPending || !document) return <Pending message="文档加载中 . . ." />;
+  if (isPending || !document)
+    return <DefaultPending message="文档加载中 . . ." />;
 
   return (
     <PlatePrimitive editor={editor} readOnly={false}>

@@ -1,13 +1,15 @@
-import { Pending } from '@/components/pending';
+import { DefaultError } from '@/components/default-error';
+import { DefaultPending } from '@/components/default-pending';
 import { routeTree } from '@/routeTree.gen';
 import { createRouter } from '@tanstack/react-router';
 
 export const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
-  defaultPendingComponent: Pending,
   defaultPendingMs: 0,
   defaultPendingMinMs: 0,
+  defaultPendingComponent: DefaultPending,
+  defaultErrorComponent: DefaultError,
 });
 
 declare module '@tanstack/react-router' {
