@@ -1,0 +1,18 @@
+ProDoc Copilot 首页配图提示词 · 槽位 feature-ai（AI 智能写作功能区）
+画面比例 4:3 · 建议尺寸 1600×1200
+用法：复制下方提示词交给绘图 AI 出图；出图保存为本文件同目录的 feature-ai.png，
+首页对应占位即自动替换，无需改动任何代码。
+
+── 提示词（英文，已组装，直接复制） ──
+clean minimal SaaS marketing illustration, light and airy, pure white background (#FFFFFF), soft light-gray surfaces (#F1F5F9), monochrome palette with a single graphite near-black accent (#1F1F1F), thin 1px light-gray borders, generous white space, flat vector style with subtle gradients and soft shadows, crisp edges, high quality. Close-up UI illustration of a slash-command menu in a document editor: a white dropdown card floating next to a text cursor, list rows with small dark icons and abstract gray text bars, one row highlighted with a light-gray background; in the background document, one sentence shows a revision — old words struck through in light gray, new words in bold black. Aspect ratio 4:3.
+
+── 负面提示词（Negative prompt，直接复制） ──
+dark theme, dark background, neon colors, blue, purple, orange, cluttered layout, photographic texture, realistic humans, readable words, garbled text, watermark, logo, low contrast, heavy shadows, 3D render
+
+── 提示词（中文版，供中文绘图 AI 使用，直接复制） ──
+简洁极简的 SaaS 营销插画，轻盈通透，纯白背景（#FFFFFF），浅灰面板（#F1F5F9），黑白灰单色调、以近黑石墨色（#1F1F1F）作强调，细浅灰描边，大量留白，扁平矢量风格，带轻微渐变与柔和投影，边缘干净，高清。文档编辑器中「斜杠指令菜单」的界面特写插画：光标旁悬浮一张白色下拉菜单卡片，列表行为「小黑色图标 + 抽象灰字条」，其中一行以浅灰底高亮；背景正文中有一句展示修订：旧词以浅灰删除线划掉、新词为加粗黑色。画面比例 4:3。
+
+── 负面提示词（中文版） ──
+深色背景、彩色（尤其蓝色/紫色/橙色）、杂乱构图、照片质感、真实人像、可读文字、乱码、水印、logo、低对比、重阴影、3D 渲染
+
+（Midjourney 用户可在英文提示词结尾追加： --ar 4:3 --no blue,purple,orange,watermark,logo ）

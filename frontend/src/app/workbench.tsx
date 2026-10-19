@@ -31,7 +31,8 @@ import { useEffect, useRef } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 
 export const Route = createFileRoute('/workbench/$taskId/')({
-  beforeLoad: () => {
+  beforeLoad: ({ cause }) => {
+    if (cause === 'preload') return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
   component: WorkbenchPage,

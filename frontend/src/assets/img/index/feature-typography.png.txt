@@ -1,0 +1,18 @@
+ProDoc Copilot 首页配图提示词 · 槽位 feature-typography（排版与格式功能区）
+画面比例 4:3 · 建议尺寸 1600×1200
+用法：复制下方提示词交给绘图 AI 出图；出图保存为本文件同目录的 feature-typography.png，
+首页对应占位即自动替换，无需改动任何代码。
+
+── 提示词（英文，已组装，直接复制） ──
+clean minimal SaaS marketing illustration, light and airy, pure white background (#FFFFFF), soft light-gray surfaces (#F1F5F9), monochrome palette with a single graphite near-black accent (#1F1F1F), thin 1px light-gray borders, generous white space, flat vector style with subtle gradients and soft shadows, crisp edges, high quality. Neatly arranged collage of rich typography elements inside a document: a large heading bar, a bold sentence, a data table with a black header row on white, an elegant block math formula rendered as abstract symbols, a light code-block window with gray-scale syntax tokens, and a nested bulleted list, all separated by generous spacing. Aspect ratio 4:3.
+
+── 负面提示词（Negative prompt，直接复制） ──
+dark theme, dark background, neon colors, blue, purple, orange, cluttered layout, photographic texture, realistic humans, readable words, garbled text, watermark, logo, low contrast, heavy shadows, 3D render
+
+── 提示词（中文版，供中文绘图 AI 使用，直接复制） ──
+简洁极简的 SaaS 营销插画，轻盈通透，纯白背景（#FFFFFF），浅灰面板（#F1F5F9），黑白灰单色调、以近黑石墨色（#1F1F1F）作强调，细浅灰描边，大量留白，扁平矢量风格，带轻微渐变与柔和投影，边缘干净，高清。文档富排版元素的整体拼贴插画：一根大标题条、一句加粗文字、一张黑色表头的白底数据表格、一段以抽象符号呈现的优雅块级数学公式、一个浅色代码块窗口（灰阶语法 token）、一组多级嵌套列表，各元素间距充裕。画面比例 4:3。
+
+── 负面提示词（中文版） ──
+深色背景、彩色（尤其蓝色/紫色/橙色）、杂乱构图、照片质感、真实人像、可读文字、乱码、水印、logo、低对比、重阴影、3D 渲染
+
+（Midjourney 用户可在英文提示词结尾追加： --ar 4:3 --no blue,purple,orange,watermark,logo ）

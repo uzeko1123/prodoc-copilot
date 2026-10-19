@@ -8,7 +8,8 @@ import { noop } from '@tanstack/react-query';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/dashboard')({
-  beforeLoad: () => {
+  beforeLoad: ({ cause }) => {
+    if (cause === 'preload') return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
   component: DashboardPage,
@@ -37,8 +38,8 @@ function Dashboard() {
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <div className="px-4 lg:px-6">
+            <div className="flex flex-1 flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <div className="flex-1 px-4 lg:px-6">
                 <Outlet />
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { DefaultError } from '@/components/default-error';
+import { DefaultNotFound } from '@/components/default-not-found';
 import { DefaultPending } from '@/components/default-pending';
 import { routeTree } from '@/routeTree.gen';
 import { createRouter } from '@tanstack/react-router';
@@ -9,6 +10,7 @@ export const router = createRouter({
   defaultPendingMs: 0,
   defaultPendingMinMs: 0,
   defaultPendingComponent: DefaultPending,
+  defaultNotFoundComponent: DefaultNotFound,
   defaultErrorComponent: DefaultError,
 });
 

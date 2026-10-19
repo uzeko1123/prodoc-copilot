@@ -20,7 +20,8 @@ import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './fea
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
 import { Route as featuresDashboardPagesIndexRouteImport } from './features/dashboard/pages/index'
-import { Route as featuresDashboardPagesNullRouteImport } from './features/dashboard/pages/null'
+import { Route as featuresDashboardPagesTaskEditRouteImport } from './features/dashboard/pages/task-edit'
+import { Route as featuresDashboardPagesTaskReviewRouteImport } from './features/dashboard/pages/task-review'
 import { Route as appWorkbenchRouteImport } from './app/workbench'
 
 const appIndexRoute = appIndexRouteImport.update({
@@ -84,10 +85,16 @@ const featuresDashboardPagesIndexRoute =
     path: '/',
     getParentRoute: () => appDashboardRoute,
   } as any)
-const featuresDashboardPagesNullRoute =
-  featuresDashboardPagesNullRouteImport.update({
-    id: '/null',
-    path: '/null',
+const featuresDashboardPagesTaskEditRoute =
+  featuresDashboardPagesTaskEditRouteImport.update({
+    id: '/task/edit',
+    path: '/task/edit',
+    getParentRoute: () => appDashboardRoute,
+  } as any)
+const featuresDashboardPagesTaskReviewRoute =
+  featuresDashboardPagesTaskReviewRouteImport.update({
+    id: '/task/review',
+    path: '/task/review',
     getParentRoute: () => appDashboardRoute,
   } as any)
 const appWorkbenchRoute = appWorkbenchRouteImport.update({
@@ -107,9 +114,10 @@ export interface FileRoutesByFullPath {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
-  '/dashboard/null': typeof featuresDashboardPagesNullRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
+  '/dashboard/task/edit': typeof featuresDashboardPagesTaskEditRoute
+  '/dashboard/task/review': typeof featuresDashboardPagesTaskReviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
@@ -121,9 +129,10 @@ export interface FileRoutesByTo {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
-  '/dashboard/null': typeof featuresDashboardPagesNullRoute
   '/dashboard': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId': typeof appWorkbenchRoute
+  '/dashboard/task/edit': typeof featuresDashboardPagesTaskEditRoute
+  '/dashboard/task/review': typeof featuresDashboardPagesTaskReviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -137,9 +146,10 @@ export interface FileRoutesById {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
-  '/dashboard/null': typeof featuresDashboardPagesNullRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
+  '/dashboard/task/edit': typeof featuresDashboardPagesTaskEditRoute
+  '/dashboard/task/review': typeof featuresDashboardPagesTaskReviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -154,9 +164,10 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/dashboard/null'
     | '/dashboard/'
     | '/workbench/$taskId/'
+    | '/dashboard/task/edit'
+    | '/dashboard/task/review'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -168,9 +179,10 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/dashboard/null'
     | '/dashboard'
     | '/workbench/$taskId'
+    | '/dashboard/task/edit'
+    | '/dashboard/task/review'
   id:
     | '__root__'
     | '/'
@@ -183,9 +195,10 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
-    | '/dashboard/null'
     | '/dashboard/'
     | '/workbench/$taskId/'
+    | '/dashboard/task/edit'
+    | '/dashboard/task/review'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -281,11 +294,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof featuresDashboardPagesIndexRouteImport
       parentRoute: typeof appDashboardRoute
     }
-    '/dashboard/null': {
-      id: '/dashboard/null'
-      path: '/null'
-      fullPath: '/dashboard/null'
-      preLoaderRoute: typeof featuresDashboardPagesNullRouteImport
+    '/dashboard/task/edit': {
+      id: '/dashboard/task/edit'
+      path: '/task/edit'
+      fullPath: '/dashboard/task/edit'
+      preLoaderRoute: typeof featuresDashboardPagesTaskEditRouteImport
+      parentRoute: typeof appDashboardRoute
+    }
+    '/dashboard/task/review': {
+      id: '/dashboard/task/review'
+      path: '/task/review'
+      fullPath: '/dashboard/task/review'
+      preLoaderRoute: typeof featuresDashboardPagesTaskReviewRouteImport
       parentRoute: typeof appDashboardRoute
     }
     '/workbench/$taskId/': {
@@ -299,13 +319,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface appDashboardRouteChildren {
-  featuresDashboardPagesNullRoute: typeof featuresDashboardPagesNullRoute
   featuresDashboardPagesIndexRoute: typeof featuresDashboardPagesIndexRoute
+  featuresDashboardPagesTaskEditRoute: typeof featuresDashboardPagesTaskEditRoute
+  featuresDashboardPagesTaskReviewRoute: typeof featuresDashboardPagesTaskReviewRoute
 }
 
 const appDashboardRouteChildren: appDashboardRouteChildren = {
-  featuresDashboardPagesNullRoute: featuresDashboardPagesNullRoute,
   featuresDashboardPagesIndexRoute: featuresDashboardPagesIndexRoute,
+  featuresDashboardPagesTaskEditRoute: featuresDashboardPagesTaskEditRoute,
+  featuresDashboardPagesTaskReviewRoute: featuresDashboardPagesTaskReviewRoute,
 }
 
 const appDashboardRouteWithChildren = appDashboardRoute._addFileChildren(

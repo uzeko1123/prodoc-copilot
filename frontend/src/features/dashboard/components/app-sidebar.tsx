@@ -65,15 +65,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
-                  <PencilIcon /> 编辑 / 修改
+                <Link to="/dashboard/task/edit">
+                  <PencilIcon /> 我编写的
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
-                  <CheckCheckIcon /> 评阅 / 审核
+                <Link to="/dashboard/task/review">
+                  <CheckCheckIcon /> 我评审的
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
+                <Link to="/dashboard">
                   <FormIcon /> 文档模板
                 </Link>
               </SidebarMenuButton>
@@ -93,7 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
+                <Link to="/dashboard">
                   <BookOpenIcon /> 写作指南
                 </Link>
               </SidebarMenuButton>
@@ -105,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
+                <Link to="/dashboard">
                   <ScaleIcon /> 标准规范
                 </Link>
               </SidebarMenuButton>
@@ -114,7 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
+                <Link to="/dashboard">
                   <PaletteIcon /> 风格参考
                 </Link>
               </SidebarMenuButton>
@@ -123,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/null">
+                <Link to="/dashboard">
                   <DatabaseIcon /> 事实来源
                 </Link>
               </SidebarMenuButton>

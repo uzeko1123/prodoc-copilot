@@ -1,0 +1,18 @@
+ProDoc Copilot 首页配图提示词 · 槽位 feature-collaboration（协作与评审功能区）
+画面比例 4:3 · 建议尺寸 1600×1200
+用法：复制下方提示词交给绘图 AI 出图；出图保存为本文件同目录的 feature-collaboration.png，
+首页对应占位即自动替换，无需改动任何代码。
+
+── 提示词（英文，已组装，直接复制） ──
+clean minimal SaaS marketing illustration, light and airy, pure white background (#FFFFFF), soft light-gray surfaces (#F1F5F9), monochrome palette with a single graphite near-black accent (#1F1F1F), thin 1px light-gray borders, generous white space, flat vector style with subtle gradients and soft shadows, crisp edges, high quality. UI illustration of document-margin comments: two white comment cards anchored by thin dark threads to highlighted sentences in a document; one card contains a reply thread with two abstract circular avatars (one black, one gray); beside them, a slim review panel lists revisions with small accept / reject buttons. Light and airy, soft shadows. Aspect ratio 4:3.
+
+── 负面提示词（Negative prompt，直接复制） ──
+dark theme, dark background, neon colors, blue, purple, orange, cluttered layout, photographic texture, realistic humans, readable words, garbled text, watermark, logo, low contrast, heavy shadows, 3D render
+
+── 提示词（中文版，供中文绘图 AI 使用，直接复制） ──
+简洁极简的 SaaS 营销插画，轻盈通透，纯白背景（#FFFFFF），浅灰面板（#F1F5F9），黑白灰单色调、以近黑石墨色（#1F1F1F）作强调，细浅灰描边，大量留白，扁平矢量风格，带轻微渐变与柔和投影，边缘干净，高清。「页边评论」界面插画：两张白色评论卡通过细深色线锚定到文档中被高亮的句子；其中一张卡里是回复串，带两个抽象圆形头像（一黑一灰）；旁边一个窄修订面板，列出修订条目并带小的「接受 / 拒绝」按钮。轻盈通透、柔和投影。画面比例 4:3。
+
+── 负面提示词（中文版） ──
+深色背景、彩色（尤其蓝色/紫色/橙色）、杂乱构图、照片质感、真实人像、可读文字、乱码、水印、logo、低对比、重阴影、3D 渲染
+
+（Midjourney 用户可在英文提示词结尾追加： --ar 4:3 --no blue,purple,orange,watermark,logo ）
