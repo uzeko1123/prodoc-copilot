@@ -1,5 +1,9 @@
-import { getAuthUserRetrieveQueryOptions } from '@/api/gen/endpoints/auth/auth';
+import {
+  getAuthUserRetrieveQueryOptions,
+  useAuthUserRetrieve,
+} from '@/api/gen/endpoints/auth/auth';
 import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
+import type { Task, UserDetails } from '@/api/gen/models';
 import { DefaultPending } from '@/components/default-pending';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Button } from '@/components/shadcn/ui/button';
@@ -18,6 +22,9 @@ import { UserMenu } from '@/features/auth/components/user-menu';
 import { Chat } from '@/features/chat/components/chat';
 import { SettingsDialog } from '@/features/chat/components/editor/settings-dialog';
 import { Comment } from '@/features/comment/components/comment';
+import { TaskUpdateDialog } from '@/features/dashboard/components/task-dialog';
+import type { Role } from '@/features/dashboard/components/task-list';
+import { TaskStageBadge } from '@/features/dashboard/components/task-stage-badge';
 import { Editor } from '@/features/editor/components/editor';
 import { Find } from '@/features/editor/components/find';
 import { Plate } from '@/features/editor/components/plate';
@@ -25,12 +32,23 @@ import { ToC } from '@/features/editor/components/toc';
 import { queryClient } from '@/lib/query-client';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { noop } from '@tanstack/react-query';
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowLeftIcon, PanelRightIcon } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router';
+import {
+  ArrowLeftIcon,
+  InfoIcon,
+  PanelRightIcon,
+  WorkflowIcon,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
+import { z } from 'zod';
 
 export const Route = createFileRoute('/workbench/$taskId/')({
+  validateSearch: z.object({ role: z.enum(['creator', 'reviewer']) }),
   beforeLoad: ({ cause }) => {
     if (cause === 'preload') return;
     void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
@@ -48,40 +66,45 @@ function WorkbenchPage() {
 
 function Workbench() {
   const { taskId } = Route.useParams();
+  const { role } = Route.useSearch() as { role: Role };
+  const { data: user } = useAuthUserRetrieve();
   const { data: task, isPending } = useMainTasksRetrieve(taskId);
 
+  const readonly = isReadonly(role, user, task);
+
+  const router = useRouter();
+  const navigate = useNavigate();
+
   const leftPanelRef = useRef<PanelImperativeHandle>(null);
-  const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
-  const setIsLeftPanelOpen = useWorkbenchStore(
-    (state) => state.setLeftPanelOpen,
-  );
+  const leftPanelOpen = useWorkbenchStore((state) => state.leftPanelOpen);
+  const setLeftPanelOpen = useWorkbenchStore((state) => state.setLeftPanelOpen);
 
   useEffect(() => {
-    if (isLeftPanelOpen) {
+    if (leftPanelOpen) {
       leftPanelRef.current?.expand();
     } else {
       leftPanelRef.current?.collapse();
     }
-  }, [isLeftPanelOpen]);
+  }, [leftPanelOpen]);
 
   const handleLeftPanelResize = () => {
-    setIsLeftPanelOpen(!leftPanelRef.current?.isCollapsed());
+    setLeftPanelOpen(!leftPanelRef.current?.isCollapsed());
   };
 
   const rightPanelRef = useRef<PanelImperativeHandle>(null);
-  const isRightPanelOpen = useWorkbenchStore((state) => state.isRightPanelOpen);
+  const rightPanelOpen = useWorkbenchStore((state) => state.rightPanelOpen);
   const setRightPanelOpen = useWorkbenchStore(
     (state) => state.setRightPanelOpen,
   );
   const toggleRightPanel = useWorkbenchStore((state) => state.toggleRightPanel);
 
   useEffect(() => {
-    if (isRightPanelOpen) {
+    if (rightPanelOpen) {
       rightPanelRef.current?.expand();
     } else {
       rightPanelRef.current?.collapse();
     }
-  }, [isRightPanelOpen]);
+  }, [rightPanelOpen]);
 
   const handleRightPanelResize = () => {
     setRightPanelOpen(!rightPanelRef.current?.isCollapsed());
@@ -104,23 +127,43 @@ function Workbench() {
     (state) => state.setActiveRightPanelTab,
   );
 
+  const [taskUpdateDialogOpen, setTaskUpdateDialogOpen] = useState(false);
+
   const _hideHeader = false;
   const _hideRightPanel = false;
 
-  if (isPending || !task) return <Pending message="任务加载中 . . ." />;
+  if (isPending || !task) return <DefaultPending message="任务加载中 . . ." />;
 
   return (
     <div className="flex h-dvh flex-col">
-      <Plate task={task}>
+      <Plate task={task} readonly={readonly}>
         {!_hideHeader && (
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
-            <Button variant="ghost" size="icon-sm" asChild>
-              <Link to="/dashboard">
-                <ArrowLeftIcon />
-              </Link>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() =>
+                router.history.canGoBack()
+                  ? router.history.back()
+                  : navigate({ to: '/dashboard' })
+              }
+            >
+              <ArrowLeftIcon />
             </Button>
-            <h1 className="text-sm font-semibold">{task.name}</h1>
-            <UserMenu className="ml-auto py-1" />
+            <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
+            <TaskStageBadge role={role} stage={task.stage} />
+            <Button className="ml-auto">
+              <WorkflowIcon />
+              提交流程
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setTaskUpdateDialogOpen(true)}
+            >
+              <InfoIcon />
+              文档信息
+            </Button>
+            <UserMenu className="ml-2 py-1" />
           </header>
         )}
 
@@ -175,7 +218,7 @@ function Workbench() {
               >
                 <TabsTrigger value="chat">AI 对话</TabsTrigger>
                 <TabsTrigger value="comment">评论 & 修订</TabsTrigger>
-                {!_hideRightPanel && !isRightPanelOpen && (
+                {!_hideRightPanel && !rightPanelOpen && (
                   <Button variant="ghost" onClick={toggleRightPanel}>
                     <PanelRightIcon />
                   </Button>
@@ -237,7 +280,21 @@ function Workbench() {
         </ResizablePanelGroup>
 
         <SettingsDialog />
+
+        <TaskUpdateDialog
+          task={task}
+          open={taskUpdateDialogOpen}
+          onOpenChange={setTaskUpdateDialogOpen}
+        />
       </Plate>
     </div>
   );
+}
+
+function isReadonly(role: Role, user?: UserDetails, task?: Task): boolean {
+  if (!user || !task) return true;
+  if (role === 'creator' && task.creator === user.pk) {
+    return task.stage !== 'editing' && task.stage !== 'revision';
+  }
+  return true;
 }

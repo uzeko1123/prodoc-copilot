@@ -21,13 +21,13 @@ import { TextIndentToolbarButton } from './text-indent-toolbar-button';
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
 
-  const isLeftPanelOpen = useWorkbenchStore((state) => state.isLeftPanelOpen);
+  const leftPanelOpen = useWorkbenchStore((state) => state.leftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
 
   return (
     <div className="flex w-full">
       <ToolbarGroup>
-        {!isLeftPanelOpen && (
+        {!leftPanelOpen && (
           <>
             <Button variant="ghost" onClick={toggleLeftPanel}>
               <PanelLeftIcon />

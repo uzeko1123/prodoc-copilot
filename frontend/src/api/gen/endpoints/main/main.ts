@@ -30,6 +30,7 @@ import type {
   MainCommentsListParams,
   MainDiscussionsListParams,
   MainDocumentsListParams,
+  MainTasksListParams,
   PatchedCommentRequest,
   PatchedDiscussionRequest,
   PatchedDocumentRequest,
@@ -2106,35 +2107,39 @@ export const useMainDocumentsDestroy = <
   );
 };
 export const mainTasksList = (
+  params?: MainTasksListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<Task[]>(
-    { url: `/api/main/tasks/`, method: 'GET', signal },
+    { url: `/api/main/tasks/`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getMainTasksListQueryKey = () => {
-  return [`/api/main/tasks/`] as const;
+export const getMainTasksListQueryKey = (params?: MainTasksListParams) => {
+  return [`/api/main/tasks/`, ...(params ? [params] : [])] as const;
 };
 
 export const getMainTasksListQueryOptions = <
   TData = Awaited<ReturnType<typeof mainTasksList>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
+>(
+  params?: MainTasksListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainTasksListQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getMainTasksListQueryKey(params);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof mainTasksList>>> = ({
     signal,
-  }) => mainTasksList(requestOptions, signal);
+  }) => mainTasksList(params, requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof mainTasksList>>,
@@ -2152,6 +2157,7 @@ export function useMainTasksList<
   TData = Awaited<ReturnType<typeof mainTasksList>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | MainTasksListParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
@@ -2174,6 +2180,7 @@ export function useMainTasksList<
   TData = Awaited<ReturnType<typeof mainTasksList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainTasksListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
@@ -2196,6 +2203,7 @@ export function useMainTasksList<
   TData = Awaited<ReturnType<typeof mainTasksList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainTasksListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
@@ -2211,6 +2219,7 @@ export function useMainTasksList<
   TData = Awaited<ReturnType<typeof mainTasksList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainTasksListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof mainTasksList>>, TError, TData>
@@ -2221,7 +2230,7 @@ export function useMainTasksList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainTasksListQueryOptions(options);
+  const queryOptions = getMainTasksListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

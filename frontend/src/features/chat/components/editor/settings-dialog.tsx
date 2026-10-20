@@ -16,15 +16,15 @@ import * as React from 'react';
 import { useChatStore } from '../../stores';
 
 export function SettingsDialog() {
-  const isSettingsDialogOpen = useWorkbenchStore(
-    (state) => state.isSettingsDialogOpen,
+  const settingsDialogOpen = useWorkbenchStore(
+    (state) => state.settingsDialogOpen,
   );
   const setSettingsDialogOpen = useWorkbenchStore(
     (state) => state.setSettingsDialogOpen,
   );
 
   return (
-    <Dialog open={isSettingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
+    <Dialog open={settingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl">设置</DialogTitle>

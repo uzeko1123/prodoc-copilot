@@ -24,8 +24,11 @@ import {
   ScaleIcon,
 } from 'lucide-react';
 import * as React from 'react';
+import { TaskCreateDialog } from './task-dialog';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [taskCreateDialogOpen, setTaskCreateDialogOpen] = React.useState(false);
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -54,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton>
+              <SidebarMenuButton onClick={() => setTaskCreateDialogOpen(true)}>
                 <CirclePlusIcon /> 快速创建
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -66,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link to="/dashboard/task/edit">
-                  <PencilIcon /> 我编写的
+                  <PencilIcon /> 我创建的
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -138,6 +141,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+      <TaskCreateDialog
+        open={taskCreateDialogOpen}
+        onOpenChange={setTaskCreateDialogOpen}
+      />
     </Sidebar>
   );
 }

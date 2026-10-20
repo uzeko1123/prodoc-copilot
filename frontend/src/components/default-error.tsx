@@ -8,6 +8,7 @@ import {
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
 import { getErrorMessage } from '@/lib/error-message';
+import { useRouter } from '@tanstack/react-router';
 import { CircleAlertIcon } from 'lucide-react';
 
 export function DefaultError({
@@ -19,6 +20,8 @@ export function DefaultError({
   error: unknown;
   reset: () => void;
 }) {
+  const router = useRouter();
+
   return (
     <Empty className="h-full">
       <EmptyHeader>
@@ -33,11 +36,11 @@ export function DefaultError({
           <Button size="sm" onClick={() => reset()}>
             重试
           </Button>
-          {window.history.length > 1 && (
+          {router.history.canGoBack() && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.history.back()}
+              onClick={() => router.history.back()}
             >
               返回
             </Button>

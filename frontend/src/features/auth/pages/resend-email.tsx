@@ -7,7 +7,7 @@ export const Route = createFileRoute('/account/resend-email')({
   validateSearch: z.object({
     email: z.email(),
     resend: z.coerce.boolean().optional(),
-  }).parse,
+  }),
   component: ResendEmailPage,
 });
 

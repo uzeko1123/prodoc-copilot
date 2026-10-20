@@ -18,6 +18,8 @@ export * from './loginRequest';
 export * from './mainCommentsListParams';
 export * from './mainDiscussionsListParams';
 export * from './mainDocumentsListParams';
+export * from './mainTasksListParams';
+export * from './mainTasksListStage';
 export * from './messageResponse';
 export * from './passwordChangeRequest';
 export * from './passwordResetConfirmRequest';

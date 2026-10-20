@@ -1,6 +1,7 @@
 'use client';
 
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
+import { formatDate } from '@/lib/format-date';
 import {
   getCommentKeyId,
   getCommentKeys,
@@ -28,7 +29,7 @@ import {
   discussionPlugin,
   type TDiscussion,
 } from '../components/editor/plugins/discussion-kit';
-import { formatCommentDate, type TComment } from '../components/ui/comment';
+import type { TComment } from '../components/ui/comment';
 
 export interface ResolvedDiscussion extends TDiscussion {
   path: Path;
@@ -151,18 +152,13 @@ const getSuggestionIds = (
 const suggestionTypeText = (node: TElement) =>
   (TYPE_TEXT_MAP[node.type] ?? (() => node.type))(node);
 
-const formatSuggestionDateText = (date: string) => {
-  const elementDate = new Date(date);
-  return formatCommentDate(elementDate);
-};
-
 const getInlineSuggestionElementText = (node: TElement) => {
   if (typeof node.value === 'string' && node.value.length > 0) {
     return node.value;
   }
 
   if (typeof node.date === 'string' && node.date.length > 0) {
-    return formatSuggestionDateText(node.date);
+    return formatDate(node.date);
   }
 
   if (

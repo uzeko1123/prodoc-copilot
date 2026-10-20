@@ -6,7 +6,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserAvatar } from '@/features/auth/components/user-avatar';
+import { formatDate } from '@/lib/format-date';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import {
@@ -36,7 +37,7 @@ import {
   discussionPlugin,
   type TDiscussion,
 } from '../editor/plugins/discussion-kit';
-import { Comment, CommentCreateForm, formatCommentDate } from './comment';
+import { Comment, CommentCreateForm } from './comment';
 
 export function BlockSuggestionCard({
   idx,
@@ -96,13 +97,9 @@ export function BlockSuggestionCard({
     >
       <div className="flex flex-col p-4">
         <div className="relative flex items-center">
-          {/* Replace to your own backend or refer to potion */}
-          <Avatar className="size-5">
-            <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
-            <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
-          </Avatar>
+          {userInfo && <UserAvatar user={userInfo} className="size-5" />}
           <h4 className="mx-2 text-sm leading-none font-semibold">
-            {userInfo?.name}
+            {userInfo?.full_name || userInfo?.username}
           </h4>
 
           {suggestion.createdByAI && (
@@ -115,9 +112,7 @@ export function BlockSuggestionCard({
           )}
 
           <div className="text-muted-foreground/80 text-xs leading-none">
-            <span className="mr-1">
-              {formatCommentDate(new Date(suggestion.createdAt))}
-            </span>
+            <span className="mr-1">{formatDate(suggestion.createdAt)}</span>
           </div>
         </div>
 

@@ -1,4 +1,21 @@
+import {
+  getMainTasksListQueryKey,
+  getMainTasksRetrieveQueryKey,
+  useMainTasksCreate,
+  useMainTasksPartialUpdate,
+} from '@/api/gen/endpoints/main/main';
+import type { Task } from '@/api/gen/models';
+import {
+  MainTasksCreateBody,
+  MainTasksPartialUpdateBody,
+} from '@/api/gen/zod/main/main';
 import { Button } from '@/components/shadcn/ui/button';
+import {
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/shadcn/ui/dialog';
 import {
   Field,
   FieldError,
@@ -6,59 +23,178 @@ import {
   FieldLabel,
 } from '@/components/shadcn/ui/field';
 import { Input } from '@/components/shadcn/ui/input';
+import { toastErrorMessage } from '@/lib/error-message';
+import { setFormErrors } from '@/lib/form-errors';
+import { queryClient } from '@/lib/query-client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
-// 扩展方式：在 schema 中加字段，并在下方增加对应的 Controller 块
-const taskFormSchema = z.object({
-  name: z.string().min(1, '请输入任务名称').max(200, '名称过长'),
-});
-
-export type TaskFormValues = z.infer<typeof taskFormSchema>;
-
-export function TaskForm({
-  formId,
-  defaultValues,
-  onSubmit,
-  submitLabel,
+export function TaskCreateForm({
+  onSuccess,
+  onCancel,
 }: {
-  formId: string;
-  defaultValues?: TaskFormValues;
-  onSubmit: (values: TaskFormValues) => void;
-  submitLabel: string;
+  onSuccess: () => void;
+  onCancel: () => void;
 }) {
-  const { control, handleSubmit } = useForm<TaskFormValues>({
-    resolver: zodResolver(taskFormSchema),
-    defaultValues,
+  const { control, formState, handleSubmit, setError } = useForm<
+    z.infer<typeof MainTasksCreateBody>
+  >({ resolver: zodResolver(MainTasksCreateBody) });
+
+  const { mutate, isPending } = useMainTasksCreate({
+    mutation: {
+      onSuccess: (data) => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainTasksListQueryKey(),
+        });
+        onSuccess();
+        void navigate({
+          to: '/workbench/$taskId',
+          params: { taskId: data.id },
+          search: { role: 'creator' },
+        });
+      },
+      onError: (error) => {
+        if (setFormErrors(error, MainTasksCreateBody, setError)) return;
+        toastErrorMessage(error);
+      },
+    },
   });
 
+  const navigate = useNavigate();
+
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit((data) => mutate({ data }))}
+      className="flex flex-col gap-4"
+    >
+      <DialogHeader>
+        <DialogTitle>新建文档</DialogTitle>
+      </DialogHeader>
       <FieldGroup>
         <Controller
           name="name"
           control={control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={`${formId}-name`}>名称</FieldLabel>
+              <FieldLabel htmlFor="name">文档名称</FieldLabel>
               <Input
                 {...field}
                 value={field.value ?? ''}
-                id={`${formId}-name`}
-                placeholder="请输入任务名称"
+                id="name"
+                placeholder="文档名称"
                 required
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
-        <Field>
-          <Button type="submit" form={formId}>
-            {submitLabel}
-          </Button>
-        </Field>
+        {formState.errors.root && (
+          <Field>
+            <FieldError errors={[formState.errors.root]} />
+          </Field>
+        )}
       </FieldGroup>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isPending}
+          onClick={onCancel}
+        >
+          取消
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          创建
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+export function TaskUpdateForm({
+  task,
+  onSuccess,
+  onCancel,
+}: {
+  task: Task;
+  onSuccess: () => void;
+  onCancel: () => void;
+}) {
+  const { control, formState, handleSubmit, setError } = useForm<
+    z.infer<typeof MainTasksPartialUpdateBody>
+  >({
+    resolver: zodResolver(MainTasksPartialUpdateBody),
+    defaultValues: { name: task.name },
+  });
+
+  const { mutate, isPending } = useMainTasksPartialUpdate({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainTasksListQueryKey(),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: getMainTasksRetrieveQueryKey(task.id),
+        });
+        toast.success('文档信息已保存');
+        onSuccess();
+      },
+      onError: (error) => {
+        if (setFormErrors(error, MainTasksPartialUpdateBody, setError)) return;
+        toastErrorMessage(error);
+      },
+    },
+  });
+
+  return (
+    <form
+      onSubmit={handleSubmit((data) => mutate({ id: task.id, data }))}
+      className="flex flex-col gap-4"
+    >
+      <DialogHeader>
+        <DialogTitle>文档信息</DialogTitle>
+        <DialogDescription>{task.name}</DialogDescription>
+      </DialogHeader>
+      <FieldGroup>
+        <Controller
+          name="name"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field>
+              <FieldLabel htmlFor="name">名称</FieldLabel>
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                id="name"
+                placeholder="文档名称"
+                required
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {formState.errors.root && (
+          <Field>
+            <FieldError errors={[formState.errors.root]} />
+          </Field>
+        )}
+      </FieldGroup>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isPending}
+          onClick={onCancel}
+        >
+          取消
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          保存
+        </Button>
+      </DialogFooter>
     </form>
   );
 }

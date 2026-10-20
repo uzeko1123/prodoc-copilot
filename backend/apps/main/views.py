@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, MethodNotAllowed, NotFound
+from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
 
 from .models import Comment, Discussion, Document, Task
@@ -43,6 +44,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = (TaskPermission,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ("creator", "reviewer", "stage")
+    ordering_fields = ("updated_at", "created_at")
+    ordering = ("-updated_at",)
 
     def get_queryset(self):
         user = self.request.user

@@ -4,7 +4,7 @@ import { FormPageTemplate } from '../components/form-page-template';
 import { LoginForm } from '../components/login-form';
 
 export const Route = createFileRoute('/account/login')({
-  validateSearch: z.object({ redirect: z.string().optional() }).parse,
+  validateSearch: z.object({ redirect: z.string().optional() }),
   component: LoginPage,
 });
 

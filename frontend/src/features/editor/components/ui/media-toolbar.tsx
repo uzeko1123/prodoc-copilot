@@ -47,13 +47,13 @@ export function MediaToolbar({
     (editor) => !editor.api.isExpanded(),
     [],
   );
-  const isImagePreviewOpen = useImagePreviewValue('isOpen', editor.id);
+  const imagePreviewOpen = useImagePreviewValue('isOpen', editor.id);
   const open =
     isFocusedLast &&
     !readOnly &&
     selected &&
     selectionCollapsed &&
-    !isImagePreviewOpen;
+    !imagePreviewOpen;
   const isEditing = useFloatingMediaValue('isEditing');
 
   React.useEffect(() => {

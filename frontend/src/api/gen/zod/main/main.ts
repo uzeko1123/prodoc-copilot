@@ -380,6 +380,18 @@ export const MainDocumentsDestroyParams = zod.object({
 
 export const MainDocumentsDestroyResponse = zod.void();
 
+export const MainTasksListQueryParams = zod.object({
+  creator: zod.int().optional(),
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
+  reviewer: zod.int().optional(),
+  stage: zod
+    .enum(['editing', 'final', 'review', 'revision'])
+    .optional()
+    .describe(
+      '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
+    ),
+});
+
 export const mainTasksListResponseNameMax = 255;
 
 export const MainTasksListResponseItem = zod.object({

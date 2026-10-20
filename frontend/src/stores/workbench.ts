@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 type WorkbenchState = {
-  isLeftPanelOpen: boolean;
-  setLeftPanelOpen: (isLeftPanelOpen: boolean) => void;
+  leftPanelOpen: boolean;
+  setLeftPanelOpen: (leftPanelOpen: boolean) => void;
   toggleLeftPanel: () => void;
 
-  isRightPanelOpen: boolean;
-  setRightPanelOpen: (isRightPanelOpen: boolean) => void;
+  rightPanelOpen: boolean;
+  setRightPanelOpen: (rightPanelOpen: boolean) => void;
   toggleRightPanel: () => void;
 
   activeMainTab: string;
@@ -19,22 +19,23 @@ type WorkbenchState = {
   activeRightPanelTab: string;
   setActiveRightPanelTab: (tab: string) => void;
 
-  isSettingsDialogOpen: boolean;
-  setSettingsDialogOpen: (isSettingsDialogOpen: boolean) => void;
+  settingsDialogOpen: boolean;
+  setSettingsDialogOpen: (settingsDialogOpen: boolean) => void;
 };
 
 export const useWorkbenchStore = create<WorkbenchState>()(
   devtools(
     (set) => ({
-      isLeftPanelOpen: true,
-      setLeftPanelOpen: (isLeftPanelOpen) => set({ isLeftPanelOpen }),
+      leftPanelOpen: true,
+      setLeftPanelOpen: (leftPanelOpen) =>
+        set({ leftPanelOpen: leftPanelOpen }),
       toggleLeftPanel: () =>
-        set((state) => ({ isLeftPanelOpen: !state.isLeftPanelOpen })),
+        set((state) => ({ leftPanelOpen: !state.leftPanelOpen })),
 
-      isRightPanelOpen: true,
-      setRightPanelOpen: (isRightPanelOpen) => set({ isRightPanelOpen }),
+      rightPanelOpen: true,
+      setRightPanelOpen: (rightPanelOpen) => set({ rightPanelOpen }),
       toggleRightPanel: () =>
-        set((state) => ({ isRightPanelOpen: !state.isRightPanelOpen })),
+        set((state) => ({ rightPanelOpen: !state.rightPanelOpen })),
 
       activeMainTab: 'chat',
       setActiveMainTab: (activeMainTab) => set({ activeMainTab }),
@@ -47,9 +48,9 @@ export const useWorkbenchStore = create<WorkbenchState>()(
       setActiveRightPanelTab: (activeRightPanelTab) =>
         set({ activeRightPanelTab }),
 
-      isSettingsDialogOpen: false,
-      setSettingsDialogOpen: (isSettingsDialogOpen) =>
-        set({ isSettingsDialogOpen }),
+      settingsDialogOpen: false,
+      setSettingsDialogOpen: (settingsDialogOpen) =>
+        set({ settingsDialogOpen }),
     }),
     { name: 'WorkbenchStore' },
   ),

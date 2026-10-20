@@ -12,23 +12,29 @@ import { DocumentPlugin } from './editor/plugins/document-kit';
 
 export function Plate({
   task,
+  readonly,
   children,
 }: {
   task: Task;
+  readonly: boolean;
   children: React.ReactNode;
 }) {
   return (
     <ErrorBoundary message="文档加载失败">
-      <PlateComponent task={task}>{children}</PlateComponent>
+      <PlateComponent task={task} readonly={readonly}>
+        {children}
+      </PlateComponent>
     </ErrorBoundary>
   );
 }
 
 function PlateComponent({
   task,
+  readonly,
   children,
 }: {
   task: Task;
+  readonly: boolean;
   children: React.ReactNode;
 }) {
   const documentId = task.document;
@@ -47,7 +53,7 @@ function PlateComponent({
     return <DefaultPending message="文档加载中 . . ." />;
 
   return (
-    <PlatePrimitive editor={editor} readOnly={false}>
+    <PlatePrimitive editor={editor} readOnly={readonly}>
       {children}
     </PlatePrimitive>
   );

@@ -4,7 +4,7 @@ import { FormPageTemplate } from '../components/form-page-template';
 import { ResetPasswordConfirmForm } from '../components/reset-password-confirm-form';
 
 export const Route = createFileRoute('/account/reset-password-confirm')({
-  validateSearch: z.object({ uid: z.string(), token: z.string() }).parse,
+  validateSearch: z.object({ uid: z.string(), token: z.string() }),
   component: ResetPasswordConfirmPage,
 });
 

@@ -10,6 +10,7 @@ pytest-asyncio~=1.4.0
 mypy~=1.19.0
 django-stubs[compatible-mypy]~=5.2.0
 djangorestframework-stubs[compatible-mypy]~=3.16.0
+types-django-filter~=26.2
 types-channels~=4.3.0
 celery-types~=0.26.0
 ruff~=0.16.0

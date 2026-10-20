@@ -25,6 +25,7 @@ import {
   useEditorContainerRef,
   useEditorMounted,
   useEditorRef,
+  useEditorSelector,
   useHotkeys,
   useOnClickOutside,
   usePluginOption,
@@ -249,6 +250,8 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const [portalElement, setPortalElement] = React.useState<HTMLElement | null>(
     null,
   );
+
+  useEditorSelector(() => void update(), [update]);
 
   React.useEffect(() => {
     if (!editorMounted) return;

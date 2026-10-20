@@ -31,11 +31,6 @@ import { useFilePicker } from 'use-file-picker';
 import { z } from 'zod';
 import { UserAvatar } from './user-avatar';
 
-const UserDetailsFormSchema = AuthUserPartialUpdateBody.pick({
-  full_name: true,
-  avatar: true,
-});
-
 export function UserDetailsForm({
   user,
   onSuccess,
@@ -46,9 +41,9 @@ export function UserDetailsForm({
   onCancel: () => void;
 }) {
   const { control, formState, handleSubmit, setValue, setError } = useForm<
-    z.infer<typeof UserDetailsFormSchema>
+    z.infer<typeof AuthUserPartialUpdateBody>
   >({
-    resolver: zodResolver(UserDetailsFormSchema),
+    resolver: zodResolver(AuthUserPartialUpdateBody),
     defaultValues: {
       full_name: user.full_name ?? '',
       avatar: user.avatar,
@@ -63,7 +58,7 @@ export function UserDetailsForm({
         onSuccess();
       },
       onError: (error) => {
-        if (setFormErrors(error, UserDetailsFormSchema, setError)) return;
+        if (setFormErrors(error, AuthUserPartialUpdateBody, setError)) return;
         toastErrorMessage(error);
       },
     },

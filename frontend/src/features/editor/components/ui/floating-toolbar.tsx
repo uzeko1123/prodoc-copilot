@@ -37,15 +37,15 @@ export function FloatingToolbar({
   const editor = useEditorRef();
   const editorId = useEditorId();
   const focusedEditorId = useEventEditorValue('focus');
-  const isFloatingLinkOpen = !!usePluginOption({ key: KEYS.link }, 'mode');
-  const isAIChatOpen = usePluginOption({ key: KEYS.aiChat }, 'open');
+  const floatingLinkOpen = !!usePluginOption({ key: KEYS.link }, 'mode');
+  const aiChatOpen = usePluginOption({ key: KEYS.aiChat }, 'open');
   const selectedBlockIds = usePluginOption(BlockSelectionPlugin, 'selectedIds');
   const isBlockSelected = !!selectedBlockIds && selectedBlockIds.size > 0;
 
   const floatingToolbarState = useFloatingToolbarState({
     editorId,
     focusedEditorId,
-    hideToolbar: isFloatingLinkOpen || isAIChatOpen,
+    hideToolbar: floatingLinkOpen || aiChatOpen,
     ...state,
     floatingOptions: {
       getBoundingClientRect: () => {

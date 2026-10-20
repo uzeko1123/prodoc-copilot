@@ -4,118 +4,1228 @@
  * ProDoc Copilot 产品首页（路由 "/"，纯静态营销页，无任何后端请求）。
  *
  * 页面结构：导航 → Hero → 能力速览 → AI 智能写作 / 排版与格式 / 协作与评审
- * → 任务工作流 → 知识库 & 模板 → CTA → 页脚。全页唯一行动入口为 /dashboard。
+ * → 任务工作流（含任务总览）→ 知识库 & 模板（愿景界面）→ CTA → 页脚。
+ * 全页唯一行动入口为 /dashboard。
  *
  * 视觉：黑白灰单色调，强调色统一使用 primary（近黑）；除 Hero 与底部 CTA
  * 居中聚焦外，其余区块一律左对齐，保持整齐的版面节奏。
  *
- * 配图说明：页面所有图片均为 <ImageSlot> 占位。生图提示词（已组装、可直接
- * 复制使用）位于 src/assets/img/index/<槽位名>.png.txt；出图后保存为同目录
- * 的 <槽位名>.png 即自动替换占位，无需改动任何代码。
+ * 功能展示：页面不使用任何配图，全部由静态界面复刻（mock 场景）承担——
+ * 仅用原生 HTML + shadcn 通用件 + lucide 图标，零 hooks、零交互，不引入
+ * platejs 等编辑器依赖。场景样式对齐工作台真实 UI（三栏布局、line 标签条、
+ * 四阶段徽章、任务表格等），mock 内可交互件一律 tabIndex={-1}。
  */
 import { Badge } from '@/components/shadcn/ui/badge';
 import { Button } from '@/components/shadcn/ui/button';
 import { Card } from '@/components/shadcn/ui/card';
 import { Kbd } from '@/components/shadcn/ui/kbd';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/shadcn/ui/table';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { cn } from 'cn';
 import {
+  ArrowLeftIcon,
   ArrowRightIcon,
+  ArrowUpIcon,
+  BadgeQuestionMarkIcon,
+  BoldIcon,
   BookOpenIcon,
+  CaseSensitiveIcon,
+  CheckCheckIcon,
   CheckIcon,
+  ChevronRightIcon,
   CirclePlusIcon,
   DatabaseIcon,
+  EllipsisVerticalIcon,
+  FeatherIcon,
+  FileDownIcon,
+  FileUpIcon,
   FormIcon,
-  ImagePlusIcon,
+  GraduationCapIcon,
+  HighlighterIcon,
+  ImageIcon,
+  IndentIncreaseIcon,
+  ItalicIcon,
+  LanguagesIcon,
+  LayoutDashboardIcon,
+  ListMinusIcon,
+  ListPlusIcon,
+  ListTreeIcon,
   MessageSquareIcon,
   MessagesSquareIcon,
+  MinusIcon,
   PaletteIcon,
+  PanelLeftIcon,
+  PaperclipIcon,
   PencilIcon,
   PencilSparklesIcon,
   PenLineIcon,
+  PlusIcon,
+  QuoteIcon,
+  Redo2Icon,
   ScaleIcon,
+  SendIcon,
   SparklesIcon,
+  SpellCheckIcon,
+  SquareSlashIcon,
   StampIcon,
+  SummaryIcon,
+  TableIcon,
+  Undo2Icon,
   WandSparklesIcon,
+  XIcon,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-/**
- * 首页配图自动拾取：把出图保存为 src/assets/img/index/<槽位名>.png 放入该
- * 目录，即可自动替换对应占位（开发时新增文件热更新，构建时由 Vite 打包），
- * 无需改动任何代码。生图提示词见同目录 <槽位名>.png.txt（已组装可直接复制）。
- */
-const SLOT_SOURCES: Record<string, string> = Object.fromEntries(
-  Object.entries(
-    import.meta.glob<string>('../assets/img/index/*.png', {
-      eager: true,
-      import: 'default',
-    }),
-  ).map(([path, url]) => {
-    const file = path.split('/').pop() ?? path;
-    return [file.replace(/\.png$/, ''), url];
-  }),
-);
+/* ────────────────────────── mock 场景骨架小件 ────────────────────────── */
 
-/** <ImageSlot> 图片占位组件 —— 首页配图统一由此渲染 */
-function ImageSlot({
-  slot,
-  src,
-  alt,
-  ratio = 'aspect-video',
-  caption,
+/** 场景窗口容器：圆角描边「应用窗口」，整卡视为一张示意图 */
+function MockFrame({
+  label,
   className,
+  children,
 }: {
-  /** 槽位 id，自动对应 src/assets/img/index/<slot>.png */
-  slot: string;
-  /** 显式图片地址，优先于自动拾取；两者皆缺省时渲染占位样式 */
-  src?: string;
-  /** 真图的 alt 文本；占位态作为 aria-label 使用 */
-  alt: string;
-  /** Tailwind 宽高比工具类，默认 'aspect-video' */
-  ratio?: string;
-  /** 占位卡片正中的说明文字：这张图应画什么 */
-  caption: string;
+  /** 示意图的屏幕阅读器描述 */
+  label: string;
   className?: string;
+  children: React.ReactNode;
 }) {
-  const containerClass = cn(
-    'relative overflow-hidden rounded-xl border bg-card',
-    ratio,
-    className,
-  );
-
-  const resolved = src ?? SLOT_SOURCES[slot];
-
-  if (resolved) {
-    return (
-      <div className={containerClass}>
-        <img
-          src={resolved}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 size-full object-cover"
-        />
-      </div>
-    );
-  }
-
   return (
-    <div role="img" aria-label={alt} className={containerClass}>
-      <div
-        aria-hidden="true"
-        className="bg-muted/40 from-primary/10 to-primary/5 absolute inset-0 bg-linear-to-br via-transparent"
-      />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center">
-        <ImagePlusIcon aria-hidden="true" className="text-primary/50 size-8" />
-        <p className="text-muted-foreground text-sm">{caption}</p>
-        <span className="text-primary/60 font-mono text-xs">
-          image slot: {slot}
-        </span>
-      </div>
+    <div
+      role="img"
+      aria-label={label}
+      className={cn(
+        'bg-card overflow-hidden rounded-xl border shadow-2xl shadow-black/10',
+        className,
+      )}
+    >
+      {children}
     </div>
   );
 }
+
+/** 静态标签条：复刻工作台面板顶部的 line 变体 Tabs（无交互） */
+function MockTabsBar({
+  tabs,
+  active,
+  className,
+}: {
+  /** 标签名列表 */
+  tabs: string[];
+  /** 高亮标签名 */
+  active: string;
+  className?: string;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        'text-muted-foreground flex h-10 min-h-10 w-full items-center gap-1 border-b px-1',
+        className,
+      )}
+    >
+      {tabs.map((tab) => (
+        <span
+          key={tab}
+          className={cn(
+            'relative flex h-full items-center px-2.5 text-sm whitespace-nowrap',
+            tab === active
+              ? 'text-foreground font-medium'
+              : 'text-muted-foreground',
+          )}
+        >
+          {tab}
+          {tab === active && (
+            <span className="bg-foreground absolute inset-x-1.5 bottom-0 h-0.5" />
+          )}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** 静态工具栏图标钮：复刻编辑器工具栏按钮（无交互） */
+function MockToolbarButton({
+  icon: Icon,
+  label,
+  className,
+}: {
+  icon: LucideIcon;
+  /** 悬停提示，兼作示意图注 */
+  label: string;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      title={label}
+      className={cn(
+        'text-muted-foreground flex size-7 cursor-default items-center justify-center rounded-md',
+        className,
+      )}
+    >
+      <Icon className="size-4" />
+    </span>
+  );
+}
+
+/** 静态工具栏分隔线 */
+function MockSeparator({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn('bg-border mx-1 h-4 w-px shrink-0', className)}
+    />
+  );
+}
+
+/** 静态首字母头像：复刻评论区用户头像（无交互） */
+function MockAvatar({
+  name,
+  className,
+}: {
+  /** 展示姓名，取首字符作头像字 */
+  name: string;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'bg-muted text-muted-foreground flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold',
+        className,
+      )}
+    >
+      {name.charAt(0)}
+    </span>
+  );
+}
+
+/** 静态 ghost 图标钮（头栏返回、表格行菜单等） */
+function MockGhostIconButton({
+  icon: Icon,
+  label,
+  className,
+}: {
+  icon: LucideIcon;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      title={label}
+      className={cn(
+        'text-muted-foreground flex size-7 items-center justify-center rounded-md',
+        className,
+      )}
+    >
+      <Icon className="size-4" />
+    </span>
+  );
+}
+
+/* ─────────────────────────── 场景：工作台 ─────────────────────────── */
+
+/** Hero 大纲条目（左栏），active 对应当前滚动位置 */
+const HERO_TOC: { depth: 1 | 2; title: string; active?: boolean }[] = [
+  { depth: 1, title: '1 产品概述', active: true },
+  { depth: 2, title: '1.1 目标用户' },
+  { depth: 2, title: '1.2 核心场景' },
+  { depth: 1, title: '2 功能需求' },
+  { depth: 2, title: '2.1 数据同步' },
+  { depth: 2, title: '2.2 健康报告' },
+  { depth: 1, title: '3 非功能需求' },
+];
+
+/**
+ * Hero 场景：复刻工作台三栏布局——左「大纲」、中文档与固定工具栏、
+ * 右「AI 对话」面板（上下文引用 + 斜杠指令 + 流式回复 + 输入栏）。
+ */
+function HeroWorkbenchScene({ className }: { className?: string }) {
+  return (
+    <MockFrame
+      label="工作台界面示意：左侧大纲、中间文档正文与修订标注、右侧 AI 对话面板"
+      className={className}
+    >
+      {/* 头栏：任务名 + 阶段徽章 + 工作流按钮 + 用户 */}
+      <div className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
+        <MockGhostIconButton icon={ArrowLeftIcon} label="返回总览" />
+        <span className="text-sm font-semibold">智能手环 App 产品需求文档</span>
+        <Badge>评审中</Badge>
+        <span className="text-muted-foreground hidden text-xs lg:inline">
+          当前阶段由对方编辑，你仅可查看与评论
+        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-2.5 text-xs"
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            退回
+          </Button>
+          <Button
+            size="sm"
+            className="h-7 px-2.5 text-xs"
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            通过
+          </Button>
+          <MockAvatar name="王" className="size-6" />
+        </div>
+      </div>
+
+      {/* 三栏主体：窄屏仅保留中部文档 */}
+      <div className="grid md:grid-cols-[168px_minmax(0,1fr)_264px]">
+        {/* 左栏：大纲 */}
+        <div className="hidden border-r md:block">
+          <MockTabsBar tabs={['大纲', '查找']} active="大纲" />
+          <nav className="p-2">
+            {HERO_TOC.map((item) => (
+              <span
+                key={item.title}
+                className={cn(
+                  'block truncate px-0.5 py-1.5 text-xs font-medium',
+                  item.depth === 1 ? 'pl-2' : 'pl-5',
+                  item.active
+                    ? 'bg-accent text-foreground'
+                    : 'text-muted-foreground',
+                )}
+              >
+                {item.title}
+              </span>
+            ))}
+          </nav>
+        </div>
+
+        {/* 中栏：固定工具栏 + 文档正文 */}
+        <div className="min-w-0">
+          <div
+            aria-hidden="true"
+            className="flex h-10 min-h-10 items-center border-b px-2"
+          >
+            <MockToolbarButton icon={PanelLeftIcon} label="大纲面板" />
+            <MockSeparator />
+            <MockToolbarButton icon={FileUpIcon} label="导入" />
+            <MockToolbarButton icon={FileDownIcon} label="导出" />
+            <MockSeparator className="hidden sm:mx-1 sm:block" />
+            <MockToolbarButton
+              icon={Undo2Icon}
+              label="撤销"
+              className="hidden sm:flex"
+            />
+            <MockToolbarButton
+              icon={Redo2Icon}
+              label="重做"
+              className="hidden sm:flex"
+            />
+            <MockSeparator className="hidden sm:mx-1 sm:block" />
+            <MockToolbarButton
+              icon={BoldIcon}
+              label="加粗"
+              className="hidden sm:flex"
+            />
+            <MockToolbarButton
+              icon={ItalicIcon}
+              label="斜体"
+              className="hidden sm:flex"
+            />
+            <MockToolbarButton
+              icon={HighlighterIcon}
+              label="荧光笔"
+              className="hidden sm:flex"
+            />
+            <div className="grow" />
+            <MockToolbarButton icon={SparklesIcon} label="AI 指令" />
+            <MockSeparator />
+            <MockToolbarButton icon={BookOpenIcon} label="阅读模式" />
+          </div>
+          <div className="space-y-2.5 p-4 text-xs leading-relaxed md:p-5 md:text-sm">
+            <h3 className="text-sm font-bold md:text-base">1 产品概述</h3>
+            <p>
+              智能手环 App{' '}
+              <span className="text-muted-foreground line-through">
+                提供基础的健康数据记录功能
+              </span>
+              <span className="underline underline-offset-2">
+                面向注重健康的都市用户，提供全天候心率监测、睡眠分析与运动记录
+              </span>
+              ，与手机端数据实时同步。
+            </p>
+            <p className="text-muted-foreground">
+              目标版本{' '}
+              <code className="bg-muted rounded px-1 py-0.5 font-mono">
+                v2.3.0
+              </code>{' '}
+              计划于本季度末发布。
+              <span className="bg-foreground ml-0.5 inline-block h-3 w-0.5 animate-pulse align-middle" />
+            </p>
+          </div>
+        </div>
+
+        {/* 右栏：AI 对话 */}
+        <div className="hidden border-l md:block">
+          <MockTabsBar tabs={['AI 对话', '评论 & 修订']} active="AI 对话" />
+          <div className="flex flex-col gap-2.5 p-3">
+            {/* 上下文引用条 */}
+            <div className="text-muted-foreground bg-muted/40 relative rounded-md border px-2.5 py-2 text-xs leading-relaxed">
+              <QuoteIcon className="absolute top-1.5 right-1.5 size-3 opacity-40" />
+              1 产品概述：智能手环 App
+              提供基础的健康数据记录功能，与手机端数据实时同步……
+              <span className="bg-muted ml-1 rounded px-1 py-0.5 font-mono text-[10px]">
+                /section
+              </span>
+              <XIcon className="absolute right-1.5 bottom-1.5 size-3 opacity-40" />
+            </div>
+            {/* 用户指令 */}
+            <div className="bg-primary text-primary-foreground self-end rounded-lg px-2.5 py-1.5 text-xs">
+              /polish 润色这段介绍
+            </div>
+            {/* AI 流式回复 */}
+            <div className="text-muted-foreground bg-muted/40 self-start rounded-lg border px-2.5 py-1.5 text-xs leading-relaxed">
+              已生成 2
+              条修订：将「提供基础的健康数据记录功能」细化为具体能力描述，并修正语序。
+              <span className="bg-foreground ml-0.5 inline-block h-3 w-0.5 animate-pulse align-middle" />
+            </div>
+          </div>
+          {/* 输入栏 */}
+          <div className="flex items-center gap-2 border-t px-2.5 py-2">
+            <SquareSlashIcon className="text-muted-foreground size-4 shrink-0" />
+            <span className="text-muted-foreground grow truncate text-xs">
+              发送 AI 指令 . . .
+            </span>
+            <Badge variant="outline" className="px-1.5 text-[10px]">
+              修订
+            </Badge>
+            <Kbd className="text-[10px]">Tab</Kbd>
+            <span className="bg-primary text-primary-foreground flex size-5 shrink-0 items-center justify-center rounded-full">
+              <ArrowUpIcon className="size-3" />
+            </span>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+/* ─────────────────────── 场景：AI 指令菜单 ─────────────────────── */
+
+/** AI 指令面板分组（与工作台斜杠菜单一致：直接发送 + 三类场景共 12 条指令） */
+const AI_MENU_GROUPS: {
+  heading: string | null;
+  items: {
+    icon: LucideIcon;
+    label: string;
+    value: string;
+    active?: boolean;
+  }[];
+}[] = [
+  {
+    heading: null,
+    items: [{ icon: SendIcon, label: '直接发送', value: '/' }],
+  },
+  {
+    heading: '内容生成',
+    items: [
+      { icon: PencilSparklesIcon, label: '自动续写', value: '/continue' },
+      { icon: ListTreeIcon, label: '生成大纲', value: '/outline' },
+    ],
+  },
+  {
+    heading: '文档编辑',
+    items: [
+      {
+        icon: WandSparklesIcon,
+        label: '智能润色',
+        value: '/polish',
+        active: true,
+      },
+      { icon: SpellCheckIcon, label: '语法校对', value: '/fix' },
+      { icon: ListPlusIcon, label: '扩写内容', value: '/expand' },
+      { icon: ListMinusIcon, label: '精简内容', value: '/shorten' },
+      { icon: GraduationCapIcon, label: '书面用语', value: '/formal' },
+      { icon: FeatherIcon, label: '通俗用语', value: '/simplify' },
+    ],
+  },
+  {
+    heading: '对话 & 评论',
+    items: [
+      { icon: MessageSquareIcon, label: '智能评阅', value: '/review' },
+      { icon: LanguagesIcon, label: '双语互译', value: '/translate' },
+      { icon: BadgeQuestionMarkIcon, label: '深度解释', value: '/explain' },
+      { icon: SummaryIcon, label: '提炼总结', value: '/summarize' },
+    ],
+  },
+];
+
+/** 「AI 智能写作」场景：文档底衬 + 浮出斜杠指令面板 + 上下文与模式标签 */
+function AiCommandScene({ className }: { className?: string }) {
+  return (
+    <MockFrame
+      label="AI 指令菜单界面示意：选中文字后唤起斜杠指令面板，十二项指令按场景分组"
+      className={className}
+    >
+      <div className="relative">
+        {/* 文档底衬：一段带选区的正文 */}
+        <div className="text-muted-foreground/80 p-4 pb-28 text-xs leading-relaxed sm:text-sm">
+          <h3 className="text-foreground mb-2 text-sm font-bold sm:text-base">
+            1 产品概述
+          </h3>
+          <p>
+            智能手环 App{' '}
+            <span className="bg-primary/10 text-foreground rounded px-0.5">
+              提供基础的健康数据记录功能
+            </span>
+            ，与手机端数据实时同步。用户可在手机端查看完整的健康趋势报告，
+            并接收个性化的运动建议。
+          </p>
+        </div>
+
+        {/* 浮出的斜杠指令面板 */}
+        <div className="absolute inset-x-4 bottom-4 overflow-hidden rounded-lg border shadow-lg sm:inset-x-auto sm:left-6 sm:w-80">
+          <div className="bg-card text-muted-foreground flex h-9 items-center border-b px-3 text-sm">
+            发送 AI 指令 . . .
+          </div>
+          <div className="bg-card relative max-h-56 overflow-hidden">
+            {AI_MENU_GROUPS.map((group) => (
+              <div key={group.heading ?? '直接发送'}>
+                {group.heading && (
+                  <p className="text-muted-foreground/80 px-3 pt-2 pb-1 text-xs font-medium">
+                    {group.heading}
+                  </p>
+                )}
+                {group.items.map((item) => (
+                  <div
+                    key={item.value}
+                    className={cn(
+                      'flex items-center gap-2 px-3 py-1.5 text-sm',
+                      item.active && 'bg-accent text-foreground',
+                    )}
+                  >
+                    <item.icon
+                      aria-hidden="true"
+                      className="text-muted-foreground size-4 shrink-0"
+                    />
+                    <span>{item.label}</span>
+                    <div className="grow" />
+                    {item.value !== '/' && (
+                      <code className="text-muted-foreground font-mono text-xs font-medium">
+                        {item.value}
+                      </code>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+            {/* 底部渐隐，暗示列表可滚动 */}
+            <div
+              aria-hidden="true"
+              className="to-card pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-linear-to-b from-transparent"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 底栏：上下文范围与 AI 模式 */}
+      <div className="flex flex-wrap items-center gap-1.5 border-t px-4 py-3">
+        <span className="text-muted-foreground flex items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-xs">
+          /section 本节
+        </span>
+        <span className="text-muted-foreground flex items-center gap-1 rounded-md border px-1.5 py-0.5 font-mono text-xs">
+          /fulltext 全文
+        </span>
+        <div className="grow" />
+        {['对话', '评论', '修订', '自动'].map((mode) => (
+          <span
+            key={mode}
+            className={cn(
+              'rounded-full px-2 py-0.5 text-xs',
+              mode === '修订'
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground border',
+            )}
+          >
+            {mode}
+          </span>
+        ))}
+      </div>
+    </MockFrame>
+  );
+}
+
+/* ─────────────────────── 场景：富排版文档 ─────────────────────── */
+
+/** 静态行内标记小件：复刻正文中的各种 mark */
+function Mark({ kind, children }: { kind: string; children: string }) {
+  const cls: Record<string, string> = {
+    bold: 'font-bold',
+    italic: 'italic',
+    code: 'bg-muted rounded px-1 py-0.5 font-mono text-[0.85em]',
+    highlight: 'bg-highlight rounded px-0.5',
+    sup: 'align-super text-[0.7em]',
+  };
+  return <span className={cls[kind]}>{children}</span>;
+}
+
+/** 语法高亮的静态 python 代码块（单色调手工着色） */
+function CodeBlock() {
+  return (
+    <div className="overflow-hidden rounded-lg border">
+      <div className="bg-muted/50 text-muted-foreground flex items-center justify-between border-b px-3 py-1.5 font-mono text-xs">
+        <span>python</span>
+        <span className="bg-background flex gap-1 rounded-full border px-1.5 py-0.5">
+          <span className="size-1.5 rounded-full bg-current opacity-60" />
+          <span className="size-1.5 rounded-full bg-current opacity-30" />
+        </span>
+      </div>
+      <pre className="overflow-x-auto p-3 font-mono text-xs leading-relaxed">
+        <code>
+          <span className="font-semibold">def</span> energy(m, v=
+          <span className="italic">0</span>):{'\n'}
+          {'    '}
+          <span className="text-muted-foreground italic">
+            # 相对论能量：静止质量对应的能量
+          </span>
+          {'\n'}
+          {'    '}
+          <span className="font-semibold">return</span> m * c **{' '}
+          <span className="italic">2</span>
+          {'\n\n    '}
+          <span className="text-muted-foreground/70"># 代码块自动语法高亮</span>
+        </code>
+      </pre>
+    </div>
+  );
+}
+
+/** 「排版与格式」场景：固定工具栏 + 含表格、公式、代码块的文档片段 */
+function DocumentPageScene({ className }: { className?: string }) {
+  return (
+    <MockFrame
+      label="富文本文档界面示意：工具栏与含表格、公式、代码块的正文"
+      className={className}
+    >
+      {/* 固定工具栏（复刻真实按钮排布） */}
+      <div
+        aria-hidden="true"
+        className="flex h-10 min-h-10 items-center border-b px-2"
+      >
+        <MockToolbarButton icon={PanelLeftIcon} label="大纲面板" />
+        <MockSeparator />
+        <MockToolbarButton icon={FileUpIcon} label="导入" />
+        <MockToolbarButton icon={FileDownIcon} label="导出" />
+        <MockSeparator />
+        <MockToolbarButton icon={CaseSensitiveIcon} label="字体" />
+        <MockToolbarButton
+          icon={IndentIncreaseIcon}
+          label="首行缩进"
+          className="hidden sm:flex"
+        />
+        <MockSeparator className="hidden sm:mx-1 sm:block" />
+        <MockToolbarButton
+          icon={Undo2Icon}
+          label="撤销"
+          className="hidden sm:flex"
+        />
+        <MockToolbarButton
+          icon={Redo2Icon}
+          label="重做"
+          className="hidden sm:flex"
+        />
+        <MockSeparator className="hidden sm:mx-1 sm:block" />
+        <MockToolbarButton
+          icon={TableIcon}
+          label="表格"
+          className="hidden sm:flex"
+        />
+        <MockToolbarButton
+          icon={ImageIcon}
+          label="图片"
+          className="hidden sm:flex"
+        />
+        <MockToolbarButton
+          icon={PaperclipIcon}
+          label="附件"
+          className="hidden sm:flex"
+        />
+        <div className="grow" />
+        <MockToolbarButton icon={HighlighterIcon} label="荧光笔" />
+        <MockToolbarButton icon={MessageSquareIcon} label="评论" />
+        <MockToolbarButton icon={SparklesIcon} label="AI 指令" />
+        <MockSeparator />
+        <MockToolbarButton icon={BookOpenIcon} label="阅读模式" />
+      </div>
+
+      {/* 文档正文 */}
+      <div className="space-y-4 p-5 text-sm leading-relaxed md:p-6">
+        <div>
+          <h3 className="mb-2 text-base font-bold">2 实验与测量</h3>
+          <p>
+            本节记录关键参数的测量方法。其中激光器输出功率以{' '}
+            <Mark kind="code">P = 3.2 mW</Mark> 记录，测量结果以
+            <Mark kind="bold">加粗</Mark>标注，
+            <Mark kind="italic">斜体</Mark>表示推算值；关键结论以
+            <Mark kind="highlight">荧光标记</Mark>，单位上标写作 m·s
+            <Mark kind="sup">-1</Mark>。
+          </p>
+        </div>
+
+        {/* 合并表头的表格 */}
+        <div className="overflow-hidden rounded-lg border">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-muted/50 border-b">
+                <th className="px-3 py-2 text-left font-medium" rowSpan={2}>
+                  方案
+                </th>
+                <th className="px-3 py-2 text-center font-medium" colSpan={2}>
+                  相对误差
+                </th>
+              </tr>
+              <tr className="bg-muted/50 border-b">
+                <th className="px-3 py-2 text-center font-medium">第一次</th>
+                <th className="px-3 py-2 text-center font-medium">第二次</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b last:border-0">
+                <td className="px-3 py-2">基准方案</td>
+                <td className="px-3 py-2 text-center">2.4%</td>
+                <td className="px-3 py-2 text-center">2.1%</td>
+              </tr>
+              <tr className="border-b last:border-0">
+                <td className="px-3 py-2">改进方案</td>
+                <td className="px-3 py-2 text-center">0.9%</td>
+                <td className="px-3 py-2 text-center">0.8%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* 块级 LaTeX 公式 */}
+        <div className="relative rounded-lg border px-4 py-4">
+          <span className="text-muted-foreground/70 absolute top-2 right-2.5 font-mono text-[10px]">
+            $$…$$
+          </span>
+          <p className="text-center font-serif text-lg italic">
+            E = mc<sup>2</sup>
+          </p>
+        </div>
+
+        <CodeBlock />
+      </div>
+    </MockFrame>
+  );
+}
+
+/* ─────────────────────── 场景：评论与修订 ─────────────────────── */
+
+/** 单条评论行：头像 + 姓名 + 日期，正文在竖线之下 */
+function CommentRow({
+  name,
+  date,
+  children,
+  thread = false,
+}: {
+  name: string;
+  date: string;
+  children: React.ReactNode;
+  thread?: boolean;
+}) {
+  return (
+    <div className={cn('relative', thread && 'pl-6.5')}>
+      {thread && (
+        <span className="bg-muted absolute top-0 left-3 h-full w-0.5" />
+      )}
+      <div className="flex items-center">
+        <MockAvatar name={name} />
+        <h4 className="mx-2 text-sm leading-none font-semibold">{name}</h4>
+        <div className="text-muted-foreground/80 text-xs leading-none">
+          {date}
+        </div>
+      </div>
+      <div className="my-1 pl-6.5 text-sm">{children}</div>
+    </div>
+  );
+}
+
+/**
+ * 「协作与评审」场景：左侧文档摘录（评论选区 + 行内修订 + 评论数角标），
+ * 右侧复刻「评论 & 修订」面板：多轮讨论串卡片 + AI 修订卡片。
+ * 单色调纪律：删除项用删除线、新增项用下划线表达，不引入红蓝 diff 色。
+ */
+function ReviewScene({ className }: { className?: string }) {
+  return (
+    <MockFrame
+      label="评论讨论串与修订面板界面示意：讨论串可回复与解决，AI 修订可逐条接受或拒绝"
+      className={className}
+    >
+      <div className="grid sm:grid-cols-2">
+        {/* 左：文档摘录 */}
+        <div className="border-b sm:border-r sm:border-b-0">
+          <div className="relative space-y-3 p-5 text-sm leading-relaxed">
+            <h3 className="text-base font-bold">3 结果与讨论</h3>
+            <div className="flex items-start gap-1">
+              <p>
+                实验表明，
+                <span className="border-muted-foreground/60 border-b-2 border-dotted">
+                  改进方案在低信噪比场景下的测量稳定性明显优于基准方案
+                </span>
+                ，两次重复实验的相对误差均低于 1%。
+              </p>
+              {/* 行内评论数角标 */}
+              <span
+                aria-hidden="true"
+                className="bg-muted text-muted-foreground mt-0.5 flex h-6 shrink-0 items-center gap-1 rounded-md px-1.5 text-xs font-semibold"
+              >
+                <MessagesSquareIcon className="size-3.5" />2
+              </span>
+            </div>
+            <p>
+              这一结论
+              <span className="text-muted-foreground line-through">
+                基本上可以说是
+              </span>
+              <span className="underline underline-offset-2">充分</span>
+              验证了第 1 节提出的假设，与相关文献的报道一致。
+            </p>
+          </div>
+        </div>
+
+        {/* 右：「评论 & 修订」面板 */}
+        <div>
+          <MockTabsBar tabs={['AI 对话', '评论 & 修订']} active="评论 & 修订" />
+
+          {/* 卡片一：评论讨论串 */}
+          <div className="relative p-4">
+            <div className="flex items-center">
+              <MockAvatar name="王" />
+              <h4 className="mx-2 text-sm leading-none font-semibold">
+                王评审
+              </h4>
+              <div className="text-muted-foreground/80 text-xs leading-none">
+                10-18
+              </div>
+              {/* 解决按钮 */}
+              <span
+                aria-hidden="true"
+                title="标记为已解决"
+                className="text-muted-foreground absolute top-4 right-4 flex size-6 items-center justify-center"
+              >
+                <CheckIcon className="size-4" />
+              </span>
+            </div>
+            {/* 引用的原文 */}
+            <div className="relative mt-1 flex pl-8 text-sm">
+              <span className="bg-muted absolute top-1.25 left-3 h-full w-0.5" />
+              <span className="bg-highlight my-px w-0.5 shrink-0" />
+              <span className="text-muted-foreground ml-2">
+                改进方案在低信噪比场景下的测量稳定性明显优于基准方案
+              </span>
+            </div>
+            <div className="mt-1">
+              <CommentRow name="王" date="10-18">
+                「明显优于」建议给出量化对比，或引用表 2 的数据支撑。
+              </CommentRow>
+              <CommentRow name="李" date="10-18" thread>
+                已在正文补充两次实验的误差对比，谢谢指出。
+              </CommentRow>
+            </div>
+            {/* 回复输入 */}
+            <div className="mt-2 flex items-center gap-2">
+              <MockAvatar name="王" />
+              <div className="bg-muted/50 text-muted-foreground flex h-8 flex-1 items-center justify-between rounded-md border px-3 text-sm">
+                添加评论 . . .
+                <span className="bg-primary/10 text-primary flex size-5 items-center justify-center rounded-full">
+                  <ArrowUpIcon className="size-3" />
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-muted h-px w-full" />
+
+          {/* 卡片二：AI 修订 */}
+          <div className="relative p-4">
+            <div className="flex items-center">
+              <MockAvatar name="李" />
+              <h4 className="mx-2 text-sm leading-none font-semibold">
+                李作者
+              </h4>
+              <span title="由 AI 生成">
+                <SparklesIcon
+                  aria-hidden="true"
+                  className="text-primary mr-1 size-3"
+                />
+              </span>
+              <div className="text-muted-foreground/80 text-xs leading-none">
+                10-19
+              </div>
+            </div>
+            {/* 接受 / 拒绝 */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <span
+                aria-hidden="true"
+                title="接受"
+                className="text-muted-foreground flex size-6 items-center justify-center"
+              >
+                <CheckIcon className="size-4" />
+              </span>
+              <span
+                aria-hidden="true"
+                title="拒绝"
+                className="text-muted-foreground flex size-6 items-center justify-center"
+              >
+                <XIcon className="size-4" />
+              </span>
+            </div>
+            <div className="mt-2 mb-2 flex flex-col gap-2 pl-8">
+              <div className="text-muted-foreground flex items-start gap-2 text-sm">
+                <MinusIcon className="my-0.5 size-4 shrink-0" />
+                <span className="line-through">基本上可以说是</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm">
+                <PlusIcon className="my-0.5 size-4 shrink-0" />
+                <span className="underline underline-offset-2">充分</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+/* ─────────────────────── 场景：任务总览 ─────────────────────── */
+
+/** 任务总览侧栏（复刻仪表盘侧边栏的任务分组） */
+const DASHBOARD_NAV: {
+  icon: LucideIcon;
+  label: string;
+  active?: boolean;
+}[] = [
+  { icon: LayoutDashboardIcon, label: '总览' },
+  { icon: CirclePlusIcon, label: '快速创建' },
+  { icon: PencilIcon, label: '我编写的', active: true },
+  { icon: CheckCheckIcon, label: '我评审的' },
+];
+
+/** 任务表格行：覆盖全部四个流转阶段 */
+const DASHBOARD_TASKS: {
+  name: string;
+  stage: string;
+  stageVariant: 'default' | 'secondary' | 'outline';
+  created: string;
+  updated: string;
+  action: string;
+}[] = [
+  {
+    name: 'Q4 市场推广复盘',
+    stage: '撰写中',
+    stageVariant: 'secondary',
+    created: '10-15',
+    updated: '10-19',
+    action: '进入编写',
+  },
+  {
+    name: '智能手环 App 产品需求文档',
+    stage: '评审中',
+    stageVariant: 'default',
+    created: '10-12',
+    updated: '10-18',
+    action: '查看任务',
+  },
+  {
+    name: '数据平台接口规范',
+    stage: '修订中',
+    stageVariant: 'outline',
+    created: '09-28',
+    updated: '10-17',
+    action: '进入修改',
+  },
+  {
+    name: '新员工入职指南',
+    stage: '已定稿',
+    stageVariant: 'outline',
+    created: '08-30',
+    updated: '09-21',
+    action: '查看任务',
+  },
+];
+
+/** 「任务总览」场景：侧栏角色分组 + 任务表格（阶段徽章与进入操作） */
+function DashboardScene({ className }: { className?: string }) {
+  return (
+    <MockFrame
+      label="任务总览界面示意：按「我编写的 / 我评审的」分组的任务表格，含四阶段徽章与进入操作"
+      className={className}
+    >
+      <div className="grid sm:grid-cols-[148px_minmax(0,1fr)]">
+        {/* 迷你侧栏 */}
+        <div
+          aria-hidden="true"
+          className="bg-muted/30 hidden border-r p-2 sm:block"
+        >
+          {DASHBOARD_NAV.map((item) => (
+            <span
+              key={item.label}
+              className={cn(
+                'flex items-center gap-2 rounded-md px-2 py-1.5 text-xs',
+                item.active
+                  ? 'bg-accent text-foreground font-medium'
+                  : 'text-muted-foreground',
+              )}
+            >
+              <item.icon className="size-4 shrink-0" />
+              {item.label}
+            </span>
+          ))}
+        </div>
+
+        {/* 任务表格 */}
+        <div className="min-w-0 p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium">我编写的</h3>
+            <Button
+              size="sm"
+              className="h-7 px-2.5 text-xs"
+              tabIndex={-1}
+              aria-hidden="true"
+            >
+              <PlusIcon className="size-3.5" />
+              新建任务
+            </Button>
+          </div>
+          <div className="mt-3 overflow-hidden rounded-lg border">
+            <Table className="text-xs">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>名称</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead className="hidden lg:table-cell">
+                    创建时间
+                  </TableHead>
+                  <TableHead className="hidden lg:table-cell">
+                    更新时间
+                  </TableHead>
+                  <TableHead className="w-20" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {DASHBOARD_TASKS.map((task) => (
+                  <TableRow key={task.name}>
+                    <TableCell className="max-w-40 truncate font-medium sm:max-w-none">
+                      {task.name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={task.stageVariant}>{task.stage}</Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground hidden lg:table-cell">
+                      {task.created}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground hidden lg:table-cell">
+                      {task.updated}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 px-2 text-xs"
+                          tabIndex={-1}
+                          aria-hidden="true"
+                        >
+                          {task.action}
+                        </Button>
+                        <MockGhostIconButton
+                          icon={EllipsisVerticalIcon}
+                          label="更多操作"
+                          className="size-6"
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+/* ─────────────────────── 场景：知识库 ─────────────────────── */
+
+/** 知识库侧栏条目（对齐仪表盘侧边栏的「模板 & 指南 / 知识库」分组） */
+const KNOWLEDGE_NAV: {
+  group: string;
+  items: { icon: LucideIcon; label: string; active?: boolean }[];
+}[] = [
+  {
+    group: '模板 & 指南',
+    items: [
+      { icon: FormIcon, label: '文档模板', active: true },
+      { icon: BookOpenIcon, label: '写作指南' },
+    ],
+  },
+  {
+    group: '知识库',
+    items: [
+      { icon: ScaleIcon, label: '标准规范' },
+      { icon: PaletteIcon, label: '风格参考' },
+      { icon: DatabaseIcon, label: '事实来源' },
+    ],
+  },
+];
+
+/** 指南 / 规范条目行 */
+const KNOWLEDGE_ENTRIES: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}[] = [
+  {
+    icon: BookOpenIcon,
+    title: '写作指南',
+    description: '术语表、数字用法与图表规范',
+  },
+  {
+    icon: ScaleIcon,
+    title: '标准规范',
+    description: 'GB/T 7714 参考文献著录规则',
+  },
+  {
+    icon: PaletteIcon,
+    title: '风格参考',
+    description: '优秀技术文档范例合集',
+  },
+  {
+    icon: DatabaseIcon,
+    title: '事实来源',
+    description: '关键数据出处与版本记录',
+  },
+];
+
+/** 模板卡片：HTML 迷你文档缩略（标题条 + 灰色正文行） */
+function TemplateThumb({ title, tag }: { title: string; tag: string }) {
+  return (
+    <div className="rounded-lg border p-2.5">
+      <div className="bg-card space-y-1.5 rounded-md border p-2.5">
+        <span className="bg-foreground/70 block h-1.5 w-2/3 rounded-sm" />
+        <span className="bg-muted block h-1 w-full rounded-sm" />
+        <span className="bg-muted block h-1 w-5/6 rounded-sm" />
+        <span className="bg-muted block h-1 w-2/3 rounded-sm" />
+      </div>
+      <p className="mt-2 text-xs font-medium">{title}</p>
+      <p className="text-muted-foreground mt-0.5 text-[10px]">{tag}</p>
+    </div>
+  );
+}
+
+/**
+ * 「知识库 & 模板」愿景场景：产品侧该模块尚未实现，此处按侧边栏
+ * 既有入口大致设计一个界面预览（模板卡片 + 指南规范列表）。
+ */
+function KnowledgeLibraryScene({ className }: { className?: string }) {
+  return (
+    <MockFrame
+      label="知识库与模板库界面预览：左侧模板与知识分组，右侧模板卡片与指南规范列表"
+      className={className}
+    >
+      <div className="grid sm:grid-cols-[168px_minmax(0,1fr)]">
+        {/* 迷你侧栏：模板 & 指南 / 知识库 分组 */}
+        <div
+          aria-hidden="true"
+          className="bg-muted/30 hidden border-r p-2 sm:block"
+        >
+          {KNOWLEDGE_NAV.map((group) => (
+            <div key={group.group} className="mb-3">
+              <p className="text-muted-foreground/70 px-2 pt-1 pb-1 text-[10px] font-medium">
+                {group.group}
+              </p>
+              {group.items.map((item) => (
+                <span
+                  key={item.label}
+                  className={cn(
+                    'flex items-center gap-2 rounded-md px-2 py-1.5 text-xs',
+                    item.active
+                      ? 'bg-accent text-foreground font-medium'
+                      : 'text-muted-foreground',
+                  )}
+                >
+                  <item.icon className="size-4 shrink-0" />
+                  {item.label}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* 内容区：模板卡片 + 指南规范列表 */}
+        <div className="min-w-0 p-4 md:p-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <h3 className="text-sm font-medium">文档模板</h3>
+              <span className="text-muted-foreground text-xs">12 个模板</span>
+            </div>
+            <Button
+              size="sm"
+              className="h-7 px-2.5 text-xs"
+              tabIndex={-1}
+              aria-hidden="true"
+            >
+              <PlusIcon className="size-3.5" />
+              从模板新建
+            </Button>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-2.5 md:grid-cols-4">
+            <TemplateThumb title="技术报告" tag="IEEE 双栏" />
+            <TemplateThumb title="会议纪要" tag="结论先行" />
+            <TemplateThumb title="项目提案" tag="预算附表" />
+            <TemplateThumb title="实验记录" tag="数据表格" />
+          </div>
+
+          <div className="mt-5 divide-y rounded-lg border">
+            {KNOWLEDGE_ENTRIES.map((entry) => (
+              <div
+                key={entry.title}
+                className="flex items-center gap-2.5 px-3 py-2.5"
+              >
+                <entry.icon
+                  aria-hidden="true"
+                  className="text-muted-foreground size-4 shrink-0"
+                />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium">{entry.title}</p>
+                  <p className="text-muted-foreground truncate text-[10px]">
+                    {entry.description}
+                  </p>
+                </div>
+                <div className="grow" />
+                <ChevronRightIcon
+                  aria-hidden="true"
+                  className="text-muted-foreground/60 size-4 shrink-0"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+/* ───────────────────────── 页面通用小件 ───────────────────────── */
 
 /** 区块标题：眉标 Badge + H2 + 描述（左对齐） */
 function SectionHeading({
@@ -194,6 +1304,8 @@ function BrandMark() {
   );
 }
 
+/* ─────────────────────────── 页面区块 ─────────────────────────── */
+
 function LandingNav() {
   return (
     <header className="bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
@@ -271,15 +1383,7 @@ function LandingHero() {
           </div>
         </div>
         <div className="mt-12 md:mt-16">
-          {/* 生图提示词见 src/assets/img/index/hero-main.png.txt；
-              出图存为同目录 hero-main.png 即自动替换 */}
-          <ImageSlot
-            slot="hero-main"
-            ratio="aspect-[16/9]"
-            alt="ProDoc Copilot 界面示意：AI 在文档中以修订形式给出建议"
-            caption="主视觉：AI 协作写作场景（文档 + 修订建议 + AI 面板）"
-            className="shadow-2xl shadow-black/10"
-          />
+          <HeroWorkbenchScene />
         </div>
       </div>
     </section>
@@ -422,14 +1526,7 @@ function FeatureAiWriting() {
               ，唤起 AI 面板，直接提问，或让它解释、翻译选中的段落。
             </p>
           </div>
-          {/* 生图提示词见 src/assets/img/index/feature-ai.png.txt；
-              出图存为同目录 feature-ai.png 即自动替换 */}
-          <ImageSlot
-            slot="feature-ai"
-            ratio="aspect-[4/3]"
-            alt="AI 指令菜单与修订标注的界面特写"
-            caption="功能图：斜杠指令菜单与修订标注特写"
-          />
+          <AiCommandScene />
         </div>
       </div>
     </section>
@@ -491,14 +1588,7 @@ function FeatureTypography() {
         />
         <div className="mt-12 grid items-center gap-10 md:mt-16 md:grid-cols-2 md:gap-16">
           <div className="md:order-first">
-            {/* 生图提示词见 src/assets/img/index/feature-typography.png.txt；
-                出图存为同目录 feature-typography.png 即自动替换 */}
-            <ImageSlot
-              slot="feature-typography"
-              ratio="aspect-[4/3]"
-              alt="包含公式、代码块与表格的富文本文档示意"
-              caption="功能图：富排版文档拼贴（公式、代码块、表格）"
-            />
+            <DocumentPageScene />
           </div>
           <div>
             <FeatureChecklist items={TYPOGRAPHY_ITEMS} />
@@ -558,26 +1648,22 @@ function FeatureCollaboration() {
           <div>
             <FeatureChecklist items={COLLABORATION_ITEMS} />
           </div>
-          {/* 生图提示词见 src/assets/img/index/feature-collaboration.png.txt；
-              出图存为同目录 feature-collaboration.png 即自动替换 */}
-          <ImageSlot
-            slot="feature-collaboration"
-            ratio="aspect-[4/3]"
-            alt="评论讨论串与修订面板的界面特写"
-            caption="功能图：评论讨论串与修订面板特写"
-          />
+          <ReviewScene />
         </div>
       </div>
     </section>
   );
 }
 
-const WORKFLOW_STEPS: {
+/** 任务工作流：真实的四个流转阶段（徽章样式与产品 STAGE_META 一致） */
+const WORKFLOW_STAGES: {
   step: string;
   icon: LucideIcon;
   badge: string;
   badgeVariant: 'default' | 'secondary' | 'outline';
   title: string;
+  actor: string;
+  actions: string[];
   description: string;
 }[] = [
   {
@@ -585,9 +1671,11 @@ const WORKFLOW_STEPS: {
     icon: PencilIcon,
     badge: '撰写中',
     badgeVariant: 'secondary',
-    title: '编写',
+    title: '撰写',
+    actor: '创建者 · 可编辑',
+    actions: ['提交评审'],
     description:
-      '创建者执笔写作，AI 续写、润色、查资料全程相陪；完成后一键「提交评审」。',
+      '创建者执笔写作，AI 续写、润色、查资料全程相陪；完成后一键「提交评审」并指定评审人。',
   },
   {
     step: '02',
@@ -595,16 +1683,32 @@ const WORKFLOW_STEPS: {
     badge: '评审中',
     badgeVariant: 'default',
     title: '评审',
+    actor: '评审者 · 可编辑',
+    actions: ['退回', '通过'],
     description:
-      '评审者批注评论、直接修改文字；不满意可「退回」，作者「重新提交」，往返皆有记录。',
+      '评审者批注评论、直接修改文字；不满意可「退回」，作者修改后「重新提交」，往返皆有记录。',
   },
   {
     step: '03',
+    icon: PenLineIcon,
+    badge: '修订中',
+    badgeVariant: 'outline',
+    title: '修订',
+    actor: '创建者 · 可编辑',
+    actions: ['重新提交'],
+    description:
+      '按评审意见逐条修改，AI 修订与讨论全程留痕，改到双方满意为止。',
+  },
+  {
+    step: '04',
     icon: StampIcon,
     badge: '已定稿',
     badgeVariant: 'outline',
     title: '定稿',
-    description: '评审「通过」后任务定稿，文档转为只读，内容与讨论完整留存。',
+    actor: '所有人 · 只读',
+    actions: [],
+    description:
+      '评审「通过」后任务定稿，文档转为只读，内容与讨论完整留存、随时回溯。',
   },
 ];
 
@@ -619,25 +1723,52 @@ function WorkflowSection() {
         <SectionHeading
           titleId="workflow-title"
           eyebrow="任务工作流"
-          title="编写 → 评审 → 定稿，一气呵成"
-          description="每份文档都是一个任务：撰写者执笔、评审者把关，往返修订有迹可循，定稿后文档转为只读、安心归档。"
+          title="撰写 → 评审 → 修订 → 定稿，一气呵成"
+          description="每份文档都是一个任务：四个阶段界定了谁在执笔、谁在把关——非本阶段的人只可查看与评论，改动永远有迹可循；定稿后文档转为只读、安心归档。"
         />
-        <div className="mt-12 grid gap-4 md:mt-16 md:grid-cols-3">
-          {WORKFLOW_STEPS.map((entry) => (
-            <Card key={entry.step} className="gap-4 px-6">
+        <div className="mt-12 grid gap-4 md:mt-16 md:grid-cols-2 xl:grid-cols-4">
+          {WORKFLOW_STAGES.map((stage) => (
+            <Card key={stage.step} className="gap-4 px-6">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground font-mono text-sm font-medium">
-                  {entry.step}
+                  {stage.step}
                 </span>
-                <Badge variant={entry.badgeVariant}>{entry.badge}</Badge>
+                <Badge variant={stage.badgeVariant}>{stage.badge}</Badge>
               </div>
-              <entry.icon aria-hidden="true" className="text-primary size-6" />
-              <h3 className="text-lg font-semibold">{entry.title}</h3>
+              <stage.icon aria-hidden="true" className="text-primary size-6" />
+              <h3 className="text-lg font-semibold">{stage.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {entry.description}
+                {stage.description}
               </p>
+              <div className="mt-auto flex items-center gap-1.5 pt-1">
+                <span className="text-muted-foreground/80 text-xs">
+                  {stage.actor}
+                </span>
+                <div className="grow" />
+                {stage.actions.length > 0 ? (
+                  stage.actions.map((action) => (
+                    <Button
+                      key={action}
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-2 text-xs"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    >
+                      {action}
+                    </Button>
+                  ))
+                ) : (
+                  <Badge variant="outline" className="px-1.5 text-[10px]">
+                    只读
+                  </Badge>
+                )}
+              </div>
             </Card>
           ))}
+        </div>
+        <div className="mt-10 md:mt-12">
+          <DashboardScene />
         </div>
       </div>
     </section>
@@ -695,15 +1826,8 @@ function KnowledgeSection() {
           title="好写法，值得沉淀下来"
           description="把团队的模板、指南与规范放进 ProDoc：新文档从模板起笔，写法向指南看齐，标准规范、风格参考与事实来源随手可查。"
         />
-        {/* 生图提示词见 src/assets/img/index/knowledge-wide.png.txt；
-            出图存为同目录 knowledge-wide.png 即自动替换 */}
         <div className="mt-10 md:mt-12">
-          <ImageSlot
-            slot="knowledge-wide"
-            ratio="aspect-[21/9]"
-            alt="知识库与模板库界面全景示意"
-            caption="功能图：知识库与模板库全景"
-          />
+          <KnowledgeLibraryScene />
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {KNOWLEDGE_TILES.map((tile) => (
@@ -809,20 +1933,20 @@ function LandingFooter() {
             <h3 className="text-sm font-semibold">资源</h3>
             <ul className="text-muted-foreground mt-4 space-y-3 text-sm">
               <li>
-                <Link
+                <a
                   className="hover:text-foreground transition-colors"
-                  to="/dashboard"
+                  href="#knowledge"
                 >
                   文档模板
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
+                <a
                   className="hover:text-foreground transition-colors"
-                  to="/dashboard"
+                  href="#knowledge"
                 >
                   写作指南
-                </Link>
+                </a>
               </li>
               <li>
                 <a
