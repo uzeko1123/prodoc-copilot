@@ -11,18 +11,18 @@ import {
 } from '@/api/gen/zod/main/main';
 import { Button } from '@/components/shadcn/ui/button';
 import {
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/shadcn/ui/dialog';
-import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from '@/components/shadcn/ui/field';
 import { Input } from '@/components/shadcn/ui/input';
+import {
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
 import { queryClient } from '@/lib/query-client';
@@ -32,13 +32,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-export function TaskCreateForm({
-  onSuccess,
-  onCancel,
-}: {
-  onSuccess: () => void;
-  onCancel: () => void;
-}) {
+export function TaskCreateForm({ onClose }: { onClose: () => void }) {
   const { control, formState, handleSubmit, setError } = useForm<
     z.infer<typeof MainTasksCreateBody>
   >({ resolver: zodResolver(MainTasksCreateBody) });
@@ -49,7 +43,7 @@ export function TaskCreateForm({
         void queryClient.invalidateQueries({
           queryKey: getMainTasksListQueryKey(),
         });
-        onSuccess();
+        onClose();
         void navigate({
           to: '/workbench/$taskId',
           params: { taskId: data.id },
@@ -102,7 +96,7 @@ export function TaskCreateForm({
           type="button"
           variant="outline"
           disabled={isPending}
-          onClick={onCancel}
+          onClick={onClose}
         >
           取消
         </Button>
@@ -116,12 +110,10 @@ export function TaskCreateForm({
 
 export function TaskUpdateForm({
   task,
-  onSuccess,
-  onCancel,
+  onClose,
 }: {
   task: Task;
-  onSuccess: () => void;
-  onCancel: () => void;
+  onClose: () => void;
 }) {
   const { control, formState, handleSubmit, setError } = useForm<
     z.infer<typeof MainTasksPartialUpdateBody>
@@ -140,7 +132,7 @@ export function TaskUpdateForm({
           queryKey: getMainTasksRetrieveQueryKey(task.id),
         });
         toast.success('文档信息已保存');
-        onSuccess();
+        onClose();
       },
       onError: (error) => {
         if (setFormErrors(error, MainTasksPartialUpdateBody, setError)) return;
@@ -187,7 +179,7 @@ export function TaskUpdateForm({
           type="button"
           variant="outline"
           disabled={isPending}
-          onClick={onCancel}
+          onClick={onClose}
         >
           取消
         </Button>

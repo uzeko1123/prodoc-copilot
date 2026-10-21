@@ -6,11 +6,6 @@ import type { UserDetails } from '@/api/gen/models';
 import { AuthUserPartialUpdateBody } from '@/api/gen/zod/auth/auth';
 import { Button } from '@/components/shadcn/ui/button';
 import {
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/shadcn/ui/dialog';
-import {
   Field,
   FieldError,
   FieldGroup,
@@ -18,6 +13,11 @@ import {
 } from '@/components/shadcn/ui/field';
 import { Input } from '@/components/shadcn/ui/input';
 import { Spinner } from '@/components/shadcn/ui/spinner';
+import {
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useUploadFile } from '@/hooks/use-upload-file';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';

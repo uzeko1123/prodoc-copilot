@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/shadcn/ui/dialog';
+} from '@/components/ui/dialog';
 import { Link } from '@tanstack/react-router';
 import * as React from 'react';
 import { UserAvatar } from './user-avatar';

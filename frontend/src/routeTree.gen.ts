@@ -20,8 +20,8 @@ import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './fea
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
 import { Route as featuresDashboardPagesIndexRouteImport } from './features/dashboard/pages/index'
-import { Route as featuresDashboardPagesTaskEditRouteImport } from './features/dashboard/pages/task-edit'
-import { Route as featuresDashboardPagesTaskReviewRouteImport } from './features/dashboard/pages/task-review'
+import { Route as featuresTaskPagesTaskEditRouteImport } from './features/task/pages/task-edit'
+import { Route as featuresTaskPagesTaskReviewRouteImport } from './features/task/pages/task-review'
 import { Route as appWorkbenchRouteImport } from './app/workbench'
 
 const appIndexRoute = appIndexRouteImport.update({
@@ -85,14 +85,14 @@ const featuresDashboardPagesIndexRoute =
     path: '/',
     getParentRoute: () => appDashboardRoute,
   } as any)
-const featuresDashboardPagesTaskEditRoute =
-  featuresDashboardPagesTaskEditRouteImport.update({
+const featuresTaskPagesTaskEditRoute =
+  featuresTaskPagesTaskEditRouteImport.update({
     id: '/task/edit',
     path: '/task/edit',
     getParentRoute: () => appDashboardRoute,
   } as any)
-const featuresDashboardPagesTaskReviewRoute =
-  featuresDashboardPagesTaskReviewRouteImport.update({
+const featuresTaskPagesTaskReviewRoute =
+  featuresTaskPagesTaskReviewRouteImport.update({
     id: '/task/review',
     path: '/task/review',
     getParentRoute: () => appDashboardRoute,
@@ -116,8 +116,8 @@ export interface FileRoutesByFullPath {
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
-  '/dashboard/task/edit': typeof featuresDashboardPagesTaskEditRoute
-  '/dashboard/task/review': typeof featuresDashboardPagesTaskReviewRoute
+  '/dashboard/task/edit': typeof featuresTaskPagesTaskEditRoute
+  '/dashboard/task/review': typeof featuresTaskPagesTaskReviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof appIndexRoute
@@ -131,8 +131,8 @@ export interface FileRoutesByTo {
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/dashboard': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId': typeof appWorkbenchRoute
-  '/dashboard/task/edit': typeof featuresDashboardPagesTaskEditRoute
-  '/dashboard/task/review': typeof featuresDashboardPagesTaskReviewRoute
+  '/dashboard/task/edit': typeof featuresTaskPagesTaskEditRoute
+  '/dashboard/task/review': typeof featuresTaskPagesTaskReviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -148,8 +148,8 @@ export interface FileRoutesById {
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
-  '/dashboard/task/edit': typeof featuresDashboardPagesTaskEditRoute
-  '/dashboard/task/review': typeof featuresDashboardPagesTaskReviewRoute
+  '/dashboard/task/edit': typeof featuresTaskPagesTaskEditRoute
+  '/dashboard/task/review': typeof featuresTaskPagesTaskReviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -298,14 +298,14 @@ declare module '@tanstack/react-router' {
       id: '/dashboard/task/edit'
       path: '/task/edit'
       fullPath: '/dashboard/task/edit'
-      preLoaderRoute: typeof featuresDashboardPagesTaskEditRouteImport
+      preLoaderRoute: typeof featuresTaskPagesTaskEditRouteImport
       parentRoute: typeof appDashboardRoute
     }
     '/dashboard/task/review': {
       id: '/dashboard/task/review'
       path: '/task/review'
       fullPath: '/dashboard/task/review'
-      preLoaderRoute: typeof featuresDashboardPagesTaskReviewRouteImport
+      preLoaderRoute: typeof featuresTaskPagesTaskReviewRouteImport
       parentRoute: typeof appDashboardRoute
     }
     '/workbench/$taskId/': {
@@ -320,14 +320,14 @@ declare module '@tanstack/react-router' {
 
 interface appDashboardRouteChildren {
   featuresDashboardPagesIndexRoute: typeof featuresDashboardPagesIndexRoute
-  featuresDashboardPagesTaskEditRoute: typeof featuresDashboardPagesTaskEditRoute
-  featuresDashboardPagesTaskReviewRoute: typeof featuresDashboardPagesTaskReviewRoute
+  featuresTaskPagesTaskEditRoute: typeof featuresTaskPagesTaskEditRoute
+  featuresTaskPagesTaskReviewRoute: typeof featuresTaskPagesTaskReviewRoute
 }
 
 const appDashboardRouteChildren: appDashboardRouteChildren = {
   featuresDashboardPagesIndexRoute: featuresDashboardPagesIndexRoute,
-  featuresDashboardPagesTaskEditRoute: featuresDashboardPagesTaskEditRoute,
-  featuresDashboardPagesTaskReviewRoute: featuresDashboardPagesTaskReviewRoute,
+  featuresTaskPagesTaskEditRoute: featuresTaskPagesTaskEditRoute,
+  featuresTaskPagesTaskReviewRoute: featuresTaskPagesTaskReviewRoute,
 }
 
 const appDashboardRouteWithChildren = appDashboardRoute._addFileChildren(

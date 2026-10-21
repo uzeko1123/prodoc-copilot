@@ -20,15 +20,15 @@ import {
 } from '@/components/shadcn/ui/tabs';
 import { UserMenu } from '@/features/auth/components/user-menu';
 import { Chat } from '@/features/chat/components/chat';
-import { SettingsDialog } from '@/features/chat/components/editor/settings-dialog';
 import { Comment } from '@/features/comment/components/comment';
-import { TaskUpdateDialog } from '@/features/dashboard/components/task-dialog';
-import type { Role } from '@/features/dashboard/components/task-list';
-import { TaskStageBadge } from '@/features/dashboard/components/task-stage-badge';
 import { Editor } from '@/features/editor/components/editor';
 import { Find } from '@/features/editor/components/find';
 import { Plate } from '@/features/editor/components/plate';
 import { ToC } from '@/features/editor/components/toc';
+import { TaskUpdateDialog } from '@/features/task/components/task-dialog';
+import type { Role } from '@/features/task/components/task-list';
+import { TaskStageBadge } from '@/features/task/components/task-stage-badge';
+import { TaskWorkflowDialog } from '@/features/task/components/task-workflow';
 import { queryClient } from '@/lib/query-client';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { noop } from '@tanstack/react-query';
@@ -127,6 +127,7 @@ function Workbench() {
     (state) => state.setActiveRightPanelTab,
   );
 
+  const [taskWorkflowDialogOpen, setTaskWorkflowDialogOpen] = useState(false);
   const [taskUpdateDialogOpen, setTaskUpdateDialogOpen] = useState(false);
 
   const _hideHeader = false;
@@ -152,10 +153,15 @@ function Workbench() {
             </Button>
             <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
             <TaskStageBadge role={role} stage={task.stage} />
-            <Button className="ml-auto">
-              <WorkflowIcon />
-              提交流程
-            </Button>
+            {!readonly && (
+              <Button
+                className="ml-auto"
+                onClick={() => setTaskWorkflowDialogOpen(true)}
+              >
+                <WorkflowIcon />
+                提交流程
+              </Button>
+            )}
             <Button
               variant="outline"
               onClick={() => setTaskUpdateDialogOpen(true)}
@@ -279,7 +285,11 @@ function Workbench() {
           )}
         </ResizablePanelGroup>
 
-        <SettingsDialog />
+        <TaskWorkflowDialog
+          task={task}
+          open={taskWorkflowDialogOpen}
+          onOpenChange={setTaskWorkflowDialogOpen}
+        />
 
         <TaskUpdateDialog
           task={task}

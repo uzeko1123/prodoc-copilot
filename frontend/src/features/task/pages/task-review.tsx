@@ -1,5 +1,5 @@
 import { ErrorBoundary } from '@/components/error-boundary';
-import { TaskList } from '@/features/dashboard/components/task-list';
+import { TaskList } from '@/features/task/components/task-list';
 import { createFileRoute } from '@tanstack/react-router';
 
 function TaskReviewPage() {

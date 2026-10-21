@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
 } from '@/components/shadcn/ui/sidebar';
 import { UserMenu } from '@/features/auth/components/user-menu';
+import { TaskCreateDialog } from '@/features/task/components/task-dialog';
 import { Link } from '@tanstack/react-router';
 import {
   BookOpenIcon,
@@ -24,7 +25,6 @@ import {
   ScaleIcon,
 } from 'lucide-react';
 import * as React from 'react';
-import { TaskCreateDialog } from './task-dialog';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [taskCreateDialogOpen, setTaskCreateDialogOpen] = React.useState(false);

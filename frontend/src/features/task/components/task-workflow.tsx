@@ -1,0 +1,260 @@
+import type { Task } from '@/api/gen/models';
+import { MainTasksSubmitCreateBody } from '@/api/gen/zod/main/main';
+import { Button } from '@/components/shadcn/ui/button';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/shadcn/ui/field';
+import { Input } from '@/components/shadcn/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { toastErrorMessage } from '@/lib/error-message';
+import { setFormErrors } from '@/lib/form-errors';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import {
+  getMainTasksRetrieveQueryKey,
+  useMainTasksApproveCreate,
+  useMainTasksResubmitCreate,
+  useMainTasksSendBackCreate,
+  useMainTasksSubmitCreate,
+} from '@/api/gen/endpoints/main/main';
+import { queryClient } from '@/lib/query-client';
+
+export function TaskWorkflowDialog({
+  task,
+  open,
+  onOpenChange,
+}: {
+  task: Task;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  if (task.stage === 'final') return null;
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        {task.stage === 'editing' && (
+          <TaskSubmitForm task={task} onClose={() => onOpenChange(false)} />
+        )}
+        {task.stage === 'review' && (
+          <TaskReviewForm task={task} onClose={() => onOpenChange(false)} />
+        )}
+        {task.stage === 'review' && (
+          <TaskResubmitForm task={task} onClose={() => onOpenChange(false)} />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function TaskSubmitForm({
+  task,
+  onClose,
+}: {
+  task: Task;
+  onClose: () => void;
+}) {
+  const { control, formState, handleSubmit, setError } = useForm<
+    z.infer<typeof MainTasksSubmitCreateBody>
+  >({ resolver: zodResolver(MainTasksSubmitCreateBody) });
+
+  const { mutate, isPending } = useMainTasksSubmitCreate({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainTasksRetrieveQueryKey(task.id),
+        });
+        onClose();
+      },
+      onError: (error) => {
+        if (setFormErrors(error, MainTasksSubmitCreateBody, setError)) return;
+        toastErrorMessage(error);
+      },
+    },
+  });
+
+  return (
+    <form
+      onSubmit={handleSubmit((data) => mutate({ id: task.id, data }))}
+      className="flex flex-col gap-4"
+    >
+      <DialogHeader>
+        <DialogTitle>提交评审</DialogTitle>
+        <DialogDescription>{task.name}</DialogDescription>
+      </DialogHeader>
+      <FieldGroup>
+        <Controller
+          name="reviewer"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field>
+              <FieldLabel htmlFor="reviewer">评审人</FieldLabel>
+              <Input
+                {...field}
+                value={field.value ?? ''}
+                id="reviewer"
+                placeholder="评审人"
+                required
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        {formState.errors.root && (
+          <Field>
+            <FieldError errors={[formState.errors.root]} />
+          </Field>
+        )}
+      </FieldGroup>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isPending}
+          onClick={onClose}
+        >
+          取消
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          提交
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+function TaskResubmitForm({
+  task,
+  onClose,
+}: {
+  task: Task;
+  onClose: () => void;
+}) {
+  const { mutate, isPending } = useMainTasksResubmitCreate({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainTasksRetrieveQueryKey(task.id),
+        });
+        onClose();
+      },
+      onError: (error) => {
+        toastErrorMessage(error);
+      },
+    },
+  });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        mutate({ id: task.id });
+      }}
+      className="flex flex-col gap-4"
+    >
+      <DialogHeader>
+        <DialogTitle>重新提交评审</DialogTitle>
+        <DialogDescription>{task.name}</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isPending}
+          onClick={onClose}
+        >
+          取消
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          提交
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}
+
+function TaskReviewForm({
+  task,
+  onClose,
+}: {
+  task: Task;
+  onClose: () => void;
+}) {
+  const { mutate: approveMutate, isPending: approveIsPending } =
+    useMainTasksApproveCreate({
+      mutation: {
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: getMainTasksRetrieveQueryKey(task.id),
+          });
+          onClose();
+        },
+        onError: (error) => {
+          toastErrorMessage(error);
+        },
+      },
+    });
+
+  const { mutate: sendBackMutate, isPending: sendBackIsPending } =
+    useMainTasksSendBackCreate({
+      mutation: {
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: getMainTasksRetrieveQueryKey(task.id),
+          });
+          onClose();
+        },
+        onError: (error) => {
+          toastErrorMessage(error);
+        },
+      },
+    });
+
+  const isPending = approveIsPending || sendBackIsPending;
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        approveMutate({ id: task.id });
+      }}
+      className="flex flex-col gap-4"
+    >
+      <DialogHeader>
+        <DialogTitle>提交评审结论</DialogTitle>
+        <DialogDescription>{task.name}</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isPending}
+          onClick={onClose}
+        >
+          取消
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          disabled={isPending}
+          onClick={() => sendBackMutate({ id: task.id })}
+        >
+          退回
+        </Button>
+        <Button type="submit" disabled={approveIsPending}>
+          通过
+        </Button>
+      </DialogFooter>
+    </form>
+  );
+}

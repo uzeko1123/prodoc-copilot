@@ -11,20 +11,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useWorkbenchStore } from '@/stores/workbench';
 import * as React from 'react';
 import { useChatStore } from '../../stores';
 
-export function SettingsDialog() {
-  const settingsDialogOpen = useWorkbenchStore(
-    (state) => state.settingsDialogOpen,
-  );
-  const setSettingsDialogOpen = useWorkbenchStore(
-    (state) => state.setSettingsDialogOpen,
-  );
-
+export function SettingsDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   return (
-    <Dialog open={settingsDialogOpen} onOpenChange={setSettingsDialogOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl">设置</DialogTitle>
@@ -32,7 +30,7 @@ export function SettingsDialog() {
             配置模型 API（OpenAI 兼容格式）。
           </DialogDescription>
         </DialogHeader>
-        <SettingsForm onClose={() => setSettingsDialogOpen(false)} />
+        <SettingsForm onClose={() => onOpenChange(false)} />
         <p className="text-muted-foreground text-sm">
           所有设置均保存在本地，并且仅用于当前会话。
         </p>

@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/shadcn/ui/alert-dialog';
-import { Dialog, DialogContent } from '@/components/shadcn/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { queryClient } from '@/lib/query-client';
 import { toast } from 'sonner';
 import { TaskCreateForm, TaskUpdateForm } from './task-form';
@@ -29,10 +29,7 @@ export function TaskCreateDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <TaskCreateForm
-          onSuccess={() => onOpenChange(false)}
-          onCancel={() => onOpenChange(false)}
-        />
+        <TaskCreateForm onClose={() => onOpenChange(false)} />
       </DialogContent>
     </Dialog>
   );
@@ -50,11 +47,7 @@ export function TaskUpdateDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <TaskUpdateForm
-          task={task}
-          onSuccess={() => onOpenChange(false)}
-          onCancel={() => onOpenChange(false)}
-        />
+        <TaskUpdateForm task={task} onClose={() => onOpenChange(false)} />
       </DialogContent>
     </Dialog>
   );
