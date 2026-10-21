@@ -20,6 +20,7 @@ from dj_rest_auth.serializers import (
     UserDetailsSerializer as UserDetailsSerializer_,
 )
 from django.conf import settings
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from .fields import AltchaField
@@ -95,3 +96,12 @@ class UserDetailsSerializer(UserDetailsSerializer_):
         if profile is not None:
             UserProfile.objects.update_or_create(user=user, defaults=profile)
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source="profile.full_name")
+    avatar = serializers.URLField(source="profile.avatar")
+
+    class Meta:
+        model = User
+        fields = ("pk", "username", "full_name", "avatar")

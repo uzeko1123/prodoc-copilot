@@ -18,6 +18,7 @@ import {
   CirclePlusIcon,
   DatabaseIcon,
   FormIcon,
+  GraduationCapIcon,
   LayoutDashboardIcon,
   PaletteIcon,
   PencilIcon,
@@ -118,7 +119,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link to="/dashboard">
-                  <PaletteIcon /> 风格参考
+                  <GraduationCapIcon /> 专家知识
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -128,6 +129,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuButton asChild>
                 <Link to="/dashboard">
                   <DatabaseIcon /> 事实来源
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to="/dashboard">
+                  <PaletteIcon /> 风格参考
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

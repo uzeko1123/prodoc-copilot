@@ -1,4 +1,4 @@
-import type { UserDetails } from '@/api/gen/models';
+import type { User, UserDetails } from '@/api/gen/models';
 import {
   Avatar,
   AvatarFallback,
@@ -11,7 +11,7 @@ export function UserAvatar({
   className,
   children,
 }: {
-  user: UserDetails;
+  user: User | UserDetails;
   src?: string;
   className?: string;
   children?: React.ReactNode;

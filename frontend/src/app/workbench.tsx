@@ -165,12 +165,9 @@ function Workbench() {
             <ArrowLeftIcon />
           </Button>
           <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
-          <TaskStageBadge role={role} stage={task.stage} />
-          {!readonly && (
-            <Button
-              className="ml-auto"
-              onClick={() => setTaskWorkflowDialogOpen(true)}
-            >
+          <TaskStageBadge role={role} stage={task.stage} className="mr-auto" />
+          {canSubmitWorkflow(role, user, task) && (
+            <Button onClick={() => setTaskWorkflowDialogOpen(true)}>
               <WorkflowIcon />
               提交流程
             </Button>
@@ -315,8 +312,23 @@ function Workbench() {
 
 function isReadonly(role: Role, user?: UserDetails, task?: Task): boolean {
   if (!user || !task) return true;
-  if (role === 'creator' && task.creator === user.pk) {
+  if (role === 'creator' && user.pk === task.creator) {
     return task.stage !== 'editing' && task.stage !== 'revision';
   }
   return true;
+}
+
+function canSubmitWorkflow(
+  role: Role,
+  user?: UserDetails,
+  task?: Task,
+): boolean {
+  if (!user || !task) return false;
+  if (role === 'creator' && user.pk === task.creator) {
+    return task.stage === 'editing' || task.stage === 'revision';
+  }
+  if (role === 'reviewer' && user.pk === task.reviewer) {
+    return task.stage === 'review';
+  }
+  return false;
 }

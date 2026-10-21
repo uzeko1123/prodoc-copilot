@@ -22,6 +22,7 @@ import { customInstance } from '../../../mutator/custom-instance';
 import type { BodyType, ErrorType } from '../../../mutator/custom-instance';
 import type {
   AltchaChallenge,
+  AuthUsersListParams,
   Jwt,
   LoginRequest,
   MessageResponse,
@@ -35,6 +36,7 @@ import type {
   TokenRefresh,
   TokenRefreshRequest,
   TokenVerifyRequest,
+  User,
   UserDetails,
   UserDetailsRequest,
   VerifyEmailRequest,
@@ -1663,3 +1665,136 @@ export const useAuthUserPartialUpdate = <
     queryClient,
   );
 };
+export const authUsersList = (
+  params?: AuthUsersListParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<User[]>(
+    { url: `/api/auth/users/`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getAuthUsersListQueryKey = (params?: AuthUsersListParams) => {
+  return [`/api/auth/users/`, ...(params ? [params] : [])] as const;
+};
+
+export const getAuthUsersListQueryOptions = <
+  TData = Awaited<ReturnType<typeof authUsersList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: AuthUsersListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof authUsersList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAuthUsersListQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof authUsersList>>> = ({
+    signal,
+  }) => authUsersList(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof authUsersList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type AuthUsersListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof authUsersList>>
+>;
+export type AuthUsersListQueryError = ErrorType<unknown>;
+
+export function useAuthUsersList<
+  TData = Awaited<ReturnType<typeof authUsersList>>,
+  TError = ErrorType<unknown>,
+>(
+  params: undefined | AuthUsersListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof authUsersList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authUsersList>>,
+          TError,
+          Awaited<ReturnType<typeof authUsersList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useAuthUsersList<
+  TData = Awaited<ReturnType<typeof authUsersList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: AuthUsersListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof authUsersList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authUsersList>>,
+          TError,
+          Awaited<ReturnType<typeof authUsersList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useAuthUsersList<
+  TData = Awaited<ReturnType<typeof authUsersList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: AuthUsersListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof authUsersList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useAuthUsersList<
+  TData = Awaited<ReturnType<typeof authUsersList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: AuthUsersListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof authUsersList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getAuthUsersListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}

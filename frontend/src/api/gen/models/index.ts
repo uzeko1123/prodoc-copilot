@@ -5,6 +5,7 @@
  */
 
 export * from './altchaChallenge';
+export * from './authUsersListParams';
 export * from './comment';
 export * from './commentInline';
 export * from './commentInlineRequest';
@@ -48,6 +49,7 @@ export * from './tokenRefreshRequest';
 export * from './tokenVerifyRequest';
 export * from './uploadFileRequest';
 export * from './uploadFileUrl';
+export * from './user';
 export * from './userDetails';
 export * from './userDetailsRequest';
 export * from './verifyEmailRequest';

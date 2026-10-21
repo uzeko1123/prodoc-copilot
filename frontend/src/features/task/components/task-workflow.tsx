@@ -15,7 +15,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/shadcn/ui/field';
-import { Input } from '@/components/shadcn/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -24,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { UserSelect } from '@/features/auth/components/user-select';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
 import { queryClient } from '@/lib/query-client';
@@ -50,7 +50,7 @@ export function TaskWorkflowDialog({
         {task.stage === 'review' && (
           <TaskReviewForm task={task} onClose={() => onOpenChange(false)} />
         )}
-        {task.stage === 'review' && (
+        {task.stage === 'revision' && (
           <TaskResubmitForm task={task} onClose={() => onOpenChange(false)} />
         )}
       </DialogContent>
@@ -103,13 +103,7 @@ function TaskSubmitForm({
           render={({ field, fieldState }) => (
             <Field>
               <FieldLabel htmlFor="reviewer">评审人</FieldLabel>
-              <Input
-                {...field}
-                value={field.value ?? ''}
-                id="reviewer"
-                placeholder="评审人"
-                required
-              />
+              <UserSelect {...field} id="reviewer" placeholder="选择评审人" />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}

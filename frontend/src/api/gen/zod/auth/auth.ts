@@ -462,3 +462,25 @@ export const AuthUserPartialUpdateResponse = zod
       .optional(),
   })
   .describe('User model w/o password');
+
+export const AuthUsersListQueryParams = zod.object({
+  search: zod.string().optional().describe('搜索关键词。'),
+});
+
+export const authUsersListResponseUsernameMax = 150;
+
+export const authUsersListResponseUsernameRegExp = new RegExp('^[\\w.@+-]+$');
+
+export const AuthUsersListResponseItem = zod.object({
+  pk: zod.int(),
+  username: zod
+    .string()
+    .max(authUsersListResponseUsernameMax)
+    .regex(authUsersListResponseUsernameRegExp)
+    .describe(
+      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+    ),
+  full_name: zod.string(),
+  avatar: zod.url(),
+});
+export const AuthUsersListResponse = zod.array(AuthUsersListResponseItem);
