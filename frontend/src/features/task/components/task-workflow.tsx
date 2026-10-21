@@ -1,3 +1,11 @@
+import {
+  getMainTasksListQueryKey,
+  getMainTasksRetrieveQueryKey,
+  useMainTasksApproveCreate,
+  useMainTasksResubmitCreate,
+  useMainTasksSendBackCreate,
+  useMainTasksSubmitCreate,
+} from '@/api/gen/endpoints/main/main';
 import type { Task } from '@/api/gen/models';
 import { MainTasksSubmitCreateBody } from '@/api/gen/zod/main/main';
 import { Button } from '@/components/shadcn/ui/button';
@@ -18,17 +26,10 @@ import {
 } from '@/components/ui/dialog';
 import { toastErrorMessage } from '@/lib/error-message';
 import { setFormErrors } from '@/lib/form-errors';
+import { queryClient } from '@/lib/query-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  getMainTasksRetrieveQueryKey,
-  useMainTasksApproveCreate,
-  useMainTasksResubmitCreate,
-  useMainTasksSendBackCreate,
-  useMainTasksSubmitCreate,
-} from '@/api/gen/endpoints/main/main';
-import { queryClient } from '@/lib/query-client';
 
 export function TaskWorkflowDialog({
   task,
@@ -71,6 +72,9 @@ function TaskSubmitForm({
   const { mutate, isPending } = useMainTasksSubmitCreate({
     mutation: {
       onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainTasksListQueryKey(),
+        });
         void queryClient.invalidateQueries({
           queryKey: getMainTasksRetrieveQueryKey(task.id),
         });
@@ -144,6 +148,9 @@ function TaskResubmitForm({
     mutation: {
       onSuccess: () => {
         void queryClient.invalidateQueries({
+          queryKey: getMainTasksListQueryKey(),
+        });
+        void queryClient.invalidateQueries({
           queryKey: getMainTasksRetrieveQueryKey(task.id),
         });
         onClose();
@@ -195,6 +202,9 @@ function TaskReviewForm({
       mutation: {
         onSuccess: () => {
           void queryClient.invalidateQueries({
+            queryKey: getMainTasksListQueryKey(),
+          });
+          void queryClient.invalidateQueries({
             queryKey: getMainTasksRetrieveQueryKey(task.id),
           });
           onClose();
@@ -209,6 +219,9 @@ function TaskReviewForm({
     useMainTasksSendBackCreate({
       mutation: {
         onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: getMainTasksListQueryKey(),
+          });
           void queryClient.invalidateQueries({
             queryKey: getMainTasksRetrieveQueryKey(task.id),
           });

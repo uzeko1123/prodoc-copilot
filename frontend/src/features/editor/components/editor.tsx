@@ -1,6 +1,9 @@
 'use client';
 
-import { mainDocumentsPartialUpdate } from '@/api/gen/endpoints/main/main';
+import {
+  getMainDocumentsRetrieveQueryKey,
+  mainDocumentsPartialUpdate,
+} from '@/api/gen/endpoints/main/main';
 import {
   EditorContainer,
   Editor as EditorPrimitive,
@@ -8,6 +11,7 @@ import {
 import { FixedToolbar } from '@/components/shadcn/ui/fixed-toolbar';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { toastErrorMessage } from '@/lib/error-message';
+import { queryClient } from '@/lib/query-client';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import {
   useEditorRef,
@@ -71,7 +75,14 @@ function EditorValueSync() {
     savedValueRef.current = debouncedValue;
     mainDocumentsPartialUpdate(documentId, {
       value: savedValueRef.current,
-    }).catch(toastErrorMessage);
+    })
+      .then((data) => {
+        queryClient.setQueryData(
+          getMainDocumentsRetrieveQueryKey(documentId),
+          data,
+        );
+      })
+      .catch(toastErrorMessage);
   }, [documentId, debouncedValue]);
 
   useEffect(() => {
@@ -80,7 +91,14 @@ function EditorValueSync() {
       if (latestValueRef.current !== savedValueRef.current) {
         mainDocumentsPartialUpdate(documentId, {
           value: latestValueRef.current,
-        }).catch(toastErrorMessage);
+        })
+          .then((data) => {
+            queryClient.setQueryData(
+              getMainDocumentsRetrieveQueryKey(documentId),
+              data,
+            );
+          })
+          .catch(toastErrorMessage);
       }
     };
   }, [documentId]);

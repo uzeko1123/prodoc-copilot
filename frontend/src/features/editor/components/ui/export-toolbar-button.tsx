@@ -1,6 +1,9 @@
 'use client';
 
-import { mainDocumentsPartialUpdate } from '@/api/gen/endpoints/main/main';
+import {
+  getMainDocumentsRetrieveQueryKey,
+  mainDocumentsPartialUpdate,
+} from '@/api/gen/endpoints/main/main';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +14,7 @@ import {
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
 import { toastErrorMessage } from '@/lib/error-message';
+import { queryClient } from '@/lib/query-client';
 import { MarkdownPlugin } from '@platejs/markdown';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { CloudUploadIcon, SaveIcon } from 'lucide-react';
@@ -81,7 +85,13 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
   const syncToBackend = async () => {
     if (!documentId) return;
     await mainDocumentsPartialUpdate(documentId, { value })
-      .then(() => toast.success('已保存至云端'))
+      .then((data) => {
+        queryClient.setQueryData(
+          getMainDocumentsRetrieveQueryKey(documentId),
+          data,
+        );
+        toast.success('已保存至云端');
+      })
       .catch(toastErrorMessage);
   };
 
