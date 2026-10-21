@@ -2,7 +2,10 @@ import {
   getAuthUserRetrieveQueryOptions,
   useAuthUserRetrieve,
 } from '@/api/gen/endpoints/auth/auth';
-import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
+import {
+  useMainDocumentsRetrieve,
+  useMainTasksRetrieve,
+} from '@/api/gen/endpoints/main/main';
 import type { Task, UserDetails } from '@/api/gen/models';
 import { DefaultPending } from '@/components/default-pending';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -43,6 +46,7 @@ import {
   PanelRightIcon,
   WorkflowIcon,
 } from 'lucide-react';
+import type { Value } from 'platejs';
 import { useEffect, useRef, useState } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 import { z } from 'zod';
@@ -58,7 +62,7 @@ export const Route = createFileRoute('/workbench/$taskId/')({
 
 function WorkbenchPage() {
   return (
-    <ErrorBoundary message="任务加载失败">
+    <ErrorBoundary>
       <Workbench />
     </ErrorBoundary>
   );
@@ -68,7 +72,11 @@ function Workbench() {
   const { taskId } = Route.useParams();
   const { role } = Route.useSearch() as { role: Role };
   const { data: user } = useAuthUserRetrieve();
-  const { data: task, isPending } = useMainTasksRetrieve(taskId);
+  const { data: task, isPending: isTaskPending } = useMainTasksRetrieve(taskId);
+  const { data: document, isPending: isDocumentPending } =
+    useMainDocumentsRetrieve(task?.document ?? '', {
+      query: { enabled: task?.document !== undefined },
+    });
 
   const readonly = isReadonly(role, user, task);
 
@@ -133,11 +141,18 @@ function Workbench() {
   const _hideHeader = false;
   const _hideRightPanel = false;
 
-  if (isPending || !task) return <DefaultPending message="任务加载中 . . ." />;
+  if (isTaskPending || !task)
+    return <DefaultPending message="任务加载中 . . ." />;
+  if (isDocumentPending || !document)
+    return <DefaultPending message="文档加载中 . . ." />;
 
   return (
     <div className="flex h-dvh flex-col">
-      <Plate task={task} readonly={readonly}>
+      <Plate
+        documentId={task.document}
+        value={(document.value as Value) ?? []}
+        readonly={readonly}
+      >
         {!_hideHeader && (
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
             <Button
