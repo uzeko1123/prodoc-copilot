@@ -138,7 +138,6 @@ function Workbench() {
   const [taskWorkflowDialogOpen, setTaskWorkflowDialogOpen] = useState(false);
   const [taskUpdateDialogOpen, setTaskUpdateDialogOpen] = useState(false);
 
-  const _hideHeader = false;
   const _hideRightPanel = false;
 
   if (isTaskPending || !task)
@@ -153,40 +152,38 @@ function Workbench() {
         value={(document.value as Value) ?? []}
         readonly={readonly}
       >
-        {!_hideHeader && (
-          <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() =>
+              router.history.canGoBack()
+                ? router.history.back()
+                : navigate({ to: '/dashboard' })
+            }
+          >
+            <ArrowLeftIcon />
+          </Button>
+          <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
+          <TaskStageBadge role={role} stage={task.stage} />
+          {!readonly && (
             <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() =>
-                router.history.canGoBack()
-                  ? router.history.back()
-                  : navigate({ to: '/dashboard' })
-              }
+              className="ml-auto"
+              onClick={() => setTaskWorkflowDialogOpen(true)}
             >
-              <ArrowLeftIcon />
+              <WorkflowIcon />
+              提交流程
             </Button>
-            <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
-            <TaskStageBadge role={role} stage={task.stage} />
-            {!readonly && (
-              <Button
-                className="ml-auto"
-                onClick={() => setTaskWorkflowDialogOpen(true)}
-              >
-                <WorkflowIcon />
-                提交流程
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              onClick={() => setTaskUpdateDialogOpen(true)}
-            >
-              <InfoIcon />
-              文档信息
-            </Button>
-            <UserMenu className="ml-2 py-1" />
-          </header>
-        )}
+          )}
+          <Button
+            variant="outline"
+            onClick={() => setTaskUpdateDialogOpen(true)}
+          >
+            <InfoIcon />
+            文档信息
+          </Button>
+          <UserMenu className="ml-2 py-1" />
+        </header>
 
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel
