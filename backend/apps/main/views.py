@@ -2,11 +2,12 @@ from django.db import transaction
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, MethodNotAllowed, NotFound
 from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
+from rest_framework.status import HTTP_409_CONFLICT
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Comment, Discussion, Document, Task
 from .permissions import (
@@ -27,7 +28,7 @@ from .serializers import (
 
 
 class Conflict(APIException):
-    status_code = status.HTTP_409_CONFLICT
+    status_code = HTTP_409_CONFLICT
 
 
 def ensure_task_member(user, task: Task) -> None:
@@ -40,7 +41,7 @@ def ensure_task_stage_user(user, task: Task) -> None:
         raise Conflict
 
 
-class TaskViewSet(viewsets.ModelViewSet):
+class TaskViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = (TaskPermission,)
@@ -97,7 +98,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response(self.get_serializer(task).data)
 
 
-class DocumentViewSet(viewsets.ModelViewSet):
+class DocumentViewSet(ModelViewSet):
     queryset = Document.objects.select_related("task")
     serializer_class = DocumentSerializer
     permission_classes = (DocumentPermission,)
@@ -121,7 +122,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         raise MethodNotAllowed("DELETE")
 
 
-class DiscussionViewSet(viewsets.ModelViewSet):
+class DiscussionViewSet(ModelViewSet):
     queryset = Discussion.objects.select_related("document__task")
     serializer_class = DiscussionSerializer
     permission_classes = (DiscussionPermission,)
@@ -149,7 +150,7 @@ class DiscussionViewSet(viewsets.ModelViewSet):
         instance.delete()
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.select_related("discussion__document__task")
     serializer_class = CommentSerializer
     permission_classes = (CommentPermission,)

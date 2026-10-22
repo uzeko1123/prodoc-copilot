@@ -1,9 +1,9 @@
 from django.urls import include, path
-from rest_framework import routers
+from rest_framework.routers import DefaultRouter
 
 from ..views import CommentViewSet, DiscussionViewSet, DocumentViewSet, TaskViewSet
 
-router = routers.DefaultRouter()
+router = DefaultRouter()
 router.register("tasks", TaskViewSet)
 router.register("documents", DocumentViewSet)
 router.register("discussions", DiscussionViewSet)
