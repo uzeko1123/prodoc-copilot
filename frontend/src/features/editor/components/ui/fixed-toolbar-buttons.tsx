@@ -37,7 +37,7 @@ export function FixedToolbarButtons() {
           </>
         )}
 
-        <ImportToolbarButton />
+        {!readOnly && <ImportToolbarButton />}
         <ExportToolbarButton />
 
         <ToolbarSeparator className="self-stretch" />

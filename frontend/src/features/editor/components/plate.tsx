@@ -7,14 +7,14 @@ import { EditorKit } from './editor/editor-kit';
 import { DocumentPlugin } from './editor/plugins/document-kit';
 
 export function Plate({
-  documentId,
   value,
-  readonly,
+  documentId,
+  canEdit,
   children,
 }: {
-  documentId: string;
   value: Value;
-  readonly: boolean;
+  documentId: string;
+  canEdit: boolean;
   children: React.ReactNode;
 }) {
   const editor = usePlateEditor({ plugins: EditorKit, value }, [documentId]);
@@ -23,8 +23,12 @@ export function Plate({
     editor.setOption(DocumentPlugin, 'documentId', documentId);
   }, [editor, documentId]);
 
+  useEffect(() => {
+    editor.setOption(DocumentPlugin, 'canEdit', canEdit);
+  }, [editor, canEdit]);
+
   return (
-    <PlatePrimitive editor={editor} readOnly={readonly}>
+    <PlatePrimitive editor={editor} readOnly={!canEdit}>
       {children}
     </PlatePrimitive>
   );

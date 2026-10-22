@@ -69,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard/task/edit">
+                <Link to="/dashboard/task/create">
                   <PencilIcon /> 我创建的
                 </Link>
               </SidebarMenuButton>

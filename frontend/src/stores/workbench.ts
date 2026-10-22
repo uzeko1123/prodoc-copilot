@@ -41,7 +41,7 @@ export const useWorkbenchStore = create<WorkbenchState>()(
       setActiveLeftPanelTab: (activeLeftPanelTab) =>
         set({ activeLeftPanelTab }),
 
-      activeRightPanelTab: '1',
+      activeRightPanelTab: 'guide',
       setActiveRightPanelTab: (activeRightPanelTab) =>
         set({ activeRightPanelTab }),
     }),

@@ -13,8 +13,9 @@ import {
   type DropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, EyeIcon, PencilIcon } from 'lucide-react';
-import { useEditorReadOnly, useEditorRef } from 'platejs/react';
+import { useEditorRef, usePluginOption } from 'platejs/react';
 import * as React from 'react';
+import { DocumentPlugin } from '../editor/plugins/document-kit';
 
 const item: Record<string, { icon: React.ReactNode; label: string }> = {
   editing: {
@@ -29,15 +30,20 @@ const item: Record<string, { icon: React.ReactNode; label: string }> = {
 
 export function ModeToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
-  const readOnly = useEditorReadOnly();
+  const canEdit = usePluginOption(DocumentPlugin, 'canEdit');
   const [open, setOpen] = React.useState(false);
 
-  const value = readOnly ? 'viewing' : 'editing';
+  const value = canEdit ? 'editing' : 'viewing';
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton pressed={open} tooltip="选择模式" isDropdown disabled>
+        <ToolbarButton
+          pressed={open}
+          tooltip="选择模式"
+          isDropdown
+          disabled={!canEdit}
+        >
           {item[value].icon}
           <span className="hidden lg:inline">{item[value].label}</span>
         </ToolbarButton>

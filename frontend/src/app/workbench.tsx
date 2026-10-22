@@ -78,8 +78,6 @@ function Workbench() {
       query: { enabled: task?.document !== undefined },
     });
 
-  const readonly = isReadonly(role, user, task);
-
   const router = useRouter();
   const navigate = useNavigate();
 
@@ -138,8 +136,6 @@ function Workbench() {
   const [taskWorkflowDialogOpen, setTaskWorkflowDialogOpen] = useState(false);
   const [taskUpdateDialogOpen, setTaskUpdateDialogOpen] = useState(false);
 
-  const _hideRightPanel = false;
-
   if (isTaskPending || !task)
     return <DefaultPending message="任务加载中 . . ." />;
   if (isDocumentPending || !document)
@@ -148,9 +144,9 @@ function Workbench() {
   return (
     <div className="flex h-dvh flex-col">
       <Plate
-        documentId={task.document}
         value={(document.value as Value) ?? []}
-        readonly={readonly}
+        documentId={task.document}
+        canEdit={canEdit(role, user, task)}
       >
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
           <Button
@@ -233,7 +229,7 @@ function Workbench() {
               >
                 <TabsTrigger value="chat">AI 对话</TabsTrigger>
                 <TabsTrigger value="comment">评论 & 修订</TabsTrigger>
-                {!_hideRightPanel && !rightPanelOpen && (
+                {!rightPanelOpen && (
                   <Button variant="ghost" onClick={toggleRightPanel}>
                     <PanelRightIcon />
                   </Button>
@@ -253,45 +249,36 @@ function Workbench() {
               </TabsContent>
             </Tabs>
           </ResizablePanel>
-          {!_hideRightPanel && (
-            <>
-              <ResizableHandle withHandle />
-              <ResizablePanel
-                collapsible
-                defaultSize="20%"
-                minSize="15%"
-                panelRef={rightPanelRef}
-                onResize={handleRightPanelResize}
+          <ResizableHandle withHandle />
+          <ResizablePanel
+            collapsible
+            defaultSize="20%"
+            minSize="15%"
+            panelRef={rightPanelRef}
+            onResize={handleRightPanelResize}
+          >
+            <Tabs
+              value={activeRightPanelTab}
+              onValueChange={(value) => setActiveRightPanelTab(value)}
+              className="h-full gap-0"
+            >
+              <TabsList
+                variant="line"
+                className="h-10 min-h-10 w-full border-b"
               >
-                <Tabs
-                  value={activeRightPanelTab}
-                  onValueChange={(value) => setActiveRightPanelTab(value)}
-                  className="h-full gap-0"
-                >
-                  <TabsList
-                    variant="line"
-                    className="h-10 min-h-10 w-full border-b"
-                  >
-                    <TabsTrigger value="1">1</TabsTrigger>
-                    <TabsTrigger value="2">2</TabsTrigger>
-                    <TabsTrigger value="3">3</TabsTrigger>
-                  </TabsList>
-                  <TabsContent
-                    value="1"
-                    className="min-h-0 data-[state=inactive]:hidden"
-                  ></TabsContent>
-                  <TabsContent
-                    value="2"
-                    className="min-h-0 data-[state=inactive]:hidden"
-                  ></TabsContent>
-                  <TabsContent
-                    value="3"
-                    className="min-h-0 data-[state=inactive]:hidden"
-                  ></TabsContent>
-                </Tabs>
-              </ResizablePanel>
-            </>
-          )}
+                <TabsTrigger value="guide">写作指南</TabsTrigger>
+                <TabsTrigger value="knowledge">知识库</TabsTrigger>
+              </TabsList>
+              <TabsContent
+                value="guide"
+                className="min-h-0 data-[state=inactive]:hidden"
+              ></TabsContent>
+              <TabsContent
+                value="knowledge"
+                className="min-h-0 data-[state=inactive]:hidden"
+              ></TabsContent>
+            </Tabs>
+          </ResizablePanel>
         </ResizablePanelGroup>
 
         <TaskWorkflowDialog
@@ -310,12 +297,12 @@ function Workbench() {
   );
 }
 
-function isReadonly(role: Role, user?: UserDetails, task?: Task): boolean {
-  if (!user || !task) return true;
+function canEdit(role: Role, user?: UserDetails, task?: Task): boolean {
+  if (!user || !task) return false;
   if (role === 'creator' && user.pk === task.creator) {
-    return task.stage !== 'editing' && task.stage !== 'revision';
+    return task.stage === 'editing' || task.stage === 'revision';
   }
-  return true;
+  return false;
 }
 
 function canSubmitWorkflow(
