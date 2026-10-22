@@ -2,7 +2,7 @@
 
 /* eslint-disable react-hooks/refs -- Fake stream abort control is imperative transport state. */
 import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
-import { mockApiResponse } from '@/mock/chat';
+// import { mockApiResponse } from '@/mock/chat';
 import { useChat as useBaseChat, type UseChatHelpers } from '@ai-sdk/react';
 import { BaseAIPlugin, withAIBatch } from '@platejs/ai';
 import {
@@ -111,7 +111,7 @@ export const useChat = () => {
 
 function createChatTransport({
   api,
-  abortControllerRef,
+  // abortControllerRef,
   editor,
 }: {
   api: string;
@@ -137,7 +137,7 @@ function createChatTransport({
       });
 
       if (!res.ok) {
-        return mockApiResponse(editor, init, abortControllerRef);
+        // return mockApiResponse(editor, init, abortControllerRef);
       }
 
       return res;
