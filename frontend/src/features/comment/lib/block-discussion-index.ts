@@ -1,5 +1,6 @@
 'use client';
 
+import type { Discussion } from '@/api/gen/models';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { formatDate } from '@/lib/format-date';
 import {
@@ -21,14 +22,12 @@ import {
   type TCommentText,
   type TElement,
   type TSuggestionText,
+  type Value,
 } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
-import { useEditorRef, usePluginOption, useValueVersion } from 'platejs/react';
+import { useEditorRef, useValueVersion } from 'platejs/react';
 import * as React from 'react';
-import {
-  discussionPlugin,
-  type TDiscussion,
-} from '../components/editor/plugins/discussion-kit';
+import type { TDiscussion } from '../components/editor/plugins/discussion-kit';
 import type { TComment } from '../components/ui/comment';
 
 export interface ResolvedDiscussion extends TDiscussion {
@@ -472,9 +471,11 @@ export const getDiscussionIndex = (
   return index;
 };
 
-export const useBlockDiscussionItems = (blockPath: Path) => {
+export const useBlockDiscussionItems = (
+  blockPath: Path,
+  discussions: TDiscussion[],
+) => {
   const editor = useEditorRef();
-  const discussions = usePluginOption(discussionPlugin, 'discussions');
   const version = useDebounce(useValueVersion() ?? 0);
 
   return React.useMemo(() => {
@@ -488,3 +489,21 @@ export const useBlockDiscussionItems = (blockPath: Path) => {
     };
   }, [blockPath, discussions, editor, version]);
 };
+
+export function toTDiscussion(discussion: Discussion): TDiscussion {
+  return {
+    id: discussion.key,
+    comments: discussion.comments.map<TComment>((comment) => ({
+      id: comment.id,
+      contentRich: comment.content_rich as Value,
+      createdAt: new Date(comment.created_at),
+      discussionId: discussion.key,
+      isEdited: comment.is_edited,
+      userId: String(comment.user),
+    })),
+    createdAt: new Date(discussion.created_at),
+    documentContent: discussion.document_content,
+    isResolved: discussion.is_resolved ?? false,
+    userId: String(discussion.user),
+  };
+}

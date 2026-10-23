@@ -32,26 +32,24 @@ export function UserMenu({
   align?: React.ComponentProps<typeof DropdownMenuContent>['align'];
   className?: string;
 }) {
-  const { data: user } = useAuthUserRetrieve();
+  const { data: me } = useAuthUserRetrieve();
   const navigate = useNavigate();
   const [userDetailsDialogOpen, setUserDetailsDialogOpen] =
     React.useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = React.useState(false);
 
-  if (!user) return null;
+  if (!me) return null;
 
   return (
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className={cn('h-auto py-2', className)}>
-            <UserAvatar user={user} className="size-8" />
+            <UserAvatar user={me} className="size-8" />
             <div className="grid flex-1 text-left leading-tight">
-              <span className="font-medium">
-                {user.full_name || user.username}
-              </span>
+              <span className="font-medium">{me.full_name || me.username}</span>
               <span className="text-muted-foreground text-xs">
-                {user.username}
+                {me.username}
               </span>
             </div>
           </Button>

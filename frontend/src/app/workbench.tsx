@@ -71,7 +71,7 @@ function WorkbenchPage() {
 function Workbench() {
   const { taskId } = Route.useParams();
   const { role } = Route.useSearch() as { role: Role };
-  const { data: user } = useAuthUserRetrieve();
+  const { data: me } = useAuthUserRetrieve();
   const { data: task, isPending: isTaskPending } = useMainTasksRetrieve(taskId);
   const { data: document, isPending: isDocumentPending } =
     useMainDocumentsRetrieve(task?.document ?? '', {
@@ -146,7 +146,7 @@ function Workbench() {
       <Plate
         value={(document.value as Value) ?? []}
         documentId={task.document}
-        canEdit={canEdit(role, user, task)}
+        canEdit={canEdit(role, me, task)}
       >
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
           <Button
@@ -162,7 +162,7 @@ function Workbench() {
           </Button>
           <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
           <TaskStageBadge role={role} stage={task.stage} className="mr-auto" />
-          {canSubmitWorkflow(role, user, task) && (
+          {canSubmitWorkflow(role, me, task) && (
             <Button onClick={() => setTaskWorkflowDialogOpen(true)}>
               <WorkflowIcon />
               提交流程
@@ -245,7 +245,7 @@ function Workbench() {
                 value="comment"
                 className="min-h-0 data-[state=inactive]:hidden"
               >
-                <Comment task={task} />
+                <Comment />
               </TabsContent>
             </Tabs>
           </ResizablePanel>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuthUsersRetrieve } from '@/api/gen/endpoints/auth/auth';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   Tooltip,
@@ -27,16 +28,13 @@ import {
   UnderlineIcon,
   XIcon,
 } from 'lucide-react';
-import { useEditorPlugin, usePluginOption } from 'platejs/react';
+import { useEditorPlugin } from 'platejs/react';
 import * as React from 'react';
 import {
   BLOCK_SUGGESTION_TOKEN,
   type ResolvedSuggestion,
 } from '../../lib/block-discussion-index';
-import {
-  discussionPlugin,
-  type TDiscussion,
-} from '../editor/plugins/discussion-kit';
+import type { TDiscussion } from '../editor/plugins/discussion-kit';
 import { Comment, CommentCreateForm } from './comment';
 
 export function BlockSuggestionCard({
@@ -50,7 +48,9 @@ export function BlockSuggestionCard({
 }) {
   const { api, editor } = useEditorPlugin(SuggestionPlugin);
 
-  const userInfo = usePluginOption(discussionPlugin, 'user', suggestion.userId);
+  const { data: user } = useAuthUsersRetrieve(Number(suggestion.userId), {
+    query: { throwOnError: false },
+  });
 
   const accept = (suggestion: ResolvedSuggestion) => {
     api.suggestion.withoutSuggestions(() => {
@@ -97,9 +97,9 @@ export function BlockSuggestionCard({
     >
       <div className="flex flex-col p-4">
         <div className="relative flex items-center">
-          {userInfo && <UserAvatar user={userInfo} className="size-5" />}
+          <UserAvatar user={user} className="size-5" />
           <h4 className="mx-2 text-sm leading-none font-semibold">
-            {userInfo?.full_name || userInfo?.username}
+            {user?.full_name || user?.username || '未知用户'}
           </h4>
 
           {suggestion.createdByAI && (

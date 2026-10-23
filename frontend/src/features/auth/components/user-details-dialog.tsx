@@ -19,11 +19,11 @@ export function UserDetailsDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { data: user } = useAuthUserRetrieve();
+  const { data: me } = useAuthUserRetrieve();
 
   const [mode, setMode] = React.useState<'view' | 'modify'>('view');
 
-  if (!user) return null;
+  if (!me) return null;
 
   return (
     <Dialog
@@ -39,16 +39,16 @@ export function UserDetailsDialog({
             <DialogHeader>
               <DialogTitle>用户信息</DialogTitle>
             </DialogHeader>
-            <UserAvatar user={user} className="mx-auto size-16" />
+            <UserAvatar user={me} className="mx-auto size-16" />
             <div className="flex flex-col gap-1 text-center">
               <span className="text-lg font-medium">
-                {user.full_name || user.username}
+                {me.full_name || me.username}
               </span>
               <span className="text-muted-foreground text-sm">
-                {user.username}
+                {me.username}
               </span>
               <span className="text-muted-foreground text-sm break-all">
-                {user.email}
+                {me.email}
               </span>
             </div>
             <DialogFooter>
@@ -60,7 +60,7 @@ export function UserDetailsDialog({
           </>
         ) : (
           <UserDetailsForm
-            user={user}
+            user={me}
             onCancel={() => setMode('view')}
             onSuccess={() => setMode('view')}
           />

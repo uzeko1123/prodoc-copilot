@@ -49,7 +49,7 @@ import { TaskStageBadge } from './task-stage-badge';
 export type Role = 'creator' | 'reviewer';
 
 export function TaskList({ role }: { role: Role }) {
-  const { data: user, isSuccess: isAuthSuccess } = useAuthUserRetrieve();
+  const { data: me } = useAuthUserRetrieve();
   const [stage, setStage] = React.useState<StageEnum | 'all'>('all');
 
   const {
@@ -58,11 +58,11 @@ export function TaskList({ role }: { role: Role }) {
     isPlaceholderData,
   } = useMainTasksList(
     {
-      ...(role === 'creator' ? { creator: user?.pk } : { reviewer: user?.pk }),
+      ...(role === 'creator' ? { creator: me?.pk } : { reviewer: me?.pk }),
       ...(stage !== 'all' && { stage }),
     },
     {
-      query: { enabled: isAuthSuccess, placeholderData: keepPreviousData },
+      query: { enabled: !!me, placeholderData: keepPreviousData },
     },
   );
 

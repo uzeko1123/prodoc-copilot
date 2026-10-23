@@ -1,11 +1,18 @@
-import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
+import {
+  getMainDiscussionsListQueryKey,
+  mainDiscussionsCreate,
+} from '@/api/gen/endpoints/main/main';
+import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
+import { toastErrorMessage } from '@/lib/error-message';
+import { queryClient } from '@/lib/query-client';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
 import { getCommentKey, getTransientCommentKey } from '@platejs/comment';
+import { CommentPlugin } from '@platejs/comment/react';
 import { deserializeMd } from '@platejs/markdown';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
-import { KEYS, nanoid, NodeApi, TextApi, type TNode } from 'platejs';
-import type { PlateEditor } from 'platejs/react';
+import { KEYS, NodeApi, TextApi, type TNode } from 'platejs';
+import { getEditorPlugin, type PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
 import { prompts } from './prompts/prompts';
 
@@ -77,47 +84,23 @@ export function resetCommentTool() {
 }
 
 function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
-  const range = aiCommentToRange(editor, aiComment);
+  const documentId = editor.getOption(DocumentPlugin, 'documentId');
+  if (!documentId) return console.warn('No documentId found for AI comment');
 
+  const range = aiCommentToRange(editor, aiComment);
   if (!range) return console.warn('No range found for AI comment');
 
-  const discussions = editor.getOption(discussionPlugin, 'discussions') || [];
-
-  // Generate a new discussion ID
-  const discussionId = nanoid();
-
-  // Create a new comment
-  const newComment = {
-    id: nanoid(),
-    contentRich: [{ children: [{ text: aiComment.comment }], type: 'p' }],
-    createdAt: new Date(),
-    discussionId,
-    isEdited: false,
-    userId: editor.getOption(discussionPlugin, 'currentUserId'),
-    createdByAI: true,
-  };
-
-  // Create a new discussion
-  const newDiscussion = {
-    id: discussionId,
-    comments: [newComment],
-    createdAt: new Date(),
-    documentContent: deserializeMd(editor, aiComment.content)
-      .map((node: TNode) => NodeApi.string(node))
-      .join('\n'),
-    isResolved: false,
-    userId: editor.getOption(discussionPlugin, 'currentUserId'),
-  };
-
-  // Update discussions
-  const updatedDiscussions = [...discussions, newDiscussion];
-  editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
+  const discussionId = crypto.randomUUID();
+  const contentRich = [{ children: [{ text: aiComment.comment }], type: 'p' }];
+  const documentContent = deserializeMd(editor, aiComment.content)
+    .map((node: TNode) => NodeApi.string(node))
+    .join('\n');
 
   // Apply comment marks to the editor
   editor.tf.withMerging(() => {
     editor.tf.setNodes(
       {
-        [getCommentKey(newDiscussion.id)]: true,
+        [getCommentKey(discussionId)]: true,
         [getTransientCommentKey()]: true,
         [KEYS.comment]: true,
       },
@@ -128,6 +111,27 @@ function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
       },
     );
   });
+
+  void mainDiscussionsCreate({
+    key: discussionId,
+    document: documentId,
+    document_content: documentContent,
+    comment: {
+      key: crypto.randomUUID(),
+      content_rich: contentRich,
+    },
+  })
+    .then(() =>
+      queryClient.invalidateQueries({
+        queryKey: getMainDiscussionsListQueryKey(),
+      }),
+    )
+    .catch((error) => {
+      getEditorPlugin(editor, CommentPlugin).tf.comment.unsetMark({
+        id: discussionId,
+      });
+      toastErrorMessage(error);
+    });
 
   editor.getApi(BlockSelectionPlugin).blockSelection.deselect();
 }

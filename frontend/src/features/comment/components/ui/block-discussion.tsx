@@ -1,6 +1,8 @@
 'use client';
 
+import { useMainDiscussionsList } from '@/api/gen/endpoints/main/main';
 import { Button } from '@/components/shadcn/ui/button';
+import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
 import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
 import {
@@ -32,7 +34,10 @@ import {
   useScrollRef,
 } from 'platejs/react';
 import * as React from 'react';
-import { useBlockDiscussionItems } from '../../lib/block-discussion-index';
+import {
+  toTDiscussion,
+  useBlockDiscussionItems,
+} from '../../lib/block-discussion-index';
 import { useCommentStore } from '../../stores';
 import { commentPlugin } from '../editor/plugins/comment-kit';
 import type { TDiscussion } from '../editor/plugins/discussion-kit';
@@ -51,8 +56,18 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const blockPath = editor.api.findPath(element) ?? [];
   const isTopLevelBlock = blockPath.length === 1;
 
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+  const { data } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+  const discussions = React.useMemo(
+    () => (data ?? []).map(toTDiscussion),
+    [data],
+  );
+
   const { resolvedDiscussions, resolvedSuggestions, version } =
-    useBlockDiscussionItems(blockPath);
+    useBlockDiscussionItems(blockPath, discussions);
 
   const suggestionsCount = resolvedSuggestions.length;
   const discussionsCount = resolvedDiscussions.length;

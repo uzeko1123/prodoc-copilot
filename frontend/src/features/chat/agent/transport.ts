@@ -1,4 +1,6 @@
-import { discussionPlugin } from '@/features/comment/components/editor/plugins/discussion-kit';
+import { getMainDiscussionsListQueryKey } from '@/api/gen/endpoints/main/main';
+import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
+import { queryClient } from '@/lib/query-client';
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
@@ -101,7 +103,12 @@ function createChatMessagesWithCtx(
   chatMessages: ChatMessage[],
   context: Context | null,
 ) {
-  const discussions = editor.getOption(discussionPlugin, 'discussions');
+  const discussions =
+    queryClient.getQueryData(
+      getMainDiscussionsListQueryKey({
+        document: editor.getOption(DocumentPlugin, 'documentId'),
+      }),
+    ) ?? [];
 
   const lastUserChatMessageIndex = chatMessages.findLastIndex(
     (message) => message.role === 'user',

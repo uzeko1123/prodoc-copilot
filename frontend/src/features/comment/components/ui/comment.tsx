@@ -1,5 +1,18 @@
 'use client';
 
+import {
+  useAuthUserRetrieve,
+  useAuthUsersRetrieve,
+} from '@/api/gen/endpoints/auth/auth';
+import {
+  getMainDiscussionsListQueryKey,
+  useMainCommentsCreate,
+  useMainCommentsDestroy,
+  useMainCommentsPartialUpdate,
+  useMainDiscussionsCreate,
+  useMainDiscussionsList,
+  useMainDiscussionsPartialUpdate,
+} from '@/api/gen/endpoints/main/main';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   DropdownMenu,
@@ -14,17 +27,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserAvatar } from '@/features/auth/components/user-avatar';
 import { BasicMarksKit } from '@/features/editor/components/editor/plugins/basic-marks-kit';
+import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
+import { toastErrorMessage } from '@/lib/error-message';
+import { formatDate } from '@/lib/format-date';
+import { queryClient } from '@/lib/query-client';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
 import { cn } from 'cn';
-import {
-  differenceInDays,
-  differenceInHours,
-  differenceInMinutes,
-  format,
-} from 'date-fns';
 import {
   ArrowUpIcon,
   CheckIcon,
@@ -36,7 +47,6 @@ import {
 } from 'lucide-react';
 import {
   KEYS,
-  nanoid,
   NodeApi,
   type NodeEntry,
   type TCommentText,
@@ -45,6 +55,7 @@ import {
 import type { CreatePlateEditorOptions } from 'platejs/react';
 import {
   createPlatePlugin,
+  getEditorPlugin,
   Plate,
   useEditorPlugin,
   useEditorRef,
@@ -54,10 +65,6 @@ import {
 import * as React from 'react';
 import { useCommentStore } from '../../stores';
 import { commentPlugin } from '../editor/plugins/comment-kit';
-import {
-  discussionPlugin,
-  type TDiscussion,
-} from '../editor/plugins/discussion-kit';
 
 export type TComment = {
   id: string;
@@ -90,31 +97,48 @@ export function Comment(props: {
     onEditorClick,
   } = props;
 
-  const editor = useEditorRef();
-  const setDiscussions = useCommentStore((state) => state.setDiscussions);
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
 
-  const userInfo = usePluginOption(discussionPlugin, 'user', comment.userId);
-  const currentUserId = usePluginOption(discussionPlugin, 'currentUserId');
+  const { data: me } = useAuthUserRetrieve();
+
+  const { data: discussions } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+
+  const { data: user } = useAuthUsersRetrieve(Number(comment.userId), {
+    query: { throwOnError: false },
+  });
+
+  const { mutate: discussionsPartialUpdateMutate } =
+    useMainDiscussionsPartialUpdate({
+      mutation: {
+        onSuccess: () => {
+          void queryClient.invalidateQueries({
+            queryKey: getMainDiscussionsListQueryKey(),
+          });
+        },
+      },
+    });
+
+  const { mutate: commentsPartialUpdateMutate } = useMainCommentsPartialUpdate({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainDiscussionsListQueryKey(),
+        });
+      },
+    },
+  });
 
   const resolveDiscussion = async (id: string) => {
-    const updatedDiscussions = editor
-      .getOption(discussionPlugin, 'discussions')
-      .map((discussion) => {
-        if (discussion.id === id) {
-          return { ...discussion, isResolved: true };
-        }
-        return discussion;
+    const discussion = discussions?.find((discussion) => discussion.key === id);
+    if (discussion) {
+      discussionsPartialUpdateMutate({
+        id: discussion.id,
+        data: { is_resolved: true },
       });
-    editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
-    setDiscussions(updatedDiscussions);
-  };
-
-  const removeDiscussion = async (id: string) => {
-    const updatedDiscussions = editor
-      .getOption(discussionPlugin, 'discussions')
-      .filter((discussion) => discussion.id !== id);
-    editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
-    setDiscussions(updatedDiscussions);
+    }
   };
 
   const updateComment = async (input: {
@@ -123,33 +147,21 @@ export function Comment(props: {
     discussionId: string;
     isEdited: boolean;
   }) => {
-    const updatedDiscussions = editor
-      .getOption(discussionPlugin, 'discussions')
-      .map((discussion) => {
-        if (discussion.id === input.discussionId) {
-          const updatedComments = discussion.comments.map((comment) => {
-            if (comment.id === input.id) {
-              return {
-                ...comment,
-                contentRich: input.contentRich,
-                isEdited: true,
-                updatedAt: new Date(),
-              };
-            }
-            return comment;
-          });
-          return { ...discussion, comments: updatedComments };
-        }
-        return discussion;
+    const discussion = discussions?.find(
+      (discussion) => discussion.key === input.discussionId,
+    );
+    if (discussion) {
+      commentsPartialUpdateMutate({
+        id: comment.id,
+        data: { content_rich: input.contentRich },
       });
-    editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
-    setDiscussions(updatedDiscussions);
+    }
   };
 
   const { tf } = useEditorPlugin(CommentPlugin);
 
   // Replace to your own backend or refer to potion
-  const isMyComment = currentUserId === comment.userId;
+  const isMyComment = (me ? String(me.pk) : '') === comment.userId;
 
   const initialValue = comment.contentRich;
 
@@ -197,13 +209,9 @@ export function Comment(props: {
       onMouseLeave={() => setHovering(false)}
     >
       <div className="relative flex items-center">
-        <Avatar className="size-5">
-          <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
-          <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
-        </Avatar>
+        <UserAvatar user={user} className="size-5" />
         <h4 className="mx-2 text-sm leading-none font-semibold">
-          {/* Replace to your own backend or refer to potion */}
-          {userInfo?.name}
+          {user?.full_name || user?.username || '未知用户'}
         </h4>
 
         {comment.createdByAI && (
@@ -216,9 +224,7 @@ export function Comment(props: {
         )}
 
         <div className="text-muted-foreground/80 text-xs leading-none">
-          <span className="mr-1">
-            {formatCommentDate(new Date(comment.createdAt))}
-          </span>
+          <span className="mr-1">{formatDate(comment.createdAt)}</span>
           {comment.isEdited && <span>（已编辑）</span>}
         </div>
         {isMyComment && (hovering || dropdownOpen) && (
@@ -243,7 +249,6 @@ export function Comment(props: {
               onRemoveComment={() => {
                 if (discussionLength === 1) {
                   tf.comment.unsetMark({ id: comment.discussionId });
-                  void removeDiscussion(comment.discussionId);
                 }
               }}
               comment={comment}
@@ -338,55 +343,43 @@ function CommentMoreDropdown(props: {
     onRemoveComment,
   } = props;
 
-  const editor = useEditorRef();
-  const setDiscussions = useCommentStore((state) => state.setDiscussions);
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+
+  const { data: discussions } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+
+  const { mutate: commentsDestroyMutate } = useMainCommentsDestroy({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainDiscussionsListQueryKey(),
+        });
+      },
+    },
+  });
 
   const selectedEditCommentRef = React.useRef<boolean>(false);
 
   const onDeleteComment = React.useCallback(() => {
-    if (!comment.id) return alert('操作过快，请稍后再试。');
-
-    // Find and update the discussion
-    const updatedDiscussions = editor
-      .getOption(discussionPlugin, 'discussions')
-      .map((discussion) => {
-        if (discussion.id !== comment.discussionId) {
-          return discussion;
-        }
-
-        const commentIndex = discussion.comments.findIndex(
-          (c) => c.id === comment.id,
-        );
-        if (commentIndex === -1) {
-          return discussion;
-        }
-
-        return {
-          ...discussion,
-          comments: [
-            ...discussion.comments.slice(0, commentIndex),
-            ...discussion.comments.slice(commentIndex + 1),
-          ],
-        };
-      });
-
-    // Save back to session storage
-    editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
-    setDiscussions(updatedDiscussions);
+    const discussion = discussions?.find(
+      (discussion) => discussion.key === comment.discussionId,
+    );
+    if (discussion) {
+      commentsDestroyMutate({ id: comment.id });
+    }
     onRemoveComment?.();
   }, [
     comment.discussionId,
     comment.id,
-    editor,
+    discussions,
     onRemoveComment,
-    setDiscussions,
+    commentsDestroyMutate,
   ]);
 
   const onEditComment = React.useCallback(() => {
     selectedEditCommentRef.current = true;
-
-    if (!comment.id) return alert('操作过快，请稍后再试。');
-
     setEditingId(comment.id);
   }, [comment.id, setEditingId]);
 
@@ -470,11 +463,42 @@ export function CommentCreateForm({
 }) {
   const editor = useEditorRef();
   const commentEditor = useCommentEditor();
-  const setDiscussions = useCommentStore((state) => state.setDiscussions);
-
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
   const commentId = useCommentId();
   const discussionId = discussionIdProp ?? commentId;
-  const userInfo = usePluginOption(discussionPlugin, 'currentUser');
+
+  const { data: me } = useAuthUserRetrieve();
+
+  const { data: discussions } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+
+  const { mutate: discussionsCreateMutate } = useMainDiscussionsCreate({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainDiscussionsListQueryKey(),
+        });
+      },
+      onError: (error, variables) => {
+        getEditorPlugin(editor, CommentPlugin).tf.comment.unsetMark({
+          id: variables.data.key,
+        });
+        toastErrorMessage(error);
+      },
+    },
+  });
+
+  const { mutate: commentsCreateMutate } = useMainCommentsCreate({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainDiscussionsListQueryKey(),
+        });
+      },
+    },
+  });
 
   const discussionDraftKey = discussionId ?? getDraftCommentKey();
   const discussionDraftValue = useCommentStore(
@@ -509,67 +533,39 @@ export function CommentCreateForm({
   }, [commentEditor, discussionDraftValue]);
 
   const onAddComment = React.useCallback(async () => {
+    if (!documentId) return;
+
     const commentValue =
       useCommentStore.getState().discussionDrafts[discussionDraftKey];
     if (!commentValue) return;
-
-    const discussions = editor.getOption(discussionPlugin, 'discussions');
 
     commentEditor.tf.reset();
     useCommentStore.getState().removeDiscussionDraft(discussionDraftKey);
 
     if (discussionId) {
       // Get existing discussion
-      const discussion = discussions.find((d) => d.id === discussionId);
+      const discussion = discussions?.find(
+        (discussion) => discussion.key === discussionId,
+      );
       if (!discussion) {
-        // Mock creating suggestion
-        const newDiscussion: TDiscussion = {
-          id: discussionId,
-          comments: [
-            {
-              id: nanoid(),
-              contentRich: commentValue,
-              createdAt: new Date(),
-              discussionId,
-              isEdited: false,
-              userId: editor.getOption(discussionPlugin, 'currentUserId'),
-            },
-          ],
-          createdAt: new Date(),
-          isResolved: false,
-          userId: editor.getOption(discussionPlugin, 'currentUserId'),
-        };
-
-        editor.setOption(discussionPlugin, 'discussions', [
-          ...discussions,
-          newDiscussion,
-        ]);
+        discussionsCreateMutate({
+          data: {
+            key: discussionId,
+            document: documentId,
+            comment: { key: crypto.randomUUID(), content_rich: commentValue },
+          },
+        });
         return;
       }
 
       // Create reply comment
-      const comment: TComment = {
-        id: nanoid(),
-        contentRich: commentValue,
-        createdAt: new Date(),
-        discussionId,
-        isEdited: false,
-        userId: editor.getOption(discussionPlugin, 'currentUserId'),
-      };
-
-      // Add reply to discussion comments
-      const updatedDiscussion = {
-        ...discussion,
-        comments: [...discussion.comments, comment],
-      };
-
-      // Filter out old discussion and add updated one
-      const updatedDiscussions = discussions
-        .filter((d) => d.id !== discussionId)
-        .concat(updatedDiscussion);
-
-      editor.setOption(discussionPlugin, 'discussions', updatedDiscussions);
-      setDiscussions(updatedDiscussions);
+      commentsCreateMutate({
+        data: {
+          key: crypto.randomUUID(),
+          discussion: discussion.id,
+          content_rich: commentValue,
+        },
+      });
 
       return;
     }
@@ -584,33 +580,19 @@ export function CommentCreateForm({
       .map(([node]: NodeEntry<TCommentText>) => node.text)
       .join('');
 
-    const _discussionId = nanoid();
-    // Mock creating new discussion
-    const newDiscussion: TDiscussion = {
-      id: _discussionId,
-      comments: [
-        {
-          id: nanoid(),
-          contentRich: commentValue,
-          createdAt: new Date(),
-          discussionId: _discussionId,
-          isEdited: false,
-          userId: editor.getOption(discussionPlugin, 'currentUserId'),
-        },
-      ],
-      createdAt: new Date(),
-      documentContent,
-      isResolved: false,
-      userId: editor.getOption(discussionPlugin, 'currentUserId'),
-    };
+    const _discussionId = crypto.randomUUID();
+    const _commentId = crypto.randomUUID();
 
-    editor.setOption(discussionPlugin, 'discussions', [
-      ...discussions,
-      newDiscussion,
-    ]);
-    setDiscussions([...discussions, newDiscussion]);
+    discussionsCreateMutate({
+      data: {
+        key: _discussionId,
+        document: documentId,
+        document_content: documentContent,
+        comment: { key: _commentId, content_rich: commentValue },
+      },
+    });
 
-    const id = newDiscussion.id;
+    const id = _discussionId;
 
     commentsNodeEntry.forEach(([, path]: NodeEntry<TCommentText>) => {
       editor.tf.setNodes(
@@ -626,20 +608,19 @@ export function CommentCreateForm({
     editor.setOption(commentPlugin, 'commentingBlock', null);
   }, [
     editor,
+    discussions,
     commentEditor.tf,
+    documentId,
     discussionId,
     discussionDraftKey,
-    setDiscussions,
+    discussionsCreateMutate,
+    commentsCreateMutate,
   ]);
 
   return (
     <div className={cn('flex w-full', className)}>
       <div className="mr-1 shrink-0">
-        {/* Replace to your own backend or refer to potion */}
-        <Avatar className="size-5">
-          <AvatarImage alt={userInfo?.name} src={userInfo?.avatarUrl} />
-          <AvatarFallback>{userInfo?.name?.[0]}</AvatarFallback>
-        </Avatar>
+        <UserAvatar user={me} className="size-5" />
       </div>
 
       <div className="relative flex grow gap-2">
@@ -688,23 +669,3 @@ export function CommentCreateForm({
     </div>
   );
 }
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const formatCommentDate = (date: Date) => {
-  const now = new Date();
-  const diffMinutes = differenceInMinutes(now, date);
-  const diffHours = differenceInHours(now, date);
-  const diffDays = differenceInDays(now, date);
-
-  if (diffMinutes < 60) {
-    return `${diffMinutes} 分钟前`;
-  }
-  if (diffHours < 24) {
-    return `${diffHours} 小时前`;
-  }
-  if (diffDays < 7) {
-    return `${diffDays} 天前`;
-  }
-
-  return format(date, 'yyyy年M月d日');
-};

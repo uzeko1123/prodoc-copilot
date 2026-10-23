@@ -1,7 +1,6 @@
 'use client';
 
 import { createPlatePlugin } from 'platejs/react';
-import { useCommentStore } from '../../../stores';
 import { BlockDiscussion } from '../../ui/block-discussion';
 import type { TComment } from '../../ui/comment';
 
@@ -49,45 +48,11 @@ export const getDiscussionBlockClickTarget = ({
     target,
   });
 
-const avatarUrl = (seed: string) =>
-  `#https://api.dicebear.com/9.x/glass/svg?seed=${seed}`;
-
-const usersData: Record<
-  string,
-  { id: string; avatarUrl: string; name: string; hue?: number }
-> = {
-  alice: {
-    id: 'alice',
-    avatarUrl: avatarUrl('alice6'),
-    name: 'Alice',
-  },
-  bob: {
-    id: 'bob',
-    avatarUrl: avatarUrl('bob4'),
-    name: 'Bob',
-  },
-  charlie: {
-    id: 'charlie',
-    avatarUrl: avatarUrl('charlie2'),
-    name: 'Charlie',
-  },
-};
-
 // This plugin is purely UI. It's only used to store the discussions and users data
 export const discussionPlugin = createPlatePlugin({
   key: 'discussion',
-  options: {
-    currentUserId: 'alice',
-    discussions: useCommentStore.getState().discussions,
-    users: usersData,
-  },
-})
-  .configure({
-    render: { aboveNodes: BlockDiscussion },
-  })
-  .extendSelectors(({ getOption }) => ({
-    currentUser: () => getOption('users')[getOption('currentUserId')],
-    user: (id: string) => getOption('users')[id],
-  }));
+}).configure({
+  render: { aboveNodes: BlockDiscussion },
+});
 
 export const DiscussionKit = [discussionPlugin];

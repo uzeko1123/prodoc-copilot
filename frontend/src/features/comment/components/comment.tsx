@@ -1,5 +1,7 @@
 'use client';
 
+import { useAuthUserRetrieve } from '@/api/gen/endpoints/auth/auth';
+import { useMainDiscussionsList } from '@/api/gen/endpoints/main/main';
 import { Card } from '@/components/shadcn/ui/card';
 import {
   Empty,
@@ -8,6 +10,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
+import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
@@ -18,11 +21,11 @@ import { useEditorRef, usePluginOption, useValueVersion } from 'platejs/react';
 import { useEffect, useMemo, useRef } from 'react';
 import {
   getDiscussionIndex,
+  toTDiscussion,
   type ResolvedDiscussion,
   type ResolvedSuggestion,
 } from '../lib/block-discussion-index';
 import { commentPlugin } from './editor/plugins/comment-kit';
-import { discussionPlugin } from './editor/plugins/discussion-kit';
 import { suggestionPlugin } from './editor/plugins/suggestion-kit';
 import { BlockComment } from './ui/block-discussion';
 import { BlockSuggestionCard } from './ui/block-suggestion';
@@ -37,7 +40,22 @@ type CommentItem = { id: string; path: Path } & (
 export function Comment() {
   const editor = useEditorRef();
   const version = useDebounce(useValueVersion() ?? 0);
-  const discussions = usePluginOption(discussionPlugin, 'discussions');
+
+  const { data: me } = useAuthUserRetrieve();
+  useEffect(() => {
+    editor.setOption(
+      suggestionPlugin,
+      'currentUserId',
+      me ? String(me.pk) : '',
+    );
+  }, [editor, me]);
+
+  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+  const { data } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+  const discussions = useMemo(() => (data ?? []).map(toTDiscussion), [data]);
 
   const commentingBlock = usePluginOption(commentPlugin, 'commentingBlock');
   const activeCommentId = usePluginOption(commentPlugin, 'activeId');

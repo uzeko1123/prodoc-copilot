@@ -5,9 +5,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_spectacular.utils import extend_schema
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from ..responses import MessageResponse
 from ..serializers import MessageResponseSerializer
@@ -41,7 +41,7 @@ class AltchaAPIView(APIView):
         return Response(challenge.to_dict())
 
 
-class UserListAPIView(ListAPIView):
+class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     queryset = (
         User.objects.exclude(username="AnonymousUser")
@@ -50,8 +50,3 @@ class UserListAPIView(ListAPIView):
     )
     filter_backends = (SearchFilter,)
     search_fields = ("username", "profile__full_name")
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)

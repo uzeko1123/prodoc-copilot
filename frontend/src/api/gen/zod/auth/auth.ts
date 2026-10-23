@@ -484,3 +484,26 @@ export const AuthUsersListResponseItem = zod.object({
   avatar: zod.url(),
 });
 export const AuthUsersListResponse = zod.array(AuthUsersListResponseItem);
+
+export const AuthUsersRetrieveParams = zod.object({
+  id: zod.int().describe('标识此 用户 的 唯一整数值。'),
+});
+
+export const authUsersRetrieveResponseUsernameMax = 150;
+
+export const authUsersRetrieveResponseUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
+export const AuthUsersRetrieveResponse = zod.object({
+  pk: zod.int(),
+  username: zod
+    .string()
+    .max(authUsersRetrieveResponseUsernameMax)
+    .regex(authUsersRetrieveResponseUsernameRegExp)
+    .describe(
+      '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+    ),
+  full_name: zod.string(),
+  avatar: zod.url(),
+});

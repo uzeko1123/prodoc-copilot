@@ -20,7 +20,6 @@ import {
   VoidRemoveSuggestionOverlay,
 } from '../../ui/suggestion-node';
 import {
-  discussionPlugin,
   getDiscussionBlockClickTarget,
   getDiscussionClickTarget,
 } from './discussion-kit';
@@ -54,10 +53,9 @@ function getInlineSuggestionData(editor: PlateEditor, element: TElement) {
 
 export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
   BaseSuggestionPlugin,
-  ({ editor }) => ({
+  () => ({
     options: {
       activeId: null,
-      currentUserId: editor.getOption(discussionPlugin, 'currentUserId'),
       hoverId: null,
     },
   }),
