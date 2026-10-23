@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
-import { type DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { TypeIcon } from 'lucide-react';
 import * as React from 'react';
 import { useEditorStore, type Font } from '../../stores';

@@ -1,4 +1,4 @@
-import { type Value } from 'platejs';
+import type { Value } from 'platejs';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
