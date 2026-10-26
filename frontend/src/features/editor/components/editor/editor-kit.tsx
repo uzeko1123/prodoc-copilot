@@ -37,6 +37,7 @@ import { MathKit } from './plugins/math-kit';
 import { MediaKit } from './plugins/media-kit';
 import { SelectionKit } from './plugins/selection-kit';
 import { TableKit } from './plugins/table-kit';
+import { TemplateKit } from './plugins/template-kit';
 import { TocKit } from './plugins/toc-kit';
 
 export const EditorKit = [
@@ -95,6 +96,9 @@ export const EditorKit = [
 
   // Document
   ...DocumentKit,
+
+  // Template
+  ...TemplateKit,
 ];
 
 export type MyEditor = TPlateEditor<Value, (typeof EditorKit)[number]>;

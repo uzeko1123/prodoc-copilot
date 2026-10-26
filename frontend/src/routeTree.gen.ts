@@ -20,6 +20,7 @@ import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './fea
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
 import { Route as featuresDashboardPagesIndexRouteImport } from './features/dashboard/pages/index'
+import { Route as featuresTemplatePagesTemplateRouteImport } from './features/template/pages/template'
 import { Route as featuresTaskPagesTaskCreateRouteImport } from './features/task/pages/task-create'
 import { Route as featuresTaskPagesTaskReviewRouteImport } from './features/task/pages/task-review'
 import { Route as appWorkbenchRouteImport } from './app/workbench'
@@ -85,6 +86,12 @@ const featuresDashboardPagesIndexRoute =
     path: '/',
     getParentRoute: () => appDashboardRoute,
   } as any)
+const featuresTemplatePagesTemplateRoute =
+  featuresTemplatePagesTemplateRouteImport.update({
+    id: '/template',
+    path: '/template',
+    getParentRoute: () => appDashboardRoute,
+  } as any)
 const featuresTaskPagesTaskCreateRoute =
   featuresTaskPagesTaskCreateRouteImport.update({
     id: '/task/create',
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/template': typeof featuresTemplatePagesTemplateRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
   '/dashboard/task/create': typeof featuresTaskPagesTaskCreateRoute
@@ -129,6 +137,7 @@ export interface FileRoutesByTo {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/template': typeof featuresTemplatePagesTemplateRoute
   '/dashboard': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId': typeof appWorkbenchRoute
   '/dashboard/task/create': typeof featuresTaskPagesTaskCreateRoute
@@ -146,6 +155,7 @@ export interface FileRoutesById {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/template': typeof featuresTemplatePagesTemplateRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
   '/dashboard/task/create': typeof featuresTaskPagesTaskCreateRoute
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/template'
     | '/dashboard/'
     | '/workbench/$taskId/'
     | '/dashboard/task/create'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/template'
     | '/dashboard'
     | '/workbench/$taskId'
     | '/dashboard/task/create'
@@ -195,6 +207,7 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/template'
     | '/dashboard/'
     | '/workbench/$taskId/'
     | '/dashboard/task/create'
@@ -294,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof featuresDashboardPagesIndexRouteImport
       parentRoute: typeof appDashboardRoute
     }
+    '/dashboard/template': {
+      id: '/dashboard/template'
+      path: '/template'
+      fullPath: '/dashboard/template'
+      preLoaderRoute: typeof featuresTemplatePagesTemplateRouteImport
+      parentRoute: typeof appDashboardRoute
+    }
     '/dashboard/task/create': {
       id: '/dashboard/task/create'
       path: '/task/create'
@@ -319,12 +339,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface appDashboardRouteChildren {
+  featuresTemplatePagesTemplateRoute: typeof featuresTemplatePagesTemplateRoute
   featuresDashboardPagesIndexRoute: typeof featuresDashboardPagesIndexRoute
   featuresTaskPagesTaskCreateRoute: typeof featuresTaskPagesTaskCreateRoute
   featuresTaskPagesTaskReviewRoute: typeof featuresTaskPagesTaskReviewRoute
 }
 
 const appDashboardRouteChildren: appDashboardRouteChildren = {
+  featuresTemplatePagesTemplateRoute: featuresTemplatePagesTemplateRoute,
   featuresDashboardPagesIndexRoute: featuresDashboardPagesIndexRoute,
   featuresTaskPagesTaskCreateRoute: featuresTaskPagesTaskCreateRoute,
   featuresTaskPagesTaskReviewRoute: featuresTaskPagesTaskReviewRoute,

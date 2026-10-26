@@ -58,7 +58,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => setTaskCreateDialogOpen(true)}>
+              <SidebarMenuButton
+                variant="outline"
+                onClick={() => setTaskCreateDialogOpen(true)}
+              >
                 <CirclePlusIcon /> 快速创建
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -88,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard">
+                <Link to="/dashboard/template">
                   <FormIcon /> 文档模板
                 </Link>
               </SidebarMenuButton>

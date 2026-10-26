@@ -10,7 +10,7 @@ import { DndPlugin, useDraggable, useDropLine } from '@platejs/dnd';
 import { expandListItemsWithChildren } from '@platejs/list';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { cn } from 'cn';
-import { GripVertical } from 'lucide-react';
+import { GripVerticalIcon, PinIcon } from 'lucide-react';
 import { getPluginByType, isType, KEYS, type TElement } from 'platejs';
 import {
   MemoizedChildren,
@@ -58,6 +58,8 @@ export const BlockDraggable: RenderNodeWrapper = (props) => {
 function Draggable(props: PlateElementProps) {
   const { children, editor, element, path } = props;
   const readOnly = useEditorReadOnly();
+  const locked =
+    element.readonly === true || (element as TElement).template != null;
   const blockSelectionApi = editor.getApi(BlockSelectionPlugin).blockSelection;
 
   const { isAboutToDrag, isDragging, nodeRef, previewRef, handleRef } =
@@ -128,7 +130,7 @@ function Draggable(props: PlateElementProps) {
               )}
             >
               <Button
-                ref={readOnly ? undefined : handleRef}
+                ref={readOnly || locked ? undefined : handleRef}
                 variant="ghost"
                 className="absolute left-0 h-6 w-full p-0"
                 style={{ top: `${dragButtonTop + 3}px` }}
@@ -139,6 +141,7 @@ function Draggable(props: PlateElementProps) {
                   previewRef={previewRef}
                   resetPreview={resetPreview}
                   setPreviewTop={setPreviewTop}
+                  locked={locked}
                 />
               </Button>
             </div>
@@ -207,11 +210,13 @@ const DragHandle = React.memo(function DragHandle({
   previewRef,
   resetPreview,
   setPreviewTop,
+  locked,
 }: {
   isDragging: boolean;
   previewRef: React.RefObject<HTMLDivElement | null>;
   resetPreview: () => void;
   setPreviewTop: (top: number) => void;
+  locked: boolean;
 }) {
   const editor = useEditorRef();
   const readOnly = useEditorReadOnly();
@@ -251,7 +256,7 @@ const DragHandle = React.memo(function DragHandle({
               selectionNodes,
             ).map(([node]) => node);
 
-            if (!readOnly) {
+            if (!readOnly && !locked) {
               if (blockSelection.length === 0) {
                 editor.tf.blur();
                 editor.tf.collapse();
@@ -309,10 +314,14 @@ const DragHandle = React.memo(function DragHandle({
           data-plate-prevent-deselect
           role="button"
         >
-          <GripVertical className="text-muted-foreground" />
+          {locked ? (
+            <PinIcon className="text-muted-foreground" />
+          ) : (
+            <GripVerticalIcon className="text-muted-foreground" />
+          )}
         </div>
       </TooltipTrigger>
-      {!readOnly && <TooltipContent>拖动</TooltipContent>}
+      {!readOnly && !locked && <TooltipContent>拖动</TooltipContent>}
     </Tooltip>
   );
 });

@@ -28,6 +28,7 @@ import { Editor } from '@/features/editor/components/editor';
 import { Find } from '@/features/editor/components/find';
 import { Plate } from '@/features/editor/components/plate';
 import { ToC } from '@/features/editor/components/toc';
+import { templateValue } from '@/features/editor/data/template';
 import { TaskUpdateDialog } from '@/features/task/components/task-dialog';
 import type { Role } from '@/features/task/components/task-list';
 import { TaskStageBadge } from '@/features/task/components/task-stage-badge';
@@ -144,7 +145,7 @@ function Workbench() {
   return (
     <div className="flex h-dvh flex-col">
       <Plate
-        value={(document.value as Value) ?? []}
+        value={(document.value as Value) ?? templateValue}
         documentId={task.document}
         canEdit={canEdit(role, me, task)}
       >

@@ -32,8 +32,8 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { cn } from 'cn';
 import {
+  CheckCheckIcon,
   EllipsisVerticalIcon,
-  InboxIcon,
   PencilIcon,
   PlusIcon,
   TrashIcon,
@@ -67,8 +67,12 @@ export function TaskList({ role }: { role: Role }) {
   );
 
   const [taskCreateDialogOpen, setTaskCreateDialogOpen] = React.useState(false);
-  const [taskUpdateDialogOpen, setTaskUpdateDialogOpen] = React.useState(false);
-  const [taskDeleteDialogOpen, setTaskDeleteDialogOpen] = React.useState(false);
+  const [taskUpdateDialogId, setTaskUpdateDialogId] = React.useState<
+    string | null
+  >(null);
+  const [taskDeleteDialogId, setTaskDeleteDialogId] = React.useState<
+    string | null
+  >(null);
 
   if (isPending) return <DefaultPending message="任务列表加载中 . . ." />;
 
@@ -106,7 +110,7 @@ export function TaskList({ role }: { role: Role }) {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <InboxIcon />
+              {role === 'creator' ? <PencilIcon /> : <CheckCheckIcon />}
             </EmptyMedia>
             <EmptyTitle>
               {role === 'creator' ? '暂无文档' : '暂无评审任务'}
@@ -163,46 +167,49 @@ export function TaskList({ role }: { role: Role }) {
                           {getEnterLabel(role, task)}
                         </Link>
                       </Button>
-                      {role === 'creator' && task.stage !== 'review' && (
-                        <>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon-sm">
-                                <EllipsisVerticalIcon />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onSelect={() => setTaskUpdateDialogOpen(true)}
-                              >
-                                <PencilIcon />
-                                修改信息
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                variant="destructive"
-                                onSelect={() => setTaskDeleteDialogOpen(true)}
-                              >
-                                <TrashIcon />
-                                删除文档
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-
-                          <TaskUpdateDialog
-                            task={task}
-                            open={taskUpdateDialogOpen}
-                            onOpenChange={setTaskUpdateDialogOpen}
-                          />
-
-                          <TaskDeleteDialog
-                            task={task}
-                            open={taskDeleteDialogOpen}
-                            onOpenChange={setTaskDeleteDialogOpen}
-                          />
-                        </>
-                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          asChild
+                          disabled={
+                            role !== 'creator' || task.stage === 'review'
+                          }
+                        >
+                          <Button variant="ghost" size="icon-sm">
+                            <EllipsisVerticalIcon />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onSelect={() => setTaskUpdateDialogId(task.id)}
+                          >
+                            <PencilIcon />
+                            修改信息
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onSelect={() => setTaskDeleteDialogId(task.id)}
+                          >
+                            <TrashIcon />
+                            删除文档
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </TableCell>
+                  <TaskUpdateDialog
+                    task={task}
+                    open={taskUpdateDialogId === task.id}
+                    onOpenChange={(open) =>
+                      setTaskUpdateDialogId(open ? task.id : null)
+                    }
+                  />
+                  <TaskDeleteDialog
+                    task={task}
+                    open={taskDeleteDialogId === task.id}
+                    onOpenChange={(open) =>
+                      setTaskDeleteDialogId(open ? task.id : null)
+                    }
+                  />
                 </TableRow>
               ))}
             </TableBody>

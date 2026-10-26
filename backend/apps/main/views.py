@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Comment, Discussion, Document, Task
+from .models import Comment, Discussion, Document, Task, Template
 from .permissions import (
     CommentPermission,
     DiscussionPermission,
@@ -24,6 +24,7 @@ from .serializers import (
     DocumentSerializer,
     TaskSerializer,
     TaskSubmitSerializer,
+    TemplateSerializer,
 )
 
 
@@ -183,3 +184,8 @@ class CommentViewSet(ModelViewSet):
             instance.delete()
             if not discussion.comments.exists():
                 discussion.delete()
+
+
+class TemplateViewSet(ModelViewSet):
+    queryset = Template.objects.all()
+    serializer_class = TemplateSerializer

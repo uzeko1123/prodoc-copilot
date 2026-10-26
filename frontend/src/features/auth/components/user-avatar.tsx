@@ -24,7 +24,7 @@ export function UserAvatar({
         {user ? (
           (user.full_name || user.username)[0].toUpperCase()
         ) : (
-          <UserIcon />
+          <UserIcon className="size-3.5" />
         )}
       </AvatarFallback>
       {children}

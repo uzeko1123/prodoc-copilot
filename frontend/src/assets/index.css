@@ -35,6 +35,7 @@
 }
 
 .editor-font .slate-p[placeholder]::before,
+.editor-font .slate-p[placeholder]::after,
 .editor-font .slate-p[role='listitem'],
 .editor-font .slate-p li,
 .editor-font table .slate-p {

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from rest_framework import serializers
 
-from .models import Comment, Discussion, Document, Task
+from .models import Comment, Discussion, Document, Task, Template
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -102,3 +102,10 @@ class DiscussionSerializer(serializers.ModelSerializer):
         validated_data.pop("key", None)
         validated_data.pop("document", None)
         return super().update(instance, validated_data)
+
+
+class TemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Template
+        fields = ("id", "name", "value", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")

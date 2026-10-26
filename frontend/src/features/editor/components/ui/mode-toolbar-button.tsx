@@ -13,7 +13,11 @@ import {
   type DropdownMenuProps,
 } from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, EyeIcon, PencilIcon } from 'lucide-react';
-import { useEditorRef, usePluginOption } from 'platejs/react';
+import {
+  useEditorReadOnly,
+  useEditorRef,
+  usePluginOption,
+} from 'platejs/react';
 import * as React from 'react';
 import { DocumentPlugin } from '../editor/plugins/document-kit';
 
@@ -30,20 +34,16 @@ const item: Record<string, { icon: React.ReactNode; label: string }> = {
 
 export function ModeToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
+  const readOnly = useEditorReadOnly();
   const canEdit = usePluginOption(DocumentPlugin, 'canEdit');
   const [open, setOpen] = React.useState(false);
 
-  const value = canEdit ? 'editing' : 'viewing';
+  const value = readOnly ? 'viewing' : 'editing';
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false} {...props}>
       <DropdownMenuTrigger asChild>
-        <ToolbarButton
-          pressed={open}
-          tooltip="选择模式"
-          isDropdown
-          disabled={!canEdit}
-        >
+        <ToolbarButton pressed={open} tooltip="选择模式" isDropdown>
           {item[value].icon}
           <span className="hidden lg:inline">{item[value].label}</span>
         </ToolbarButton>
@@ -51,27 +51,21 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
 
       <DropdownMenuContent align="end" className="w-auto">
         <DropdownMenuRadioGroup
-          onValueChange={(newValue) => {
-            if (newValue === 'viewing') {
-              editor.store.setReadOnly(true);
-              editor.tf.focus();
-              return;
-            }
-            if (newValue === 'editing') {
-              editor.store.setReadOnly(false);
-              editor.tf.focus();
-            }
+          onValueChange={(value) => {
+            editor.store.setReadOnly(value === 'viewing');
+            editor.tf.focus();
           }}
           value={value}
         >
-          <DropdownMenuRadioItem
-            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
-            value="editing"
-          >
-            <Indicator />
-            {item.editing.icon} {item.editing.label}
-          </DropdownMenuRadioItem>
-
+          {canEdit && (
+            <DropdownMenuRadioItem
+              className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+              value="editing"
+            >
+              <Indicator />
+              {item.editing.icon} {item.editing.label}
+            </DropdownMenuRadioItem>
+          )}
           <DropdownMenuRadioItem
             className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
             value="viewing"

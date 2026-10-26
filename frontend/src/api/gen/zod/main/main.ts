@@ -601,3 +601,99 @@ export const MainTasksSubmitCreateResponse = zod.object({
   updated_at: zod.iso.datetime({ offset: true }),
   document: zod.uuid(),
 });
+
+export const mainTemplatesListResponseNameMax = 255;
+
+export const MainTemplatesListResponseItem = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTemplatesListResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+export const MainTemplatesListResponse = zod.array(
+  MainTemplatesListResponseItem,
+);
+
+export const mainTemplatesCreateBodyNameMax = 255;
+
+export const MainTemplatesCreateBody = zod.object({
+  name: zod.string().min(1).max(mainTemplatesCreateBodyNameMax),
+  value: zod.unknown(),
+});
+
+export const mainTemplatesCreateResponseNameMax = 255;
+
+export const MainTemplatesCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTemplatesCreateResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTemplatesRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 template 的 UUID 字符串。'),
+});
+
+export const mainTemplatesRetrieveResponseNameMax = 255;
+
+export const MainTemplatesRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTemplatesRetrieveResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTemplatesUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 template 的 UUID 字符串。'),
+});
+
+export const mainTemplatesUpdateBodyNameMax = 255;
+
+export const MainTemplatesUpdateBody = zod.object({
+  name: zod.string().min(1).max(mainTemplatesUpdateBodyNameMax),
+  value: zod.unknown(),
+});
+
+export const mainTemplatesUpdateResponseNameMax = 255;
+
+export const MainTemplatesUpdateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTemplatesUpdateResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTemplatesPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 template 的 UUID 字符串。'),
+});
+
+export const mainTemplatesPartialUpdateBodyNameMax = 255;
+
+export const MainTemplatesPartialUpdateBody = zod.object({
+  name: zod
+    .string()
+    .min(1)
+    .max(mainTemplatesPartialUpdateBodyNameMax)
+    .optional(),
+  value: zod.unknown().optional(),
+});
+
+export const mainTemplatesPartialUpdateResponseNameMax = 255;
+
+export const MainTemplatesPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainTemplatesPartialUpdateResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainTemplatesDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 template 的 UUID 字符串。'),
+});
+
+export const MainTemplatesDestroyResponse = zod.void();
