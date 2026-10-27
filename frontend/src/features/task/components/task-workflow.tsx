@@ -6,7 +6,7 @@ import {
   useMainTasksSendBackCreate,
   useMainTasksSubmitCreate,
 } from '@/api/gen/endpoints/main/main';
-import type { Task } from '@/api/gen/models';
+import type { Task, User } from '@/api/gen/models';
 import { MainTasksSubmitCreateBody } from '@/api/gen/zod/main/main';
 import { Button } from '@/components/shadcn/ui/button';
 import {
@@ -15,6 +15,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/shadcn/ui/field';
+import { Combobox, ComboboxInput } from '@/components/ui/combobox';
 import {
   Dialog,
   DialogContent,
@@ -167,6 +168,17 @@ function TaskResubmitForm({
         <DialogTitle>重新提交评审</DialogTitle>
         <DialogDescription>{task.name}</DialogDescription>
       </DialogHeader>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="reviewer">评审人</FieldLabel>
+          <Combobox
+            value={task.reviewer}
+            itemToStringLabel={(user: User) => user.full_name || user.username}
+          >
+            <ComboboxInput id="reviewer" placeholder="未指定" disabled />
+          </Combobox>
+        </Field>
+      </FieldGroup>
       <DialogFooter>
         <Button
           type="button"
@@ -241,6 +253,17 @@ function TaskReviewForm({
         <DialogTitle>提交评审结论</DialogTitle>
         <DialogDescription>{task.name}</DialogDescription>
       </DialogHeader>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="creator">创建者</FieldLabel>
+          <Combobox
+            value={task.creator}
+            itemToStringLabel={(user: User) => user.full_name || user.username}
+          >
+            <ComboboxInput id="creator" placeholder="未知用户" disabled />
+          </Combobox>
+        </Field>
+      </FieldGroup>
       <DialogFooter>
         <Button
           type="button"

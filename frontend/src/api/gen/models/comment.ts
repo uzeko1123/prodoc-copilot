@@ -3,6 +3,7 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { User } from './user';
 
 export interface Comment {
   readonly id: string;
@@ -10,7 +11,7 @@ export interface Comment {
   discussion: string;
   content_rich: unknown;
   readonly is_edited: boolean;
-  readonly user: number;
+  readonly user: User;
   readonly created_at: string;
   readonly updated_at: string;
 }

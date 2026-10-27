@@ -128,6 +128,10 @@ export function TaskList({ role }: { role: Role }) {
             <TableHeader>
               <TableRow>
                 <TableHead>名称</TableHead>
+                <TableHead>模板</TableHead>
+                <TableHead>
+                  {role === 'creator' ? '评审人' : '创建者'}
+                </TableHead>
                 <TableHead>状态</TableHead>
                 <TableHead>创建时间</TableHead>
                 <TableHead>更新时间</TableHead>
@@ -146,6 +150,18 @@ export function TaskList({ role }: { role: Role }) {
                     >
                       {task.name}
                     </Link>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {task.template?.name ?? '无模板'}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {role === 'creator'
+                      ? task.reviewer?.full_name ||
+                        task.reviewer?.username ||
+                        '未指定'
+                      : task.creator.full_name ||
+                        task.creator.username ||
+                        '未知用户'}
                   </TableCell>
                   <TableCell>
                     <TaskStageBadge role={role} stage={task.stage} />

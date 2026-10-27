@@ -499,11 +499,11 @@ export function toTDiscussion(discussion: Discussion): TDiscussion {
       createdAt: new Date(comment.created_at),
       discussionId: discussion.key,
       isEdited: comment.is_edited,
-      userId: String(comment.user),
+      userId: String(comment.user.pk),
     })),
     createdAt: new Date(discussion.created_at),
     documentContent: discussion.document_content,
     isResolved: discussion.is_resolved ?? false,
-    userId: String(discussion.user),
+    userId: String(discussion.user.pk),
   };
 }

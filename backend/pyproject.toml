@@ -12,7 +12,7 @@ plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
 exclude = ["^apps/.*/migrations/.*"]
 
 [[tool.mypy.overrides]]
-module = ["environ.*", "allauth.*", "dj_rest_auth.*"]
+module = ["environ.*", "allauth.*", "dj_rest_auth.*", "django_celery_beat.*"]
 ignore_missing_imports = true
 
 [tool.django-stubs]

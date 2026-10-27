@@ -9,6 +9,6 @@ export interface DiscussionRequest {
   key: string;
   document: string;
   document_content?: string;
+  comment_inline: CommentInlineRequest;
   is_resolved?: boolean;
-  comment: CommentInlineRequest;
 }

@@ -1,10 +1,12 @@
+from copy import deepcopy
+
 from django.db import transaction
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, MethodNotAllowed, NotFound
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 from rest_framework.viewsets import ModelViewSet
@@ -42,6 +44,13 @@ def ensure_task_stage_user(user, task: Task) -> None:
         raise Conflict
 
 
+class TemplateViewSet(ModelViewSet):
+    queryset = Template.objects.all().order_by("name")
+    serializer_class = TemplateSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ("name",)
+
+
 class TaskViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -52,13 +61,17 @@ class TaskViewSet(ModelViewSet):
     ordering = ("-updated_at",)
 
     def get_queryset(self):
-        user = self.request.user
-        return Task.objects.filter(Q(creator=user) | Q(reviewer=user))
+        return Task.objects.filter(
+            Q(creator=self.request.user) | Q(reviewer=self.request.user)
+        ).select_related("template", "creator__profile", "reviewer__profile")
 
     def perform_create(self, serializer):
         with transaction.atomic():
             task = serializer.save(creator=self.request.user)
-            Document.objects.create(task=task, value=[])
+            Document.objects.create(
+                task=task,
+                value=deepcopy(task.template.value) if task.template else [],
+            )
 
     @extend_schema(request=TaskSubmitSerializer, responses={200: TaskSerializer})
     @action(detail=True, methods=["post"])
@@ -107,9 +120,8 @@ class DocumentViewSet(ModelViewSet):
     filterset_fields = ("task",)
 
     def get_queryset(self):
-        user = self.request.user
         return Document.objects.filter(
-            Q(task__creator=user) | Q(task__reviewer=user)
+            Q(task__creator=self.request.user) | Q(task__reviewer=self.request.user)
         ).select_related("task")
 
     def perform_create(self, serializer):
@@ -123,47 +135,20 @@ class DocumentViewSet(ModelViewSet):
         raise MethodNotAllowed("DELETE")
 
 
-class DiscussionViewSet(ModelViewSet):
-    queryset = Discussion.objects.select_related("document__task")
-    serializer_class = DiscussionSerializer
-    permission_classes = (DiscussionPermission,)
-    filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ("document",)
-
-    def get_queryset(self):
-        user = self.request.user
-        return Discussion.objects.filter(
-            Q(document__task__creator=user) | Q(document__task__reviewer=user)
-        ).select_related("document__task")
-
-    def perform_create(self, serializer):
-        document = serializer.validated_data["document"]
-        ensure_task_member(self.request.user, document.task)
-        ensure_task_stage_user(self.request.user, document.task)
-        serializer.save(user=self.request.user)
-
-    def perform_update(self, serializer):
-        ensure_task_stage_user(self.request.user, serializer.instance.document.task)
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        ensure_task_stage_user(self.request.user, instance.document.task)
-        instance.delete()
-
-
 class CommentViewSet(ModelViewSet):
-    queryset = Comment.objects.select_related("discussion__document__task")
+    queryset = Comment.objects.select_related(
+        "discussion__document__task", "user__profile"
+    )
     serializer_class = CommentSerializer
     permission_classes = (CommentPermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("discussion",)
 
     def get_queryset(self):
-        user = self.request.user
         return Comment.objects.filter(
-            Q(discussion__document__task__creator=user)
-            | Q(discussion__document__task__reviewer=user)
-        ).select_related("discussion__document__task")
+            Q(discussion__document__task__creator=self.request.user)
+            | Q(discussion__document__task__reviewer=self.request.user)
+        ).select_related("discussion__document__task", "user__profile")
 
     def perform_create(self, serializer):
         discussion = serializer.validated_data["discussion"]
@@ -186,6 +171,29 @@ class CommentViewSet(ModelViewSet):
                 discussion.delete()
 
 
-class TemplateViewSet(ModelViewSet):
-    queryset = Template.objects.all()
-    serializer_class = TemplateSerializer
+class DiscussionViewSet(ModelViewSet):
+    queryset = Discussion.objects.select_related("document__task", "user__profile")
+    serializer_class = DiscussionSerializer
+    permission_classes = (DiscussionPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("document",)
+
+    def get_queryset(self):
+        return Discussion.objects.filter(
+            Q(document__task__creator=self.request.user)
+            | Q(document__task__reviewer=self.request.user)
+        ).select_related("document__task", "user__profile")
+
+    def perform_create(self, serializer):
+        document = serializer.validated_data["document"]
+        ensure_task_member(self.request.user, document.task)
+        ensure_task_stage_user(self.request.user, document.task)
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        ensure_task_stage_user(self.request.user, serializer.instance.document.task)
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        ensure_task_stage_user(self.request.user, instance.document.task)
+        instance.delete()

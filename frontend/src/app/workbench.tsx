@@ -28,7 +28,6 @@ import { Editor } from '@/features/editor/components/editor';
 import { Find } from '@/features/editor/components/find';
 import { Plate } from '@/features/editor/components/plate';
 import { ToC } from '@/features/editor/components/toc';
-import { templateValue } from '@/features/editor/data/template';
 import { TaskUpdateDialog } from '@/features/task/components/task-dialog';
 import type { Role } from '@/features/task/components/task-list';
 import { TaskStageBadge } from '@/features/task/components/task-stage-badge';
@@ -145,7 +144,7 @@ function Workbench() {
   return (
     <div className="flex h-dvh flex-col">
       <Plate
-        value={(document.value as Value) ?? templateValue}
+        value={(document.value as Value) ?? []}
         documentId={task.document}
         canEdit={canEdit(role, me, task)}
       >
@@ -300,7 +299,7 @@ function Workbench() {
 
 function canEdit(role: Role, user?: UserDetails, task?: Task): boolean {
   if (!user || !task) return false;
-  if (role === 'creator' && user.pk === task.creator) {
+  if (role === 'creator' && user.pk === task.creator.pk) {
     return task.stage === 'editing' || task.stage === 'revision';
   }
   return false;
@@ -312,10 +311,10 @@ function canSubmitWorkflow(
   task?: Task,
 ): boolean {
   if (!user || !task) return false;
-  if (role === 'creator' && user.pk === task.creator) {
+  if (role === 'creator' && user.pk === task.creator.pk) {
     return task.stage === 'editing' || task.stage === 'revision';
   }
-  if (role === 'reviewer' && user.pk === task.reviewer) {
+  if (role === 'reviewer' && user.pk === task.reviewer?.pk) {
     return task.stage === 'review';
   }
   return false;

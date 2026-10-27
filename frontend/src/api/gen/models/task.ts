@@ -4,16 +4,18 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { StageEnum } from './stageEnum';
+import type { Template } from './template';
+import type { User } from './user';
 
 export interface Task {
   readonly id: string;
   /** @maxLength 255 */
   name: string;
+  readonly document: string;
+  readonly template: Template | null;
   readonly stage: StageEnum;
-  readonly creator: number;
-  /** @nullable */
-  readonly reviewer: number | null;
+  readonly creator: User;
+  readonly reviewer: User | null;
   readonly created_at: string;
   readonly updated_at: string;
-  readonly document: string;
 }

@@ -4,6 +4,14 @@ from django.conf import settings
 from django.db import models
 
 
+class Template(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    value = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class Task(models.Model):
     class Stage(models.TextChoices):
         EDITING = "editing"
@@ -13,6 +21,13 @@ class Task(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
+    template = models.ForeignKey(
+        Template,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="tasks",
+    )
     stage = models.CharField(
         max_length=15, choices=Stage.choices, default=Stage.EDITING
     )
@@ -67,13 +82,5 @@ class Comment(models.Model):
     )
     content_rich = models.JSONField()
     is_edited = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class Template(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    value = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

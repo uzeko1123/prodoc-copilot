@@ -40,4 +40,4 @@ class TemplateAdmin(admin.ModelAdmin):
     list_display = ("name", "updated_at")
     search_fields = ("name",)
     ordering = ("-updated_at",)
-    readonly_fields = ("value",)
+    # readonly_fields = ("value",)

@@ -552,7 +552,10 @@ export function CommentCreateForm({
           data: {
             key: discussionId,
             document: documentId,
-            comment: { key: crypto.randomUUID(), content_rich: commentValue },
+            comment_inline: {
+              key: crypto.randomUUID(),
+              content_rich: commentValue,
+            },
           },
         });
         return;
@@ -588,7 +591,7 @@ export function CommentCreateForm({
         key: _discussionId,
         document: documentId,
         document_content: documentContent,
-        comment: { key: _commentId, content_rich: commentValue },
+        comment_inline: { key: _commentId, content_rich: commentValue },
       },
     });
 

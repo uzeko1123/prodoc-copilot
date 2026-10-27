@@ -10,4 +10,6 @@ export interface PatchedTaskRequest {
    * @maxLength 255
    */
   name?: string;
+  /** @nullable */
+  template_id?: string | null;
 }

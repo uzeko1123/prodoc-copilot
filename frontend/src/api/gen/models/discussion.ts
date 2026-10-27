@@ -4,15 +4,16 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { Comment } from './comment';
+import type { User } from './user';
 
 export interface Discussion {
   readonly id: string;
   key: string;
   document: string;
   document_content?: string;
+  readonly comments: readonly Comment[];
   is_resolved?: boolean;
-  readonly user: number;
+  readonly user: User;
   readonly created_at: string;
   readonly updated_at: string;
-  readonly comments: readonly Comment[];
 }

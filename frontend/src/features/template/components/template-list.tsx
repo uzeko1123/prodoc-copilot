@@ -29,9 +29,12 @@ export function TemplateList() {
     data: templates,
     isPending,
     isPlaceholderData,
-  } = useMainTemplatesList({
-    query: { enabled: !!me, placeholderData: keepPreviousData },
-  });
+  } = useMainTemplatesList(
+    {},
+    {
+      query: { enabled: !!me, placeholderData: keepPreviousData },
+    },
+  );
 
   const [templateDialogId, setTemplateDialogId] = React.useState<string | null>(
     null,

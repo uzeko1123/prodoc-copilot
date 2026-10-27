@@ -31,6 +31,7 @@ import type {
   MainDiscussionsListParams,
   MainDocumentsListParams,
   MainTasksListParams,
+  MainTemplatesListParams,
   PatchedCommentRequest,
   PatchedDiscussionRequest,
   PatchedDocumentRequest,
@@ -3101,39 +3102,46 @@ export const useMainTasksSubmitCreate = <
   );
 };
 export const mainTemplatesList = (
+  params?: MainTemplatesListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal,
 ) => {
   return customInstance<Template[]>(
-    { url: `/api/main/templates/`, method: 'GET', signal },
+    { url: `/api/main/templates/`, method: 'GET', params, signal },
     options,
   );
 };
 
-export const getMainTemplatesListQueryKey = () => {
-  return [`/api/main/templates/`] as const;
+export const getMainTemplatesListQueryKey = (
+  params?: MainTemplatesListParams,
+) => {
+  return [`/api/main/templates/`, ...(params ? [params] : [])] as const;
 };
 
 export const getMainTemplatesListQueryOptions = <
   TData = Awaited<ReturnType<typeof mainTemplatesList>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof mainTemplatesList>>,
-      TError,
-      TData
-    >
-  >;
-  request?: SecondParameter<typeof customInstance>;
-}) => {
+>(
+  params?: MainTemplatesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainTemplatesList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getMainTemplatesListQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getMainTemplatesListQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof mainTemplatesList>>
-  > = ({ signal }) => mainTemplatesList(requestOptions, signal);
+  > = ({ signal }) => mainTemplatesList(params, requestOptions, signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof mainTemplatesList>>,
@@ -3151,6 +3159,7 @@ export function useMainTemplatesList<
   TData = Awaited<ReturnType<typeof mainTemplatesList>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | MainTemplatesListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -3177,6 +3186,7 @@ export function useMainTemplatesList<
   TData = Awaited<ReturnType<typeof mainTemplatesList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainTemplatesListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -3203,6 +3213,7 @@ export function useMainTemplatesList<
   TData = Awaited<ReturnType<typeof mainTemplatesList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainTemplatesListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -3222,6 +3233,7 @@ export function useMainTemplatesList<
   TData = Awaited<ReturnType<typeof mainTemplatesList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: MainTemplatesListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -3236,7 +3248,7 @@ export function useMainTemplatesList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
-  const queryOptions = getMainTemplatesListQueryOptions(options);
+  const queryOptions = getMainTemplatesListQueryOptions(params, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

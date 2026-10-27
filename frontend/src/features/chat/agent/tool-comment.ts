@@ -116,7 +116,7 @@ function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
     key: discussionId,
     document: documentId,
     document_content: documentContent,
-    comment: {
+    comment_inline: {
       key: crypto.randomUUID(),
       content_rich: contentRich,
     },

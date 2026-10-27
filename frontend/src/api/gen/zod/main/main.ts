@@ -9,13 +9,30 @@ export const MainCommentsListQueryParams = zod.object({
   discussion: zod.uuid().optional(),
 });
 
+export const mainCommentsListResponseUserOneUsernameMax = 150;
+
+export const mainCommentsListResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainCommentsListResponseItem = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
-  user: zod.int(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainCommentsListResponseUserOneUsernameMax)
+      .regex(mainCommentsListResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
 });
@@ -27,13 +44,30 @@ export const MainCommentsCreateBody = zod.object({
   content_rich: zod.unknown(),
 });
 
+export const mainCommentsCreateResponseUserOneUsernameMax = 150;
+
+export const mainCommentsCreateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainCommentsCreateResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
-  user: zod.int(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainCommentsCreateResponseUserOneUsernameMax)
+      .regex(mainCommentsCreateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
 });
@@ -42,13 +76,30 @@ export const MainCommentsRetrieveParams = zod.object({
   id: zod.uuid().describe('标识此 comment 的 UUID 字符串。'),
 });
 
+export const mainCommentsRetrieveResponseUserOneUsernameMax = 150;
+
+export const mainCommentsRetrieveResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainCommentsRetrieveResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
-  user: zod.int(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainCommentsRetrieveResponseUserOneUsernameMax)
+      .regex(mainCommentsRetrieveResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
 });
@@ -63,13 +114,30 @@ export const MainCommentsUpdateBody = zod.object({
   content_rich: zod.unknown(),
 });
 
+export const mainCommentsUpdateResponseUserOneUsernameMax = 150;
+
+export const mainCommentsUpdateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainCommentsUpdateResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
-  user: zod.int(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainCommentsUpdateResponseUserOneUsernameMax)
+      .regex(mainCommentsUpdateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
 });
@@ -84,13 +152,29 @@ export const MainCommentsPartialUpdateBody = zod.object({
   content_rich: zod.unknown().optional(),
 });
 
+export const mainCommentsPartialUpdateResponseUserOneUsernameMax = 150;
+
+export const mainCommentsPartialUpdateResponseUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+
 export const MainCommentsPartialUpdateResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
-  user: zod.int(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainCommentsPartialUpdateResponseUserOneUsernameMax)
+      .regex(mainCommentsPartialUpdateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
 });
@@ -105,15 +189,21 @@ export const MainDiscussionsListQueryParams = zod.object({
   document: zod.uuid().optional(),
 });
 
+export const mainDiscussionsListResponseCommentsItemUserOneUsernameMax = 150;
+
+export const mainDiscussionsListResponseCommentsItemUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsListResponseUserOneUsernameMax = 150;
+
+export const mainDiscussionsListResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainDiscussionsListResponseItem = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  user: zod.int(),
-  created_at: zod.iso.datetime({ offset: true }),
-  updated_at: zod.iso.datetime({ offset: true }),
   comments: zod.array(
     zod.object({
       id: zod.uuid(),
@@ -121,11 +211,37 @@ export const MainDiscussionsListResponseItem = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
-      user: zod.int(),
+      user: zod.object({
+        pk: zod.int(),
+        username: zod
+          .string()
+          .max(mainDiscussionsListResponseCommentsItemUserOneUsernameMax)
+          .regex(mainDiscussionsListResponseCommentsItemUserOneUsernameRegExp)
+          .describe(
+            '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+          ),
+        full_name: zod.string(),
+        avatar: zod.url(),
+      }),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  is_resolved: zod.boolean().optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainDiscussionsListResponseUserOneUsernameMax)
+      .regex(mainDiscussionsListResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 export const MainDiscussionsListResponse = zod.array(
   MainDiscussionsListResponseItem,
@@ -135,22 +251,28 @@ export const MainDiscussionsCreateBody = zod.object({
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  comment: zod.object({
+  comment_inline: zod.object({
     key: zod.uuid(),
     content_rich: zod.unknown(),
   }),
+  is_resolved: zod.boolean().optional(),
 });
+
+export const mainDiscussionsCreateResponseCommentsItemUserOneUsernameMax = 150;
+
+export const mainDiscussionsCreateResponseCommentsItemUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsCreateResponseUserOneUsernameMax = 150;
+
+export const mainDiscussionsCreateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
 
 export const MainDiscussionsCreateResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  user: zod.int(),
-  created_at: zod.iso.datetime({ offset: true }),
-  updated_at: zod.iso.datetime({ offset: true }),
   comments: zod.array(
     zod.object({
       id: zod.uuid(),
@@ -158,26 +280,58 @@ export const MainDiscussionsCreateResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
-      user: zod.int(),
+      user: zod.object({
+        pk: zod.int(),
+        username: zod
+          .string()
+          .max(mainDiscussionsCreateResponseCommentsItemUserOneUsernameMax)
+          .regex(mainDiscussionsCreateResponseCommentsItemUserOneUsernameRegExp)
+          .describe(
+            '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+          ),
+        full_name: zod.string(),
+        avatar: zod.url(),
+      }),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  is_resolved: zod.boolean().optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainDiscussionsCreateResponseUserOneUsernameMax)
+      .regex(mainDiscussionsCreateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
 export const MainDiscussionsRetrieveParams = zod.object({
   id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
 });
 
+export const mainDiscussionsRetrieveResponseCommentsItemUserOneUsernameMax = 150;
+
+export const mainDiscussionsRetrieveResponseCommentsItemUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsRetrieveResponseUserOneUsernameMax = 150;
+
+export const mainDiscussionsRetrieveResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainDiscussionsRetrieveResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  user: zod.int(),
-  created_at: zod.iso.datetime({ offset: true }),
-  updated_at: zod.iso.datetime({ offset: true }),
   comments: zod.array(
     zod.object({
       id: zod.uuid(),
@@ -185,11 +339,39 @@ export const MainDiscussionsRetrieveResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
-      user: zod.int(),
+      user: zod.object({
+        pk: zod.int(),
+        username: zod
+          .string()
+          .max(mainDiscussionsRetrieveResponseCommentsItemUserOneUsernameMax)
+          .regex(
+            mainDiscussionsRetrieveResponseCommentsItemUserOneUsernameRegExp,
+          )
+          .describe(
+            '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+          ),
+        full_name: zod.string(),
+        avatar: zod.url(),
+      }),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  is_resolved: zod.boolean().optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainDiscussionsRetrieveResponseUserOneUsernameMax)
+      .regex(mainDiscussionsRetrieveResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
 export const MainDiscussionsUpdateParams = zod.object({
@@ -200,22 +382,28 @@ export const MainDiscussionsUpdateBody = zod.object({
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  comment: zod.object({
+  comment_inline: zod.object({
     key: zod.uuid(),
     content_rich: zod.unknown(),
   }),
+  is_resolved: zod.boolean().optional(),
 });
+
+export const mainDiscussionsUpdateResponseCommentsItemUserOneUsernameMax = 150;
+
+export const mainDiscussionsUpdateResponseCommentsItemUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsUpdateResponseUserOneUsernameMax = 150;
+
+export const mainDiscussionsUpdateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
 
 export const MainDiscussionsUpdateResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  user: zod.int(),
-  created_at: zod.iso.datetime({ offset: true }),
-  updated_at: zod.iso.datetime({ offset: true }),
   comments: zod.array(
     zod.object({
       id: zod.uuid(),
@@ -223,11 +411,37 @@ export const MainDiscussionsUpdateResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
-      user: zod.int(),
+      user: zod.object({
+        pk: zod.int(),
+        username: zod
+          .string()
+          .max(mainDiscussionsUpdateResponseCommentsItemUserOneUsernameMax)
+          .regex(mainDiscussionsUpdateResponseCommentsItemUserOneUsernameRegExp)
+          .describe(
+            '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+          ),
+        full_name: zod.string(),
+        avatar: zod.url(),
+      }),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  is_resolved: zod.boolean().optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainDiscussionsUpdateResponseUserOneUsernameMax)
+      .regex(mainDiscussionsUpdateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
 export const MainDiscussionsPartialUpdateParams = zod.object({
@@ -238,24 +452,29 @@ export const MainDiscussionsPartialUpdateBody = zod.object({
   key: zod.uuid().optional(),
   document: zod.uuid().optional(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  comment: zod
+  comment_inline: zod
     .object({
       key: zod.uuid(),
       content_rich: zod.unknown(),
     })
     .optional(),
+  is_resolved: zod.boolean().optional(),
 });
+
+export const mainDiscussionsPartialUpdateResponseCommentsItemUserOneUsernameMax = 150;
+
+export const mainDiscussionsPartialUpdateResponseCommentsItemUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsPartialUpdateResponseUserOneUsernameMax = 150;
+
+export const mainDiscussionsPartialUpdateResponseUserOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
 
 export const MainDiscussionsPartialUpdateResponse = zod.object({
   id: zod.uuid(),
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  is_resolved: zod.boolean().optional(),
-  user: zod.int(),
-  created_at: zod.iso.datetime({ offset: true }),
-  updated_at: zod.iso.datetime({ offset: true }),
   comments: zod.array(
     zod.object({
       id: zod.uuid(),
@@ -263,11 +482,41 @@ export const MainDiscussionsPartialUpdateResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
-      user: zod.int(),
+      user: zod.object({
+        pk: zod.int(),
+        username: zod
+          .string()
+          .max(
+            mainDiscussionsPartialUpdateResponseCommentsItemUserOneUsernameMax,
+          )
+          .regex(
+            mainDiscussionsPartialUpdateResponseCommentsItemUserOneUsernameRegExp,
+          )
+          .describe(
+            '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+          ),
+        full_name: zod.string(),
+        avatar: zod.url(),
+      }),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  is_resolved: zod.boolean().optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainDiscussionsPartialUpdateResponseUserOneUsernameMax)
+      .regex(mainDiscussionsPartialUpdateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
 });
 
 export const MainDiscussionsDestroyParams = zod.object({
@@ -394,19 +643,67 @@ export const MainTasksListQueryParams = zod.object({
 
 export const mainTasksListResponseNameMax = 255;
 
+export const mainTasksListResponseTemplateOneNameMax = 255;
+
+export const mainTasksListResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksListResponseCreatorOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+export const mainTasksListResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksListResponseReviewerOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainTasksListResponseItem = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksListResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksListResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksListResponseCreatorOneUsernameMax)
+      .regex(mainTasksListResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksListResponseReviewerOneUsernameMax)
+        .regex(mainTasksListResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 export const MainTasksListResponse = zod.array(MainTasksListResponseItem);
 
@@ -414,23 +711,72 @@ export const mainTasksCreateBodyNameMax = 255;
 
 export const MainTasksCreateBody = zod.object({
   name: zod.string().min(1).max(mainTasksCreateBodyNameMax),
+  template_id: zod.uuid().nullish(),
 });
 
 export const mainTasksCreateResponseNameMax = 255;
 
+export const mainTasksCreateResponseTemplateOneNameMax = 255;
+
+export const mainTasksCreateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksCreateResponseCreatorOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+export const mainTasksCreateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksCreateResponseReviewerOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainTasksCreateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksCreateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksCreateResponseCreatorOneUsernameMax)
+      .regex(mainTasksCreateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksCreateResponseReviewerOneUsernameMax)
+        .regex(mainTasksCreateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksRetrieveParams = zod.object({
@@ -439,19 +785,67 @@ export const MainTasksRetrieveParams = zod.object({
 
 export const mainTasksRetrieveResponseNameMax = 255;
 
+export const mainTasksRetrieveResponseTemplateOneNameMax = 255;
+
+export const mainTasksRetrieveResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksRetrieveResponseCreatorOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+export const mainTasksRetrieveResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksRetrieveResponseReviewerOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainTasksRetrieveResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksRetrieveResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksRetrieveResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksRetrieveResponseCreatorOneUsernameMax)
+      .regex(mainTasksRetrieveResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksRetrieveResponseReviewerOneUsernameMax)
+        .regex(mainTasksRetrieveResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksUpdateParams = zod.object({
@@ -462,23 +856,72 @@ export const mainTasksUpdateBodyNameMax = 255;
 
 export const MainTasksUpdateBody = zod.object({
   name: zod.string().min(1).max(mainTasksUpdateBodyNameMax),
+  template_id: zod.uuid().nullish(),
 });
 
 export const mainTasksUpdateResponseNameMax = 255;
 
+export const mainTasksUpdateResponseTemplateOneNameMax = 255;
+
+export const mainTasksUpdateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksUpdateResponseCreatorOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+export const mainTasksUpdateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksUpdateResponseReviewerOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
 export const MainTasksUpdateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksUpdateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksUpdateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksUpdateResponseCreatorOneUsernameMax)
+      .regex(mainTasksUpdateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksUpdateResponseReviewerOneUsernameMax)
+        .regex(mainTasksUpdateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksPartialUpdateParams = zod.object({
@@ -489,23 +932,70 @@ export const mainTasksPartialUpdateBodyNameMax = 255;
 
 export const MainTasksPartialUpdateBody = zod.object({
   name: zod.string().min(1).max(mainTasksPartialUpdateBodyNameMax).optional(),
+  template_id: zod.uuid().nullish(),
 });
 
 export const mainTasksPartialUpdateResponseNameMax = 255;
 
+export const mainTasksPartialUpdateResponseTemplateOneNameMax = 255;
+
+export const mainTasksPartialUpdateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksPartialUpdateResponseCreatorOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainTasksPartialUpdateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksPartialUpdateResponseReviewerOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+
 export const MainTasksPartialUpdateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksPartialUpdateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksPartialUpdateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksPartialUpdateResponseCreatorOneUsernameMax)
+      .regex(mainTasksPartialUpdateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksPartialUpdateResponseReviewerOneUsernameMax)
+        .regex(mainTasksPartialUpdateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksDestroyParams = zod.object({
@@ -520,19 +1010,65 @@ export const MainTasksApproveCreateParams = zod.object({
 
 export const mainTasksApproveCreateResponseNameMax = 255;
 
+export const mainTasksApproveCreateResponseTemplateOneNameMax = 255;
+
+export const mainTasksApproveCreateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksApproveCreateResponseCreatorOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainTasksApproveCreateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksApproveCreateResponseReviewerOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+
 export const MainTasksApproveCreateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksApproveCreateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksApproveCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksApproveCreateResponseCreatorOneUsernameMax)
+      .regex(mainTasksApproveCreateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksApproveCreateResponseReviewerOneUsernameMax)
+        .regex(mainTasksApproveCreateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksResubmitCreateParams = zod.object({
@@ -541,19 +1077,65 @@ export const MainTasksResubmitCreateParams = zod.object({
 
 export const mainTasksResubmitCreateResponseNameMax = 255;
 
+export const mainTasksResubmitCreateResponseTemplateOneNameMax = 255;
+
+export const mainTasksResubmitCreateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksResubmitCreateResponseCreatorOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainTasksResubmitCreateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksResubmitCreateResponseReviewerOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+
 export const MainTasksResubmitCreateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksResubmitCreateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksResubmitCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksResubmitCreateResponseCreatorOneUsernameMax)
+      .regex(mainTasksResubmitCreateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksResubmitCreateResponseReviewerOneUsernameMax)
+        .regex(mainTasksResubmitCreateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksSendBackCreateParams = zod.object({
@@ -562,19 +1144,65 @@ export const MainTasksSendBackCreateParams = zod.object({
 
 export const mainTasksSendBackCreateResponseNameMax = 255;
 
+export const mainTasksSendBackCreateResponseTemplateOneNameMax = 255;
+
+export const mainTasksSendBackCreateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksSendBackCreateResponseCreatorOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+export const mainTasksSendBackCreateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksSendBackCreateResponseReviewerOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+
 export const MainTasksSendBackCreateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksSendBackCreateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksSendBackCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksSendBackCreateResponseCreatorOneUsernameMax)
+      .regex(mainTasksSendBackCreateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksSendBackCreateResponseReviewerOneUsernameMax)
+        .regex(mainTasksSendBackCreateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
 });
 
 export const MainTasksSubmitCreateParams = zod.object({
@@ -587,19 +1215,70 @@ export const MainTasksSubmitCreateBody = zod.object({
 
 export const mainTasksSubmitCreateResponseNameMax = 255;
 
+export const mainTasksSubmitCreateResponseTemplateOneNameMax = 255;
+
+export const mainTasksSubmitCreateResponseCreatorOneUsernameMax = 150;
+
+export const mainTasksSubmitCreateResponseCreatorOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+export const mainTasksSubmitCreateResponseReviewerOneUsernameMax = 150;
+
+export const mainTasksSubmitCreateResponseReviewerOneUsernameRegExp =
+  new RegExp('^[\\w.@+-]+$');
+
 export const MainTasksSubmitCreateResponse = zod.object({
   id: zod.uuid(),
   name: zod.string().max(mainTasksSubmitCreateResponseNameMax),
+  document: zod.uuid(),
+  template: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksSubmitCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
   stage: zod
     .enum(['editing', 'review', 'revision', 'final'])
     .describe(
       '* `editing` - Editing\n* `review` - Review\n* `revision` - Revision\n* `final` - Final',
     ),
-  creator: zod.int(),
-  reviewer: zod.int().nullable(),
+  creator: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainTasksSubmitCreateResponseCreatorOneUsernameMax)
+      .regex(mainTasksSubmitCreateResponseCreatorOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  reviewer: zod.union([
+    zod.object({
+      pk: zod.int(),
+      username: zod
+        .string()
+        .max(mainTasksSubmitCreateResponseReviewerOneUsernameMax)
+        .regex(mainTasksSubmitCreateResponseReviewerOneUsernameRegExp)
+        .describe(
+          '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+        ),
+      full_name: zod.string(),
+      avatar: zod.url(),
+    }),
+    zod.null(),
+  ]),
   created_at: zod.iso.datetime({ offset: true }),
   updated_at: zod.iso.datetime({ offset: true }),
-  document: zod.uuid(),
+});
+
+export const MainTemplatesListQueryParams = zod.object({
+  search: zod.string().optional().describe('搜索关键词。'),
 });
 
 export const mainTemplatesListResponseNameMax = 255;
