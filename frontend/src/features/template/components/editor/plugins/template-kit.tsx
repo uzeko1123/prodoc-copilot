@@ -29,9 +29,11 @@ export const TemplatePlugin = createPlatePlugin({
       // 同一机制，定位与 text-indent 规则天然一致）；块内一旦有内容属性即不再注入，
       // 提示自动隐藏，清空后复现。
       // 多行占位：before:absolute 脱离文档流、不撑高度，长文案会溢出盖住下方块
-      // ——补一个 after:invisible 同文案在流内占位撑高；relative 把 before 的
-      // 收缩宽度锚定到本元素，两个伪元素同字体同宽度，换行一致、高度对齐
-      // （.slate-p[placeholder] 的缩进重置在 index.css 已扩到 ::after）。
+      // ——补一个 after:invisible 同文案在流内占位撑高。before 用 inset-x-0
+      // 拉满块宽、锚定到本元素：走 abspos 静态位置会被块的 text-indent 整体
+      // 推移（多行文案行行缩进），锚定后 text-indent/text-align 随块继承，则与
+      // 正文一样只缩进首行；::after 行内渲染路径相同，同宽换行一致、高度对齐
+      // （index.css 的 text-indent 重置因此不含 ::before，::before 要靠继承）。
       // 空块的 slate DOM 是 ZWSP+<br>（ZeroWidthString isLineBreak），<br> 会把
       // ::after 顶到第二行起排、整块比正文多占一行——把该 <br> 隐藏掉。
       transformProps: ({ element }) => {
@@ -42,7 +44,7 @@ export const TemplatePlugin = createPlatePlugin({
 
         return {
           className:
-            'relative before:absolute before:cursor-text before:text-muted-foreground/80 before:content-[attr(placeholder)] after:invisible after:content-[attr(placeholder)] [&_[data-slate-zero-width="n"]_br]:hidden',
+            'relative before:absolute before:inset-x-0 before:cursor-text before:text-muted-foreground/80 before:content-[attr(placeholder)] after:invisible after:content-[attr(placeholder)] [&_[data-slate-zero-width="n"]_br]:hidden',
           placeholder: element.template,
         };
       },

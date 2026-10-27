@@ -7,7 +7,7 @@ export const BlockPlaceholderKit = [
   BlockPlaceholderPlugin.configure({
     options: {
       className:
-        'before:absolute before:cursor-text before:text-muted-foreground/80 before:content-[attr(placeholder)]',
+        'relative before:absolute before:inset-x-0 before:cursor-text before:text-muted-foreground/80 before:content-[attr(placeholder)]',
       placeholders: {
         [KEYS.p]: '输入文本，或插入更多内容 . . .',
       },
