@@ -12,4 +12,6 @@ export interface TaskRequest {
   name: string;
   /** @nullable */
   template_id?: string | null;
+  /** @nullable */
+  guide_id?: string | null;
 }

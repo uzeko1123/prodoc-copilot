@@ -739,6 +739,8 @@ export const mainTasksListResponseNameMax = 255;
 
 export const mainTasksListResponseTemplateOneNameMax = 255;
 
+export const mainTasksListResponseGuideOneNameMax = 255;
+
 export const mainTasksListResponseCreatorOneUsernameMax = 150;
 
 export const mainTasksListResponseCreatorOneUsernameRegExp = new RegExp(
@@ -758,6 +760,16 @@ export const MainTasksListResponseItem = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksListResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksListResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -806,11 +818,14 @@ export const mainTasksCreateBodyNameMax = 255;
 export const MainTasksCreateBody = zod.object({
   name: zod.string().min(1).max(mainTasksCreateBodyNameMax),
   template_id: zod.uuid().nullish(),
+  guide_id: zod.uuid().nullish(),
 });
 
 export const mainTasksCreateResponseNameMax = 255;
 
 export const mainTasksCreateResponseTemplateOneNameMax = 255;
+
+export const mainTasksCreateResponseGuideOneNameMax = 255;
 
 export const mainTasksCreateResponseCreatorOneUsernameMax = 150;
 
@@ -831,6 +846,16 @@ export const MainTasksCreateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksCreateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -881,6 +906,8 @@ export const mainTasksRetrieveResponseNameMax = 255;
 
 export const mainTasksRetrieveResponseTemplateOneNameMax = 255;
 
+export const mainTasksRetrieveResponseGuideOneNameMax = 255;
+
 export const mainTasksRetrieveResponseCreatorOneUsernameMax = 150;
 
 export const mainTasksRetrieveResponseCreatorOneUsernameRegExp = new RegExp(
@@ -900,6 +927,16 @@ export const MainTasksRetrieveResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksRetrieveResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksRetrieveResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -951,11 +988,14 @@ export const mainTasksUpdateBodyNameMax = 255;
 export const MainTasksUpdateBody = zod.object({
   name: zod.string().min(1).max(mainTasksUpdateBodyNameMax),
   template_id: zod.uuid().nullish(),
+  guide_id: zod.uuid().nullish(),
 });
 
 export const mainTasksUpdateResponseNameMax = 255;
 
 export const mainTasksUpdateResponseTemplateOneNameMax = 255;
+
+export const mainTasksUpdateResponseGuideOneNameMax = 255;
 
 export const mainTasksUpdateResponseCreatorOneUsernameMax = 150;
 
@@ -976,6 +1016,16 @@ export const MainTasksUpdateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksUpdateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksUpdateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -1027,11 +1077,14 @@ export const mainTasksPartialUpdateBodyNameMax = 255;
 export const MainTasksPartialUpdateBody = zod.object({
   name: zod.string().min(1).max(mainTasksPartialUpdateBodyNameMax).optional(),
   template_id: zod.uuid().nullish(),
+  guide_id: zod.uuid().nullish(),
 });
 
 export const mainTasksPartialUpdateResponseNameMax = 255;
 
 export const mainTasksPartialUpdateResponseTemplateOneNameMax = 255;
+
+export const mainTasksPartialUpdateResponseGuideOneNameMax = 255;
 
 export const mainTasksPartialUpdateResponseCreatorOneUsernameMax = 150;
 
@@ -1050,6 +1103,16 @@ export const MainTasksPartialUpdateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksPartialUpdateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksPartialUpdateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -1106,6 +1169,8 @@ export const mainTasksApproveCreateResponseNameMax = 255;
 
 export const mainTasksApproveCreateResponseTemplateOneNameMax = 255;
 
+export const mainTasksApproveCreateResponseGuideOneNameMax = 255;
+
 export const mainTasksApproveCreateResponseCreatorOneUsernameMax = 150;
 
 export const mainTasksApproveCreateResponseCreatorOneUsernameRegExp =
@@ -1123,6 +1188,16 @@ export const MainTasksApproveCreateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksApproveCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksApproveCreateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -1173,6 +1248,8 @@ export const mainTasksResubmitCreateResponseNameMax = 255;
 
 export const mainTasksResubmitCreateResponseTemplateOneNameMax = 255;
 
+export const mainTasksResubmitCreateResponseGuideOneNameMax = 255;
+
 export const mainTasksResubmitCreateResponseCreatorOneUsernameMax = 150;
 
 export const mainTasksResubmitCreateResponseCreatorOneUsernameRegExp =
@@ -1190,6 +1267,16 @@ export const MainTasksResubmitCreateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksResubmitCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksResubmitCreateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -1240,6 +1327,8 @@ export const mainTasksSendBackCreateResponseNameMax = 255;
 
 export const mainTasksSendBackCreateResponseTemplateOneNameMax = 255;
 
+export const mainTasksSendBackCreateResponseGuideOneNameMax = 255;
+
 export const mainTasksSendBackCreateResponseCreatorOneUsernameMax = 150;
 
 export const mainTasksSendBackCreateResponseCreatorOneUsernameRegExp =
@@ -1257,6 +1346,16 @@ export const MainTasksSendBackCreateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksSendBackCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksSendBackCreateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),
@@ -1311,6 +1410,8 @@ export const mainTasksSubmitCreateResponseNameMax = 255;
 
 export const mainTasksSubmitCreateResponseTemplateOneNameMax = 255;
 
+export const mainTasksSubmitCreateResponseGuideOneNameMax = 255;
+
 export const mainTasksSubmitCreateResponseCreatorOneUsernameMax = 150;
 
 export const mainTasksSubmitCreateResponseCreatorOneUsernameRegExp = new RegExp(
@@ -1329,6 +1430,16 @@ export const MainTasksSubmitCreateResponse = zod.object({
     zod.object({
       id: zod.uuid(),
       name: zod.string().max(mainTasksSubmitCreateResponseTemplateOneNameMax),
+      value: zod.unknown(),
+      created_at: zod.iso.datetime({ offset: true }),
+      updated_at: zod.iso.datetime({ offset: true }),
+    }),
+    zod.null(),
+  ]),
+  guide: zod.union([
+    zod.object({
+      id: zod.uuid(),
+      name: zod.string().max(mainTasksSubmitCreateResponseGuideOneNameMax),
       value: zod.unknown(),
       created_at: zod.iso.datetime({ offset: true }),
       updated_at: zod.iso.datetime({ offset: true }),

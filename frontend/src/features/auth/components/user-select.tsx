@@ -21,11 +21,9 @@ export function UserSelect({
   placeholder = '选择用户',
   ...props
 }: {
-  value: number | null;
+  value: number | null | undefined;
   onChange: (value: number | null) => void;
 } & Omit<React.ComponentProps<typeof ComboboxInput>, 'value' | 'onChange'>) {
-  void value;
-
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const debouncedInputValue = useDebounce(inputValue);
@@ -40,17 +38,18 @@ export function UserSelect({
         search: debouncedInputValue.trim(),
       }),
     },
-    { query: { enabled: open, placeholderData: keepPreviousData } },
+    { query: { enabled: open || !!value, placeholderData: keepPreviousData } },
   );
 
   return (
     <Combobox
+      value={users?.find((user) => user.pk === value) ?? null}
       itemToStringLabel={(user: User) => user.full_name || user.username}
       onValueChange={(user) => onChange(user ? user.pk : null)}
       onOpenChange={setOpen}
       onInputValueChange={setInputValue}
     >
-      <ComboboxInput placeholder={placeholder} {...props} />
+      <ComboboxInput placeholder={placeholder} showClear {...props} />
       <ComboboxContent className={cn(isPlaceholderData && 'opacity-60')}>
         {isPending ? (
           <DefaultPending />

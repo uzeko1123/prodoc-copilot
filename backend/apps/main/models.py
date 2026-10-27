@@ -36,6 +36,13 @@ class Task(models.Model):
         on_delete=models.SET_NULL,
         related_name="tasks",
     )
+    guide = models.ForeignKey(
+        Guide,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="tasks",
+    )
     stage = models.CharField(
         max_length=15, choices=Stage.choices, default=Stage.EDITING
     )

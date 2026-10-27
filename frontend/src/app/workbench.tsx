@@ -28,6 +28,7 @@ import { Editor } from '@/features/editor/components/editor';
 import { Find } from '@/features/editor/components/find';
 import { Plate } from '@/features/editor/components/plate';
 import { ToC } from '@/features/editor/components/toc';
+import { Guide } from '@/features/guide/components/guide';
 import { TaskUpdateDialog } from '@/features/task/components/task-dialog';
 import type { Role } from '@/features/task/components/task-list';
 import { TaskStageBadge } from '@/features/task/components/task-stage-badge';
@@ -272,7 +273,9 @@ function Workbench() {
               <TabsContent
                 value="guide"
                 className="min-h-0 data-[state=inactive]:hidden"
-              ></TabsContent>
+              >
+                <Guide task={task} />
+              </TabsContent>
               <TabsContent
                 value="knowledge"
                 className="min-h-0 data-[state=inactive]:hidden"

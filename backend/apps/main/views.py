@@ -71,7 +71,7 @@ class TaskViewSet(ModelViewSet):
     def get_queryset(self):
         return Task.objects.filter(
             Q(creator=self.request.user) | Q(reviewer=self.request.user)
-        ).select_related("template", "creator__profile", "reviewer__profile")
+        ).select_related("template", "guide", "creator__profile", "reviewer__profile")
 
     def perform_create(self, serializer):
         with transaction.atomic():

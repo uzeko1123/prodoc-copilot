@@ -3,6 +3,7 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { Guide } from './guide';
 import type { StageEnum } from './stageEnum';
 import type { Template } from './template';
 import type { User } from './user';
@@ -13,6 +14,7 @@ export interface Task {
   name: string;
   readonly document: string;
   readonly template: Template | null;
+  readonly guide: Guide | null;
   readonly stage: StageEnum;
   readonly creator: User;
   readonly reviewer: User | null;

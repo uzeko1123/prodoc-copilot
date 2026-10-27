@@ -32,6 +32,14 @@ class TaskSerializer(serializers.ModelSerializer):
         allow_null=True,
         required=False,
     )
+    guide = GuideSerializer(read_only=True, allow_null=True)
+    guide_id = serializers.PrimaryKeyRelatedField(
+        queryset=Guide.objects.all(),
+        source="guide",
+        write_only=True,
+        allow_null=True,
+        required=False,
+    )
 
     class Meta:
         model = Task
@@ -41,6 +49,8 @@ class TaskSerializer(serializers.ModelSerializer):
             "document",
             "template",
             "template_id",
+            "guide",
+            "guide_id",
             "stage",
             "creator",
             "reviewer",
