@@ -1,0 +1,166 @@
+[
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "template": "在此填写文档标题",
+    "type": "h1",
+    "id": "static-0001"
+  },
+  {
+    "children": [
+      {
+        "text": "本文档由 "
+      },
+      {
+        "bold": true,
+        "text": "ProDoc"
+      },
+      {
+        "text": " 文档模板创建：拖拽把手为图钉的块是模板的固定结构，不可修改；灰色提示标出各处该写什么，点击对应位置直接输入即可，清空后提示会重新出现。写作中随时按下 "
+      },
+      {
+        "code": true,
+        "text": "Tab"
+      },
+      {
+        "text": " 唤起 AI 指令，让它续写、润色或校对。"
+      }
+    ],
+    "readonly": true,
+    "type": "p",
+    "id": "static-0002"
+  },
+  {
+    "children": [
+      {
+        "text": "目录"
+      }
+    ],
+    "readonly": true,
+    "type": "h2",
+    "id": "static-0003"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "readonly": true,
+    "type": "toc",
+    "id": "static-0004"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "readonly": true,
+    "type": "hr",
+    "id": "static-0005"
+  },
+  {
+    "children": [
+      {
+        "text": "一、背景与目标"
+      }
+    ],
+    "readonly": true,
+    "type": "h2",
+    "id": "static-0006"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "template": "在这里说明文档的背景：为什么写这份文档、面向哪些读者、要达成什么目标。",
+    "type": "p",
+    "id": "static-0007"
+  },
+  {
+    "children": [
+      {
+        "text": "二、主体内容"
+      }
+    ],
+    "readonly": true,
+    "type": "h2",
+    "id": "static-0008"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "template": "在这里展开正文。标题、列表、表格、公式、代码块等常用格式可从工具栏插入，熟悉 Markdown 的话直接输入符号也能触发。",
+    "type": "p",
+    "id": "static-0009"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "template": "写不下去时试试 AI：/outline 根据主题生成章节大纲，/continue 顺着上下文自动续写。",
+    "type": "p",
+    "id": "static-0010"
+  },
+  {
+    "children": [
+      {
+        "text": "三、总结"
+      }
+    ],
+    "readonly": true,
+    "type": "h2",
+    "id": "static-0011"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "template": "在这里总结全文要点，并给出结论或下一步计划。",
+    "type": "p",
+    "id": "static-0012"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "readonly": true,
+    "type": "hr",
+    "id": "static-0013"
+  },
+  {
+    "align": "right",
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "template": "—— 撰写人 / 日期",
+    "type": "p",
+    "id": "static-0014"
+  },
+  {
+    "children": [
+      {
+        "text": ""
+      }
+    ],
+    "type": "p",
+    "id": "static-0015"
+  }
+]
