@@ -27,14 +27,18 @@ import type {
   DiscussionRequest,
   Document,
   DocumentRequest,
+  Guide,
+  GuideRequest,
   MainCommentsListParams,
   MainDiscussionsListParams,
   MainDocumentsListParams,
+  MainGuidesListParams,
   MainTasksListParams,
   MainTemplatesListParams,
   PatchedCommentRequest,
   PatchedDiscussionRequest,
   PatchedDocumentRequest,
+  PatchedGuideRequest,
   PatchedTaskRequest,
   PatchedTemplateRequest,
   Task,
@@ -2109,6 +2113,655 @@ export const useMainDocumentsDestroy = <
     getMainDocumentsDestroyMutationOptions(options),
     queryClient,
   );
+};
+export const mainGuidesList = (
+  params?: MainGuidesListParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Guide[]>(
+    { url: `/api/main/guides/`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getMainGuidesListQueryKey = (params?: MainGuidesListParams) => {
+  return [`/api/main/guides/`, ...(params ? [params] : [])] as const;
+};
+
+export const getMainGuidesListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainGuidesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainGuidesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainGuidesList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainGuidesListQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof mainGuidesList>>> = ({
+    signal,
+  }) => mainGuidesList(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainGuidesList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainGuidesListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainGuidesList>>
+>;
+export type MainGuidesListQueryError = ErrorType<unknown>;
+
+export function useMainGuidesList<
+  TData = Awaited<ReturnType<typeof mainGuidesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params: undefined | MainGuidesListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainGuidesList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainGuidesList>>,
+          TError,
+          Awaited<ReturnType<typeof mainGuidesList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainGuidesList<
+  TData = Awaited<ReturnType<typeof mainGuidesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainGuidesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainGuidesList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainGuidesList>>,
+          TError,
+          Awaited<ReturnType<typeof mainGuidesList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainGuidesList<
+  TData = Awaited<ReturnType<typeof mainGuidesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainGuidesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainGuidesList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainGuidesList<
+  TData = Awaited<ReturnType<typeof mainGuidesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainGuidesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainGuidesList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainGuidesListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainGuidesCreate = (
+  guideRequest: BodyType<GuideRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Guide>(
+    {
+      url: `/api/main/guides/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: guideRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainGuidesCreateMutationKey = () =>
+  ['mainGuidesCreate'] as const;
+
+export const getMainGuidesCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainGuidesCreate>>,
+    TError,
+    MainGuidesCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainGuidesCreate>>,
+  TError,
+  MainGuidesCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainGuidesCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainGuidesCreate>>,
+    MainGuidesCreateMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mainGuidesCreate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainGuidesCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainGuidesCreate>>
+>;
+export type MainGuidesCreateMutationBody = BodyType<GuideRequest>;
+export type MainGuidesCreateMutationError = ErrorType<unknown>;
+export type MainGuidesCreateMutationVariables = {
+  data: BodyType<GuideRequest>;
+};
+
+export const useMainGuidesCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainGuidesCreate>>,
+      TError,
+      MainGuidesCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainGuidesCreate>>,
+  TError,
+  MainGuidesCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainGuidesCreateMutationOptions(options), queryClient);
+};
+export const mainGuidesRetrieve = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Guide>(
+    { url: `/api/main/guides/${id}/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainGuidesRetrieveQueryKey = (id: string) => {
+  return [`/api/main/guides/${id}/`] as const;
+};
+
+export const getMainGuidesRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainGuidesRetrieveQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainGuidesRetrieve>>
+  > = ({ signal }) => mainGuidesRetrieve(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainGuidesRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainGuidesRetrieve>>
+>;
+export type MainGuidesRetrieveQueryError = ErrorType<unknown>;
+
+export function useMainGuidesRetrieve<
+  TData = Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainGuidesRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainGuidesRetrieve<
+  TData = Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainGuidesRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainGuidesRetrieve<
+  TData = Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainGuidesRetrieve<
+  TData = Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainGuidesRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainGuidesRetrieveQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainGuidesUpdate = (
+  id: string,
+  guideRequest: BodyType<GuideRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Guide>(
+    {
+      url: `/api/main/guides/${id}/`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: guideRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainGuidesUpdateMutationKey = () =>
+  ['mainGuidesUpdate'] as const;
+
+export const getMainGuidesUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainGuidesUpdate>>,
+    TError,
+    MainGuidesUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainGuidesUpdate>>,
+  TError,
+  MainGuidesUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainGuidesUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainGuidesUpdate>>,
+    MainGuidesUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainGuidesUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainGuidesUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainGuidesUpdate>>
+>;
+export type MainGuidesUpdateMutationBody = BodyType<GuideRequest>;
+export type MainGuidesUpdateMutationError = ErrorType<unknown>;
+export type MainGuidesUpdateMutationVariables = {
+  id: string;
+  data: BodyType<GuideRequest>;
+};
+
+export const useMainGuidesUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainGuidesUpdate>>,
+      TError,
+      MainGuidesUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainGuidesUpdate>>,
+  TError,
+  MainGuidesUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainGuidesUpdateMutationOptions(options), queryClient);
+};
+export const mainGuidesPartialUpdate = (
+  id: string,
+  patchedGuideRequest?: BodyType<PatchedGuideRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Guide>(
+    {
+      url: `/api/main/guides/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedGuideRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainGuidesPartialUpdateMutationKey = () =>
+  ['mainGuidesPartialUpdate'] as const;
+
+export const getMainGuidesPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainGuidesPartialUpdate>>,
+    TError,
+    MainGuidesPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainGuidesPartialUpdate>>,
+  TError,
+  MainGuidesPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainGuidesPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainGuidesPartialUpdate>>,
+    MainGuidesPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainGuidesPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainGuidesPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainGuidesPartialUpdate>>
+>;
+export type MainGuidesPartialUpdateMutationBody =
+  BodyType<PatchedGuideRequest> | undefined;
+export type MainGuidesPartialUpdateMutationError = ErrorType<unknown>;
+export type MainGuidesPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedGuideRequest>;
+};
+
+export const useMainGuidesPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainGuidesPartialUpdate>>,
+      TError,
+      MainGuidesPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainGuidesPartialUpdate>>,
+  TError,
+  MainGuidesPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainGuidesPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainGuidesDestroy = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/main/guides/${id}/`, method: 'DELETE', signal },
+    options,
+  );
+};
+
+export const getMainGuidesDestroyMutationKey = () =>
+  ['mainGuidesDestroy'] as const;
+
+export const getMainGuidesDestroyMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainGuidesDestroy>>,
+    TError,
+    MainGuidesDestroyMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainGuidesDestroy>>,
+  TError,
+  MainGuidesDestroyMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainGuidesDestroyMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainGuidesDestroy>>,
+    MainGuidesDestroyMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainGuidesDestroy(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainGuidesDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainGuidesDestroy>>
+>;
+
+export type MainGuidesDestroyMutationError = ErrorType<unknown>;
+export type MainGuidesDestroyMutationVariables = { id: string };
+
+export const useMainGuidesDestroy = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainGuidesDestroy>>,
+      TError,
+      MainGuidesDestroyMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainGuidesDestroy>>,
+  TError,
+  MainGuidesDestroyMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainGuidesDestroyMutationOptions(options), queryClient);
 };
 export const mainTasksList = (
   params?: MainTasksListParams,

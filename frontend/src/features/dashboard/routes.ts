@@ -5,4 +5,5 @@ export const dashboardRoutes = [
   route('/task/create', 'features/task/pages/task-create.tsx'),
   route('/task/review', 'features/task/pages/task-review.tsx'),
   route('/template', 'features/template/pages/template.tsx'),
+  route('/guide', 'features/guide/pages/guide.tsx'),
 ];

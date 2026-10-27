@@ -629,6 +629,100 @@ export const MainDocumentsDestroyParams = zod.object({
 
 export const MainDocumentsDestroyResponse = zod.void();
 
+export const MainGuidesListQueryParams = zod.object({
+  search: zod.string().optional().describe('搜索关键词。'),
+});
+
+export const mainGuidesListResponseNameMax = 255;
+
+export const MainGuidesListResponseItem = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainGuidesListResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+export const MainGuidesListResponse = zod.array(MainGuidesListResponseItem);
+
+export const mainGuidesCreateBodyNameMax = 255;
+
+export const MainGuidesCreateBody = zod.object({
+  name: zod.string().min(1).max(mainGuidesCreateBodyNameMax),
+  value: zod.unknown(),
+});
+
+export const mainGuidesCreateResponseNameMax = 255;
+
+export const MainGuidesCreateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainGuidesCreateResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainGuidesRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 guide 的 UUID 字符串。'),
+});
+
+export const mainGuidesRetrieveResponseNameMax = 255;
+
+export const MainGuidesRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainGuidesRetrieveResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainGuidesUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 guide 的 UUID 字符串。'),
+});
+
+export const mainGuidesUpdateBodyNameMax = 255;
+
+export const MainGuidesUpdateBody = zod.object({
+  name: zod.string().min(1).max(mainGuidesUpdateBodyNameMax),
+  value: zod.unknown(),
+});
+
+export const mainGuidesUpdateResponseNameMax = 255;
+
+export const MainGuidesUpdateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainGuidesUpdateResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainGuidesPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 guide 的 UUID 字符串。'),
+});
+
+export const mainGuidesPartialUpdateBodyNameMax = 255;
+
+export const MainGuidesPartialUpdateBody = zod.object({
+  name: zod.string().min(1).max(mainGuidesPartialUpdateBodyNameMax).optional(),
+  value: zod.unknown().optional(),
+});
+
+export const mainGuidesPartialUpdateResponseNameMax = 255;
+
+export const MainGuidesPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  name: zod.string().max(mainGuidesPartialUpdateResponseNameMax),
+  value: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainGuidesDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 guide 的 UUID 字符串。'),
+});
+
+export const MainGuidesDestroyResponse = zod.void();
+
 export const MainTasksListQueryParams = zod.object({
   creator: zod.int().optional(),
   ordering: zod.string().optional().describe('用于排序结果的字段。'),

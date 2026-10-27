@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Comment, Discussion, Document, Task, Template
+from .models import Comment, Discussion, Document, Guide, Task, Template
 from .permissions import (
     CommentPermission,
     DiscussionPermission,
@@ -24,6 +24,7 @@ from .serializers import (
     CommentSerializer,
     DiscussionSerializer,
     DocumentSerializer,
+    GuideSerializer,
     TaskSerializer,
     TaskSubmitSerializer,
     TemplateSerializer,
@@ -47,6 +48,13 @@ def ensure_task_stage_user(user, task: Task) -> None:
 class TemplateViewSet(ModelViewSet):
     queryset = Template.objects.all().order_by("name")
     serializer_class = TemplateSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ("name",)
+
+
+class GuideViewSet(ModelViewSet):
+    queryset = Guide.objects.all().order_by("name")
+    serializer_class = GuideSerializer
     filter_backends = (SearchFilter,)
     search_fields = ("name",)
 

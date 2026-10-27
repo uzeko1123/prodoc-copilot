@@ -7,10 +7,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { BaseEditorKit } from '@/features/editor/components/editor/editor-base-kit';
-import { TemplateKit } from '@/features/editor/components/editor/plugins/template-kit';
 import type { Value } from 'platejs';
 import { createSlateEditor } from 'platejs';
 import * as React from 'react';
+import { TemplateKit } from './editor/plugins/template-kit';
 
 export function TemplateDialog({
   template,

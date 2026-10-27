@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Comment, Discussion, Document, Task, Template
+from .models import Comment, Discussion, Document, Guide, Task, Template
 
 
 @admin.register(Task)
@@ -37,6 +37,14 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Template)
 class TemplateAdmin(admin.ModelAdmin):
+    list_display = ("name", "updated_at")
+    search_fields = ("name",)
+    ordering = ("-updated_at",)
+    # readonly_fields = ("value",)
+
+
+@admin.register(Guide)
+class GuideAdmin(admin.ModelAdmin):
     list_display = ("name", "updated_at")
     search_fields = ("name",)
     ordering = ("-updated_at",)

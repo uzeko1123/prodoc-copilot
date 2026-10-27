@@ -12,6 +12,14 @@ class Template(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class Guide(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    value = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class Task(models.Model):
     class Stage(models.TextChoices):
         EDITING = "editing"

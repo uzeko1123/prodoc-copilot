@@ -20,6 +20,7 @@ import { Route as featuresAuthPagesResetPasswordConfirmRouteImport } from './fea
 import { Route as featuresAuthPagesSignupRouteImport } from './features/auth/pages/signup'
 import { Route as featuresAuthPagesVerifyEmailRouteImport } from './features/auth/pages/verify-email'
 import { Route as featuresDashboardPagesIndexRouteImport } from './features/dashboard/pages/index'
+import { Route as featuresGuidePagesGuideRouteImport } from './features/guide/pages/guide'
 import { Route as featuresTemplatePagesTemplateRouteImport } from './features/template/pages/template'
 import { Route as featuresTaskPagesTaskCreateRouteImport } from './features/task/pages/task-create'
 import { Route as featuresTaskPagesTaskReviewRouteImport } from './features/task/pages/task-review'
@@ -86,6 +87,11 @@ const featuresDashboardPagesIndexRoute =
     path: '/',
     getParentRoute: () => appDashboardRoute,
   } as any)
+const featuresGuidePagesGuideRoute = featuresGuidePagesGuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
+  getParentRoute: () => appDashboardRoute,
+} as any)
 const featuresTemplatePagesTemplateRoute =
   featuresTemplatePagesTemplateRouteImport.update({
     id: '/template',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/guide': typeof featuresGuidePagesGuideRoute
   '/dashboard/template': typeof featuresTemplatePagesTemplateRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/guide': typeof featuresGuidePagesGuideRoute
   '/dashboard/template': typeof featuresTemplatePagesTemplateRoute
   '/dashboard': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId': typeof appWorkbenchRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/account/reset-password-confirm': typeof featuresAuthPagesResetPasswordConfirmRoute
   '/account/signup': typeof featuresAuthPagesSignupRoute
   '/account/verify-email': typeof featuresAuthPagesVerifyEmailRoute
+  '/dashboard/guide': typeof featuresGuidePagesGuideRoute
   '/dashboard/template': typeof featuresTemplatePagesTemplateRoute
   '/dashboard/': typeof featuresDashboardPagesIndexRoute
   '/workbench/$taskId/': typeof appWorkbenchRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/guide'
     | '/dashboard/template'
     | '/dashboard/'
     | '/workbench/$taskId/'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/guide'
     | '/dashboard/template'
     | '/dashboard'
     | '/workbench/$taskId'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/account/reset-password-confirm'
     | '/account/signup'
     | '/account/verify-email'
+    | '/dashboard/guide'
     | '/dashboard/template'
     | '/dashboard/'
     | '/workbench/$taskId/'
@@ -307,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof featuresDashboardPagesIndexRouteImport
       parentRoute: typeof appDashboardRoute
     }
+    '/dashboard/guide': {
+      id: '/dashboard/guide'
+      path: '/guide'
+      fullPath: '/dashboard/guide'
+      preLoaderRoute: typeof featuresGuidePagesGuideRouteImport
+      parentRoute: typeof appDashboardRoute
+    }
     '/dashboard/template': {
       id: '/dashboard/template'
       path: '/template'
@@ -339,6 +358,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface appDashboardRouteChildren {
+  featuresGuidePagesGuideRoute: typeof featuresGuidePagesGuideRoute
   featuresTemplatePagesTemplateRoute: typeof featuresTemplatePagesTemplateRoute
   featuresDashboardPagesIndexRoute: typeof featuresDashboardPagesIndexRoute
   featuresTaskPagesTaskCreateRoute: typeof featuresTaskPagesTaskCreateRoute
@@ -346,6 +366,7 @@ interface appDashboardRouteChildren {
 }
 
 const appDashboardRouteChildren: appDashboardRouteChildren = {
+  featuresGuidePagesGuideRoute: featuresGuidePagesGuideRoute,
   featuresTemplatePagesTemplateRoute: featuresTemplatePagesTemplateRoute,
   featuresDashboardPagesIndexRoute: featuresDashboardPagesIndexRoute,
   featuresTaskPagesTaskCreateRoute: featuresTaskPagesTaskCreateRoute,

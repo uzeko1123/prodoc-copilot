@@ -19,6 +19,7 @@ import { AIKit } from '@/features/chat/components/editor/plugins/ai-kit';
 import { CommentKit } from '@/features/comment/components/editor/plugins/comment-kit';
 import { DiscussionKit } from '@/features/comment/components/editor/plugins/discussion-kit';
 import { SuggestionKit } from '@/features/comment/components/editor/plugins/suggestion-kit';
+import { TemplateKit } from '@/features/template/components/editor/plugins/template-kit';
 import { TrailingBlockPlugin, type Value } from 'platejs';
 import { useEditorRef, type TPlateEditor } from 'platejs/react';
 import { BasicBlocksKit } from './plugins/basic-blocks-kit';
@@ -37,7 +38,6 @@ import { MathKit } from './plugins/math-kit';
 import { MediaKit } from './plugins/media-kit';
 import { SelectionKit } from './plugins/selection-kit';
 import { TableKit } from './plugins/table-kit';
-import { TemplateKit } from './plugins/template-kit';
 import { TocKit } from './plugins/toc-kit';
 
 export const EditorKit = [

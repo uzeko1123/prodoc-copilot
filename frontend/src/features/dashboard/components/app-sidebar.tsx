@@ -100,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to="/dashboard">
+                <Link to="/dashboard/guide">
                   <BookOpenIcon /> 写作指南
                 </Link>
               </SidebarMenuButton>

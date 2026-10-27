@@ -4,12 +4,19 @@ from rest_framework import serializers
 
 from apps.auth.serializers import UserSerializer
 
-from .models import Comment, Discussion, Document, Task, Template
+from .models import Comment, Discussion, Document, Guide, Task, Template
 
 
 class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Template
+        fields = ("id", "name", "value", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
+
+
+class GuideSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guide
         fields = ("id", "name", "value", "created_at", "updated_at")
         read_only_fields = ("id", "created_at", "updated_at")
 

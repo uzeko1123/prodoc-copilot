@@ -5,6 +5,7 @@ from ..views import (
     CommentViewSet,
     DiscussionViewSet,
     DocumentViewSet,
+    GuideViewSet,
     TaskViewSet,
     TemplateViewSet,
 )
@@ -15,6 +16,7 @@ router.register("documents", DocumentViewSet)
 router.register("discussions", DiscussionViewSet)
 router.register("comments", CommentViewSet)
 router.register("templates", TemplateViewSet)
+router.register("guides", GuideViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
