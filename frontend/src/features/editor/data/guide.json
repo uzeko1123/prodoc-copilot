@@ -146,14 +146,7 @@
   {
     "children": [
       {
-        "text": "写作中随时按下 "
-      },
-      {
-        "code": true,
-        "text": "Tab"
-      },
-      {
-        "text": " 唤起 AI 指令面板：/outline 根据主题生成章节大纲，/continue 顺着上下文续写，也可选中文字让它润色或校对。"
+        "text": "写作中随时按下 Tab 唤起 AI 指令面板：/outline 根据主题生成章节大纲，/continue 顺着上下文续写，也可选中文字让它润色或校对。"
       }
     ],
     "type": "p",
