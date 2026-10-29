@@ -16,3 +16,7 @@
 ## comment
 
 评论内容（纯文本，不使用 Markdown 语法）
+
+## guideClauseIds
+
+关联的写作指南条款 ID 数组（可多选）：仅当本次评论的依据是写作指南中的具体条款时填写，取值必须是 Context 中 guide 的非标题块的 id，无依据时省略或传空数组

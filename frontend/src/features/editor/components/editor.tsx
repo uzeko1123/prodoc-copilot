@@ -3,6 +3,7 @@
 import {
   getMainDocumentsRetrieveQueryKey,
   mainDocumentsPartialUpdate,
+  useMainTasksRetrieve,
 } from '@/api/gen/endpoints/main/main';
 import {
   EditorContainer,
@@ -13,6 +14,7 @@ import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { toastErrorMessage } from '@/lib/error-message';
 import { queryClient } from '@/lib/query-client';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
+import { useParams } from '@tanstack/react-router';
 import {
   useEditorRef,
   useEditorScrollRef,
@@ -21,7 +23,6 @@ import {
 } from 'platejs/react';
 import { useEffect, useRef, type CSSProperties } from 'react';
 import { useEditorStore } from '../stores';
-import { DocumentPlugin } from './editor/plugins/document-kit';
 import { FixedToolbarButtons } from './ui/fixed-toolbar-buttons';
 
 export function Editor() {
@@ -53,14 +54,14 @@ export function Editor() {
 }
 
 function EditorValueSync() {
-  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
 
   const value = useEditorValue();
   const debouncedValue = useDebounce(value, 1500);
   const latestValueRef = useRef(value);
   const savedValueRef = useRef(value);
-
-  const initial = useRef(true);
 
   useEffect(() => {
     latestValueRef.current = value;
@@ -68,10 +69,8 @@ function EditorValueSync() {
 
   useEffect(() => {
     if (!documentId) return;
-    if (initial.current) {
-      initial.current = false;
-      return;
-    }
+    if (savedValueRef.current === debouncedValue) return;
+
     savedValueRef.current = debouncedValue;
     mainDocumentsPartialUpdate(documentId, {
       value: savedValueRef.current,

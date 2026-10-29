@@ -40,7 +40,7 @@ export const commentPlugin = toTPlatePlugin<CommentConfig>(BaseCommentPlugin, {
         : null;
       setOption('activeId', activeId);
       if (activeId) {
-        useWorkbenchStore.getState().setActiveMainTab('comment');
+        useWorkbenchStore.getState().setActiveMainTab('discussion');
       }
     },
   },
@@ -69,7 +69,7 @@ export const commentPlugin = toTPlatePlugin<CommentConfig>(BaseCommentPlugin, {
         setOption('activeId', getDraftCommentKey());
         setOption('commentingBlock', editor.selection!.focus.path.slice(0, 1));
         useCommentStore.getState().removeDiscussionDraft(getDraftCommentKey());
-        useWorkbenchStore.getState().setActiveMainTab('comment');
+        useWorkbenchStore.getState().setActiveMainTab('discussion');
       },
     }),
   )

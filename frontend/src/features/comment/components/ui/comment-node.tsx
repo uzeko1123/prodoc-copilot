@@ -1,8 +1,13 @@
 'use client';
 
 // import * as React from 'react';
+import {
+  useMainDiscussionsList,
+  useMainTasksRetrieve,
+} from '@/api/gen/endpoints/main/main';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { getCommentCount } from '@platejs/comment';
+import { useParams } from '@tanstack/react-router';
 import { cn } from 'cn';
 import type { TCommentText } from 'platejs';
 import type { PlateLeafProps } from 'platejs/react';
@@ -21,6 +26,19 @@ export function CommentLeaf(props: PlateLeafProps<TCommentText>) {
   const isActive = activeId === currentId;
   const isHover = hoverId === currentId;
 
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
+
+  const { data: discussions } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+
+  const isResolved =
+    discussions?.find((discussion) => discussion.key === currentId)
+      ?.is_resolved ?? false;
+
   return (
     <PlateLeaf
       {...props}
@@ -29,13 +47,14 @@ export function CommentLeaf(props: PlateLeafProps<TCommentText>) {
         (isHover || isActive) && 'bg-highlight/25',
         isOverlapping && 'bg-highlight/25',
         (isHover || isActive) && isOverlapping && 'bg-highlight/45',
+        isResolved && !isActive && 'bg-transparent',
       )}
       attributes={{
         ...props.attributes,
         onClick: () => {
           setOption('activeId', currentId ?? null);
           if (currentId)
-            useWorkbenchStore.getState().setActiveMainTab('comment');
+            useWorkbenchStore.getState().setActiveMainTab('discussion');
         },
         onMouseEnter: () => setOption('hoverId', currentId ?? null),
         onMouseLeave: () => setOption('hoverId', null),

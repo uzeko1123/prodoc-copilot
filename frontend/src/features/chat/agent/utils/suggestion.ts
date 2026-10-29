@@ -7,9 +7,19 @@ import {
   getSuggestionKey,
   setSuggestionNodes,
 } from '@platejs/suggestion';
-import { KEYS, nanoid, RangeApi, TextApi } from 'platejs';
+import {
+  ElementApi,
+  KEYS,
+  NodeApi,
+  PathApi,
+  PointApi,
+  RangeApi,
+  TextApi,
+} from 'platejs';
 import type {
   Descendant,
+  Path,
+  TElement,
   TInlineSuggestionData,
   TRange,
   TSuggestionElement,
@@ -104,7 +114,7 @@ function insertSuggestion(
   }
 
   const data: TSuggestionData = {
-    id: nanoid(),
+    id: crypto.randomUUID(),
     createdAt: Date.now(),
     type: 'insert',
     userId:
@@ -158,9 +168,107 @@ export function applyGenerateSuggestion(
 }
 
 /**
+ * Blocks whose content is previewed in the discussion card when fully covered
+ * by an edit range (text-level marks). Every other fully covered block is
+ * block-marked only, so the card shows a type summary instead of content.
+ */
+const PREVIEW_TYPES = new Set<string>([
+  KEYS.p,
+  KEYS.h1,
+  KEYS.h2,
+  KEYS.h3,
+  KEYS.h4,
+  KEYS.h5,
+  KEYS.h6,
+]);
+
+/**
+ * Remove-mark `range` as one suggestion, block-aware: fully covered blocks at
+ * any depth get a block-level remove mark so accepting really deletes them —
+ * text-level marks alone leave empty paragraph shells and never touch void
+ * blocks. Preview-type blocks keep text marks for the card preview. When the
+ * inserted markdown merges into the block holding `range`'s end
+ * (`mergeIntoEndBlock`), that block is never block-marked, or accepting would
+ * delete the merged insert along with the old text.
+ */
+function markRemoval(
+  editor: PlateEditor,
+  range: TRange,
+  data: TSuggestionData,
+  mergeIntoEndBlock: boolean,
+): void {
+  const [rangeStart, rangeEnd] = RangeApi.edges(range);
+
+  const textMark = (at: TRange) => {
+    setSuggestionNodes(editor, {
+      at,
+      createdAt: data.createdAt,
+      suggestionId: data.id,
+    });
+  };
+  const blockMark = (path: Path) => {
+    editor.tf.setNodes<TElement>(
+      { suggestion: { ...data, type: 'remove' } },
+      { at: path },
+    );
+  };
+
+  const visit = (at: Path) => {
+    for (const [child, childPath] of NodeApi.children(editor, at)) {
+      if (!ElementApi.isElement(child) || editor.api.isInline(child)) continue;
+
+      const start = editor.api.start(childPath);
+      const end = editor.api.end(childPath);
+      if (!start || !end) continue;
+
+      const childRange = { anchor: start, focus: end };
+      const covered =
+        PointApi.compare(start, rangeStart) >= 0 &&
+        PointApi.compare(end, rangeEnd) <= 0;
+      const holdsInsertion =
+        mergeIntoEndBlock &&
+        (PathApi.isAncestor(childPath, rangeEnd.path) ||
+          PathApi.equals(childPath, rangeEnd.path));
+
+      if (covered && !holdsInsertion) {
+        blockMark(childPath);
+
+        // Collapsed childRange (empty paragraph): setSuggestionNodes would
+        // fall through to a whole-block setNodes and overwrite the block mark
+        // set above with text-style keys.
+        if (
+          child.type &&
+          PREVIEW_TYPES.has(child.type) &&
+          !RangeApi.isCollapsed(childRange)
+        ) {
+          textMark(childRange);
+        }
+
+        // Fully covered: no need to descend.
+        continue;
+      }
+
+      // Partially covered, or the insertion target block (it must survive
+      // accepting to hold the merged insert). A collapsed intersection is
+      // skipped: marking it would land on the whole block.
+      const intersection = RangeApi.intersection(range, childRange);
+      if (intersection && !RangeApi.isCollapsed(intersection)) {
+        textMark(intersection);
+      }
+
+      // Descend for fully covered nested blocks (list items, table rows…).
+      visit(childPath);
+    }
+  };
+
+  visit([]);
+}
+
+/**
  * Replace or delete `range` as one atomic suggestion: insert at the range end
- * first (keeps the range points valid), then mark the range as a remove
- * suggestion sharing the insert id, so accept/reject applies to both. A
+ * first (keeps the range points valid), then remove-mark the range sharing the
+ * insert id, so accept/reject applies to both. Fully covered blocks are
+ * block-marked so accepting deletes them outright (see `markRemoval`). A
  * collapsed range cannot be remove-marked (the mark would land on the whole
  * block), so it degrades to a pure insert.
  */
@@ -176,9 +284,20 @@ export function applyEditSuggestion(
     data = insertSuggestion(editor, md);
   }
   if (!RangeApi.isCollapsed(range)) {
-    setSuggestionNodes(editor, {
-      at: range,
-      ...(data && { suggestionId: data.id, createdAt: data.createdAt }),
-    });
+    // Pure delete: synthesize a UUID id so the suggestion stays annotatable
+    // (the annotation row is keyed by the suggestion id, which must be a UUID).
+    data ??= {
+      id: crypto.randomUUID(),
+      createdAt: Date.now(),
+      type: 'remove',
+      userId:
+        editor.getOptions(BaseSuggestionPlugin).currentUserId ?? 'anonymous',
+      createdByAI: true,
+    };
+    // The inserted first line merges into the end block unless the markdown
+    // starts with a blank line (the sacrificial paragraph absorbs the merge).
+    const core = md.replace(/^[ \t]*/, '').replace(/[ \t]*$/, '');
+
+    markRemoval(editor, range, data, md.length > 0 && !core.startsWith('\n\n'));
   }
 }

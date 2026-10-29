@@ -2,10 +2,7 @@ import {
   getAuthUserRetrieveQueryOptions,
   useAuthUserRetrieve,
 } from '@/api/gen/endpoints/auth/auth';
-import {
-  useMainDocumentsRetrieve,
-  useMainTasksRetrieve,
-} from '@/api/gen/endpoints/main/main';
+import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
 import type { Task, UserDetails } from '@/api/gen/models';
 import { DefaultPending } from '@/components/default-pending';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -23,7 +20,7 @@ import {
 } from '@/components/shadcn/ui/tabs';
 import { UserMenu } from '@/features/auth/components/user-menu';
 import { Chat } from '@/features/chat/components/chat';
-import { Comment } from '@/features/comment/components/comment';
+import { Discussion } from '@/features/comment/components/discussion';
 import { Editor } from '@/features/editor/components/editor';
 import { Find } from '@/features/editor/components/find';
 import { Plate } from '@/features/editor/components/plate';
@@ -47,7 +44,6 @@ import {
   PanelRightIcon,
   WorkflowIcon,
 } from 'lucide-react';
-import type { Value } from 'platejs';
 import { useEffect, useRef, useState } from 'react';
 import type { PanelImperativeHandle } from 'react-resizable-panels';
 import { z } from 'zod';
@@ -73,11 +69,7 @@ function Workbench() {
   const { taskId } = Route.useParams();
   const { role } = Route.useSearch() as { role: Role };
   const { data: me } = useAuthUserRetrieve();
-  const { data: task, isPending: isTaskPending } = useMainTasksRetrieve(taskId);
-  const { data: document, isPending: isDocumentPending } =
-    useMainDocumentsRetrieve(task?.document ?? '', {
-      query: { enabled: task?.document !== undefined },
-    });
+  const { data: task, isPending } = useMainTasksRetrieve(taskId);
 
   const router = useRouter();
   const navigate = useNavigate();
@@ -137,17 +129,13 @@ function Workbench() {
   const [taskWorkflowDialogOpen, setTaskWorkflowDialogOpen] = useState(false);
   const [taskUpdateDialogOpen, setTaskUpdateDialogOpen] = useState(false);
 
-  if (isTaskPending || !task)
-    return <DefaultPending message="任务加载中 . . ." />;
-  if (isDocumentPending || !document)
-    return <DefaultPending message="文档加载中 . . ." />;
+  if (isPending || !task) return <DefaultPending message="任务加载中 . . ." />;
 
   return (
     <div className="flex h-dvh flex-col">
       <Plate
-        value={(document.value as Value) ?? []}
-        documentId={task.document}
         canEdit={canEdit(role, me, task)}
+        canComment={canComment(role, me, task)}
       >
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-2">
           <Button
@@ -164,10 +152,17 @@ function Workbench() {
           <h1 className="mr-2 text-lg font-medium">{task.name}</h1>
           <TaskStageBadge role={role} stage={task.stage} className="mr-auto" />
           {canSubmitWorkflow(role, me, task) && (
-            <Button onClick={() => setTaskWorkflowDialogOpen(true)}>
-              <WorkflowIcon />
-              提交流程
-            </Button>
+            <>
+              <Button onClick={() => setTaskWorkflowDialogOpen(true)}>
+                <WorkflowIcon />
+                提交流程
+              </Button>
+              <TaskWorkflowDialog
+                task={task}
+                open={taskWorkflowDialogOpen}
+                onOpenChange={setTaskWorkflowDialogOpen}
+              />
+            </>
           )}
           <Button
             variant="outline"
@@ -176,6 +171,11 @@ function Workbench() {
             <InfoIcon />
             文档信息
           </Button>
+          <TaskUpdateDialog
+            task={task}
+            open={taskUpdateDialogOpen}
+            onOpenChange={setTaskUpdateDialogOpen}
+          />
           <UserMenu className="ml-2 py-1" />
         </header>
 
@@ -229,7 +229,7 @@ function Workbench() {
                 className="h-10 min-h-10 w-full border-b"
               >
                 <TabsTrigger value="chat">AI 对话</TabsTrigger>
-                <TabsTrigger value="comment">评论 & 修订</TabsTrigger>
+                <TabsTrigger value="discussion">评论 & 修订</TabsTrigger>
                 {!rightPanelOpen && (
                   <Button variant="ghost" onClick={toggleRightPanel}>
                     <PanelRightIcon />
@@ -243,10 +243,10 @@ function Workbench() {
                 <Chat />
               </TabsContent>
               <TabsContent
-                value="comment"
+                value="discussion"
                 className="min-h-0 data-[state=inactive]:hidden"
               >
-                <Comment />
+                <Discussion />
               </TabsContent>
             </Tabs>
           </ResizablePanel>
@@ -274,7 +274,7 @@ function Workbench() {
                 value="guide"
                 className="min-h-0 data-[state=inactive]:hidden"
               >
-                <Guide task={task} />
+                <Guide />
               </TabsContent>
               <TabsContent
                 value="knowledge"
@@ -283,18 +283,6 @@ function Workbench() {
             </Tabs>
           </ResizablePanel>
         </ResizablePanelGroup>
-
-        <TaskWorkflowDialog
-          task={task}
-          open={taskWorkflowDialogOpen}
-          onOpenChange={setTaskWorkflowDialogOpen}
-        />
-
-        <TaskUpdateDialog
-          task={task}
-          open={taskUpdateDialogOpen}
-          onOpenChange={setTaskUpdateDialogOpen}
-        />
       </Plate>
     </div>
   );
@@ -304,6 +292,17 @@ function canEdit(role: Role, user?: UserDetails, task?: Task): boolean {
   if (!user || !task) return false;
   if (role === 'creator' && user.pk === task.creator.pk) {
     return task.stage === 'editing' || task.stage === 'revision';
+  }
+  return false;
+}
+
+function canComment(role: Role, user?: UserDetails, task?: Task): boolean {
+  if (!user || !task) return false;
+  if (role === 'creator' && user.pk === task.creator.pk) {
+    return task.stage === 'editing' || task.stage === 'revision';
+  }
+  if (role === 'reviewer' && user.pk === task.reviewer?.pk) {
+    return task.stage === 'review';
   }
   return false;
 }

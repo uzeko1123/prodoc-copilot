@@ -7,6 +7,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, MethodNotAllowed, NotFound
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 from rest_framework.viewsets import ModelViewSet
@@ -62,7 +63,7 @@ class GuideViewSet(ModelViewSet):
 class TaskViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = (TaskPermission,)
+    permission_classes = (IsAuthenticated, TaskPermission)
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filterset_fields = ("creator", "reviewer", "stage")
     ordering_fields = ("updated_at", "created_at")
@@ -123,7 +124,7 @@ class TaskViewSet(ModelViewSet):
 class DocumentViewSet(ModelViewSet):
     queryset = Document.objects.select_related("task")
     serializer_class = DocumentSerializer
-    permission_classes = (DocumentPermission,)
+    permission_classes = (IsAuthenticated, DocumentPermission)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("task",)
 
@@ -148,7 +149,7 @@ class CommentViewSet(ModelViewSet):
         "discussion__document__task", "user__profile"
     )
     serializer_class = CommentSerializer
-    permission_classes = (CommentPermission,)
+    permission_classes = (IsAuthenticated, CommentPermission)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("discussion",)
 
@@ -180,17 +181,23 @@ class CommentViewSet(ModelViewSet):
 
 
 class DiscussionViewSet(ModelViewSet):
-    queryset = Discussion.objects.select_related("document__task", "user__profile")
+    queryset = Discussion.objects.select_related(
+        "document__task", "user__profile"
+    ).prefetch_related("guide_clauses")
     serializer_class = DiscussionSerializer
-    permission_classes = (DiscussionPermission,)
+    permission_classes = (IsAuthenticated, DiscussionPermission)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("document",)
 
     def get_queryset(self):
-        return Discussion.objects.filter(
-            Q(document__task__creator=self.request.user)
-            | Q(document__task__reviewer=self.request.user)
-        ).select_related("document__task", "user__profile")
+        return (
+            Discussion.objects.filter(
+                Q(document__task__creator=self.request.user)
+                | Q(document__task__reviewer=self.request.user)
+            )
+            .select_related("document__task", "user__profile")
+            .prefetch_related("guide_clauses")
+        )
 
     def perform_create(self, serializer):
         document = serializer.validated_data["document"]

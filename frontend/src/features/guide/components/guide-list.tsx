@@ -95,15 +95,15 @@ export function GuideList() {
                       >
                         查看指南
                       </Button>
+                      <GuideDialog
+                        guide={guide}
+                        open={guideDialogId === guide.id}
+                        onOpenChange={(open) =>
+                          setGuideDialogId(open ? guide.id : null)
+                        }
+                      />
                     </div>
                   </TableCell>
-                  <GuideDialog
-                    guide={guide}
-                    open={guideDialogId === guide.id}
-                    onOpenChange={(open) =>
-                      setGuideDialogId(open ? guide.id : null)
-                    }
-                  />
                 </TableRow>
               ))}
             </TableBody>

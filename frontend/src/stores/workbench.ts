@@ -11,13 +11,13 @@ type WorkbenchState = {
   toggleRightPanel: () => void;
 
   activeMainTab: string;
-  setActiveMainTab: (tab: string) => void;
+  setActiveMainTab: (activeMainTab: string) => void;
 
   activeLeftPanelTab: string;
-  setActiveLeftPanelTab: (tab: string) => void;
+  setActiveLeftPanelTab: (activeLeftPanelTab: string) => void;
 
   activeRightPanelTab: string;
-  setActiveRightPanelTab: (tab: string) => void;
+  setActiveRightPanelTab: (activeRightPanelTab: string) => void;
 };
 
 export const useWorkbenchStore = create<WorkbenchState>()(

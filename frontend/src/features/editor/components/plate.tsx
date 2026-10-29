@@ -1,31 +1,45 @@
 'use client';
 
+import {
+  useMainDocumentsRetrieve,
+  useMainTasksRetrieve,
+} from '@/api/gen/endpoints/main/main';
+import { DefaultPending } from '@/components/default-pending';
+import { useParams } from '@tanstack/react-router';
 import type { Value } from 'platejs';
 import { Plate as PlatePrimitive, usePlateEditor } from 'platejs/react';
 import { useEffect } from 'react';
 import { EditorKit } from './editor/editor-kit';
-import { DocumentPlugin } from './editor/plugins/document-kit';
+import { TaskPlugin } from './editor/plugins/task-kit';
 
 export function Plate({
-  value,
-  documentId,
   canEdit,
+  canComment,
   children,
 }: {
-  value: Value;
-  documentId: string;
   canEdit: boolean;
+  canComment: boolean;
   children: React.ReactNode;
 }) {
-  const editor = usePlateEditor({ plugins: EditorKit, value }, [documentId]);
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const { data: document, isPending } = useMainDocumentsRetrieve(
+    task?.document ?? '',
+    { query: { enabled: task?.document !== undefined } },
+  );
+
+  const editor = usePlateEditor(
+    { plugins: EditorKit, value: (document?.value as Value) ?? [] },
+    [document?.id],
+  );
 
   useEffect(() => {
-    editor.setOption(DocumentPlugin, 'documentId', documentId);
-  }, [editor, documentId]);
+    editor.setOption(TaskPlugin, 'canEdit', canEdit);
+    editor.setOption(TaskPlugin, 'canComment', canComment);
+  }, [editor, canEdit, canComment]);
 
-  useEffect(() => {
-    editor.setOption(DocumentPlugin, 'canEdit', canEdit);
-  }, [editor, canEdit]);
+  if (isPending || !document)
+    return <DefaultPending message="文档加载中 . . ." />;
 
   return (
     <PlatePrimitive editor={editor} readOnly={!canEdit}>

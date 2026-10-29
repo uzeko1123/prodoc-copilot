@@ -86,7 +86,7 @@ export const suggestionPlugin = toTPlatePlugin<SuggestionConfig>(
         : null;
       setOption('activeId', activeId);
       if (activeId) {
-        useWorkbenchStore.getState().setActiveMainTab('comment');
+        useWorkbenchStore.getState().setActiveMainTab('discussion');
       }
     },
   },

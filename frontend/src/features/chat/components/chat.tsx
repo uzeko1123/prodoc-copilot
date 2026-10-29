@@ -24,6 +24,7 @@ import {
   InputGroupTextarea,
 } from '@/components/shadcn/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import { TaskPlugin } from '@/features/editor/components/editor/plugins/task-kit';
 import { AIChatPlugin } from '@platejs/ai/react';
 import {
   ArrowUpIcon,
@@ -42,6 +43,7 @@ import {
   useEditorReadOnly,
   useEditorRef,
   useEditorSelector,
+  usePluginOption,
   usePluginOptions,
 } from 'platejs/react';
 import * as React from 'react';
@@ -64,6 +66,7 @@ import {
 export function Chat() {
   const editor = useEditorRef();
   const readOnly = useEditorReadOnly();
+  const canComment = usePluginOption(TaskPlugin, 'canComment');
   const selectionText = useEditorSelector(
     (editor) => getSelectionText(editor, editor.selection),
     [],
@@ -87,8 +90,13 @@ export function Chat() {
   const setChatMessages = useChatStore((state) => state.setChatMessages);
 
   const availableChatModes = React.useMemo(
-    () => (readOnly ? ['chat', 'comment'] : chatModes),
-    [readOnly],
+    () =>
+      readOnly
+        ? canComment
+          ? (['chat', 'comment'] as ChatMode[])
+          : (['chat'] as ChatMode[])
+        : chatModes,
+    [readOnly, canComment],
   );
 
   React.useEffect(() => {
@@ -250,7 +258,35 @@ export function Chat() {
                           <DropdownMenuSeparator />
                         </>
                       )}
-                      {menuStateItems.readonlyCommand.flatMap((command) =>
+                      {canComment && (
+                        <>
+                          {menuStateItems.commentCommand.flatMap((command) =>
+                            command.items.map((item) => (
+                              <DropdownMenuItem
+                                className="text-sm [&_svg]:size-3.5"
+                                key={item.value}
+                                onSelect={() => {
+                                  setChatInput(`${item.value} ${chatInput}`);
+                                  if (item.chatMode === null) return;
+                                  useChatStore
+                                    .getState()
+                                    .setChatMode(item.chatMode);
+                                }}
+                              >
+                                {item.icon}
+                                <span>{item.label}</span>
+                                <div className="grow" />
+                                <code className="text-muted-foreground text-xs font-medium">
+                                  {item.value}
+                                </code>
+                              </DropdownMenuItem>
+                            )),
+                          )}
+
+                          <DropdownMenuSeparator />
+                        </>
+                      )}
+                      {menuStateItems.chatCommand.flatMap((command) =>
                         command.items.map((item) => (
                           <DropdownMenuItem
                             className="text-sm [&_svg]:size-3.5"
@@ -328,6 +364,11 @@ export function Chat() {
                     </DropdownMenuContent>
                   </DropdownMenu>
 
+                  <SettingsDialog
+                    open={settingsDialogOpen}
+                    onOpenChange={setSettingsDialogOpen}
+                  />
+
                   <div className="grow" />
 
                   <DropdownMenu>
@@ -394,10 +435,6 @@ export function Chat() {
           </CardFooter>
         </Card>
       </MessageScrollerProvider>
-      <SettingsDialog
-        open={settingsDialogOpen}
-        onOpenChange={setSettingsDialogOpen}
-      />
     </>
   );
 }

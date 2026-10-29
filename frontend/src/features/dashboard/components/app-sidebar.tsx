@@ -64,6 +64,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               >
                 <CirclePlusIcon /> 快速创建
               </SidebarMenuButton>
+              <TaskCreateDialog
+                open={taskCreateDialogOpen}
+                onOpenChange={setTaskCreateDialogOpen}
+              />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
@@ -154,10 +158,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <TaskCreateDialog
-        open={taskCreateDialogOpen}
-        onOpenChange={setTaskCreateDialogOpen}
-      />
     </Sidebar>
   );
 }

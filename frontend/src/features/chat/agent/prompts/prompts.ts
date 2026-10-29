@@ -100,6 +100,7 @@ export const prompts = {
       'blockId',
       'content',
       'comment',
+      'guideClauseIds',
     ]),
     edit: parseToolDescriptions('edit', editToolDescriptions, [
       'blockId',

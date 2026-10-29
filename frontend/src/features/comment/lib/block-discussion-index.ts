@@ -199,13 +199,27 @@ const toResolvedSuggestion = ({
 
   if (sortedEntries.length === 0) return null;
 
+  const hasContentMark = (blockPath: Path) =>
+    sortedEntries.some(([entry, entryPath]) => {
+      if (!PathApi.isAncestor(blockPath, entryPath)) return false;
+      if (TextApi.isText(entry)) {
+        return getSuggestionDataList(entry as TSuggestionText).some(
+          (data) => data.id === id,
+        );
+      }
+      return (
+        ElementApi.isElement(entry) &&
+        getSuggestionData(entry)?.id === keyId2SuggestionId(id)
+      );
+    });
+
   let newText = '';
   let text = '';
   let properties: Record<string, unknown> = {};
   let newProperties: Record<string, unknown> = {};
   let createdByAI = false;
 
-  sortedEntries.forEach(([node]) => {
+  sortedEntries.forEach(([node, nodePath]) => {
     if (TextApi.isText(node)) {
       getSuggestionDataList(node as TSuggestionText).forEach((data) => {
         if (data.id !== id) return;
@@ -261,6 +275,8 @@ const toResolvedSuggestion = ({
     }
 
     if (!isBlockSuggestion(node)) return;
+
+    if (!suggestionData.isLineBreak && hasContentMark(nodePath)) return;
 
     const nextText = suggestionData.isLineBreak
       ? BLOCK_SUGGESTION_TOKEN
@@ -392,7 +408,7 @@ export const buildBlockDiscussionIndex = ({
   discussions.forEach((discussion) => {
     const ownerPath = commentOwnerById.get(discussion.id);
 
-    if (!ownerPath || discussion.isResolved) {
+    if (!ownerPath) {
       return;
     }
 

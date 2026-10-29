@@ -3,6 +3,7 @@
 import {
   getMainDocumentsRetrieveQueryKey,
   mainDocumentsPartialUpdate,
+  useMainTasksRetrieve,
 } from '@/api/gen/endpoints/main/main';
 import {
   DropdownMenu,
@@ -17,16 +18,11 @@ import { toastErrorMessage } from '@/lib/error-message';
 import { queryClient } from '@/lib/query-client';
 import { MarkdownPlugin } from '@platejs/markdown';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+import { useParams } from '@tanstack/react-router';
 import { CloudUploadIcon, SaveIcon } from 'lucide-react';
-import {
-  useEditorReadOnly,
-  useEditorRef,
-  useEditorValue,
-  usePluginOption,
-} from 'platejs/react';
+import { useEditorReadOnly, useEditorRef, useEditorValue } from 'platejs/react';
 import * as React from 'react';
 import { toast } from 'sonner';
-import { DocumentPlugin } from '../editor/plugins/document-kit';
 import {
   ImageFileIcon,
   MarkdownFileIcon,
@@ -38,7 +34,10 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
   const value = useEditorValue();
   const readOnly = useEditorReadOnly();
-  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
 
   const [open, setOpen] = React.useState(false);
 

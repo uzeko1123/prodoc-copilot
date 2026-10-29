@@ -6,7 +6,8 @@ import { ToolbarGroup, ToolbarSeparator } from '@/components/shadcn/ui/toolbar';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { PanelLeftIcon, SparklesIcon } from 'lucide-react';
 import { KEYS } from 'platejs';
-import { useEditorReadOnly } from 'platejs/react';
+import { useEditorReadOnly, usePluginOption } from 'platejs/react';
+import { TaskPlugin } from '../editor/plugins/task-kit';
 import { CommentToolbarButton } from './comment-toolbar-button';
 import { ExportToolbarButton } from './export-toolbar-button';
 import { FontToolbarButton } from './font-toolbar-button';
@@ -20,6 +21,7 @@ import { TextIndentToolbarButton } from './text-indent-toolbar-button';
 
 export function FixedToolbarButtons() {
   const readOnly = useEditorReadOnly();
+  const canComment = usePluginOption(TaskPlugin, 'canComment');
 
   const leftPanelOpen = useWorkbenchStore((state) => state.leftPanelOpen);
   const toggleLeftPanel = useWorkbenchStore((state) => state.toggleLeftPanel);
@@ -72,7 +74,7 @@ export function FixedToolbarButtons() {
       <ToolbarGroup>
         <ToolbarSeparator className="self-stretch" />
 
-        <CommentToolbarButton />
+        {canComment && <CommentToolbarButton />}
         <AIToolbarButton tooltip="AI 指令">
           <SparklesIcon />
         </AIToolbarButton>

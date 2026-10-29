@@ -2,6 +2,7 @@
 
 import { useChat, type UseChatHelpers } from '@ai-sdk/react';
 import { AIChatPlugin } from '@platejs/ai/react';
+import { useParams } from '@tanstack/react-router';
 import type { LanguageModelUsage, ToolUIPart, UIMessage } from 'ai';
 import { useEditorRef } from 'platejs/react';
 import * as React from 'react';
@@ -23,7 +24,13 @@ export type Chat = UseChatHelpers<ChatMessage>;
 
 export const useAgent = () => {
   const editor = useEditorRef();
-  const transport = React.useMemo(() => createAgentTransport(editor), [editor]);
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+
+  const transport = React.useMemo(
+    () => createAgentTransport(editor, taskId),
+    [editor, taskId],
+  );
+
   const chat = useChat<ChatMessage>({
     transport,
     throttle: 100,
@@ -44,7 +51,7 @@ export const useAgent = () => {
     const lastChatMessage = chat.messages.at(-1);
     if (lastChatMessage?.role !== 'assistant') return;
 
-    applyTools(editor, chat, lastChatMessage);
+    applyTools(editor, chat, lastChatMessage, taskId);
     upsertChatMessage(lastChatMessage);
 
     if (chat.status === 'streaming' || chat.status === 'submitted') return;

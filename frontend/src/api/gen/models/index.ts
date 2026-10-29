@@ -11,6 +11,8 @@ export * from './commentInline';
 export * from './commentInlineRequest';
 export * from './commentRequest';
 export * from './discussion';
+export * from './discussionGuideClause';
+export * from './discussionGuideClauseRequest';
 export * from './discussionRequest';
 export * from './document';
 export * from './documentRequest';

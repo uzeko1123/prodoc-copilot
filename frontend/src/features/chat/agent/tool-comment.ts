@@ -1,8 +1,9 @@
 import {
   getMainDiscussionsListQueryKey,
+  getMainTasksRetrieveQueryKey,
   mainDiscussionsCreate,
 } from '@/api/gen/endpoints/main/main';
-import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
+import type { Task } from '@/api/gen/models';
 import { toastErrorMessage } from '@/lib/error-message';
 import { queryClient } from '@/lib/query-client';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
@@ -20,6 +21,7 @@ export type CommentToolIO = {
   blockId: string;
   content: string;
   comment: string;
+  guideClauseIds?: string[];
 };
 
 export type CommentTool = {
@@ -40,6 +42,11 @@ const commentToolIOSchema = jsonSchema<CommentToolIO>({
       description: prompts.tools.comment.schema.comment,
       type: 'string',
     },
+    guideClauseIds: {
+      description: prompts.tools.comment.schema.guideClauseIds,
+      type: 'array',
+      items: { type: 'string' },
+    },
   },
   required: ['blockId', 'content', 'comment'],
   additionalProperties: false,
@@ -59,6 +66,7 @@ export function applyCommentTool(
   editor: PlateEditor,
   chat: Chat,
   part: ToolUIPart<CommentTool>,
+  taskId: string,
 ) {
   if (part.state === 'input-available' && !output.has(part.toolCallId)) {
     output.add(part.toolCallId);
@@ -75,7 +83,7 @@ export function applyCommentTool(
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'comment');
-  applyComment(editor, part.input);
+  applyComment(editor, part.input, taskId);
 }
 
 export function resetCommentTool() {
@@ -83,10 +91,11 @@ export function resetCommentTool() {
   output.clear();
 }
 
-function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
-  const documentId = editor.getOption(DocumentPlugin, 'documentId');
-  if (!documentId) return console.warn('No documentId found for AI comment');
-
+function applyComment(
+  editor: PlateEditor,
+  aiComment: CommentToolIO,
+  taskId: string,
+) {
   const range = aiCommentToRange(editor, aiComment);
   if (!range) return console.warn('No range found for AI comment');
 
@@ -112,6 +121,20 @@ function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
     );
   });
 
+  const task = queryClient.getQueryData<Task>(
+    getMainTasksRetrieveQueryKey(taskId),
+  );
+  const documentId = task?.document ?? '';
+  const guide = task?.guide;
+
+  const guideClauses =
+    guide && aiComment.guideClauseIds?.length
+      ? aiComment.guideClauseIds.map((block_id) => ({
+          guide: guide.id,
+          block_id,
+        }))
+      : undefined;
+
   void mainDiscussionsCreate({
     key: discussionId,
     document: documentId,
@@ -120,6 +143,7 @@ function applyComment(editor: PlateEditor, aiComment: CommentToolIO) {
       key: crypto.randomUUID(),
       content_rich: contentRich,
     },
+    ...(guideClauses && { guide_clauses: guideClauses }),
   })
     .then(() =>
       queryClient.invalidateQueries({

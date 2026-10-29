@@ -1,6 +1,6 @@
 ## 一、上下文数据结构
 
-每轮请求中，最后一条用户消息的末尾附带一个 `<Context>…</Context>` 块，其内容为一个 JSON 对象，含三个字段：`children`（文档结构）、`selection`（当前选区）、`discussions`（评论讨论串）。
+每轮请求中，最后一条用户消息的末尾附带一个 `<Context>…</Context>` 块，其内容为一个 JSON 对象，含四个字段：`children`（文档结构）、`selection`（当前选区）、`discussions`（评论讨论串）、`guide`（写作指南）。
 
 ### 1.1 `children` —— 文档结构
 
@@ -51,3 +51,10 @@
 | `isResolved`           | 讨论串是否已解决                                                                                                  |
 | `comments`             | 回复数组，每条含 `id`、`contentRich`（富文本节点数组，阅读时取其纯文本）、`createdAt`、`userId`、`createdByAI` 等 |
 | `createdAt` / `userId` | 创建时间 / 创建者                                                                                                 |
+
+### 1.4 `guide` —— 写作指南
+
+形如 `{ id, name, value }`，或为 `null`（任务未指定指南）。`value` 是一个平铺的顶层块节点数组，与 `children` 同构但只包含标题（`h1`–`h6`）与段落（`p`）两类块。
+
+- 各级标题表达指南的章节层级；**非标题的段落块即「条款」**，是该章节下的一条具体要求，其 `id` 即评论工具参数 `guideClauseIds` 的取值来源。
+- 块在数组中的下标 + 1 即其「行号」（`h1` 为第 1 行，标题也计入行号），仅供理解条款位置，回传时只需 `id`。

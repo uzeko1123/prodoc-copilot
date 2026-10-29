@@ -29,7 +29,6 @@ import { BlockSelectionKit } from './plugins/block-selection-kit';
 import { CodeBlockKit } from './plugins/code-block-kit';
 import { CursorOverlayKit } from './plugins/cursor-overlay-kit';
 import { DndKit } from './plugins/dnd-kit';
-import { DocumentKit } from './plugins/document-kit';
 import { FindReplaceKit } from './plugins/find-replace-kit';
 import { FloatingToolbarKit } from './plugins/floating-toolbar-kit';
 import { LinkKit } from './plugins/link-kit';
@@ -38,6 +37,7 @@ import { MathKit } from './plugins/math-kit';
 import { MediaKit } from './plugins/media-kit';
 import { SelectionKit } from './plugins/selection-kit';
 import { TableKit } from './plugins/table-kit';
+import { TaskKit } from './plugins/task-kit';
 import { TocKit } from './plugins/toc-kit';
 
 export const EditorKit = [
@@ -94,8 +94,8 @@ export const EditorKit = [
   // Find
   ...FindReplaceKit,
 
-  // Document
-  ...DocumentKit,
+  // Task
+  ...TaskKit,
 
   // Template
   ...TemplateKit,

@@ -1,5 +1,8 @@
-import { getMainDiscussionsListQueryKey } from '@/api/gen/endpoints/main/main';
-import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
+import {
+  getMainDiscussionsListQueryKey,
+  getMainTasksRetrieveQueryKey,
+} from '@/api/gen/endpoints/main/main';
+import type { Discussion, Task } from '@/api/gen/models';
 import { queryClient } from '@/lib/query-client';
 import {
   convertToModelMessages,
@@ -26,7 +29,7 @@ type Context = {
   toolName: string | null;
 };
 
-export function createAgentTransport(editor: PlateEditor) {
+export function createAgentTransport(editor: PlateEditor, taskId: string) {
   let context: Context | null = null;
   let usage: LanguageModelUsage | undefined = undefined;
 
@@ -64,7 +67,7 @@ export function createAgentTransport(editor: PlateEditor) {
         model: getModel(),
         instructions,
         messages: await convertToModelMessages(
-          createChatMessagesWithCtx(editor, chatMessages, context),
+          createChatMessagesWithCtx(chatMessages, context, taskId),
           { tools, ignoreIncompleteToolCalls: true },
         ),
         tools: availableTools,
@@ -99,16 +102,19 @@ export function createAgentTransport(editor: PlateEditor) {
 }
 
 function createChatMessagesWithCtx(
-  editor: PlateEditor,
   chatMessages: ChatMessage[],
   context: Context | null,
+  taskId: string,
 ) {
+  const task = queryClient.getQueryData<Task>(
+    getMainTasksRetrieveQueryKey(taskId),
+  );
+  const documentId = task?.document ?? '';
   const discussions =
-    queryClient.getQueryData(
-      getMainDiscussionsListQueryKey({
-        document: editor.getOption(DocumentPlugin, 'documentId'),
-      }),
+    queryClient.getQueryData<Discussion[]>(
+      getMainDiscussionsListQueryKey({ document: documentId }),
     ) ?? [];
+  const guide = task?.guide ?? null;
 
   const lastUserChatMessageIndex = chatMessages.findLastIndex(
     (message) => message.role === 'user',
@@ -126,6 +132,7 @@ function createChatMessagesWithCtx(
           children: context?.children,
           selection: context?.selection,
           discussions,
+          guide,
         })}</Context>`,
       },
     ],

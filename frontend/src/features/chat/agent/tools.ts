@@ -51,6 +51,7 @@ export function applyTools(
   editor: PlateEditor,
   chat: Chat,
   message: ChatMessage,
+  taskId: string,
 ) {
   if (currentMessageId !== message.id) {
     currentMessageId = message.id;
@@ -62,7 +63,7 @@ export function applyTools(
   for (const part of message.parts) {
     switch (part.type) {
       case 'tool-comment':
-        applyCommentTool(editor, chat, part);
+        applyCommentTool(editor, chat, part, taskId);
         break;
       case 'tool-edit':
         applyEditTool(editor, chat, part);

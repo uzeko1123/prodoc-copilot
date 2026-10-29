@@ -8,6 +8,7 @@ import {
   CommandList,
 } from '@/components/shadcn/ui/command';
 import { Spinner } from '@/components/ui/spinner';
+import { TaskPlugin } from '@/features/editor/components/editor/plugins/task-kit';
 import { AIChatPlugin, useEditorChat } from '@platejs/ai/react';
 import {
   flip,
@@ -252,7 +253,8 @@ export function AIMenu() {
   );
 }
 
-type EditorChatState = 'cursorCommand' | 'selectionCommand' | 'readonlyCommand';
+type EditorChatState =
+  'cursorCommand' | 'selectionCommand' | 'commentCommand' | 'chatCommand';
 
 const aiChatItems = {
   continue: {
@@ -470,15 +472,20 @@ export const menuStateItems: Record<
       heading: '文档编辑',
     },
   ],
-  readonlyCommand: [
+  commentCommand: [
+    {
+      items: [aiChatItems.review],
+      heading: '智能评论',
+    },
+  ],
+  chatCommand: [
     {
       items: [
-        aiChatItems.review,
         aiChatItems.translate,
         aiChatItems.explain,
         aiChatItems.summarize,
       ],
-      heading: '对话 & 评论',
+      heading: 'AI 对话',
     },
   ],
 };
@@ -493,16 +500,22 @@ export const AIMenuItems = ({
   const editor = useEditorRef();
   const readOnly = useEditorReadOnly();
   const isSelecting = useIsSelecting();
+  const canComment = usePluginOption(TaskPlugin, 'canComment');
 
   const menuStates = React.useMemo(() => {
+    const commandStates: EditorChatState[] = [
+      ...(canComment ? (['commentCommand'] as const) : []),
+      'chatCommand',
+    ];
+
     return (
       readOnly
-        ? ['readonlyCommand']
+        ? commandStates
         : isSelecting
-          ? ['selectionCommand', 'readonlyCommand']
-          : ['cursorCommand', 'readonlyCommand']
+          ? ['selectionCommand', ...commandStates]
+          : ['cursorCommand', ...commandStates]
     ) as EditorChatState[];
-  }, [readOnly, isSelecting]);
+  }, [readOnly, isSelecting, canComment]);
 
   return (
     <>

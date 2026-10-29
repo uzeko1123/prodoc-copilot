@@ -97,15 +97,15 @@ export function TemplateList() {
                       >
                         查看模板
                       </Button>
+                      <TemplateDialog
+                        template={template}
+                        open={templateDialogId === template.id}
+                        onOpenChange={(open) =>
+                          setTemplateDialogId(open ? template.id : null)
+                        }
+                      />
                     </div>
                   </TableCell>
-                  <TemplateDialog
-                    template={template}
-                    open={templateDialogId === template.id}
-                    onOpenChange={(open) =>
-                      setTemplateDialogId(open ? template.id : null)
-                    }
-                  />
                 </TableRow>
               ))}
             </TableBody>

@@ -193,6 +193,8 @@ export const mainDiscussionsListResponseCommentsItemUserOneUsernameMax = 150;
 
 export const mainDiscussionsListResponseCommentsItemUserOneUsernameRegExp =
   new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsListResponseGuideClausesItemBlockIdMax = 255;
+
 export const mainDiscussionsListResponseUserOneUsernameMax = 150;
 
 export const mainDiscussionsListResponseUserOneUsernameRegExp = new RegExp(
@@ -227,6 +229,16 @@ export const MainDiscussionsListResponseItem = zod.object({
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .max(mainDiscussionsListResponseGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
   user: zod.object({
     pk: zod.int(),
@@ -247,14 +259,29 @@ export const MainDiscussionsListResponse = zod.array(
   MainDiscussionsListResponseItem,
 );
 
+export const mainDiscussionsCreateBodyGuideClausesItemBlockIdMax = 255;
+
 export const MainDiscussionsCreateBody = zod.object({
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  comment_inline: zod.object({
-    key: zod.uuid(),
-    content_rich: zod.unknown(),
-  }),
+  comment_inline: zod
+    .object({
+      key: zod.uuid(),
+      content_rich: zod.unknown(),
+    })
+    .optional(),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .min(1)
+          .max(mainDiscussionsCreateBodyGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
 });
 
@@ -262,6 +289,8 @@ export const mainDiscussionsCreateResponseCommentsItemUserOneUsernameMax = 150;
 
 export const mainDiscussionsCreateResponseCommentsItemUserOneUsernameRegExp =
   new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsCreateResponseGuideClausesItemBlockIdMax = 255;
+
 export const mainDiscussionsCreateResponseUserOneUsernameMax = 150;
 
 export const mainDiscussionsCreateResponseUserOneUsernameRegExp = new RegExp(
@@ -296,6 +325,16 @@ export const MainDiscussionsCreateResponse = zod.object({
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .max(mainDiscussionsCreateResponseGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
   user: zod.object({
     pk: zod.int(),
@@ -321,6 +360,8 @@ export const mainDiscussionsRetrieveResponseCommentsItemUserOneUsernameMax = 150
 
 export const mainDiscussionsRetrieveResponseCommentsItemUserOneUsernameRegExp =
   new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsRetrieveResponseGuideClausesItemBlockIdMax = 255;
+
 export const mainDiscussionsRetrieveResponseUserOneUsernameMax = 150;
 
 export const mainDiscussionsRetrieveResponseUserOneUsernameRegExp = new RegExp(
@@ -357,6 +398,16 @@ export const MainDiscussionsRetrieveResponse = zod.object({
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .max(mainDiscussionsRetrieveResponseGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
   user: zod.object({
     pk: zod.int(),
@@ -378,14 +429,29 @@ export const MainDiscussionsUpdateParams = zod.object({
   id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
 });
 
+export const mainDiscussionsUpdateBodyGuideClausesItemBlockIdMax = 255;
+
 export const MainDiscussionsUpdateBody = zod.object({
   key: zod.uuid(),
   document: zod.uuid(),
   document_content: zod.string().optional(),
-  comment_inline: zod.object({
-    key: zod.uuid(),
-    content_rich: zod.unknown(),
-  }),
+  comment_inline: zod
+    .object({
+      key: zod.uuid(),
+      content_rich: zod.unknown(),
+    })
+    .optional(),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .min(1)
+          .max(mainDiscussionsUpdateBodyGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
 });
 
@@ -393,6 +459,8 @@ export const mainDiscussionsUpdateResponseCommentsItemUserOneUsernameMax = 150;
 
 export const mainDiscussionsUpdateResponseCommentsItemUserOneUsernameRegExp =
   new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsUpdateResponseGuideClausesItemBlockIdMax = 255;
+
 export const mainDiscussionsUpdateResponseUserOneUsernameMax = 150;
 
 export const mainDiscussionsUpdateResponseUserOneUsernameRegExp = new RegExp(
@@ -427,6 +495,16 @@ export const MainDiscussionsUpdateResponse = zod.object({
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .max(mainDiscussionsUpdateResponseGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
   user: zod.object({
     pk: zod.int(),
@@ -448,6 +526,8 @@ export const MainDiscussionsPartialUpdateParams = zod.object({
   id: zod.uuid().describe('标识此 discussion 的 UUID 字符串。'),
 });
 
+export const mainDiscussionsPartialUpdateBodyGuideClausesItemBlockIdMax = 255;
+
 export const MainDiscussionsPartialUpdateBody = zod.object({
   key: zod.uuid().optional(),
   document: zod.uuid().optional(),
@@ -458,6 +538,17 @@ export const MainDiscussionsPartialUpdateBody = zod.object({
       content_rich: zod.unknown(),
     })
     .optional(),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .min(1)
+          .max(mainDiscussionsPartialUpdateBodyGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
 });
 
@@ -465,6 +556,8 @@ export const mainDiscussionsPartialUpdateResponseCommentsItemUserOneUsernameMax 
 
 export const mainDiscussionsPartialUpdateResponseCommentsItemUserOneUsernameRegExp =
   new RegExp('^[\\w.@+-]+$');
+export const mainDiscussionsPartialUpdateResponseGuideClausesItemBlockIdMax = 255;
+
 export const mainDiscussionsPartialUpdateResponseUserOneUsernameMax = 150;
 
 export const mainDiscussionsPartialUpdateResponseUserOneUsernameRegExp =
@@ -502,6 +595,16 @@ export const MainDiscussionsPartialUpdateResponse = zod.object({
       updated_at: zod.iso.datetime({ offset: true }),
     }),
   ),
+  guide_clauses: zod
+    .array(
+      zod.object({
+        guide: zod.uuid(),
+        block_id: zod
+          .string()
+          .max(mainDiscussionsPartialUpdateResponseGuideClausesItemBlockIdMax),
+      }),
+    )
+    .optional(),
   is_resolved: zod.boolean().optional(),
   user: zod.object({
     pk: zod.int(),

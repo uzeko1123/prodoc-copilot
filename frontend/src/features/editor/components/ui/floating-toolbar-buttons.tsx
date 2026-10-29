@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { KEYS } from 'platejs';
 import { useEditorReadOnly, usePluginOption } from 'platejs/react';
+import { TaskPlugin } from '../editor/plugins/task-kit';
 import { AlignToolbarButton } from './align-toolbar-button';
 import { CommentToolbarButton } from './comment-toolbar-button';
 import { InlineEquationToolbarButton } from './equation-toolbar-button';
@@ -109,12 +110,14 @@ function FloatingToolbarButtonsWithBlockSelection() {
 }
 
 function FloatingToolbarButtonsStatic() {
+  const canComment = usePluginOption(TaskPlugin, 'canComment');
+
   return (
     <>
       <MarkToolbarButton nodeType={KEYS.highlight} tooltip="标记">
         <HighlighterIcon />
       </MarkToolbarButton>
-      <CommentToolbarButton />
+      {canComment && <CommentToolbarButton />}
       <AIToolbarButton tooltip="AI 指令">
         <SparklesIcon />
       </AIToolbarButton>

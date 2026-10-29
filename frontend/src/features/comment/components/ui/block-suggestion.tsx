@@ -1,6 +1,11 @@
 'use client';
 
-import { useAuthUsersRetrieve } from '@/api/gen/endpoints/auth/auth';
+// import { Comment, CommentCreateForm } from './comment';
+import {
+  useAuthUserRetrieve,
+  useAuthUsersRetrieve,
+} from '@/api/gen/endpoints/auth/auth';
+import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   Tooltip,
@@ -8,9 +13,11 @@ import {
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
 import { UserAvatar } from '@/features/auth/components/user-avatar';
+import { useStageUser } from '@/features/auth/hooks/use-stage-user';
 import { formatDate } from '@/lib/format-date';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
+import { useParams } from '@tanstack/react-router';
 import {
   ALargeSmallIcon,
   BoldIcon,
@@ -35,7 +42,6 @@ import {
   type ResolvedSuggestion,
 } from '../../lib/block-discussion-index';
 import type { TDiscussion } from '../editor/plugins/discussion-kit';
-import { Comment, CommentCreateForm } from './comment';
 
 export function BlockSuggestionCard({
   idx,
@@ -48,9 +54,17 @@ export function BlockSuggestionCard({
 }) {
   const { api, editor } = useEditorPlugin(SuggestionPlugin);
 
+  const { data: me } = useAuthUserRetrieve();
   const { data: user } = useAuthUsersRetrieve(Number(suggestion.userId), {
     query: { throwOnError: false },
   });
+
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+
+  const isMySuggestion = (me ? String(me.pk) : '') === suggestion.userId;
+  const stageUser = useStageUser(task);
+  const isStageUser = !!stageUser && stageUser.pk === me?.pk;
 
   const accept = (suggestion: ResolvedSuggestion) => {
     api.suggestion.withoutSuggestions(() => {
@@ -86,7 +100,7 @@ export function BlockSuggestionCard({
     return items;
   };
 
-  const [editingId, setEditingId] = React.useState<string | null>(null);
+  // const [editingId, setEditingId] = React.useState<string | null>(null);
 
   return (
     <div
@@ -95,7 +109,7 @@ export function BlockSuggestionCard({
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
-      <div className="flex flex-col p-4">
+      <div className="flex flex-col p-4 pb-2">
         <div className="relative flex items-center">
           <UserAvatar user={user} className="size-5" />
           <h4 className="mx-2 text-sm leading-none font-semibold">
@@ -116,7 +130,7 @@ export function BlockSuggestionCard({
           </div>
         </div>
 
-        <div className="relative mt-1 mb-4 pl-8">
+        <div className="relative mt-1 mb-2 pl-8">
           <div className="flex flex-col gap-2">
             {suggestion.type === 'remove' &&
               getRemoveSummaryItems(suggestion.text!).map((text, index) => (
@@ -155,7 +169,7 @@ export function BlockSuggestionCard({
                       className="flex items-start gap-2 text-red-900"
                     >
                       <MinusIcon className="my-0.5 size-4 shrink-0" />
-                      <span className="text-sm">
+                      <span className="text-sm line-clamp-3">
                         {text || (
                           <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
                         )}
@@ -172,7 +186,7 @@ export function BlockSuggestionCard({
                         className="flex items-start gap-2 text-blue-900"
                       >
                         <PlusIcon className="my-0.5 size-4 shrink-0" />
-                        <span className="text-sm">
+                        <span className="text-sm line-clamp-3">
                           {text || (
                             <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
                           )}
@@ -201,13 +215,13 @@ export function BlockSuggestionCard({
                     </span>
                   ))}
                 </span>
-                <span className="text-sm">{suggestion.newText}</span>
+                <span className="text-sm line-clamp-3">{suggestion.newText}</span>
               </div>
             )}
           </div>
         </div>
 
-        {suggestion.comments.map((comment, index) => (
+        {/* {suggestion.comments.map((comment, index) => (
           <Comment
             key={comment.id ?? index}
             comment={comment}
@@ -217,29 +231,39 @@ export function BlockSuggestionCard({
             index={index}
             setEditingId={setEditingId}
           />
-        ))}
+        ))} */}
 
-        {hovering && (
+        {isMySuggestion && isStageUser && hovering && (
           <div className="absolute top-4 right-4 flex gap-2">
-            <Button
-              variant="ghost"
-              className="text-muted-foreground size-6 p-1"
-              onClick={() => accept(suggestion)}
-            >
-              <CheckIcon className="size-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground size-6 p-1"
+                  onClick={() => accept(suggestion)}
+                >
+                  <CheckIcon className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>接受</TooltipContent>
+            </Tooltip>
 
-            <Button
-              variant="ghost"
-              className="text-muted-foreground size-6 p-1"
-              onClick={() => reject(suggestion)}
-            >
-              <XIcon className="size-4" />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground size-6 p-1"
+                  onClick={() => reject(suggestion)}
+                >
+                  <XIcon className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>拒绝</TooltipContent>
+            </Tooltip>
           </div>
         )}
 
-        <CommentCreateForm discussionId={suggestion.suggestionId} />
+        {/* <CommentCreateForm discussionId={suggestion.suggestionId} /> */}
       </div>
 
       {!isLast && <div className="bg-muted h-px w-full" />}

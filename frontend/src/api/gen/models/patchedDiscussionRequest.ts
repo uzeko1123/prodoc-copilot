@@ -4,11 +4,13 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { CommentInlineRequest } from './commentInlineRequest';
+import type { DiscussionGuideClauseRequest } from './discussionGuideClauseRequest';
 
 export interface PatchedDiscussionRequest {
   key?: string;
   document?: string;
   document_content?: string;
   comment_inline?: CommentInlineRequest;
+  guide_clauses?: DiscussionGuideClauseRequest[];
   is_resolved?: boolean;
 }

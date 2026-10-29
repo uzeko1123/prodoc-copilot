@@ -4,7 +4,15 @@ from rest_framework import serializers
 
 from apps.auth.serializers import UserSerializer
 
-from .models import Comment, Discussion, Document, Guide, Task, Template
+from .models import (
+    Comment,
+    Discussion,
+    DiscussionGuideClause,
+    Document,
+    Guide,
+    Task,
+    Template,
+)
 
 
 class TemplateSerializer(serializers.ModelSerializer):
@@ -108,10 +116,17 @@ class CommentInlineSerializer(serializers.ModelSerializer):
         fields = ("key", "content_rich")
 
 
+class DiscussionGuideClauseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DiscussionGuideClause
+        fields = ("guide", "block_id")
+
+
 class DiscussionSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
-    comment_inline = CommentInlineSerializer(write_only=True)
+    comment_inline = CommentInlineSerializer(write_only=True, required=False)
+    guide_clauses = DiscussionGuideClauseSerializer(many=True, required=False)
 
     class Meta:
         model = Discussion
@@ -122,6 +137,7 @@ class DiscussionSerializer(serializers.ModelSerializer):
             "document_content",
             "comments",
             "comment_inline",
+            "guide_clauses",
             "is_resolved",
             "user",
             "created_at",
@@ -130,15 +146,22 @@ class DiscussionSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created_at", "updated_at")
 
     def create(self, validated_data):
-        comment_inline = validated_data.pop("comment_inline")
+        comment_inline = validated_data.pop("comment_inline", None)
+        guide_clauses = validated_data.pop("guide_clauses", [])
         with transaction.atomic():
             discussion = Discussion.objects.create(**validated_data)
-            Comment.objects.create(
-                discussion=discussion, user=discussion.user, **comment_inline
+            if comment_inline is not None:
+                Comment.objects.create(
+                    discussion=discussion, user=discussion.user, **comment_inline
+                )
+            DiscussionGuideClause.objects.bulk_create(
+                DiscussionGuideClause(discussion=discussion, **guide_clause)
+                for guide_clause in guide_clauses
             )
         return discussion
 
     def update(self, instance, validated_data):
         validated_data.pop("key", None)
         validated_data.pop("document", None)
+        validated_data.pop("guide_clauses", None)
         return super().update(instance, validated_data)

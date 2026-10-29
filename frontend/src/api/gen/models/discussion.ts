@@ -4,6 +4,7 @@
  * OpenAPI spec version: 0.0.0
  */
 import type { Comment } from './comment';
+import type { DiscussionGuideClause } from './discussionGuideClause';
 import type { User } from './user';
 
 export interface Discussion {
@@ -12,6 +13,7 @@ export interface Discussion {
   document: string;
   document_content?: string;
   readonly comments: readonly Comment[];
+  guide_clauses?: DiscussionGuideClause[];
   is_resolved?: boolean;
   readonly user: User;
   readonly created_at: string;

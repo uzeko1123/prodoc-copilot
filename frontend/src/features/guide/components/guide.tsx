@@ -1,4 +1,4 @@
-import type { Task } from '@/api/gen/models';
+import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
 import {
   Empty,
   EmptyDescription,
@@ -6,11 +6,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/shadcn/ui/empty';
+import { useParams } from '@tanstack/react-router';
 import { BookOpenIcon } from 'lucide-react';
 import { GuideContent } from './guide-content';
 
-export function Guide({ task }: { task: Task }) {
-  if (!task.guide)
+export function Guide() {
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const guide = task?.guide ?? null;
+
+  if (!guide)
     return (
       <Empty className="h-full">
         <EmptyHeader>
@@ -25,7 +30,7 @@ export function Guide({ task }: { task: Task }) {
 
   return (
     <div className="h-full overflow-y-auto">
-      <GuideContent value={task.guide.value} className="editor-font sm:px-6" />
+      <GuideContent value={guide.value} />
     </div>
   );
 }

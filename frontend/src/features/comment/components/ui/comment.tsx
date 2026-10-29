@@ -12,6 +12,7 @@ import {
   useMainDiscussionsCreate,
   useMainDiscussionsList,
   useMainDiscussionsPartialUpdate,
+  useMainTasksRetrieve,
 } from '@/api/gen/endpoints/main/main';
 import { Button } from '@/components/shadcn/ui/button';
 import {
@@ -28,13 +29,14 @@ import {
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
 import { UserAvatar } from '@/features/auth/components/user-avatar';
+import { useStageUser } from '@/features/auth/hooks/use-stage-user';
 import { BasicMarksKit } from '@/features/editor/components/editor/plugins/basic-marks-kit';
-import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
 import { toastErrorMessage } from '@/lib/error-message';
 import { formatDate } from '@/lib/format-date';
 import { queryClient } from '@/lib/query-client';
 import { getCommentKey, getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin, useCommentId } from '@platejs/comment/react';
+import { useParams } from '@tanstack/react-router';
 import { cn } from 'cn';
 import {
   ArrowUpIcon,
@@ -43,6 +45,7 @@ import {
   PencilIcon,
   SparklesIcon,
   TrashIcon,
+  UndoIcon,
   XIcon,
 } from 'lucide-react';
 import {
@@ -60,10 +63,10 @@ import {
   useEditorPlugin,
   useEditorRef,
   usePlateEditor,
-  usePluginOption,
 } from 'platejs/react';
 import * as React from 'react';
 import { useCommentStore } from '../../stores';
+import { DiscussionTags } from '../discussion-tags';
 import { commentPlugin } from '../editor/plugins/comment-kit';
 
 export type TComment = {
@@ -97,9 +100,11 @@ export function Comment(props: {
     onEditorClick,
   } = props;
 
-  const documentId = usePluginOption(DocumentPlugin, 'documentId');
-
   const { data: me } = useAuthUserRetrieve();
+
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
 
   const { data: discussions } = useMainDiscussionsList(
     { document: documentId },
@@ -131,12 +136,12 @@ export function Comment(props: {
     },
   });
 
-  const resolveDiscussion = async (id: string) => {
+  const toggleDiscussionResolved = async (id: string) => {
     const discussion = discussions?.find((discussion) => discussion.key === id);
     if (discussion) {
       discussionsPartialUpdateMutate({
         id: discussion.id,
-        data: { is_resolved: true },
+        data: { is_resolved: !discussion.is_resolved },
       });
     }
   };
@@ -162,6 +167,12 @@ export function Comment(props: {
 
   // Replace to your own backend or refer to potion
   const isMyComment = (me ? String(me.pk) : '') === comment.userId;
+  const stageUser = useStageUser(task);
+  const isStageUser = !!stageUser && stageUser.pk === me?.pk;
+
+  const isResolved =
+    discussions?.find((discussion) => discussion.key === comment.discussionId)
+      ?.is_resolved ?? false;
 
   const initialValue = comment.contentRich;
 
@@ -192,8 +203,7 @@ export function Comment(props: {
   };
 
   const onResolveComment = () => {
-    void resolveDiscussion(comment.discussionId);
-    tf.comment.unsetMark({ id: comment.discussionId });
+    void toggleDiscussionResolved(comment.discussionId);
   };
 
   const isFirst = index === 0;
@@ -225,102 +235,123 @@ export function Comment(props: {
 
         <div className="text-muted-foreground/80 text-xs leading-none">
           <span className="mr-1">{formatDate(comment.createdAt)}</span>
-          {comment.isEdited && <span>（已编辑）</span>}
+          {isFirst && isResolved ? (
+            <span>（已解决）</span>
+          ) : (
+            comment.isEdited && <span>（已编辑）</span>
+          )}
         </div>
-        {isMyComment && (hovering || dropdownOpen) && (
+        {isMyComment && isStageUser && (hovering || dropdownOpen) && (
           <div className="absolute top-0 right-0 flex space-x-1">
             {index === 0 && (
-              <Button
-                variant="ghost"
-                className="text-muted-foreground h-6 p-1"
-                onClick={onResolveComment}
-                type="button"
-              >
-                <CheckIcon className="size-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-muted-foreground h-6 p-1"
+                    onClick={onResolveComment}
+                    type="button"
+                  >
+                    {isResolved ? (
+                      <UndoIcon className="size-4" />
+                    ) : (
+                      <CheckIcon className="size-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isResolved ? '标记为未解决' : '标记为已解决'}
+                </TooltipContent>
+              </Tooltip>
             )}
 
-            <CommentMoreDropdown
-              onCloseAutoFocus={() => {
-                setTimeout(() => {
-                  commentEditor.tf.focus({ edge: 'endEditor' });
-                }, 0);
-              }}
-              onRemoveComment={() => {
-                if (discussionLength === 1) {
-                  tf.comment.unsetMark({ id: comment.discussionId });
-                }
-              }}
-              comment={comment}
-              dropdownOpen={dropdownOpen}
-              setDropdownOpen={setDropdownOpen}
-              setEditingId={setEditingId}
-            />
+            {!isResolved && (
+              <CommentMoreDropdown
+                onCloseAutoFocus={() => {
+                  setTimeout(() => {
+                    commentEditor.tf.focus({ edge: 'endEditor' });
+                  }, 0);
+                }}
+                onRemoveComment={() => {
+                  if (discussionLength === 1) {
+                    tf.comment.unsetMark({ id: comment.discussionId });
+                  }
+                }}
+                comment={comment}
+                dropdownOpen={dropdownOpen}
+                setDropdownOpen={setDropdownOpen}
+                setEditingId={setEditingId}
+              />
+            )}
           </div>
         )}
       </div>
 
-      {isFirst && showDocumentContent && (
-        <div className="text-subtle-foreground relative mt-1 flex pl-8 text-sm">
-          {discussionLength > 1 && (
-            <div className="bg-muted absolute top-1.25 left-3 h-full w-0.5 shrink-0" />
-          )}
-          <div className="bg-highlight my-px w-0.5 shrink-0" />
-          {documentContent && (
-            <div className="ml-2 wrap-anywhere">{documentContent}</div>
-          )}
-        </div>
-      )}
-
-      <div className="relative my-1 pl-6.5">
+      <div className="relative pb-px">
         {!isLast && (
-          <div className="bg-muted absolute top-0 left-3 h-full w-0.5 shrink-0" />
+          <div className="bg-muted absolute top-0 bottom-1 left-2.25 w-0.5 shrink-0" />
         )}
-        <Plate readOnly={!isEditing} editor={commentEditor}>
-          <EditorContainer variant="comment">
-            <Editor
-              variant="comment"
-              className="w-auto grow"
-              onClick={() => onEditorClick?.()}
-              onKeyDown={(e) => {
-                if (isEditing && e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  onSave();
-                }
-              }}
-            />
 
-            {isEditing && (
-              <div className="ml-auto flex shrink-0 gap-1">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    void onCancel();
-                  }}
-                >
-                  <div className="bg-primary/40 flex size-5 shrink-0 items-center justify-center rounded-[50%]">
-                    <XIcon className="text-background size-3 stroke-[3px]" />
-                  </div>
-                </Button>
-
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    void onSave();
-                  }}
-                >
-                  <div className="bg-brand flex size-5 shrink-0 items-center justify-center rounded-[50%]">
-                    <CheckIcon className="text-background size-3 stroke-[3px]" />
-                  </div>
-                </Button>
-              </div>
+        {isFirst && showDocumentContent && (
+          <div className="text-subtle-foreground mt-1 flex pl-8 text-sm">
+            <div className="bg-highlight my-px w-0.5 shrink-0" />
+            {documentContent && (
+              <div className="ml-2 wrap-anywhere">{documentContent}</div>
             )}
-          </EditorContainer>
-        </Plate>
+          </div>
+        )}
+
+        <div className="mt-1 mb-2 pl-6.5">
+          <Plate readOnly={!isEditing} editor={commentEditor}>
+            <EditorContainer variant="comment">
+              <Editor
+                variant="comment"
+                className="w-auto grow"
+                onClick={() => onEditorClick?.()}
+                onKeyDown={(e) => {
+                  if (isEditing && e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    onSave();
+                  }
+                }}
+              />
+
+              {isEditing && (
+                <div className="ml-auto flex shrink-0 gap-1">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.stopPropagation();
+                      void onCancel();
+                    }}
+                  >
+                    <div className="bg-primary/40 flex size-5 shrink-0 items-center justify-center rounded-[50%]">
+                      <XIcon className="text-background size-3 stroke-[3px]" />
+                    </div>
+                  </Button>
+
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.stopPropagation();
+                      void onSave();
+                    }}
+                  >
+                    <div className="bg-brand flex size-5 shrink-0 items-center justify-center rounded-[50%]">
+                      <CheckIcon className="text-background size-3 stroke-[3px]" />
+                    </div>
+                  </Button>
+                </div>
+              )}
+            </EditorContainer>
+          </Plate>
+        </div>
+
+        {isFirst && showDocumentContent && (
+          <DiscussionTags discussionKey={comment.discussionId} />
+        )}
       </div>
     </div>
   );
@@ -343,7 +374,9 @@ function CommentMoreDropdown(props: {
     onRemoveComment,
   } = props;
 
-  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
 
   const { data: discussions } = useMainDiscussionsList(
     { document: documentId },
@@ -389,11 +422,19 @@ function CommentMoreDropdown(props: {
       onOpenChange={setDropdownOpen}
       modal={false}
     >
-      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-        <Button variant="ghost" className={cn('text-muted-foreground h-6 p-1')}>
-          <MoreHorizontalIcon className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              className={cn('text-muted-foreground h-6 p-1')}
+            >
+              <MoreHorizontalIcon className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>更多</TooltipContent>
+      </Tooltip>
       <DropdownMenuContent
         className="w-48"
         onCloseAutoFocus={(e) => {
@@ -462,8 +503,11 @@ export function CommentCreateForm({
   focusOnMount?: boolean;
 }) {
   const editor = useEditorRef();
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
+
   const commentEditor = useCommentEditor();
-  const documentId = usePluginOption(DocumentPlugin, 'documentId');
   const commentId = useCommentId();
   const discussionId = discussionIdProp ?? commentId;
 

@@ -35,17 +35,11 @@ class DiscussionPermission(BasePermission):
     def has_object_permission(self, request, view, obj: Discussion):
         if request.method in SAFE_METHODS:
             return is_task_member(request.user, obj.document.task)
-        return (
-            obj.user_id == request.user.id
-            or obj.document.task.reviewer_id == request.user.id
-        )
+        return obj.user_id == request.user.id
 
 
 class CommentPermission(BasePermission):
     def has_object_permission(self, request, view, obj: Comment):
         if request.method in SAFE_METHODS:
             return is_task_member(request.user, obj.discussion.document.task)
-        return (
-            obj.user_id == request.user.id
-            or obj.discussion.document.task.reviewer_id == request.user.id
-        )
+        return obj.user_id == request.user.id

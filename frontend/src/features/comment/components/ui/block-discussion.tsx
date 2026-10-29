@@ -1,8 +1,11 @@
 'use client';
 
-import { useMainDiscussionsList } from '@/api/gen/endpoints/main/main';
+import {
+  useMainDiscussionsList,
+  useMainTasksRetrieve,
+} from '@/api/gen/endpoints/main/main';
 import { Button } from '@/components/shadcn/ui/button';
-import { DocumentPlugin } from '@/features/editor/components/editor/plugins/document-kit';
+import { TaskPlugin } from '@/features/editor/components/editor/plugins/task-kit';
 import { getDraftCommentKey } from '@platejs/comment';
 import { CommentPlugin } from '@platejs/comment/react';
 import {
@@ -14,6 +17,7 @@ import {
 } from '@platejs/floating';
 import { getTransientSuggestionKey } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
+import { useParams } from '@tanstack/react-router';
 import { useComposedRef } from '@udecode/cn';
 import {
   MessageSquareTextIcon,
@@ -56,7 +60,10 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
   const blockPath = editor.api.findPath(element) ?? [];
   const isTopLevelBlock = blockPath.length === 1;
 
-  const documentId = usePluginOption(DocumentPlugin, 'documentId');
+  const { taskId } = useParams({ from: '/workbench/$taskId/' });
+  const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
+
   const { data } = useMainDiscussionsList(
     { document: documentId },
     { query: { enabled: !!documentId } },
@@ -401,9 +408,11 @@ export function BlockComment({
 }) {
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
+  const canComment = usePluginOption(TaskPlugin, 'canComment');
+
   return (
     <React.Fragment key={discussion.id}>
-      <div className="p-4">
+      <div className="p-4 pb-2">
         {discussion.comments.map((comment, index) => (
           <Comment
             key={comment.id ?? index}
@@ -416,7 +425,9 @@ export function BlockComment({
             showDocumentContent
           />
         ))}
-        <CommentCreateForm discussionId={discussion.id} />
+        {canComment && !discussion.isResolved && (
+          <CommentCreateForm discussionId={discussion.id} className="mb-2" />
+        )}
       </div>
 
       {!isLast && <div className="bg-muted h-px w-full" />}

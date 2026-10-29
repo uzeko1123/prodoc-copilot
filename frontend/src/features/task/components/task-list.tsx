@@ -80,9 +80,15 @@ export function TaskList({ role }: { role: Role }) {
     <div className="flex flex-col gap-4">
       <div className="flex items-center">
         {role === 'creator' ? (
-          <Button size="sm" onClick={() => setTaskCreateDialogOpen(true)}>
-            <PlusIcon /> 新建文档
-          </Button>
+          <>
+            <Button size="sm" onClick={() => setTaskCreateDialogOpen(true)}>
+              <PlusIcon /> 新建文档
+            </Button>
+            <TaskCreateDialog
+              open={taskCreateDialogOpen}
+              onOpenChange={setTaskCreateDialogOpen}
+            />
+          </>
         ) : (
           <></>
           // <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
@@ -212,32 +218,28 @@ export function TaskList({ role }: { role: Role }) {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
+                      <TaskUpdateDialog
+                        task={task}
+                        open={taskUpdateDialogId === task.id}
+                        onOpenChange={(open) =>
+                          setTaskUpdateDialogId(open ? task.id : null)
+                        }
+                      />
+                      <TaskDeleteDialog
+                        task={task}
+                        open={taskDeleteDialogId === task.id}
+                        onOpenChange={(open) =>
+                          setTaskDeleteDialogId(open ? task.id : null)
+                        }
+                      />
                     </div>
                   </TableCell>
-                  <TaskUpdateDialog
-                    task={task}
-                    open={taskUpdateDialogId === task.id}
-                    onOpenChange={(open) =>
-                      setTaskUpdateDialogId(open ? task.id : null)
-                    }
-                  />
-                  <TaskDeleteDialog
-                    task={task}
-                    open={taskDeleteDialogId === task.id}
-                    onOpenChange={(open) =>
-                      setTaskDeleteDialogId(open ? task.id : null)
-                    }
-                  />
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
       )}
-      <TaskCreateDialog
-        open={taskCreateDialogOpen}
-        onOpenChange={setTaskCreateDialogOpen}
-      />
     </div>
   );
 }

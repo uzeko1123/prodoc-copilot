@@ -19,7 +19,7 @@ import {
   usePluginOption,
 } from 'platejs/react';
 import * as React from 'react';
-import { DocumentPlugin } from '../editor/plugins/document-kit';
+import { TaskPlugin } from '../editor/plugins/task-kit';
 
 const item: Record<string, { icon: React.ReactNode; label: string }> = {
   editing: {
@@ -35,7 +35,7 @@ const item: Record<string, { icon: React.ReactNode; label: string }> = {
 export function ModeToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
   const readOnly = useEditorReadOnly();
-  const canEdit = usePluginOption(DocumentPlugin, 'canEdit');
+  const canEdit = usePluginOption(TaskPlugin, 'canEdit');
   const [open, setOpen] = React.useState(false);
 
   const value = readOnly ? 'viewing' : 'editing';
