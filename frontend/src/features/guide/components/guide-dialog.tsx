@@ -23,7 +23,7 @@ export function GuideDialog({
           <DialogTitle>{guide.name}</DialogTitle>
         </DialogHeader>
         <div className="max-h-[75vh] overflow-y-auto rounded-lg border">
-          <GuideContent value={guide.value} />
+          <GuideContent guide={guide} />
         </div>
       </DialogContent>
     </Dialog>

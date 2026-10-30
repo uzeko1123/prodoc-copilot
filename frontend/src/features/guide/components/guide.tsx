@@ -30,7 +30,7 @@ export function Guide() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <GuideContent value={guide.value} />
+      <GuideContent guide={guide} interactive />
     </div>
   );
 }

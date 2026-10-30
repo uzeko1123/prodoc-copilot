@@ -50,7 +50,7 @@ function GuideClauseTags({ discussionKey }: { discussionKey: string }) {
   const guideClauseItems = React.useMemo(() => {
     if (!discussions || !guide) return [];
 
-    return getGuideClauseItems(guide.value).filter((guideClauseItem) =>
+    return getGuideClauseItems(guide).filter((guideClauseItem) =>
       (
         discussions.find((discussion) => discussion.key === discussionKey)
           ?.guide_clauses ?? []
