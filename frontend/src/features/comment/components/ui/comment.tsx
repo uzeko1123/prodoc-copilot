@@ -232,7 +232,6 @@ export function Comment(props: {
             <TooltipContent>由 AI 生成</TooltipContent>
           </Tooltip>
         )}
-
         <div className="text-muted-foreground/80 text-xs leading-none">
           <span className="mr-1">{formatDate(comment.createdAt)}</span>
           {isFirst && isResolved ? (
@@ -241,6 +240,7 @@ export function Comment(props: {
             comment.isEdited && <span>（已编辑）</span>
           )}
         </div>
+
         {isMyComment && isStageUser && (hovering || dropdownOpen) && (
           <div className="absolute top-0 right-0 flex space-x-1">
             {index === 0 && (
@@ -250,7 +250,6 @@ export function Comment(props: {
                     variant="ghost"
                     className="text-muted-foreground h-6 p-1"
                     onClick={onResolveComment}
-                    type="button"
                   >
                     {isResolved ? (
                       <UndoIcon className="size-4" />
@@ -289,7 +288,7 @@ export function Comment(props: {
 
       <div className="relative pb-px">
         {!isLast && (
-          <div className="bg-muted absolute top-0 bottom-1 left-2.25 w-0.5 shrink-0" />
+          <div className="bg-border absolute top-0 bottom-1 left-2.25 w-px shrink-0" />
         )}
 
         {isFirst && showDocumentContent && (
@@ -350,7 +349,9 @@ export function Comment(props: {
         </div>
 
         {isFirst && showDocumentContent && (
-          <DiscussionTags discussionKey={comment.discussionId} />
+          <div className="mb-3 pl-8">
+            <DiscussionTags discussionKey={comment.discussionId} />
+          </div>
         )}
       </div>
     </div>
@@ -436,7 +437,7 @@ function CommentMoreDropdown(props: {
         <TooltipContent>更多</TooltipContent>
       </Tooltip>
       <DropdownMenuContent
-        className="w-48"
+        align="end"
         onCloseAutoFocus={(e) => {
           if (selectedEditCommentRef.current) {
             onCloseAutoFocus?.();

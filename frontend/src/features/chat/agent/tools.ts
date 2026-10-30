@@ -66,10 +66,10 @@ export function applyTools(
         applyCommentTool(editor, chat, part, taskId);
         break;
       case 'tool-edit':
-        applyEditTool(editor, chat, part);
+        applyEditTool(editor, chat, part, taskId);
         break;
       case 'tool-generate':
-        applyGenerateTool(editor, chat, part);
+        applyGenerateTool(editor, chat, part, taskId);
         break;
     }
   }

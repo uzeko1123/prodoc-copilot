@@ -11,6 +11,7 @@ export type EditToolIO = {
   blockId: string;
   content: string;
   edit: string;
+  guideClauseIds?: string[];
 };
 
 export type EditTool = {
@@ -31,6 +32,11 @@ const editToolIOSchema = jsonSchema<EditToolIO>({
       description: prompts.tools.edit.schema.edit,
       type: 'string',
     },
+    guideClauseIds: {
+      description: prompts.tools.edit.schema.guideClauseIds,
+      type: 'array',
+      items: { type: 'string' },
+    },
   },
   required: ['blockId', 'content', 'edit'],
   additionalProperties: false,
@@ -50,6 +56,7 @@ export function applyEditTool(
   editor: PlateEditor,
   chat: Chat,
   part: ToolUIPart<EditTool>,
+  taskId: string,
 ) {
   if (part.state === 'input-available' && !output.has(part.toolCallId)) {
     output.add(part.toolCallId);
@@ -66,7 +73,7 @@ export function applyEditTool(
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'edit');
-  applyEdit(editor, part.input);
+  applyEdit(editor, part.input, taskId);
 }
 
 export function resetEditTool() {
@@ -74,7 +81,7 @@ export function resetEditTool() {
   output.clear();
 }
 
-function applyEdit(editor: PlateEditor, aiEdit: EditToolIO) {
+function applyEdit(editor: PlateEditor, aiEdit: EditToolIO, taskId: string) {
   const range = aiCommentToRange(editor, { ...aiEdit, comment: '' });
 
   if (!range) return console.warn('No range found for AI edit');
@@ -82,7 +89,7 @@ function applyEdit(editor: PlateEditor, aiEdit: EditToolIO) {
   withAIBatch(
     editor,
     () => {
-      applyEditSuggestion(editor, range, aiEdit.edit);
+      applyEditSuggestion(editor, range, aiEdit, taskId);
     },
     { split: true },
   );

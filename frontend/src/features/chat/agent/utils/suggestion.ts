@@ -1,6 +1,14 @@
 // @generated-by-ai
 
+import {
+  getMainDiscussionsListQueryKey,
+  getMainTasksRetrieveQueryKey,
+  mainDiscussionsCreate,
+} from '@/api/gen/endpoints/main/main';
+import type { Task } from '@/api/gen/models';
 import type { TSuggestionData } from '@/features/comment/lib/suggestion';
+import { toastErrorMessage } from '@/lib/error-message';
+import { queryClient } from '@/lib/query-client';
 import { deserializeMd } from '@platejs/markdown';
 import {
   BaseSuggestionPlugin,
@@ -21,6 +29,7 @@ import type {
   Path,
   TElement,
   TInlineSuggestionData,
+  TNode,
   TRange,
   TSuggestionElement,
   TSuggestionText,
@@ -157,14 +166,63 @@ function insertSuggestion(
   return data;
 }
 
-/** Insert markdown at the end of `range` as an insert suggestion. */
+/**
+ * 落库 AI 修订的条款绑定：以 suggestionId 为 key 建一条无评论的 Discussion
+ * 行，guide_clauses 随行嵌套写入——修订卡上的条款 tag 与条款下的修订 tag
+ * 都从该行读取，key 与编辑器 suggestion marks 的 id 一致。无指南、无条款
+ * 或未产生修订时不建行；创建失败仅提示不回滚——修订 marks 本身仍有效，
+ * 绑定只是辅助元数据。
+ */
+function saveSuggestionClauseBindings(
+  editor: PlateEditor,
+  taskId: string,
+  aiEdit: { content: string; guideClauseIds?: string[] },
+  suggestion?: TSuggestionData,
+) {
+  if (!suggestion || !aiEdit.guideClauseIds?.length) return;
+
+  const task = queryClient.getQueryData<Task>(
+    getMainTasksRetrieveQueryKey(taskId),
+  );
+  const guide = task?.guide;
+  if (!guide) return;
+
+  const documentContent = deserializeMd(editor, aiEdit.content)
+    .map((node: TNode) => NodeApi.string(node))
+    .join('\n');
+
+  void mainDiscussionsCreate({
+    key: suggestion.id,
+    document: task?.document ?? '',
+    document_content: documentContent,
+    guide_clauses: aiEdit.guideClauseIds.map((block_id) => ({
+      guide: guide.id,
+      block_id,
+    })),
+  })
+    .then(() =>
+      queryClient.invalidateQueries({
+        queryKey: getMainDiscussionsListQueryKey(),
+      }),
+    )
+    .catch((error) => toastErrorMessage(error));
+}
+
+/**
+ * Insert `aiGenerate.generate` at the end of `range` as an insert suggestion,
+ * then persist the IO's guide-clause bindings (see
+ * `saveSuggestionClauseBindings`).
+ */
 export function applyGenerateSuggestion(
   editor: PlateEditor,
   range: TRange,
-  md: string,
+  aiGenerate: { content: string; generate: string; guideClauseIds?: string[] },
+  taskId: string,
 ): void {
   editor.tf.select(RangeApi.end(range));
-  insertSuggestion(editor, md);
+  const data = insertSuggestion(editor, aiGenerate.generate);
+
+  saveSuggestionClauseBindings(editor, taskId, aiGenerate, data);
 }
 
 /**
@@ -270,18 +328,20 @@ function markRemoval(
  * insert id, so accept/reject applies to both. Fully covered blocks are
  * block-marked so accepting deletes them outright (see `markRemoval`). A
  * collapsed range cannot be remove-marked (the mark would land on the whole
- * block), so it degrades to a pure insert.
+ * block), so it degrades to a pure insert. The IO's guide-clause bindings are
+ * persisted alongside (see `saveSuggestionClauseBindings`).
  */
 export function applyEditSuggestion(
   editor: PlateEditor,
   range: TRange,
-  md: string,
+  aiEdit: { content: string; edit: string; guideClauseIds?: string[] },
+  taskId: string,
 ): void {
   let data: TSuggestionData | undefined;
 
-  if (md.length > 0) {
+  if (aiEdit.edit.length > 0) {
     editor.tf.select(RangeApi.end(range));
-    data = insertSuggestion(editor, md);
+    data = insertSuggestion(editor, aiEdit.edit);
   }
   if (!RangeApi.isCollapsed(range)) {
     // Pure delete: synthesize a UUID id so the suggestion stays annotatable
@@ -296,8 +356,15 @@ export function applyEditSuggestion(
     };
     // The inserted first line merges into the end block unless the markdown
     // starts with a blank line (the sacrificial paragraph absorbs the merge).
-    const core = md.replace(/^[ \t]*/, '').replace(/[ \t]*$/, '');
+    const core = aiEdit.edit.replace(/^[ \t]*/, '').replace(/[ \t]*$/, '');
 
-    markRemoval(editor, range, data, md.length > 0 && !core.startsWith('\n\n'));
+    markRemoval(
+      editor,
+      range,
+      data,
+      aiEdit.edit.length > 0 && !core.startsWith('\n\n'),
+    );
   }
+
+  saveSuggestionClauseBindings(editor, taskId, aiEdit, data);
 }

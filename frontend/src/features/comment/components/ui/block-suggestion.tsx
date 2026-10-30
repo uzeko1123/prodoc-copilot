@@ -1,11 +1,15 @@
 'use client';
 
-// import { Comment, CommentCreateForm } from './comment';
 import {
   useAuthUserRetrieve,
   useAuthUsersRetrieve,
 } from '@/api/gen/endpoints/auth/auth';
-import { useMainTasksRetrieve } from '@/api/gen/endpoints/main/main';
+import {
+  getMainDiscussionsListQueryKey,
+  useMainDiscussionsDestroy,
+  useMainDiscussionsList,
+  useMainTasksRetrieve,
+} from '@/api/gen/endpoints/main/main';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   Tooltip,
@@ -15,6 +19,7 @@ import {
 import { UserAvatar } from '@/features/auth/components/user-avatar';
 import { useStageUser } from '@/features/auth/hooks/use-stage-user';
 import { formatDate } from '@/lib/format-date';
+import { queryClient } from '@/lib/query-client';
 import { acceptSuggestion, rejectSuggestion } from '@platejs/suggestion';
 import { SuggestionPlugin } from '@platejs/suggestion/react';
 import { useParams } from '@tanstack/react-router';
@@ -41,10 +46,10 @@ import {
   BLOCK_SUGGESTION_TOKEN,
   type ResolvedSuggestion,
 } from '../../lib/block-discussion-index';
+import { DiscussionTags } from '../discussion-tags';
 import type { TDiscussion } from '../editor/plugins/discussion-kit';
 
 export function BlockSuggestionCard({
-  idx,
   isLast,
   suggestion,
 }: {
@@ -61,21 +66,46 @@ export function BlockSuggestionCard({
 
   const { taskId } = useParams({ from: '/workbench/$taskId/' });
   const { data: task } = useMainTasksRetrieve(taskId);
+  const documentId = task?.document ?? '';
+
+  const { data: discussions } = useMainDiscussionsList(
+    { document: documentId },
+    { query: { enabled: !!documentId } },
+  );
+
+  const { mutate: discussionsDestroyMutate } = useMainDiscussionsDestroy({
+    mutation: {
+      onSuccess: () => {
+        void queryClient.invalidateQueries({
+          queryKey: getMainDiscussionsListQueryKey(),
+        });
+      },
+    },
+  });
 
   const isMySuggestion = (me ? String(me.pk) : '') === suggestion.userId;
   const stageUser = useStageUser(task);
   const isStageUser = !!stageUser && stageUser.pk === me?.pk;
 
+  const removeSuggestionDiscussion = () => {
+    const discussion = discussions?.find(
+      (discussion) => discussion.key === suggestion.suggestionId,
+    );
+    if (discussion) discussionsDestroyMutate({ id: discussion.id });
+  };
+
   const accept = (suggestion: ResolvedSuggestion) => {
     api.suggestion.withoutSuggestions(() => {
       acceptSuggestion(editor, suggestion);
     });
+    removeSuggestionDiscussion();
   };
 
   const reject = (suggestion: ResolvedSuggestion) => {
     api.suggestion.withoutSuggestions(() => {
       rejectSuggestion(editor, suggestion);
     });
+    removeSuggestionDiscussion();
   };
 
   const [hovering, setHovering] = React.useState(false);
@@ -100,16 +130,12 @@ export function BlockSuggestionCard({
     return items;
   };
 
-  // const [editingId, setEditingId] = React.useState<string | null>(null);
-
   return (
-    <div
-      key={`${suggestion.suggestionId}-${idx}`}
-      className="relative"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-    >
-      <div className="flex flex-col p-4 pb-2">
+    <div className="p-4 pb-2">
+      <div
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
         <div className="relative flex items-center">
           <UserAvatar user={user} className="size-5" />
           <h4 className="mx-2 text-sm leading-none font-semibold">
@@ -128,142 +154,135 @@ export function BlockSuggestionCard({
           <div className="text-muted-foreground/80 text-xs leading-none">
             <span className="mr-1">{formatDate(suggestion.createdAt)}</span>
           </div>
+
+          {isMySuggestion && isStageUser && hovering && (
+            <div className="absolute top-0 right-0 flex space-x-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-muted-foreground h-6 p-1"
+                    onClick={() => accept(suggestion)}
+                  >
+                    <CheckIcon className="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>接受</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-muted-foreground h-6 p-1"
+                    onClick={() => reject(suggestion)}
+                  >
+                    <XIcon className="size-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>拒绝</TooltipContent>
+              </Tooltip>
+            </div>
+          )}
         </div>
-
-        <div className="relative mt-1 mb-2 pl-8">
-          <div className="flex flex-col gap-2">
-            {suggestion.type === 'remove' &&
-              getRemoveSummaryItems(suggestion.text!).map((text, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-2 text-red-900"
-                >
-                  <MinusIcon className="my-0.5 size-4 shrink-0" />
-                  <span key={index} className="text-sm">
-                    {text}
-                  </span>
-                </div>
-              ))}
-
-            {suggestion.type === 'insert' &&
-              suggestionText2Array(suggestion.newText!).map((text, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-2 text-blue-900"
-                >
-                  <PlusIcon className="my-0.5 size-4 shrink-0" />
-                  <span key={index} className="text-sm">
-                    {text || (
-                      <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
-                    )}
-                  </span>
-                </div>
-              ))}
-
-            {suggestion.type === 'replace' && (
-              <div className="flex flex-col gap-2">
-                {suggestionText2Array(suggestion.text!).map((text, index) => (
-                  <React.Fragment key={index}>
-                    <div
-                      key={index}
-                      className="flex items-start gap-2 text-red-900"
-                    >
-                      <MinusIcon className="my-0.5 size-4 shrink-0" />
-                      <span className="text-sm line-clamp-3">
-                        {text || (
-                          <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
-                        )}
-                      </span>
-                    </div>
-                  </React.Fragment>
+        <div className="pb-px">
+          <div className="mt-1 mb-2 pl-8">
+            <div className="flex flex-col gap-2">
+              {suggestion.type === 'remove' &&
+                getRemoveSummaryItems(suggestion.text!).map((text, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2 text-red-900"
+                  >
+                    <MinusIcon className="my-0.5 size-4 shrink-0" />
+                    <span key={index} className="text-sm">
+                      {text}
+                    </span>
+                  </div>
                 ))}
 
-                {suggestionText2Array(suggestion.newText!).map(
-                  (text, index) => (
+              {suggestion.type === 'insert' &&
+                suggestionText2Array(suggestion.newText!).map((text, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2 text-blue-900"
+                  >
+                    <PlusIcon className="my-0.5 size-4 shrink-0" />
+                    <span key={index} className="text-sm">
+                      {text || (
+                        <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
+                      )}
+                    </span>
+                  </div>
+                ))}
+
+              {suggestion.type === 'replace' && (
+                <div className="flex flex-col gap-2">
+                  {suggestionText2Array(suggestion.text!).map((text, index) => (
                     <React.Fragment key={index}>
                       <div
                         key={index}
-                        className="flex items-start gap-2 text-blue-900"
+                        className="flex items-start gap-2 text-red-900"
                       >
-                        <PlusIcon className="my-0.5 size-4 shrink-0" />
-                        <span className="text-sm line-clamp-3">
+                        <MinusIcon className="my-0.5 size-4 shrink-0" />
+                        <span className="line-clamp-3 text-sm">
                           {text || (
                             <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
                           )}
                         </span>
                       </div>
                     </React.Fragment>
-                  ),
-                )}
-              </div>
-            )}
-
-            {suggestion.type === 'update' && (
-              <div className="flex items-start gap-2">
-                <span className="flex shrink-0 gap-1">
-                  {Object.keys(suggestion.properties).map((key) => (
-                    <span key={key} className="flex shrink-0 text-red-900">
-                      <MinusIcon className="my-1 size-3" />
-                      <MarkIcon mark={key} />
-                    </span>
                   ))}
 
-                  {Object.keys(suggestion.newProperties).map((key) => (
-                    <span key={key} className="flex shrink-0 text-blue-900">
-                      <PlusIcon className="my-1 size-3" />
-                      <MarkIcon mark={key} />
-                    </span>
-                  ))}
-                </span>
-                <span className="text-sm line-clamp-3">{suggestion.newText}</span>
-              </div>
-            )}
+                  {suggestionText2Array(suggestion.newText!).map(
+                    (text, index) => (
+                      <React.Fragment key={index}>
+                        <div
+                          key={index}
+                          className="flex items-start gap-2 text-blue-900"
+                        >
+                          <PlusIcon className="my-0.5 size-4 shrink-0" />
+                          <span className="line-clamp-3 text-sm">
+                            {text || (
+                              <CornerDownLeftIcon className="my-0.5 size-4 shrink-0" />
+                            )}
+                          </span>
+                        </div>
+                      </React.Fragment>
+                    ),
+                  )}
+                </div>
+              )}
+
+              {suggestion.type === 'update' && (
+                <div className="flex items-start gap-2">
+                  <span className="flex shrink-0 gap-1">
+                    {Object.keys(suggestion.properties).map((key) => (
+                      <span key={key} className="flex shrink-0 text-red-900">
+                        <MinusIcon className="my-1 size-3" />
+                        <MarkIcon mark={key} />
+                      </span>
+                    ))}
+
+                    {Object.keys(suggestion.newProperties).map((key) => (
+                      <span key={key} className="flex shrink-0 text-blue-900">
+                        <PlusIcon className="my-1 size-3" />
+                        <MarkIcon mark={key} />
+                      </span>
+                    ))}
+                  </span>
+                  <span className="line-clamp-3 text-sm">
+                    {suggestion.newText}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mb-3 pl-8">
+            <DiscussionTags discussionKey={suggestion.suggestionId} />
           </div>
         </div>
-
-        {/* {suggestion.comments.map((comment, index) => (
-          <Comment
-            key={comment.id ?? index}
-            comment={comment}
-            discussionLength={suggestion.comments.length}
-            documentContent="__suggestion__"
-            editingId={editingId}
-            index={index}
-            setEditingId={setEditingId}
-          />
-        ))} */}
-
-        {isMySuggestion && isStageUser && hovering && (
-          <div className="absolute top-4 right-4 flex gap-2">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground size-6 p-1"
-                  onClick={() => accept(suggestion)}
-                >
-                  <CheckIcon className="size-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>接受</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground size-6 p-1"
-                  onClick={() => reject(suggestion)}
-                >
-                  <XIcon className="size-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>拒绝</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
-
-        {/* <CommentCreateForm discussionId={suggestion.suggestionId} /> */}
       </div>
 
       {!isLast && <div className="bg-muted h-px w-full" />}

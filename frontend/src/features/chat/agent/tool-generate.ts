@@ -11,6 +11,7 @@ export type GenerateToolIO = {
   blockId: string;
   content: string;
   generate: string;
+  guideClauseIds?: string[];
 };
 
 export type GenerateTool = {
@@ -31,6 +32,11 @@ const generateIOSchema = jsonSchema<GenerateToolIO>({
       description: prompts.tools.generate.schema.generate,
       type: 'string',
     },
+    guideClauseIds: {
+      description: prompts.tools.generate.schema.guideClauseIds,
+      type: 'array',
+      items: { type: 'string' },
+    },
   },
   required: ['blockId', 'content', 'generate'],
   additionalProperties: false,
@@ -50,6 +56,7 @@ export function applyGenerateTool(
   editor: PlateEditor,
   chat: Chat,
   part: ToolUIPart<GenerateTool>,
+  taskId: string,
 ) {
   if (part.state === 'input-available' && !output.has(part.toolCallId)) {
     output.add(part.toolCallId);
@@ -66,7 +73,7 @@ export function applyGenerateTool(
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'generate');
-  applyGenerate(editor, part.input);
+  applyGenerate(editor, part.input, taskId);
 }
 
 export function resetGenerateTool() {
@@ -74,7 +81,11 @@ export function resetGenerateTool() {
   output.clear();
 }
 
-function applyGenerate(editor: PlateEditor, aiGenerate: GenerateToolIO) {
+function applyGenerate(
+  editor: PlateEditor,
+  aiGenerate: GenerateToolIO,
+  taskId: string,
+) {
   const range =
     aiCommentToRange(editor, { ...aiGenerate, comment: '' }) ??
     getBlockStartRange(editor, aiGenerate.blockId);
@@ -84,7 +95,7 @@ function applyGenerate(editor: PlateEditor, aiGenerate: GenerateToolIO) {
   withAIBatch(
     editor,
     () => {
-      applyGenerateSuggestion(editor, range, aiGenerate.generate);
+      applyGenerateSuggestion(editor, range, aiGenerate, taskId);
     },
     { split: true },
   );

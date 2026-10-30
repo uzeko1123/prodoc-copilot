@@ -106,11 +106,13 @@ export const prompts = {
       'blockId',
       'content',
       'edit',
+      'guideClauseIds',
     ]),
     generate: parseToolDescriptions('generate', generateToolDescriptions, [
       'blockId',
       'content',
       'generate',
+      'guideClauseIds',
     ]),
   },
 } satisfies {
