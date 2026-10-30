@@ -29,7 +29,7 @@ import {
 import { useEffect, useMemo, useRef } from 'react';
 import {
   getDiscussionIndex,
-  toTDiscussion,
+  toTDiscussions,
   type ResolvedDiscussion,
   type ResolvedSuggestion,
 } from '../lib/block-discussion-index';
@@ -68,7 +68,7 @@ export function Discussion() {
     { query: { enabled: !!documentId } },
   );
   const discussions = useMemo(
-    () => (discussionsRaw ?? []).map(toTDiscussion),
+    () => toTDiscussions(discussionsRaw ?? []),
     [discussionsRaw],
   );
 

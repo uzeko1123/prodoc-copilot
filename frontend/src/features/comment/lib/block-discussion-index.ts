@@ -523,3 +523,14 @@ export function toTDiscussion(discussion: Discussion): TDiscussion {
     userId: String(discussion.user.pk),
   };
 }
+
+const tDiscussionsCache = new WeakMap<Discussion[], TDiscussion[]>();
+
+export function toTDiscussions(discussions: Discussion[]): TDiscussion[] {
+  let tDiscussions = tDiscussionsCache.get(discussions);
+  if (!tDiscussions) {
+    tDiscussions = discussions.map(toTDiscussion);
+    tDiscussionsCache.set(discussions, tDiscussions);
+  }
+  return tDiscussions;
+}

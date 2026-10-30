@@ -39,7 +39,7 @@ import {
 } from 'platejs/react';
 import * as React from 'react';
 import {
-  toTDiscussion,
+  toTDiscussions,
   useBlockDiscussionItems,
 } from '../../lib/block-discussion-index';
 import { useCommentStore } from '../../stores';
@@ -68,10 +68,7 @@ const BlockCommentContent = ({ children, element }: PlateElementProps) => {
     { document: documentId },
     { query: { enabled: !!documentId } },
   );
-  const discussions = React.useMemo(
-    () => (data ?? []).map(toTDiscussion),
-    [data],
-  );
+  const discussions = React.useMemo(() => toTDiscussions(data ?? []), [data]);
 
   const { resolvedDiscussions, resolvedSuggestions, version } =
     useBlockDiscussionItems(blockPath, discussions);
