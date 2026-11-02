@@ -8,7 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/shadcn/ui/tooltip';
-import { getGuideClauseItems } from '@/features/guide/lib/guide-clause-index';
+import { getGuideClauses } from '@/features/guide/lib/guide-clause-index';
 import { useGuideStore } from '@/features/guide/stores';
 import { useWorkbenchStore } from '@/stores/workbench';
 import { useParams } from '@tanstack/react-router';
@@ -47,50 +47,47 @@ function GuideClauseTags({ discussionKey }: { discussionKey: string }) {
     (state) => state.setActiveGuideClauseId,
   );
 
-  const guideClauseItems = React.useMemo(() => {
+  const guideClauses = React.useMemo(() => {
     if (!discussions || !guide) return [];
 
-    return getGuideClauseItems(guide).filter((guideClauseItem) =>
+    return getGuideClauses(guide).filter((guideClause) =>
       (
         discussions.find((discussion) => discussion.key === discussionKey)
           ?.guide_clauses ?? []
       ).some(
         (guide_clause) =>
           guide_clause.guide === guide.id &&
-          guide_clause.block_id === guideClauseItem.blockId,
+          guide_clause.block_id === guideClause.id,
       ),
     );
   }, [discussions, guide, discussionKey]);
 
-  if (!guide || guideClauseItems.length === 0) return null;
+  if (!guide || guideClauses.length === 0) return null;
 
   return (
     <>
-      {guideClauseItems.map((guideClause) => (
-        <Tooltip key={guideClause.blockId}>
+      {guideClauses.map((guideClause) => (
+        <Tooltip key={guideClause.id}>
           <TooltipTrigger asChild>
             <Badge
               variant={
-                activeGuideClauseId === guideClause.blockId
-                  ? 'default'
-                  : 'secondary'
+                activeGuideClauseId === guideClause.id ? 'default' : 'secondary'
               }
               asChild
             >
               <button
                 onClick={(e) => {
-                  if (activeGuideClauseId === guideClause.blockId) {
+                  if (activeGuideClauseId === guideClause.id) {
                     e.stopPropagation();
                     setActiveGuideClauseId(null);
                     return;
                   }
                   setActiveRightPanelTab('guide');
                   setRightPanelOpen(true);
-                  setActiveGuideClauseId(guideClause.blockId);
+                  setActiveGuideClauseId(guideClause.id);
                 }}
               >
-                <span className="max-w-40 truncate">{guide.name}</span>
-                <span> · {guideClause.line}</span>
+                写作指南 · {guideClause.line}
               </button>
             </Badge>
           </TooltipTrigger>

@@ -124,17 +124,17 @@ export function ToC() {
     };
     updateActiveHeadingId();
 
-    let requestAnimationFrameId = 0;
+    let animationFrameId = 0;
     const onScroll = () => {
-      if (requestAnimationFrameId) return;
-      requestAnimationFrameId = requestAnimationFrame(() => {
-        requestAnimationFrameId = 0;
+      if (animationFrameId) return;
+      animationFrameId = requestAnimationFrame(() => {
+        animationFrameId = 0;
         updateActiveHeadingId();
       });
     };
     scroll.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      cancelAnimationFrame(requestAnimationFrameId);
+      cancelAnimationFrame(animationFrameId);
       scroll.removeEventListener('scroll', onScroll);
     };
   }, [editor, editorMounted, scrollRef, topOffset, headingListFiltered]);

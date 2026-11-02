@@ -142,7 +142,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                 <CollapsibleTrigger className="mb-1 flex items-center gap-1.5 text-xs font-medium">
                   <BrainIcon className="size-3.5" />
                   思考过程
-                  <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
+                  <ChevronDownIcon className="size-3.5 transition-transform group-data-[state=closed]:-rotate-90" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3">
@@ -178,7 +178,7 @@ const MessageAnimatedRow = React.memo(function MessageAnimatedRow({
                     <Spinner className="size-3.5" />
                   )}
                   {getToolPartName(toolPart)}
-                  <ChevronDownIcon className="size-3.5 group-data-[state=closed]:rotate-270" />
+                  <ChevronDownIcon className="size-3.5 transition-transform group-data-[state=closed]:-rotate-90" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="border-muted-foreground/30 space-y-1.5 border-l-2 py-1 pl-3">

@@ -87,10 +87,8 @@ export function GuideTags({ guideClauseId }: { guideClauseId: string }) {
                   focusDiscussionInEditor(editor, discussionItem);
                 }}
               >
-                <span>
-                  {discussionItem.type === 'comment' ? '评论' : '修订'}
-                </span>
-                <span> · {index + 1}</span>
+                {discussionItem.type === 'comment' ? '评论' : '修订'} ·{' '}
+                {index + 1}
               </button>
             </Badge>
           ),
