@@ -45,6 +45,7 @@ class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     queryset = (
         User.objects.exclude(username="AnonymousUser")
+        .filter(is_active=True)
         .select_related("profile")
         .order_by("username")
     )

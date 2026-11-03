@@ -7,4 +7,5 @@
 export interface CommentInlineRequest {
   key: string;
   content_rich: unknown;
+  created_by_ai?: boolean;
 }

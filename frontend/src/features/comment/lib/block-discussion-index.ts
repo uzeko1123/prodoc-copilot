@@ -512,6 +512,7 @@ export function toTDiscussion(discussion: Discussion): TDiscussion {
     comments: discussion.comments.map<TComment>((comment) => ({
       id: comment.id,
       contentRich: comment.content_rich as Value,
+      createdByAI: comment.created_by_ai,
       createdAt: new Date(comment.created_at),
       discussionId: discussion.key,
       isEdited: comment.is_edited,

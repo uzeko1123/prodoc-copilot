@@ -51,7 +51,14 @@ export const useAgent = () => {
     const lastChatMessage = chat.messages.at(-1);
     if (lastChatMessage?.role !== 'assistant') return;
 
-    applyTools(editor, chat, lastChatMessage, taskId);
+    if (
+      !chat.error &&
+      (chat.status === 'streaming' ||
+        chat.status === 'submitted' ||
+        lastChatMessage.metadata?.usage !== undefined)
+    ) {
+      applyTools(editor, chat, lastChatMessage, taskId);
+    }
     upsertChatMessage(lastChatMessage);
 
     if (chat.status === 'streaming' || chat.status === 'submitted') return;

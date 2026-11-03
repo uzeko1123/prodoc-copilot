@@ -95,12 +95,19 @@ class CommentSerializer(serializers.ModelSerializer):
             "key",
             "discussion",
             "content_rich",
+            "created_by_ai",
             "is_edited",
             "user",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "is_edited", "created_at", "updated_at")
+        read_only_fields = (
+            "id",
+            "created_by_ai",
+            "is_edited",
+            "created_at",
+            "updated_at",
+        )
 
     def update(self, instance, validated_data):
         validated_data.pop("key", None)
@@ -113,7 +120,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class CommentInlineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ("key", "content_rich")
+        fields = ("key", "content_rich", "created_by_ai")
 
 
 class DiscussionGuideClauseSerializer(serializers.ModelSerializer):

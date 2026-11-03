@@ -142,6 +142,7 @@ function applyComment(
     comment_inline: {
       key: crypto.randomUUID(),
       content_rich: contentRich,
+      created_by_ai: true,
     },
     ...(guideClauses && { guide_clauses: guideClauses }),
   })

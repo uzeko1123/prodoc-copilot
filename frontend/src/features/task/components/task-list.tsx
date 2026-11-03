@@ -192,12 +192,7 @@ export function TaskList({ role }: { role: Role }) {
                         </Link>
                       </Button>
                       <DropdownMenu>
-                        <DropdownMenuTrigger
-                          asChild
-                          disabled={
-                            role !== 'creator' || task.stage === 'review'
-                          }
-                        >
+                        <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon-sm">
                             <EllipsisVerticalIcon />
                           </Button>
@@ -207,19 +202,24 @@ export function TaskList({ role }: { role: Role }) {
                             onSelect={() => setTaskUpdateDialogId(task.id)}
                           >
                             <PencilIcon />
-                            修改信息
+                            {canUpdateTask(role, task)
+                              ? '修改信息'
+                              : '查看信息'}
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onSelect={() => setTaskDeleteDialogId(task.id)}
-                          >
-                            <TrashIcon />
-                            删除文档
-                          </DropdownMenuItem>
+                          {role === 'creator' && canUpdateTask(role, task) && (
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onSelect={() => setTaskDeleteDialogId(task.id)}
+                            >
+                              <TrashIcon />
+                              删除文档
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                       <TaskUpdateDialog
                         task={task}
+                        readOnly={!canUpdateTask(role, task)}
                         open={taskUpdateDialogId === task.id}
                         onOpenChange={(open) =>
                           setTaskUpdateDialogId(open ? task.id : null)
@@ -242,6 +242,13 @@ export function TaskList({ role }: { role: Role }) {
       )}
     </div>
   );
+}
+
+function canUpdateTask(role: Role, task: Task) {
+  if (role === 'creator') {
+    return task.stage === 'editing' || task.stage === 'revision';
+  }
+  return task.stage === 'review';
 }
 
 function getEnterLabel(role: Role, task: Task) {

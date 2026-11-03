@@ -96,6 +96,7 @@ class Comment(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="comments"
     )
     content_rich = models.JSONField()
+    created_by_ai = models.BooleanField(default=False)
     is_edited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

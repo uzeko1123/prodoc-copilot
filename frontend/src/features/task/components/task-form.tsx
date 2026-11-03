@@ -4,7 +4,7 @@ import {
   useMainTasksCreate,
   useMainTasksPartialUpdate,
 } from '@/api/gen/endpoints/main/main';
-import type { Task, Template } from '@/api/gen/models';
+import type { Task } from '@/api/gen/models';
 import {
   MainTasksCreateBody,
   MainTasksPartialUpdateBody,
@@ -17,7 +17,6 @@ import {
   FieldLabel,
 } from '@/components/shadcn/ui/field';
 import { Input } from '@/components/shadcn/ui/input';
-import { Combobox, ComboboxInput } from '@/components/ui/combobox';
 import {
   DialogDescription,
   DialogFooter,
@@ -135,9 +134,11 @@ export function TaskCreateForm({ onClose }: { onClose: () => void }) {
 
 export function TaskUpdateForm({
   task,
+  readOnly = false,
   onClose,
 }: {
   task: Task;
+  readOnly?: boolean;
   onClose: () => void;
 }) {
   const { control, formState, handleSubmit, setError } = useForm<
@@ -165,6 +166,44 @@ export function TaskUpdateForm({
       },
     },
   });
+
+  if (readOnly) {
+    return (
+      <div className="flex flex-col gap-4">
+        <DialogHeader>
+          <DialogTitle>文档信息</DialogTitle>
+          <DialogDescription>{task.name}</DialogDescription>
+        </DialogHeader>
+        <FieldGroup>
+          <Field>
+            <FieldLabel>名称</FieldLabel>
+            <p>{task.name}</p>
+          </Field>
+          <Field>
+            <FieldLabel>文档模板</FieldLabel>
+            <p>
+              {task.template?.name ?? (
+                <span className="text-muted-foreground">无模板</span>
+              )}
+            </p>
+          </Field>
+          <Field>
+            <FieldLabel>写作指南</FieldLabel>
+            <p>
+              {task.guide?.name ?? (
+                <span className="text-muted-foreground">无指南</span>
+              )}
+            </p>
+          </Field>
+        </FieldGroup>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onClose}>
+            关闭
+          </Button>
+        </DialogFooter>
+      </div>
+    );
+  }
 
   return (
     <form
@@ -194,13 +233,12 @@ export function TaskUpdateForm({
           )}
         />
         <Field>
-          <FieldLabel htmlFor="template">文档模板</FieldLabel>
-          <Combobox
-            value={task.template ?? null}
-            itemToStringLabel={(template: Template) => template.name}
-          >
-            <ComboboxInput id="template" placeholder="无模板" disabled />
-          </Combobox>
+          <FieldLabel>文档模板</FieldLabel>
+          <p>
+            {task.template?.name ?? (
+              <span className="text-muted-foreground">无模板</span>
+            )}
+          </p>
         </Field>
         <Controller
           name="guide_id"

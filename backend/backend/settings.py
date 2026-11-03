@@ -410,7 +410,10 @@ REST_AUTH = {
 # Simple JWT
 # https://django-rest-framework-simplejwt.readthedocs.io/
 
-SIMPLE_JWT = {}  # type:ignore
+SIMPLE_JWT = {
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
 
 
 # ALTCHA

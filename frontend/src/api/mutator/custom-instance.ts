@@ -1,5 +1,10 @@
 import { authTokenRefreshCreate } from '@/api/gen/endpoints/auth/auth';
-import Axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
+import { redirectToLogin } from '@/lib/query-client';
+import Axios, {
+  isAxiosError,
+  type AxiosError,
+  type AxiosRequestConfig,
+} from 'axios';
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -57,9 +62,15 @@ AXIOS_INSTANCE.interceptors.response.use(
 
         processQueue(null);
         return AXIOS_INSTANCE(originalRequest);
-      } catch {
+      } catch (refreshError) {
         processQueue(error);
         // Redirect to login or emit an event
+        if (
+          isAxiosError(refreshError) &&
+          refreshError.response?.status === 401
+        ) {
+          redirectToLogin();
+        }
       } finally {
         isRefreshing = false;
       }

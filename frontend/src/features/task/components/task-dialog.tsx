@@ -37,17 +37,23 @@ export function TaskCreateDialog({
 
 export function TaskUpdateDialog({
   task,
+  readOnly = false,
   open,
   onOpenChange,
 }: {
   task: Task;
+  readOnly?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <TaskUpdateForm task={task} onClose={() => onOpenChange(false)} />
+        <TaskUpdateForm
+          task={task}
+          readOnly={readOnly}
+          onClose={() => onOpenChange(false)}
+        />
       </DialogContent>
     </Dialog>
   );

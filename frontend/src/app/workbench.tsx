@@ -173,6 +173,7 @@ function Workbench() {
           </Button>
           <TaskUpdateDialog
             task={task}
+            readOnly={!canUpdateTask(role, me, task)}
             open={taskUpdateDialogOpen}
             onOpenChange={setTaskUpdateDialogOpen}
           />
@@ -288,7 +289,7 @@ function Workbench() {
   );
 }
 
-function canEdit(role: Role, user?: UserDetails, task?: Task): boolean {
+function canEdit(role: Role, user?: UserDetails, task?: Task) {
   if (!user || !task) return false;
   if (role === 'creator' && user.pk === task.creator.pk) {
     return task.stage === 'editing' || task.stage === 'revision';
@@ -296,7 +297,7 @@ function canEdit(role: Role, user?: UserDetails, task?: Task): boolean {
   return false;
 }
 
-function canComment(role: Role, user?: UserDetails, task?: Task): boolean {
+function canComment(role: Role, user?: UserDetails, task?: Task) {
   if (!user || !task) return false;
   if (role === 'creator' && user.pk === task.creator.pk) {
     return task.stage === 'editing' || task.stage === 'revision';
@@ -307,11 +308,18 @@ function canComment(role: Role, user?: UserDetails, task?: Task): boolean {
   return false;
 }
 
-function canSubmitWorkflow(
-  role: Role,
-  user?: UserDetails,
-  task?: Task,
-): boolean {
+function canUpdateTask(role: Role, user?: UserDetails, task?: Task) {
+  if (!user || !task) return false;
+  if (role === 'creator' && user.pk === task.creator.pk) {
+    return task.stage === 'editing' || task.stage === 'revision';
+  }
+  if (role === 'reviewer' && user.pk === task.reviewer?.pk) {
+    return task.stage === 'review';
+  }
+  return false;
+}
+
+function canSubmitWorkflow(role: Role, user?: UserDetails, task?: Task) {
   if (!user || !task) return false;
   if (role === 'creator' && user.pk === task.creator.pk) {
     return task.stage === 'editing' || task.stage === 'revision';

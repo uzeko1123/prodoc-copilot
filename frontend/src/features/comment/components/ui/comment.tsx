@@ -280,6 +280,7 @@ export function Comment(props: {
                 dropdownOpen={dropdownOpen}
                 setDropdownOpen={setDropdownOpen}
                 setEditingId={setEditingId}
+                canDelete={index !== 0 || discussionLength === 1}
               />
             )}
           </div>
@@ -365,6 +366,7 @@ function CommentMoreDropdown(props: {
   setEditingId: React.Dispatch<React.SetStateAction<string | null>>;
   onCloseAutoFocus?: () => void;
   onRemoveComment?: () => void;
+  canDelete: boolean;
 }) {
   const {
     comment,
@@ -373,6 +375,7 @@ function CommentMoreDropdown(props: {
     setEditingId,
     onCloseAutoFocus,
     onRemoveComment,
+    canDelete,
   } = props;
 
   const { taskId } = useParams({ from: '/workbench/$taskId/' });
@@ -452,10 +455,12 @@ function CommentMoreDropdown(props: {
             <PencilIcon className="size-4" />
             编辑评论
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDeleteComment}>
-            <TrashIcon className="size-4" />
-            删除评论
-          </DropdownMenuItem>
+          {canDelete && (
+            <DropdownMenuItem onClick={onDeleteComment}>
+              <TrashIcon className="size-4" />
+              删除评论
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

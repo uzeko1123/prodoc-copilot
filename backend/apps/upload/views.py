@@ -20,8 +20,6 @@ def file_md5(file: File) -> str:
 
 
 class UploadAPIView(APIView):
-    permission_classes = ()
-
     @extend_schema(
         request={"multipart/form-data": UploadFileSerializer},
         responses={200: UploadFileUrlSerializer},

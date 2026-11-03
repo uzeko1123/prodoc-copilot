@@ -15,6 +15,13 @@ def get_task_stage_user(task: Task):
     return None
 
 
+class IsStaffOrReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return request.user.is_authenticated
+        return bool(request.user.is_staff)
+
+
 class TaskPermission(BasePermission):
     def has_object_permission(self, request, view, obj: Task):
         if view.action in ("submit", "resubmit"):
@@ -23,7 +30,9 @@ class TaskPermission(BasePermission):
             return obj.reviewer_id == request.user.id
         if request.method in SAFE_METHODS:
             return is_task_member(request.user, obj)
-        return obj.creator_id == request.user.id
+        if request.method == "DELETE":
+            return obj.creator_id == request.user.id and obj.stage != Task.Stage.FINAL
+        return get_task_stage_user(obj) == request.user
 
 
 class DocumentPermission(BasePermission):

@@ -5,7 +5,7 @@ import { isAxiosError } from 'axios';
 
 let redirectingToLogin = false;
 
-function redirectToLogin() {
+export function redirectToLogin() {
   if (router.state.location.pathname === '/account/login') return;
   if (redirectingToLogin) return;
   redirectingToLogin = true;

@@ -17,6 +17,7 @@ from .permissions import (
     CommentPermission,
     DiscussionPermission,
     DocumentPermission,
+    IsStaffOrReadOnly,
     TaskPermission,
     get_task_stage_user,
     is_task_member,
@@ -49,6 +50,7 @@ def ensure_task_stage_user(user, task: Task) -> None:
 class TemplateViewSet(ModelViewSet):
     queryset = Template.objects.all().order_by("name")
     serializer_class = TemplateSerializer
+    permission_classes = (IsStaffOrReadOnly,)
     filter_backends = (SearchFilter,)
     search_fields = ("name",)
 
@@ -56,6 +58,7 @@ class TemplateViewSet(ModelViewSet):
 class GuideViewSet(ModelViewSet):
     queryset = Guide.objects.all().order_by("name")
     serializer_class = GuideSerializer
+    permission_classes = (IsStaffOrReadOnly,)
     filter_backends = (SearchFilter,)
     search_fields = ("name",)
 
@@ -81,6 +84,10 @@ class TaskViewSet(ModelViewSet):
                 task=task,
                 value=deepcopy(task.template.value) if task.template else [],
             )
+
+    def perform_update(self, serializer):
+        ensure_task_stage_user(self.request.user, serializer.instance)
+        serializer.save()
 
     @extend_schema(request=TaskSubmitSerializer, responses={200: TaskSerializer})
     @action(detail=True, methods=["post"])

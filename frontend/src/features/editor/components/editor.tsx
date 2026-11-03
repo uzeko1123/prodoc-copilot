@@ -62,6 +62,7 @@ function EditorValueSync() {
   const debouncedValue = useDebounce(value, 1500);
   const latestValueRef = useRef(value);
   const savedValueRef = useRef(value);
+  const savingValueRef = useRef(value);
 
   useEffect(() => {
     latestValueRef.current = value;
@@ -70,12 +71,14 @@ function EditorValueSync() {
   useEffect(() => {
     if (!documentId) return;
     if (savedValueRef.current === debouncedValue) return;
+    if (savingValueRef.current === debouncedValue) return;
 
-    savedValueRef.current = debouncedValue;
     mainDocumentsPartialUpdate(documentId, {
       value: savedValueRef.current,
     })
       .then((data) => {
+        if (savingValueRef.current !== debouncedValue) return;
+        savedValueRef.current = debouncedValue;
         queryClient.setQueryData(
           getMainDocumentsRetrieveQueryKey(documentId),
           data,
@@ -87,6 +90,7 @@ function EditorValueSync() {
   useEffect(() => {
     return () => {
       if (!documentId) return;
+
       if (latestValueRef.current !== savedValueRef.current) {
         mainDocumentsPartialUpdate(documentId, {
           value: latestValueRef.current,

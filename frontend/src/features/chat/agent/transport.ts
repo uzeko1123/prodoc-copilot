@@ -3,6 +3,7 @@ import {
   getMainTasksRetrieveQueryKey,
 } from '@/api/gen/endpoints/main/main';
 import type { Discussion, Task } from '@/api/gen/models';
+import { toTDiscussions } from '@/features/comment/lib/block-discussion-index';
 import { queryClient } from '@/lib/query-client';
 import {
   convertToModelMessages,
@@ -131,7 +132,7 @@ function createChatMessagesWithCtx(
         text: `<Context>${JSON.stringify({
           children: context?.children,
           selection: context?.selection,
-          discussions,
+          discussions: toTDiscussions(discussions),
           guide,
         })}</Context>`,
       },

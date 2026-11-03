@@ -205,7 +205,7 @@ function saveSuggestionClauseBindings(
         queryKey: getMainDiscussionsListQueryKey(),
       }),
     )
-    .catch((error) => toastErrorMessage(error));
+    .catch(toastErrorMessage);
 }
 
 /**
