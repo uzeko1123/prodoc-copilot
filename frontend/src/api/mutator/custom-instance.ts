@@ -1,4 +1,5 @@
 import { authTokenRefreshCreate } from '@/api/gen/endpoints/auth/auth';
+import type { TokenRefreshRequest } from '@/api/gen/models';
 import { redirectToLogin } from '@/lib/query-client';
 import Axios, {
   isAxiosError,
@@ -58,7 +59,7 @@ AXIOS_INSTANCE.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await authTokenRefreshCreate({ refresh: '' });
+        await authTokenRefreshCreate({} as BodyType<TokenRefreshRequest>);
 
         processQueue(null);
         return AXIOS_INSTANCE(originalRequest);
