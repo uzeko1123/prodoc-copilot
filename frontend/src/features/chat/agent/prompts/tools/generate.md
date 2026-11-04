@@ -7,7 +7,7 @@
 
 ## blockId
 
-目标块 ID，即 Context 文档树（children）中目标块节点的 id 属性值
+目标块 ID，即 Context 文档树（children）中顶层块节点的 id 属性值：必须是 children 根数组的直接子节点，不可使用列表项、表格单元格等嵌套块的 id；要操作嵌套结构内的文本时，取其所属顶层块的 id，并在 content 中写入该文本片段定位
 
 ## content
 
@@ -20,3 +20,7 @@
 ## guideClauseIds
 
 关联的写作指南条款 ID 数组（可多选）：仅当本次修订的依据是写作指南中的具体条款时填写，取值必须是 Context 中 guide 的非标题块的 id，无依据时省略或传空数组
+
+## error
+
+仅出现在工具输出中，不用于输入：应用侧未能按 blockId/content 在文档中定位到范围（含 content 为空字符串时未能按 blockId 定位到目标块）、内容未插入时，返回此失败原因；收到此字段时应向用户如实说明内容未插入，不要报告成功

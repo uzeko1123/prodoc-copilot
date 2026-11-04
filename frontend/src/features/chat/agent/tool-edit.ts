@@ -2,6 +2,7 @@ import { withAIBatch } from '@platejs/ai';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
+import type { TRange } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
 import { prompts } from './prompts/prompts';
@@ -12,6 +13,7 @@ export type EditToolIO = {
   content: string;
   edit: string;
   guideClauseIds?: string[];
+  error?: string;
 };
 
 export type EditTool = {
@@ -37,6 +39,10 @@ const editToolIOSchema = jsonSchema<EditToolIO>({
       type: 'array',
       items: { type: 'string' },
     },
+    error: {
+      description: prompts.tools.edit.schema.error,
+      type: 'string',
+    },
   },
   required: ['blockId', 'content', 'edit'],
   additionalProperties: false,
@@ -58,22 +64,29 @@ export function applyEditTool(
   part: ToolUIPart<EditTool>,
   taskId: string,
 ) {
-  if (part.state === 'input-available' && !output.has(part.toolCallId)) {
-    output.add(part.toolCallId);
-    chat.addToolOutput({
-      tool: 'edit',
-      toolCallId: part.toolCallId,
-      output: part.input,
-    });
-  }
-
   if (part.state !== 'input-available') return;
   if (applied.has(part.toolCallId)) return;
+
+  const range = aiCommentToRange(editor, { ...part.input, comment: '' });
+
+  output.add(part.toolCallId);
+  chat.addToolOutput({
+    tool: 'edit',
+    toolCallId: part.toolCallId,
+    output: range
+      ? part.input
+      : {
+          ...part.input,
+          error: prompts.tools.edit.error,
+        },
+  });
   applied.add(part.toolCallId);
+
+  if (!range) return console.warn('No range found for AI edit');
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'edit');
-  applyEdit(editor, part.input, taskId);
+  applyEdit(editor, part.input, taskId, range);
 }
 
 export function resetEditTool() {
@@ -81,11 +94,12 @@ export function resetEditTool() {
   output.clear();
 }
 
-function applyEdit(editor: PlateEditor, aiEdit: EditToolIO, taskId: string) {
-  const range = aiCommentToRange(editor, { ...aiEdit, comment: '' });
-
-  if (!range) return console.warn('No range found for AI edit');
-
+function applyEdit(
+  editor: PlateEditor,
+  aiEdit: EditToolIO,
+  taskId: string,
+  range: TRange,
+) {
   withAIBatch(
     editor,
     () => {

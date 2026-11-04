@@ -3,5 +3,6 @@ WORKDIR /app
 ARG PIP_REQUIREMENTS=base.txt
 COPY requirements/base.txt requirements/
 COPY requirements/${PIP_REQUIREMENTS} requirements/
-RUN pip install --no-cache-dir -r requirements/${PIP_REQUIREMENTS}
+COPY constraints.txt .
+RUN pip install --no-cache-dir -r requirements/${PIP_REQUIREMENTS} -c constraints.txt
 COPY . .

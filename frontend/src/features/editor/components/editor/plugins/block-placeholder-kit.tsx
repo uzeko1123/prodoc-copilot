@@ -11,7 +11,8 @@ export const BlockPlaceholderKit = [
       placeholders: {
         [KEYS.p]: '输入文本，或插入更多内容 . . .',
       },
-      query: ({ path, node }) => path.length === 1 && !node.template,
+      query: ({ path, node }) =>
+        path.length === 1 && !node.template && !node.readonly,
     },
   }),
 ];

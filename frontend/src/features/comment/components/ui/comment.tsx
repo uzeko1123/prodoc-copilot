@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  useAuthUserRetrieve,
-  useAuthUsersRetrieve,
-} from '@/api/gen/endpoints/auth/auth';
+import { useAuthUserRetrieve } from '@/api/gen/endpoints/auth/auth';
 import {
   getMainDiscussionsListQueryKey,
   useMainCommentsCreate,
@@ -14,6 +11,7 @@ import {
   useMainDiscussionsPartialUpdate,
   useMainTasksRetrieve,
 } from '@/api/gen/endpoints/main/main';
+import type { User } from '@/api/gen/models';
 import { Button } from '@/components/shadcn/ui/button';
 import {
   DropdownMenu,
@@ -76,6 +74,7 @@ export type TComment = {
   discussionId: string;
   isEdited: boolean;
   userId: string;
+  user?: User;
   createdByAI?: boolean;
 };
 
@@ -110,10 +109,6 @@ export function Comment(props: {
     { document: documentId },
     { query: { enabled: !!documentId } },
   );
-
-  const { data: user } = useAuthUsersRetrieve(Number(comment.userId), {
-    query: { throwOnError: false },
-  });
 
   const { mutate: discussionsPartialUpdateMutate } =
     useMainDiscussionsPartialUpdate({
@@ -219,9 +214,9 @@ export function Comment(props: {
       onMouseLeave={() => setHovering(false)}
     >
       <div className="relative flex items-center">
-        <UserAvatar user={user} className="size-5" />
+        <UserAvatar user={comment.user} className="size-5" />
         <h4 className="mx-2 text-sm leading-none font-semibold">
-          {user?.full_name || user?.username || '未知用户'}
+          {comment.user?.full_name || comment.user?.username || '未知用户'}
         </h4>
 
         {comment.createdByAI && (
@@ -694,7 +689,7 @@ export function CommentCreateForm({
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  onAddComment();
+                  if (hasDiscussionDraftValue) onAddComment();
                 }
               }}
               placeholder="添加评论 . . ."

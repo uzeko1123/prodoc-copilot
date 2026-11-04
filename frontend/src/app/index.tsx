@@ -419,7 +419,7 @@ function HeroWorkbenchScene({ className }: { className?: string }) {
 
 /* ─────────────────────── 场景：AI 指令菜单 ─────────────────────── */
 
-/** AI 指令面板分组（与工作台斜杠菜单一致：直接发送 + 三类场景共 12 条指令） */
+/** AI 指令面板分组——工作台斜杠菜单（ai-menu.tsx 的 menuStateItems）的静态副本，增删指令须两处同步 */
 const AI_MENU_GROUPS: {
   heading: string | null;
   items: {
@@ -467,11 +467,18 @@ const AI_MENU_GROUPS: {
   },
 ];
 
+/** 三类场景指令总数（不含「直接发送」），本页「N 项」文案的单一数字来源 */
+const AI_COMMAND_COUNT = AI_MENU_GROUPS.reduce(
+  (total, group) =>
+    group.heading === null ? total : total + group.items.length,
+  0,
+);
+
 /** 「AI 智能写作」场景：文档底衬 + 浮出斜杠指令面板 + 上下文与模式标签 */
 function AiCommandScene({ className }: { className?: string }) {
   return (
     <MockFrame
-      label="AI 指令菜单界面示意：选中文字后唤起斜杠指令面板，十二项指令按场景分组"
+      label={`AI 指令菜单界面示意：选中文字后唤起斜杠指令面板，${AI_COMMAND_COUNT} 项指令按场景分组`}
       className={className}
     >
       <div className="relative">
@@ -734,16 +741,16 @@ function CommentRow({
   name,
   date,
   children,
-  thread = false,
+  reply = false,
 }: {
   name: string;
   date: string;
   children: React.ReactNode;
-  thread?: boolean;
+  reply?: boolean;
 }) {
   return (
-    <div className={cn('relative', thread && 'pl-6.5')}>
-      {thread && (
+    <div className={cn('relative', reply && 'pl-6.5')}>
+      {reply && (
         <span className="bg-muted absolute top-0 left-3 h-full w-0.5" />
       )}
       <div className="flex items-center">
@@ -836,7 +843,7 @@ function ReviewScene({ className }: { className?: string }) {
               <CommentRow name="王" date="10-18">
                 「明显优于」建议给出量化对比，或引用表 2 的数据支撑。
               </CommentRow>
-              <CommentRow name="李" date="10-18" thread>
+              <CommentRow name="李" date="10-18" reply>
                 已在正文补充两次实验的误差对比，谢谢指出。
               </CommentRow>
             </div>
@@ -1367,7 +1374,7 @@ function LandingHero() {
             专业文档写作，从此有了 AI 搭档
           </h1>
           <p className="text-muted-foreground mt-5 text-base leading-relaxed md:text-lg">
-            续写、润色、校对、翻译、评阅——12 项 AI
+            续写、润色、校对、翻译、评阅——{AI_COMMAND_COUNT} 项 AI
             指令融入写作流程；修改以「修订」标注，逐条接受或拒绝，绝不悄悄改动您的文字。
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
@@ -1392,7 +1399,7 @@ function LandingHero() {
 
 const HIGHLIGHTS = [
   {
-    value: '12 项',
+    value: `${AI_COMMAND_COUNT} 项`,
     label: 'AI 写作指令',
     note: '续写、润色、校对、翻译、评阅……',
   },
@@ -1493,7 +1500,7 @@ function FeatureAiWriting() {
         <SectionHeading
           titleId="features-title"
           eyebrow="AI 智能写作"
-          title="十二项 AI 指令，覆盖写作全流程"
+          title={`${AI_COMMAND_COUNT} 项 AI 指令，覆盖写作全流程`}
           description="把光标放进段落，或选中一段文字，AI 指令随手唤起：生成结果直接写入正文，修改以「修订」标注在原文上——逐条接受或拒绝，改不改由您做主。"
         />
         <div className="mt-12 grid items-center gap-10 md:mt-16 md:grid-cols-2 md:gap-16">
@@ -1930,6 +1937,7 @@ function LandingFooter() {
             </ul>
           </nav>
           <nav aria-label="页脚资源导航">
+            {/* 占位锚点：文档模板/写作指南暂无独立版块，与「知识库」统一指向 #knowledge */}
             <h3 className="text-sm font-semibold">资源</h3>
             <ul className="text-muted-foreground mt-4 space-y-3 text-sm">
               <li>
@@ -1983,7 +1991,7 @@ function LandingFooter() {
           </div>
         </div>
         <div className="text-muted-foreground mt-10 border-t pt-6 text-xs">
-          <p>© 2026 ProDoc Copilot · 保留所有权利</p>
+          <p>© {new Date().getFullYear()} ProDoc Copilot · 保留所有权利</p>
         </div>
       </div>
     </footer>

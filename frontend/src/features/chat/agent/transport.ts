@@ -41,6 +41,13 @@ export function createAgentTransport(editor: PlateEditor, taskId: string) {
         messages: ChatMessage[];
       };
       if (ctx) context = ctx;
+      else if (context) {
+        context = {
+          ...context,
+          children: editor.children,
+          selection: editor.selection,
+        };
+      }
 
       const lastMessage = messages.at(-1);
       if (lastMessage) {

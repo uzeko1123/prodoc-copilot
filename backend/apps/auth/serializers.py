@@ -35,7 +35,7 @@ def _password_reset_url_generator(request, user, temp_key):
     )
 
 
-class AltchaChallengeSerializer(serializers.Serializer):
+class AltchaChallengeParametersSerializer(serializers.Serializer):
     algorithm = serializers.CharField()
     cost = serializers.IntegerField()
     keyLength = serializers.IntegerField()
@@ -46,6 +46,10 @@ class AltchaChallengeSerializer(serializers.Serializer):
     memoryCost = serializers.IntegerField(required=False)
     parallelism = serializers.IntegerField(required=False)
     expiresAt = serializers.IntegerField(required=False)
+
+
+class AltchaChallengeSerializer(serializers.Serializer):
+    parameters = AltchaChallengeParametersSerializer()
     signature = serializers.CharField(required=False)
 
 

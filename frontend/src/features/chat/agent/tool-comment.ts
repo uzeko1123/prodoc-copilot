@@ -4,6 +4,7 @@ import {
   mainDiscussionsCreate,
 } from '@/api/gen/endpoints/main/main';
 import type { Task } from '@/api/gen/models';
+import { getGuideClauses } from '@/features/guide/lib/guide-clause-index';
 import { toastErrorMessage } from '@/lib/error-message';
 import { queryClient } from '@/lib/query-client';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
@@ -12,7 +13,7 @@ import { CommentPlugin } from '@platejs/comment/react';
 import { deserializeMd } from '@platejs/markdown';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
-import { KEYS, NodeApi, TextApi, type TNode } from 'platejs';
+import { KEYS, NodeApi, TextApi, type TNode, type TRange } from 'platejs';
 import { getEditorPlugin, type PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
 import { prompts } from './prompts/prompts';
@@ -22,6 +23,7 @@ export type CommentToolIO = {
   content: string;
   comment: string;
   guideClauseIds?: string[];
+  error?: string;
 };
 
 export type CommentTool = {
@@ -47,6 +49,10 @@ const commentToolIOSchema = jsonSchema<CommentToolIO>({
       type: 'array',
       items: { type: 'string' },
     },
+    error: {
+      description: prompts.tools.comment.schema.error,
+      type: 'string',
+    },
   },
   required: ['blockId', 'content', 'comment'],
   additionalProperties: false,
@@ -68,22 +74,29 @@ export function applyCommentTool(
   part: ToolUIPart<CommentTool>,
   taskId: string,
 ) {
-  if (part.state === 'input-available' && !output.has(part.toolCallId)) {
-    output.add(part.toolCallId);
-    chat.addToolOutput({
-      tool: 'comment',
-      toolCallId: part.toolCallId,
-      output: part.input,
-    });
-  }
-
   if (part.state !== 'input-available') return;
   if (applied.has(part.toolCallId)) return;
+
+  const range = aiCommentToRange(editor, part.input);
+
+  output.add(part.toolCallId);
+  chat.addToolOutput({
+    tool: 'comment',
+    toolCallId: part.toolCallId,
+    output: range
+      ? part.input
+      : {
+          ...part.input,
+          error: prompts.tools.comment.error,
+        },
+  });
   applied.add(part.toolCallId);
+
+  if (!range) return console.warn('No range found for AI comment');
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'comment');
-  applyComment(editor, part.input, taskId);
+  applyComment(editor, part.input, taskId, range);
 }
 
 export function resetCommentTool() {
@@ -95,10 +108,8 @@ function applyComment(
   editor: PlateEditor,
   aiComment: CommentToolIO,
   taskId: string,
+  range: TRange,
 ) {
-  const range = aiCommentToRange(editor, aiComment);
-  if (!range) return console.warn('No range found for AI comment');
-
   const discussionId = crypto.randomUUID();
   const contentRich = [{ children: [{ text: aiComment.comment }], type: 'p' }];
   const documentContent = deserializeMd(editor, aiComment.content)
@@ -129,10 +140,14 @@ function applyComment(
 
   const guideClauses =
     guide && aiComment.guideClauseIds?.length
-      ? aiComment.guideClauseIds.map((block_id) => ({
-          guide: guide.id,
-          block_id,
-        }))
+      ? aiComment.guideClauseIds
+          .filter((block_id) =>
+            getGuideClauses(guide).some((clause) => clause.id === block_id),
+          )
+          .map((block_id) => ({
+            guide: guide.id,
+            block_id,
+          }))
       : undefined;
 
   void mainDiscussionsCreate({

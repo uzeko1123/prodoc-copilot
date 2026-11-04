@@ -3,17 +3,9 @@
  * Do not edit manually.
  * OpenAPI spec version: 0.0.0
  */
+import type { AltchaChallengeParameters } from './altchaChallengeParameters';
 
 export interface AltchaChallenge {
-  algorithm: string;
-  cost: number;
-  keyLength: number;
-  keyPrefix: string;
-  nonce: string;
-  salt: string;
-  keySignature?: string;
-  memoryCost?: number;
-  parallelism?: number;
-  expiresAt?: number;
+  parameters: AltchaChallengeParameters;
   signature?: string;
 }

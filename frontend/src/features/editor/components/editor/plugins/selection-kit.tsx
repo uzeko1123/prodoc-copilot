@@ -18,13 +18,13 @@ import * as React from 'react';
 import { CursorOverlayKit } from './cursor-overlay-kit';
 
 /**
- * Keeps Range text selections alive (and painted) after the editor loses
- * DOM focus, in both edit and readonly mode.
+ * 编辑器失去 DOM 焦点后，让 Range 文本选区保持存活（且可见），编辑与
+ * 只读两种模式下均生效。
  *
- * - overrideEditor: swallow the deselect slate-react applies when the DOM
- *   selection leaves the editable in readonly mode.
- * - useHooks: repaint the selection through a CursorOverlayPlugin cursor
- *   once the browser stops painting the native highlight.
+ * - overrideEditor：只读模式下 DOM 选区离开可编辑区时，吞掉 slate-react
+ *   施加的 deselect。
+ * - useHooks：浏览器停止绘制原生高亮后，通过 CursorOverlayPlugin 的
+ *   cursor 重绘选区。
  */
 export const SelectionPlugin = createPlatePlugin({
   key: 'selection',
@@ -36,7 +36,7 @@ export const SelectionPlugin = createPlatePlugin({
           operation.type === 'set_selection' &&
           operation.newProperties === null;
 
-        // Swallow: no op, no onChange, the chat context stays visible.
+        // 吞掉：不生成 op、不触发 onChange，聊天上下文保持可见。
         if (isDeselect && shouldSwallowDeselect(editor)) return;
         apply(operation);
       },
@@ -46,7 +46,7 @@ export const SelectionPlugin = createPlatePlugin({
     useHooks: ({ editor }) => useSyncSelectionOverlay(editor),
   });
 
-/** Whether the deselect comes from focus leaving the editor (e.g. clicking the chat input). */
+/** 判定 deselect 是否源于焦点离开编辑器（如点击聊天输入框）。 */
 function shouldSwallowDeselect(editor: PlateEditor) {
   if (!editor.selection || !editor.dom.readOnly) return false;
 
@@ -60,7 +60,7 @@ function shouldSwallowDeselect(editor: PlateEditor) {
   const activeElement = root.activeElement;
   if (!(activeElement instanceof HTMLElement)) return false;
 
-  // Block selection's shadow input deselects on purpose — let it through.
+  // 块选区的 shadow input 有意触发 deselect——放行。
   if (activeElement.classList.contains('slate-shadow-input')) return false;
 
   return (
@@ -69,23 +69,21 @@ function shouldSwallowDeselect(editor: PlateEditor) {
   );
 }
 
-/** Whether the browser still paints a native selection over editor content. */
+/** 判定浏览器是否仍在编辑器内容上绘制原生选区。 */
 function isNativeHighlightPainted(editor: PlateEditor) {
   const root = editor.api.findDocumentOrShadowRoot();
   const domSelection = root ? getSelection(root) : null;
   if (!domSelection?.anchorNode) return false;
 
-  // Fast path: this fires on every selectionchange anywhere in the app
-  // (typing in the chat textarea included), so bail with a cheap contains
-  // check before the toSlateRange DOM-to-model mapping. A native selection
-  // outside the editable can never map to a Slate range.
+  // 快路径：应用内任意位置的 selectionchange 都会触发这里（含在聊天
+  // 输入框打字），故先做廉价的 contains 检查再走 toSlateRange 的
+  // DOM→模型映射。可编辑区之外的原生选区永远映射不出 Slate range。
   const editable = editor.api.toDOMNode(editor);
   if (!editable) return false;
   if (!editable.contains(domSelection.anchorNode)) return false;
 
-  // Test mappability, not node containment: afterEditable slots (e.g. the
-  // AI menu) can sit inside the editable yet be unmappable, meaning the
-  // native highlight is already gone.
+  // 检验可映射性而非节点包含关系：afterEditable 槽位（如 AI 菜单）可以
+  // 位于可编辑区内却不可映射，说明原生高亮已经消失。
   return !!editor.api.toSlateRange(domSelection, {
     exactMatch: false,
     suppressThrow: true,
@@ -93,8 +91,8 @@ function isNativeHighlightPainted(editor: PlateEditor) {
 }
 
 /**
- * Idempotent reconciliation: show the overlay cursor iff a model selection
- * exists, block selection is inactive, and the native highlight is gone.
+ * 幂等调和：当且仅当存在模型选区、块选区未激活、且原生高亮已消失时，
+ * 显示 overlay cursor。
  */
 function useSyncSelectionOverlay(editor: PlateEditor) {
   const isSelectingSome = usePluginOption(
@@ -131,23 +129,23 @@ function useSyncSelectionOverlay(editor: PlateEditor) {
     }
   }, [editor, isSelectingSome, isSelectionAreaVisible]);
 
-  // React-side triggers: model selection, readonly mode, block selection.
+  // React 侧触发源：模型选区、只读模式、块选区。
   React.useEffect(() => {
     syncOverlay();
-    // Re-run after CursorOverlayPlugin's own setTimeout(0) re-add so this
-    // reconciliation always gets the last word.
+    // 在 CursorOverlayPlugin 自己的 setTimeout(0) 重加之后再跑一次，
+    // 让本次调和永远说了算。
     const id = setTimeout(syncOverlay, 0);
     return () => clearTimeout(id);
   }, [syncOverlay, selectionVersion, readOnly]);
 
-  // DOM-side trigger: in readonly mode the editable is unfocusable, so
-  // document selectionchange is the only reliable signal.
+  // DOM 侧触发源：只读模式下可编辑区不可聚焦，document 的
+  // selectionchange 是唯一可靠信号。
   React.useEffect(() => {
     document.addEventListener('selectionchange', syncOverlay);
     return () => document.removeEventListener('selectionchange', syncOverlay);
   }, [syncOverlay]);
 }
 
-// Plate dedupes plugins by key, so CursorOverlayKit being spread again in
-// editor-kit.tsx (via AIKit) is safe.
+// Plate 按 key 去重插件，CursorOverlayKit 在 editor-kit.tsx（经 AIKit）
+// 中再次展开是安全的。
 export const SelectionKit = [...CursorOverlayKit, SelectionPlugin];

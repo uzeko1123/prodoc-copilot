@@ -6,20 +6,14 @@ import { MarkdownKit } from '@/features/editor/components/editor/plugins/markdow
 import { useWorkbenchStore } from '@/stores/workbench';
 import { AIChatPlugin, AIPlugin } from '@platejs/ai/react';
 import { AICursorButton } from '../../ui/ai-cursor-button';
-import { AILoadingBar, AIMenu } from '../../ui/ai-menu';
-// import { useChat } from '../use-chat';
+import { AIMenu } from '../../ui/ai-menu';
 import { useAgent } from '../use-agent';
 
 export const aiChatPlugin = AIChatPlugin.extend({
   options: {
-    chatOptions: {
-      api: '/api/ai/command',
-      body: {},
-    },
     trigger: [],
   },
   render: {
-    afterContainer: AILoadingBar,
     afterEditable: () => (
       <>
         <AIMenu />
@@ -29,7 +23,6 @@ export const aiChatPlugin = AIChatPlugin.extend({
     node: AIAnchorElement,
   },
   shortcuts: { show: { keys: 'Tab' } },
-  // useHooks: useChat,
   useHooks: useAgent,
 }).extendApi(({ api, getOptions, setOption }) => {
   const { show, hide, submit } = api.aiChat;

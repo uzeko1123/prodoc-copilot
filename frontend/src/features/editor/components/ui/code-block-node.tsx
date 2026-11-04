@@ -2,18 +2,18 @@
 
 import { Button } from '@/components/shadcn/ui/button';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/shadcn/ui/popover';
+import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/shadcn/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/shadcn/ui/popover';
+} from '@/components/ui/command';
 import { formatCodeBlock, isLangSupported } from '@platejs/code-block';
 import { cn } from 'cn';
 import { BracesIcon, Check, CheckIcon, CopyIcon } from 'lucide-react';

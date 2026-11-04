@@ -21,6 +21,7 @@ export const MainCommentsListResponseItem = zod.object({
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
+  created_by_ai: zod.boolean(),
   user: zod.object({
     pk: zod.int(),
     username: zod
@@ -56,6 +57,7 @@ export const MainCommentsCreateResponse = zod.object({
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
+  created_by_ai: zod.boolean(),
   user: zod.object({
     pk: zod.int(),
     username: zod
@@ -88,6 +90,7 @@ export const MainCommentsRetrieveResponse = zod.object({
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
+  created_by_ai: zod.boolean(),
   user: zod.object({
     pk: zod.int(),
     username: zod
@@ -126,6 +129,7 @@ export const MainCommentsUpdateResponse = zod.object({
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
+  created_by_ai: zod.boolean(),
   user: zod.object({
     pk: zod.int(),
     username: zod
@@ -163,6 +167,7 @@ export const MainCommentsPartialUpdateResponse = zod.object({
   discussion: zod.uuid(),
   content_rich: zod.unknown(),
   is_edited: zod.boolean(),
+  created_by_ai: zod.boolean(),
   user: zod.object({
     pk: zod.int(),
     username: zod
@@ -213,6 +218,7 @@ export const MainDiscussionsListResponseItem = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
+      created_by_ai: zod.boolean(),
       user: zod.object({
         pk: zod.int(),
         username: zod
@@ -269,6 +275,7 @@ export const MainDiscussionsCreateBody = zod.object({
     .object({
       key: zod.uuid(),
       content_rich: zod.unknown(),
+      created_by_ai: zod.boolean().optional(),
     })
     .optional(),
   guide_clauses: zod
@@ -309,6 +316,7 @@ export const MainDiscussionsCreateResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
+      created_by_ai: zod.boolean(),
       user: zod.object({
         pk: zod.int(),
         username: zod
@@ -380,6 +388,7 @@ export const MainDiscussionsRetrieveResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
+      created_by_ai: zod.boolean(),
       user: zod.object({
         pk: zod.int(),
         username: zod
@@ -439,6 +448,7 @@ export const MainDiscussionsUpdateBody = zod.object({
     .object({
       key: zod.uuid(),
       content_rich: zod.unknown(),
+      created_by_ai: zod.boolean().optional(),
     })
     .optional(),
   guide_clauses: zod
@@ -479,6 +489,7 @@ export const MainDiscussionsUpdateResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
+      created_by_ai: zod.boolean(),
       user: zod.object({
         pk: zod.int(),
         username: zod
@@ -536,6 +547,7 @@ export const MainDiscussionsPartialUpdateBody = zod.object({
     .object({
       key: zod.uuid(),
       content_rich: zod.unknown(),
+      created_by_ai: zod.boolean().optional(),
     })
     .optional(),
   guide_clauses: zod
@@ -575,6 +587,7 @@ export const MainDiscussionsPartialUpdateResponse = zod.object({
       discussion: zod.uuid(),
       content_rich: zod.unknown(),
       is_edited: zod.boolean(),
+      created_by_ai: zod.boolean(),
       user: zod.object({
         pk: zod.int(),
         username: zod

@@ -96,29 +96,45 @@ export const prompts = {
     suggestion: withSharedSections(suggestionInstructions),
   },
   tools: {
-    comment: parseToolDescriptions('comment', commentToolDescriptions, [
-      'blockId',
-      'content',
-      'comment',
-      'guideClauseIds',
-    ]),
-    edit: parseToolDescriptions('edit', editToolDescriptions, [
-      'blockId',
-      'content',
-      'edit',
-      'guideClauseIds',
-    ]),
-    generate: parseToolDescriptions('generate', generateToolDescriptions, [
-      'blockId',
-      'content',
-      'generate',
-      'guideClauseIds',
-    ]),
+    comment: {
+      ...parseToolDescriptions('comment', commentToolDescriptions, [
+        'blockId',
+        'content',
+        'comment',
+        'guideClauseIds',
+        'error',
+      ]),
+      // F-040: 定位失败时写回工具 output 的错误文案
+      error: '未能在文档中定位到 content 对应的范围，评论未创建',
+    },
+    edit: {
+      ...parseToolDescriptions('edit', editToolDescriptions, [
+        'blockId',
+        'content',
+        'edit',
+        'guideClauseIds',
+        'error',
+      ]),
+      // F-040: 定位失败时写回工具 output 的错误文案
+      error: '未能在文档中定位到 content 对应的范围，修订未应用',
+    },
+    generate: {
+      ...parseToolDescriptions('generate', generateToolDescriptions, [
+        'blockId',
+        'content',
+        'generate',
+        'guideClauseIds',
+        'error',
+      ]),
+      // F-040: 定位失败时写回工具 output 的错误文案
+      error:
+        '未能在文档中定位到 content 对应的范围或 blockId 对应的块，内容未插入',
+    },
   },
 } satisfies {
   instructions: Record<ChatMode, string>;
   tools: Record<
     'comment' | 'edit' | 'generate',
-    { description: string; schema: Record<string, string> }
+    { description: string; schema: Record<string, string>; error: string }
   >;
 };

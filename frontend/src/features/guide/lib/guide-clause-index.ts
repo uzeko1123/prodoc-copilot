@@ -1,6 +1,7 @@
 // @generated-by-ai
 
 import type { Guide } from '@/api/gen/models';
+import { NodeApi, type TNode } from 'platejs';
 
 export type GuideClause = {
   id?: string;
@@ -19,7 +20,6 @@ export type GuideSection = {
 type SlateBlock = {
   id?: string;
   type?: string;
-  children?: { text?: string }[];
 };
 
 const headingDepth: Record<string, number> = {
@@ -56,11 +56,10 @@ export function getGuideSection(guide: Guide): GuideSection {
   const stack: GuideSection[] = [root];
 
   (value as SlateBlock[]).forEach((block, i) => {
-    const runs = block.children ?? [];
     const depth = block.type ? headingDepth[block.type] : undefined;
 
     if (depth != null) {
-      const title = runs.map((run) => run.text ?? '').join('');
+      const title = NodeApi.string(block as TNode);
       if (depth === 1 && !root.title) {
         root.title = title;
       } else {
@@ -78,7 +77,7 @@ export function getGuideSection(guide: Guide): GuideSection {
         stack.push(section);
       }
     } else {
-      const text = runs.map((run) => run.text ?? '').join('');
+      const text = NodeApi.string(block as TNode);
       if (text) {
         stack[stack.length - 1].clauses.push({
           id: block.id,

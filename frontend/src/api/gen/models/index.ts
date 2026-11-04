@@ -5,6 +5,7 @@
  */
 
 export * from './altchaChallenge';
+export * from './altchaChallengeParameters';
 export * from './authUsersListParams';
 export * from './comment';
 export * from './commentInline';

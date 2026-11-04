@@ -21,7 +21,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
 @admin.register(Discussion)
 class DiscussionAdmin(admin.ModelAdmin):
-    list_display = ("document", "user", "is_resolved", "created_at", "key")
+    list_display = ("document", "is_resolved", "user", "created_at", "key")
     list_filter = ("is_resolved",)
     search_fields = ("document__task__name",)
     ordering = ("-created_at",)
@@ -29,7 +29,14 @@ class DiscussionAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("discussion", "user", "is_edited", "created_at", "key")
+    list_display = (
+        "discussion",
+        "is_edited",
+        "created_by_ai",
+        "user",
+        "created_at",
+        "key",
+    )
     search_fields = ("discussion__document__task__name",)
     ordering = ("-created_at",)
     readonly_fields = ("content_rich",)

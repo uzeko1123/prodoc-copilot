@@ -77,13 +77,21 @@ class Discussion(models.Model):
     document = models.ForeignKey(
         Document, on_delete=models.CASCADE, related_name="discussions"
     )
+    document_content = models.TextField(blank=True, default="")
+    is_resolved = models.BooleanField(default=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="discussions"
     )
-    document_content = models.TextField(blank=True, default="")
-    is_resolved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=("document", "key"),
+                name="unique_discussion",
+            ),
+        )
 
 
 class Comment(models.Model):
@@ -92,14 +100,17 @@ class Comment(models.Model):
     discussion = models.ForeignKey(
         Discussion, on_delete=models.CASCADE, related_name="comments"
     )
+    content_rich = models.JSONField()
+    is_edited = models.BooleanField(default=False)
+    created_by_ai = models.BooleanField(default=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="comments"
     )
-    content_rich = models.JSONField()
-    created_by_ai = models.BooleanField(default=False)
-    is_edited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created_at",)
 
 
 class DiscussionGuideClause(models.Model):

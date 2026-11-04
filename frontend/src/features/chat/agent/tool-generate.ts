@@ -2,6 +2,7 @@ import { withAIBatch } from '@platejs/ai';
 import { AIChatPlugin, aiCommentToRange } from '@platejs/ai/react';
 import { BlockSelectionPlugin } from '@platejs/selection/react';
 import { jsonSchema, tool, type ToolUIPart } from 'ai';
+import type { TRange } from 'platejs';
 import type { PlateEditor } from 'platejs/react';
 import type { Chat } from '../components/editor/use-agent';
 import { prompts } from './prompts/prompts';
@@ -12,6 +13,7 @@ export type GenerateToolIO = {
   content: string;
   generate: string;
   guideClauseIds?: string[];
+  error?: string;
 };
 
 export type GenerateTool = {
@@ -37,6 +39,10 @@ const generateIOSchema = jsonSchema<GenerateToolIO>({
       type: 'array',
       items: { type: 'string' },
     },
+    error: {
+      description: prompts.tools.generate.schema.error,
+      type: 'string',
+    },
   },
   required: ['blockId', 'content', 'generate'],
   additionalProperties: false,
@@ -58,22 +64,31 @@ export function applyGenerateTool(
   part: ToolUIPart<GenerateTool>,
   taskId: string,
 ) {
-  if (part.state === 'input-available' && !output.has(part.toolCallId)) {
-    output.add(part.toolCallId);
-    chat.addToolOutput({
-      tool: 'generate',
-      toolCallId: part.toolCallId,
-      output: part.input,
-    });
-  }
-
   if (part.state !== 'input-available') return;
   if (applied.has(part.toolCallId)) return;
+
+  const range =
+    aiCommentToRange(editor, { ...part.input, comment: '' }) ??
+    getBlockStartRange(editor, part.input.blockId);
+
+  output.add(part.toolCallId);
+  chat.addToolOutput({
+    tool: 'generate',
+    toolCallId: part.toolCallId,
+    output: range
+      ? part.input
+      : {
+          ...part.input,
+          error: prompts.tools.generate.error,
+        },
+  });
   applied.add(part.toolCallId);
+
+  if (!range) return console.warn('No range found for AI generate');
 
   editor.setOption(AIChatPlugin, 'mode', 'insert');
   editor.setOption(AIChatPlugin, 'toolName', 'generate');
-  applyGenerate(editor, part.input, taskId);
+  applyGenerate(editor, part.input, taskId, range);
 }
 
 export function resetGenerateTool() {
@@ -85,13 +100,8 @@ function applyGenerate(
   editor: PlateEditor,
   aiGenerate: GenerateToolIO,
   taskId: string,
+  range: TRange,
 ) {
-  const range =
-    aiCommentToRange(editor, { ...aiGenerate, comment: '' }) ??
-    getBlockStartRange(editor, aiGenerate.blockId);
-
-  if (!range) return console.warn('No range found for AI generate');
-
   withAIBatch(
     editor,
     () => {

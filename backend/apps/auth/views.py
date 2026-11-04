@@ -28,7 +28,6 @@ class CSRFTokenAPIView(APIView):
 class AltchaAPIView(APIView):
     authentication_classes = ()
     permission_classes = ()
-    throttle_classes = ()
 
     @extend_schema(responses={200: AltchaChallengeSerializer})
     def get(self, request):

@@ -42,7 +42,8 @@ export function Altcha({
 
   /* Configure your `challenge` and remove the `test` attribute, see docs: https://altcha.org/docs/v2/widget-integration/  */
   const challenge =
-    import.meta.env.VITE_BACKEND_URL + getAuthAltchaRetrieveQueryKey()[0];
+    (import.meta.env.VITE_BACKEND_URL ?? '') +
+    getAuthAltchaRetrieveQueryKey()[0];
   return (
     <altcha-widget
       ref={widgetRef}

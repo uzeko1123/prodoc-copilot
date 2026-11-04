@@ -170,7 +170,13 @@ class CommentViewSet(ModelViewSet):
         discussion = serializer.validated_data["discussion"]
         ensure_task_member(self.request.user, discussion.document.task)
         ensure_task_stage_user(self.request.user, discussion.document.task)
-        serializer.save(user=self.request.user)
+        with transaction.atomic():
+            if (
+                Discussion.objects.select_for_update().filter(pk=discussion.pk).first()
+                is None
+            ):
+                raise NotFound
+            serializer.save(user=self.request.user)
 
     def perform_update(self, serializer):
         ensure_task_stage_user(
@@ -182,6 +188,11 @@ class CommentViewSet(ModelViewSet):
         ensure_task_stage_user(self.request.user, instance.discussion.document.task)
         with transaction.atomic():
             discussion = instance.discussion
+            if (
+                Discussion.objects.select_for_update().filter(pk=discussion.pk).first()
+                is None
+            ):
+                return
             instance.delete()
             if not discussion.comments.exists():
                 discussion.delete()
@@ -190,7 +201,7 @@ class CommentViewSet(ModelViewSet):
 class DiscussionViewSet(ModelViewSet):
     queryset = Discussion.objects.select_related(
         "document__task", "user__profile"
-    ).prefetch_related("guide_clauses")
+    ).prefetch_related("guide_clauses", "comments__user__profile")
     serializer_class = DiscussionSerializer
     permission_classes = (IsAuthenticated, DiscussionPermission)
     filter_backends = (DjangoFilterBackend,)
@@ -203,7 +214,7 @@ class DiscussionViewSet(ModelViewSet):
                 | Q(document__task__reviewer=self.request.user)
             )
             .select_related("document__task", "user__profile")
-            .prefetch_related("guide_clauses")
+            .prefetch_related("guide_clauses", "comments__user__profile")
         )
 
     def perform_create(self, serializer):
@@ -218,4 +229,10 @@ class DiscussionViewSet(ModelViewSet):
 
     def perform_destroy(self, instance):
         ensure_task_stage_user(self.request.user, instance.document.task)
-        instance.delete()
+        with transaction.atomic():
+            if (
+                Discussion.objects.select_for_update().filter(pk=instance.pk).first()
+                is None
+            ):
+                return
+            instance.delete()

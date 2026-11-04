@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export function useCountdown(seconds = 0, onExpire?: () => void) {
   const [countdown, setCountdown] = useState(seconds);
 
+  const startedRef = useRef(false);
+
   const onExpireRef = useRef(onExpire);
   useEffect(() => {
     onExpireRef.current = onExpire;
@@ -10,7 +12,7 @@ export function useCountdown(seconds = 0, onExpire?: () => void) {
 
   useEffect(() => {
     if (countdown <= 0) {
-      onExpireRef.current?.();
+      if (startedRef.current) onExpireRef.current?.();
       return;
     }
     const timer = setInterval(() => {
@@ -20,6 +22,7 @@ export function useCountdown(seconds = 0, onExpire?: () => void) {
   }, [countdown]);
 
   const start = useCallback((seconds: number) => {
+    startedRef.current = true;
     setCountdown(seconds);
   }, []);
 

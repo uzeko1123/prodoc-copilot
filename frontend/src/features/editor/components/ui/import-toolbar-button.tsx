@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/shadcn/ui/dropdown-menu';
 import { ToolbarButton } from '@/components/shadcn/ui/toolbar';
+import { toastErrorMessage } from '@/lib/error-message';
 import { MarkdownPlugin } from '@platejs/markdown';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { FolderOpenIcon } from 'lucide-react';
@@ -44,11 +45,15 @@ export function ImportToolbarButton(props: DropdownMenuProps) {
     accept: ['.md'],
     multiple: false,
     onFilesSelected: async ({ plainFiles }) => {
-      const text = await plainFiles[0].text();
+      try {
+        const text = await plainFiles[0].text();
 
-      const nodes = getFileNodes(text, 'markdown');
+        const nodes = getFileNodes(text, 'markdown');
 
-      editor.tf.insertNodes(nodes);
+        editor.tf.insertNodes(nodes);
+      } catch (error) {
+        toastErrorMessage(error);
+      }
     },
   });
 

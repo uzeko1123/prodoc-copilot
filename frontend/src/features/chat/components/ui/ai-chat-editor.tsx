@@ -3,10 +3,8 @@
 import { EditorStatic } from '@/components/shadcn/ui/editor-static';
 import { BaseEditorKit } from '@/features/editor/components/editor/editor-base-kit';
 import { useAIChatEditor } from '@platejs/ai/react';
-import { createSlateEditor, type SlateEditor } from 'platejs';
+import { createSlateEditor } from 'platejs';
 import * as React from 'react';
-
-let editorStatic: SlateEditor | null = null;
 
 export const AIChatEditor = React.memo(function AIChatEditor({
   content,
@@ -14,7 +12,7 @@ export const AIChatEditor = React.memo(function AIChatEditor({
   content: string;
 }) {
   const editor = React.useMemo(
-    () => (editorStatic ??= createSlateEditor({ plugins: BaseEditorKit })),
+    () => createSlateEditor({ plugins: BaseEditorKit }),
     [],
   );
 

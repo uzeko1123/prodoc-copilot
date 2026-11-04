@@ -7,4 +7,5 @@
 export interface CommentInline {
   key: string;
   content_rich: unknown;
+  created_by_ai?: boolean;
 }

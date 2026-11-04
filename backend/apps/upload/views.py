@@ -25,7 +25,9 @@ class UploadAPIView(APIView):
         responses={200: UploadFileUrlSerializer},
     )
     def post(self, request: Request):
-        file = request.data["file"]
+        serializer = UploadFileSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        file = serializer.validated_data["file"]
         md5 = file_md5(file)
         suffix = Path(file.name).suffix
         name = default_storage.save(f"upload/{md5}{suffix}", file)

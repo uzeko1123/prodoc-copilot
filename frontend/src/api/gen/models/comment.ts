@@ -11,7 +11,7 @@ export interface Comment {
   discussion: string;
   content_rich: unknown;
   readonly is_edited: boolean;
-  readonly created_by_ai?: boolean;
+  readonly created_by_ai: boolean;
   readonly user: User;
   readonly created_at: string;
   readonly updated_at: string;

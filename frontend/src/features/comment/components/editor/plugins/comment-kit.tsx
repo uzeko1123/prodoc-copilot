@@ -75,9 +75,6 @@ export const commentPlugin = toTPlatePlugin<CommentConfig>(BaseCommentPlugin, {
   )
   .configure({
     node: { component: CommentLeaf },
-    shortcuts: {
-      setDraft: { keys: 'mod+shift+m' },
-    },
   });
 
 export const CommentKit = [commentPlugin];

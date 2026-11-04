@@ -35,7 +35,7 @@ export function useUploadFile({
       const result = { ...res, name: file.name };
       setUploadedFile(result);
       onUploadComplete?.(result);
-      return uploadedFile;
+      return result;
     } catch (error) {
       toastErrorMessage(error);
       onUploadError?.(error);

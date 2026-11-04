@@ -1,12 +1,11 @@
 'use client';
 
-import { Button } from '@/components/shadcn/ui/button';
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
-} from '@/components/shadcn/ui/command';
+} from '@/components/ui/command';
 import { Spinner } from '@/components/ui/spinner';
 import { TaskPlugin } from '@/features/editor/components/editor/plugins/task-kit';
 import { AIChatPlugin, useEditorChat } from '@platejs/ai/react';
@@ -18,7 +17,7 @@ import {
   shift,
   useVirtualFloating,
 } from '@platejs/floating';
-import { BlockSelectionPlugin, useIsSelecting } from '@platejs/selection/react';
+import { useIsSelecting } from '@platejs/selection/react';
 import { useComposedRef } from '@udecode/cn';
 import { Command as CommandPrimitive } from 'cmdk';
 import { cn } from 'cn';
@@ -30,7 +29,6 @@ import {
   ListMinusIcon,
   ListPlusIcon,
   ListTreeIcon,
-  PauseIcon,
   PencilSparklesIcon,
   SendIcon,
   SpellCheckIcon,
@@ -88,8 +86,6 @@ export function AIMenu() {
 
   const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
 
-  const _skipBlockSelection = true;
-
   useEditorChat({
     onOpenBlockSelection: (blocks: NodeEntry[]) => {
       show(editor.api.toDOMNode(blocks.at(-1)![0])!);
@@ -101,18 +97,6 @@ export function AIMenu() {
     },
     onOpenCursor: () => {
       const [ancestor] = editor.api.block({ highest: true })!;
-
-      if (
-        !_skipBlockSelection &&
-        !isLoading &&
-        !editor.api.isAt({ end: true }) &&
-        !editor.api.isEmpty(ancestor)
-      ) {
-        editor
-          .getApi(BlockSelectionPlugin)
-          .blockSelection.set(ancestor.id as string);
-      }
-
       show(editor.api.toDOMNode(ancestor)!);
     },
     onOpenSelection: () => {
@@ -122,9 +106,6 @@ export function AIMenu() {
 
   useHotkeys('esc', () => {
     api.aiChat.stop();
-
-    // remove when you implement the route /api/ai/command
-    // (chat as any)._abortFakeStream();
   });
 
   React.useEffect(() => {
@@ -572,49 +553,3 @@ export const AIMenuItems = ({
     </>
   );
 };
-
-export function AILoadingBar() {
-  const chatStatus = usePluginOptions(
-    AIChatPlugin,
-    (options) => options.chat?.status,
-  );
-
-  const { api } = useEditorPlugin(AIChatPlugin);
-
-  const isLoading = chatStatus === 'streaming' || chatStatus === 'submitted';
-
-  useHotkeys('esc', () => {
-    api.aiChat.stop();
-
-    // remove when you implement the route /api/ai/command
-    // (chat as any)._abortFakeStream();
-  });
-
-  if (!isLoading) return null;
-
-  const _hide = true;
-  if (_hide) return null;
-
-  return (
-    <div
-      className={cn(
-        'border-border bg-muted text-muted-foreground absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-md border px-3 py-1.5 text-sm shadow-md transition-all duration-300',
-      )}
-    >
-      <span className="border-muted-foreground h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-      <span>AI 工作中 . . .</span>
-      <Button
-        size="sm"
-        variant="ghost"
-        className="flex items-center gap-1 text-xs"
-        onClick={() => api.aiChat.stop()}
-      >
-        <PauseIcon className="h-4 w-4" />
-        停止
-        <kbd className="bg-border text-muted-foreground ml-1 rounded px-1 font-mono text-[10px] shadow-sm">
-          Esc
-        </kbd>
-      </Button>
-    </div>
-  );
-}

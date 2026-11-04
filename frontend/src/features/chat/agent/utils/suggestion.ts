@@ -38,8 +38,8 @@ import type {
 import type { PlateEditor } from 'platejs/react';
 
 /**
- * Depth-first first/last text node of `nodes`, or undefined when there is
- * none (e.g. a void block without text children).
+ * 深度优先取 `nodes` 的首个/末个文本节点；不存在时返回 undefined
+ * （如无文本子节点的 void 块）。
  */
 function getEdgeText(
   nodes: Descendant[],
@@ -58,30 +58,23 @@ function getEdgeText(
 }
 
 /**
- * Insert markdown at the current selection as an insert suggestion. Returns
- * the suggestion data, or undefined for empty markdown (nothing inserted).
+ * 在当前选区处以插入型修订写入 markdown，返回修订数据；markdown 为空时
+ * 返回 undefined（不插入任何内容）。
  *
- * `insertFragment` merges the first fragment block into the target block at an
- * inline point and drops block-level marks, so every non-empty text
- * descendant is marked at the text level — those survive the merge (empty
- * texts are skipped to avoid ghost marks inside voids). Top-level elements
- * also keep a block-level mark so whole-block inserts are removed on reject.
- * Inline elements are deliberately unmarked: rejecting same-id inline
- * elements next to marked texts crashes in the library (stale-path removal),
- * so they survive reject instead — same as the library's own
- * insertFragmentSuggestion.
+ * `insertFragment` 会把 fragment 首块并入行内插入点所在的目标块、且丢弃
+ * 块级标记，因此所有非空文本后代一律在文本层打标——文本标记能在合并后
+ * 存活（空文本跳过，避免 void 内部留下幽灵标记）。顶层元素另保留块级
+ * 标记，整块插入才能在拒绝时随块删除。行内元素刻意不打标：拒绝删除与
+ * 已打标文本相邻的同 id 行内元素会触发库内崩溃（过期路径移除），故让
+ * 它们在拒绝后存活——与库自带的 insertFragmentSuggestion 行为一致。
  *
- * Whitespace: CommonMark strips edge whitespace, so the edges are restored
- * from the raw markdown to keep the "spaces/newlines must be written by the
- * model" contract honest — (a) leading/trailing spaces and tabs are merged
- * back into the first/last text node, (b) a whitespace-only string is
- * inserted literally instead of being dropped, and (c) an edge blank line is
- * materialized as an unmarked empty paragraph that sacrificially absorbs the
- * first/last-block unwrap `insertFragment` performs when the insertion point
- * is not at that block's boundary, keeping the real blocks whole. The empty
- * paragraph is only added on the side that would unwrap, so it never survives
- * as a visible block. (Semantics mirror the library's own streaming
- * compensation in `streamDeserializeMd`.)
+ * 空白：CommonMark 会剥掉边缘空白，这里从原始 markdown 恢复两端，以兑现
+ * 「空格/换行必须由模型写出」的约定——(a) 首尾空格与制表符并回首/末个
+ * 文本节点，(b) 纯空白串按字面插入而非丢弃，(c) 边缘空行实体化为一个
+ * 不打标的空段落，替真实块牺牲性地吸收 insertFragment 在插入点不在块
+ * 边界时执行的首/末块拆包，让真实块保持完整。空段落只加在会被拆包的
+ * 一侧，因此绝不会以可见块的形式存活。（语义对齐库在
+ * `streamDeserializeMd` 中的流式补偿。）
  */
 function insertSuggestion(
   editor: PlateEditor,
@@ -89,8 +82,8 @@ function insertSuggestion(
 ): TSuggestionData | undefined {
   if (md === '') return undefined;
 
-  // Mirror Slate's insertFragment boundary check (nearest block above the
-  // insertion point) to know which fragment edge would be unwrapped.
+  // 镜像 Slate insertFragment 的边界判定（插入点上方最近的块），得知
+  // fragment 的哪一侧边缘会被拆包。
   const focus = editor.selection?.focus;
   const blockEntry = focus
     ? editor.api.block({ at: focus, above: true })
@@ -108,8 +101,8 @@ function insertSuggestion(
   );
 
   if (fragment.length === 0) {
-    // A whitespace-only string parses to no nodes: insert it literally
-    // instead of dropping it (e.g. `edit: " "` = replace with a space).
+    // 纯空白串解析不出任何节点：按字面插入而非丢弃
+    // （如 `edit: " "` = 替换为一个空格）。
     fragment.push({ children: [{ text: md }], type: KEYS.p });
   } else {
     if (leadingSpaces) {
@@ -148,10 +141,9 @@ function insertSuggestion(
   };
   mark(fragment, true);
 
-  // Edge blank line = keep the first/last block whole. The unmarked empty
-  // paragraph contains the fragment's first/last leaf, so insertFragment
-  // unwraps it (collapsing to an invisible {text: ''}) instead of the real
-  // block — see the function doc comment.
+  // 边缘空行 = 保住首/末块完整。不打标的空段落持有 fragment 的首/末
+  // 叶子，insertFragment 拆包的是它（塌缩为不可见的 {text: ''}）而非
+  // 真实块——详见函数头注释。
   if (core.startsWith('\n\n') && !atStart) {
     fragment.unshift({ children: [{ text: '' }], type: KEYS.p });
   }
@@ -209,9 +201,8 @@ function saveSuggestionClauseBindings(
 }
 
 /**
- * Insert `aiGenerate.generate` at the end of `range` as an insert suggestion,
- * then persist the IO's guide-clause bindings (see
- * `saveSuggestionClauseBindings`).
+ * 将 `aiGenerate.generate` 以插入型修订写入 `range` 末尾，随后落库该 IO 的
+ * 指南条款绑定（见 `saveSuggestionClauseBindings`）。
  */
 export function applyGenerateSuggestion(
   editor: PlateEditor,
@@ -226,9 +217,8 @@ export function applyGenerateSuggestion(
 }
 
 /**
- * Blocks whose content is previewed in the discussion card when fully covered
- * by an edit range (text-level marks). Every other fully covered block is
- * block-marked only, so the card shows a type summary instead of content.
+ * 被编辑区间（文本级标记）完整覆盖时、讨论卡内预览其内容的块类型。
+ * 其余被完整覆盖的块只打块级标记，卡片显示类型摘要而非内容。
  */
 const PREVIEW_TYPES = new Set<string>([
   KEYS.p,
@@ -241,13 +231,11 @@ const PREVIEW_TYPES = new Set<string>([
 ]);
 
 /**
- * Remove-mark `range` as one suggestion, block-aware: fully covered blocks at
- * any depth get a block-level remove mark so accepting really deletes them —
- * text-level marks alone leave empty paragraph shells and never touch void
- * blocks. Preview-type blocks keep text marks for the card preview. When the
- * inserted markdown merges into the block holding `range`'s end
- * (`mergeIntoEndBlock`), that block is never block-marked, or accepting would
- * delete the merged insert along with the old text.
+ * 将 `range` 作为一条修订打 remove 标记，具备块级感知：任意深度上被完整
+ * 覆盖的块都打块级 remove 标记，接受时才能真正删除——仅文本级标记会留下
+ * 空段落壳、且永远碰不到 void 块。预览类型块保留文本标记供卡片预览。
+ * 插入的 markdown 并入 `range` 末端所在块时（`mergeIntoEndBlock`），
+ * 该块绝不打块级标记，否则接受时会连同旧文本一起删掉并入的插入内容。
  */
 function markRemoval(
   editor: PlateEditor,
@@ -291,9 +279,8 @@ function markRemoval(
       if (covered && !holdsInsertion) {
         blockMark(childPath);
 
-        // Collapsed childRange (empty paragraph): setSuggestionNodes would
-        // fall through to a whole-block setNodes and overwrite the block mark
-        // set above with text-style keys.
+        // childRange 塌缩（空段落）时跳过：setSuggestionNodes 会回落到
+        // 整块 setNodes，用文本样式键覆盖上面刚设的块标记。
         if (
           child.type &&
           PREVIEW_TYPES.has(child.type) &&
@@ -302,19 +289,18 @@ function markRemoval(
           textMark(childRange);
         }
 
-        // Fully covered: no need to descend.
+        // 已完整覆盖：无需继续下探。
         continue;
       }
 
-      // Partially covered, or the insertion target block (it must survive
-      // accepting to hold the merged insert). A collapsed intersection is
-      // skipped: marking it would land on the whole block.
+      // 部分覆盖，或插入目标块（它必须在接受后存活以承接并入的插入内容）。
+      // 塌缩的交集跳过：打标会落到整块上。
       const intersection = RangeApi.intersection(range, childRange);
       if (intersection && !RangeApi.isCollapsed(intersection)) {
         textMark(intersection);
       }
 
-      // Descend for fully covered nested blocks (list items, table rows…).
+      // 为完整覆盖的嵌套块下探（列表项、表格行……）。
       visit(childPath);
     }
   };
@@ -323,13 +309,11 @@ function markRemoval(
 }
 
 /**
- * Replace or delete `range` as one atomic suggestion: insert at the range end
- * first (keeps the range points valid), then remove-mark the range sharing the
- * insert id, so accept/reject applies to both. Fully covered blocks are
- * block-marked so accepting deletes them outright (see `markRemoval`). A
- * collapsed range cannot be remove-marked (the mark would land on the whole
- * block), so it degrades to a pure insert. The IO's guide-clause bindings are
- * persisted alongside (see `saveSuggestionClauseBindings`).
+ * 将 `range` 作为一条原子修订整体替换或删除：先在区间末端插入（保持区间
+ * 端点有效），再给区间打 remove 标记并复用插入 id，接受/拒绝对两者同时
+ * 生效。完整覆盖的块打块级标记，接受时直接删除（见 `markRemoval`）。
+ * 塌缩区间无法打 remove 标记（标记会落到整块上），退化为纯插入。IO 的
+ * 指南条款绑定随后一并落库（见 `saveSuggestionClauseBindings`）。
  */
 export function applyEditSuggestion(
   editor: PlateEditor,
@@ -344,8 +328,8 @@ export function applyEditSuggestion(
     data = insertSuggestion(editor, aiEdit.edit);
   }
   if (!RangeApi.isCollapsed(range)) {
-    // Pure delete: synthesize a UUID id so the suggestion stays annotatable
-    // (the annotation row is keyed by the suggestion id, which must be a UUID).
+    // 纯删除：合成一个 UUID id，修订才可被批注（批注行以修订 id 为键，
+    // 必须是 UUID）。
     data ??= {
       id: crypto.randomUUID(),
       createdAt: Date.now(),
@@ -354,8 +338,8 @@ export function applyEditSuggestion(
         editor.getOptions(BaseSuggestionPlugin).currentUserId ?? 'anonymous',
       createdByAI: true,
     };
-    // The inserted first line merges into the end block unless the markdown
-    // starts with a blank line (the sacrificial paragraph absorbs the merge).
+    // 插入的首行会并入末端块，除非 markdown 以空行开头（牺牲段落吸收
+    // 该合并）。
     const core = aiEdit.edit.replace(/^[ \t]*/, '').replace(/[ \t]*$/, '');
 
     markRemoval(

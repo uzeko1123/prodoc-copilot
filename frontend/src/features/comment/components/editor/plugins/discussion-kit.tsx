@@ -1,5 +1,6 @@
 'use client';
 
+import type { User } from '@/api/gen/models';
 import { createPlatePlugin } from 'platejs/react';
 import { BlockDiscussion } from '../../ui/block-discussion';
 import type { TComment } from '../../ui/comment';
@@ -10,6 +11,7 @@ export type TDiscussion = {
   createdAt: Date;
   isResolved: boolean;
   userId: string;
+  user?: User;
   documentContent?: string;
 };
 

@@ -52,7 +52,7 @@ export const Route = createFileRoute('/workbench/$taskId/')({
   validateSearch: z.object({ role: z.enum(['creator', 'reviewer']) }),
   beforeLoad: ({ cause }) => {
     if (cause === 'preload') return;
-    void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
+    return queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
   component: WorkbenchPage,
 });
@@ -141,6 +141,7 @@ function Workbench() {
           <Button
             variant="ghost"
             size="icon-sm"
+            aria-label="返回"
             onClick={() =>
               router.history.canGoBack()
                 ? router.history.back()
@@ -232,7 +233,11 @@ function Workbench() {
                 <TabsTrigger value="chat">AI 对话</TabsTrigger>
                 <TabsTrigger value="discussion">评论 & 修订</TabsTrigger>
                 {!rightPanelOpen && (
-                  <Button variant="ghost" onClick={toggleRightPanel}>
+                  <Button
+                    variant="ghost"
+                    aria-label="展开右侧面板"
+                    onClick={toggleRightPanel}
+                  >
                     <PanelRightIcon />
                   </Button>
                 )}

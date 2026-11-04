@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  useAuthUserRetrieve,
-  useAuthUsersRetrieve,
-} from '@/api/gen/endpoints/auth/auth';
+import { useAuthUserRetrieve } from '@/api/gen/endpoints/auth/auth';
 import {
   getMainDiscussionsListQueryKey,
   useMainDiscussionsDestroy,
@@ -60,9 +57,6 @@ export function BlockSuggestionCard({
   const { api, editor } = useEditorPlugin(SuggestionPlugin);
 
   const { data: me } = useAuthUserRetrieve();
-  const { data: user } = useAuthUsersRetrieve(Number(suggestion.userId), {
-    query: { throwOnError: false },
-  });
 
   const { taskId } = useParams({ from: '/workbench/$taskId/' });
   const { data: task } = useMainTasksRetrieve(taskId);
@@ -87,25 +81,31 @@ export function BlockSuggestionCard({
   const stageUser = useStageUser(task);
   const isStageUser = !!stageUser && stageUser.pk === me?.pk;
 
-  const removeSuggestionDiscussion = () => {
+  const removeSuggestionDiscussion = (onRemoved: () => void) => {
     const discussion = discussions?.find(
       (discussion) => discussion.key === suggestion.suggestionId,
     );
-    if (discussion) discussionsDestroyMutate({ id: discussion.id });
+    if (discussion) {
+      discussionsDestroyMutate({ id: discussion.id }, { onSuccess: onRemoved });
+    } else {
+      onRemoved();
+    }
   };
 
   const accept = (suggestion: ResolvedSuggestion) => {
-    api.suggestion.withoutSuggestions(() => {
-      acceptSuggestion(editor, suggestion);
+    removeSuggestionDiscussion(() => {
+      api.suggestion.withoutSuggestions(() => {
+        acceptSuggestion(editor, suggestion);
+      });
     });
-    removeSuggestionDiscussion();
   };
 
   const reject = (suggestion: ResolvedSuggestion) => {
-    api.suggestion.withoutSuggestions(() => {
-      rejectSuggestion(editor, suggestion);
+    removeSuggestionDiscussion(() => {
+      api.suggestion.withoutSuggestions(() => {
+        rejectSuggestion(editor, suggestion);
+      });
     });
-    removeSuggestionDiscussion();
   };
 
   const [hovering, setHovering] = React.useState(false);
@@ -137,9 +137,11 @@ export function BlockSuggestionCard({
         onMouseLeave={() => setHovering(false)}
       >
         <div className="relative flex items-center">
-          <UserAvatar user={user} className="size-5" />
+          <UserAvatar user={suggestion.user} className="size-5" />
           <h4 className="mx-2 text-sm leading-none font-semibold">
-            {user?.full_name || user?.username || '未知用户'}
+            {suggestion.user?.full_name ||
+              suggestion.user?.username ||
+              '未知用户'}
           </h4>
 
           {suggestion.createdByAI && (

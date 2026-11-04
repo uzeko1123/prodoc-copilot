@@ -6,16 +6,18 @@
 import * as zod from 'zod';
 
 export const AuthAltchaRetrieveResponse = zod.object({
-  algorithm: zod.string(),
-  cost: zod.int(),
-  keyLength: zod.int(),
-  keyPrefix: zod.string(),
-  nonce: zod.string(),
-  salt: zod.string(),
-  keySignature: zod.string().optional(),
-  memoryCost: zod.int().optional(),
-  parallelism: zod.int().optional(),
-  expiresAt: zod.int().optional(),
+  parameters: zod.object({
+    algorithm: zod.string(),
+    cost: zod.int(),
+    keyLength: zod.int(),
+    keyPrefix: zod.string(),
+    nonce: zod.string(),
+    salt: zod.string(),
+    keySignature: zod.string().optional(),
+    memoryCost: zod.int().optional(),
+    parallelism: zod.int().optional(),
+    expiresAt: zod.int().optional(),
+  }),
   signature: zod.string().optional(),
 });
 
@@ -246,6 +248,7 @@ export const AuthTokenRefreshCreateBody = zod.object({
 
 export const AuthTokenRefreshCreateResponse = zod.object({
   access: zod.string(),
+  refresh: zod.string(),
 });
 
 /**

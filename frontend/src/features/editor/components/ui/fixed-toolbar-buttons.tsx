@@ -31,7 +31,11 @@ export function FixedToolbarButtons() {
       <ToolbarGroup>
         {!leftPanelOpen && (
           <>
-            <Button variant="ghost" onClick={toggleLeftPanel}>
+            <Button
+              variant="ghost"
+              aria-label="展开左侧面板"
+              onClick={toggleLeftPanel}
+            >
               <PanelLeftIcon />
             </Button>
 

@@ -159,7 +159,7 @@ export function Chat() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                if (isBusy || chatInput.length === 0) return;
+                if (isBusy || chatInput.trim() === '') return;
                 void editor.getApi(AIChatPlugin).aiChat.submit(chatInput);
                 setChatInput('');
               }}

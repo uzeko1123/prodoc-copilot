@@ -20,7 +20,7 @@ import { MarkdownPlugin } from '@platejs/markdown';
 import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
 import { useParams } from '@tanstack/react-router';
 import { CloudUploadIcon, SaveIcon } from 'lucide-react';
-import { useEditorReadOnly, useEditorRef, useEditorValue } from 'platejs/react';
+import { useEditorReadOnly, useEditorRef } from 'platejs/react';
 import * as React from 'react';
 import { toast } from 'sonner';
 import {
@@ -32,7 +32,6 @@ import {
 
 export function ExportToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
-  const value = useEditorValue();
   const readOnly = useEditorReadOnly();
 
   const { taskId } = useParams({ from: '/workbench/$taskId/' });
@@ -71,19 +70,27 @@ export function ExportToolbarButton(props: DropdownMenuProps) {
   };
 
   const exportToImage = async () => {
-    const canvas = await getCanvas();
-    await downloadFile(canvas.toDataURL('image/png'), 'ProDoc.png');
+    try {
+      const canvas = await getCanvas();
+      await downloadFile(canvas.toDataURL('image/png'), 'ProDoc.png');
+    } catch (error) {
+      toastErrorMessage(error);
+    }
   };
 
   const exportToMarkdown = async () => {
-    const md = editor.getApi(MarkdownPlugin).markdown.serialize();
-    const url = `data:text/markdown;charset=utf-8,${encodeURIComponent(md)}`;
-    await downloadFile(url, 'ProDoc.md');
+    try {
+      const md = editor.getApi(MarkdownPlugin).markdown.serialize();
+      const url = `data:text/markdown;charset=utf-8,${encodeURIComponent(md)}`;
+      await downloadFile(url, 'ProDoc.md');
+    } catch (error) {
+      toastErrorMessage(error);
+    }
   };
 
   const syncToBackend = async () => {
     if (!documentId) return;
-    await mainDocumentsPartialUpdate(documentId, { value })
+    await mainDocumentsPartialUpdate(documentId, { value: editor.children })
       .then((data) => {
         queryClient.setQueryData(
           getMainDocumentsRetrieveQueryKey(documentId),

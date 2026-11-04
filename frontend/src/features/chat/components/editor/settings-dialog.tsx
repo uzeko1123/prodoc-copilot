@@ -61,7 +61,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
     <form id="settings-form" onSubmit={handleSubmit}>
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="email">API 地址</FieldLabel>
+          <FieldLabel htmlFor="baseUrl">API 地址</FieldLabel>
           <Input
             value={baseUrl}
             onChange={(e) => setBaseUrl(e.target.value)}
@@ -73,7 +73,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="email">API 密钥</FieldLabel>
+          <FieldLabel htmlFor="apiKey">API 密钥</FieldLabel>
           <Input
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
@@ -85,7 +85,7 @@ function SettingsForm({ onClose }: { onClose: () => void }) {
           />
         </Field>
         <Field>
-          <FieldLabel htmlFor="email">模型 ID</FieldLabel>
+          <FieldLabel htmlFor="modelId">模型 ID</FieldLabel>
           <Input
             value={modelId}
             onChange={(e) => setModelId(e.target.value)}

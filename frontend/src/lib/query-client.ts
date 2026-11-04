@@ -1,3 +1,4 @@
+import { getAuthUserRetrieveQueryKey } from '@/api/gen/endpoints/auth/auth';
 import { toastErrorMessage } from '@/lib/error-message';
 import { router } from '@/lib/router';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
@@ -10,11 +11,13 @@ export function redirectToLogin() {
   if (redirectingToLogin) return;
   redirectingToLogin = true;
 
-  toastErrorMessage('认证信息失效，请重新登录。');
+  if (queryClient.getQueryData(getAuthUserRetrieveQueryKey()) != null) {
+    toastErrorMessage('认证信息失效，请重新登录。');
+  }
   router
     .navigate({
       to: '/account/login',
-      search: { redirect: router.state.location.href },
+      search: { redirect: router.latestLocation.href },
       replace: true,
     })
     .finally(() => {
@@ -28,8 +31,11 @@ export const queryClient = new QueryClient({
     queries: {
       staleTime: 60_000,
       retry: (failureCount, error) =>
-        !(isAxiosError(error) && (error.response?.status ?? 0) < 500) &&
-        failureCount < 3,
+        !(
+          isAxiosError(error) &&
+          error.response != null &&
+          error.response.status < 500
+        ) && failureCount < 3,
       throwOnError: (error) =>
         !(isAxiosError(error) && error.response?.status === 401),
     },

@@ -16,7 +16,9 @@ const isEmptyBlock = (element: TElement) =>
   element.children.every((child) => 'text' in child && child.text === '');
 
 // 删除/移动类变换执行期间 >0（由下方 tf 包装维护），isElementReadOnly 仅在
-// 此期间返回 true，见 extend 注释
+// 此期间返回 true，见 extend 注释。计数器为模块级单例、跨编辑器实例共享：
+// 变换同步执行 + try/finally 保证归零，单线程下无串扰；若未来出现多个含
+// TemplateKit 的编辑器并发变换、或变换被异步化，须改为按实例存储
 let readonlyDepth = 0;
 
 export const TemplatePlugin = createPlatePlugin({
@@ -128,9 +130,15 @@ export const TemplatePlugin = createPlatePlugin({
         // 全选删除时 Plate 的 deleteFragment 走 reset：用默认空块顶替全部内容，
         // 会把幸存的首个锁定/模板块顶下去（表现为“首块模板被删”）。有受保护块
         // 时改为只移除可删块（受保护块的 remove_node 由下方 apply 拦截吞掉）。
-        // 仅劫持 deleteFragment 的 children === true 形态；children 传数组
-        // （全量替换内容）走原生 reset，避免新内容被丢弃
+        // children 仅支持 true（全删）：类型上即 boolean；数组形态（类型外的
+        // 运行时误用）原生实现只会插入默认值、数组内容被静默丢弃，且幸存保护
+        // 块与新内容并排错位——显式拒绝而非静默损坏
         reset(options: Parameters<typeof reset>[0]) {
+          if (options?.children && options.children !== true) {
+            throw new Error(
+              'template-kit：reset 的 children 仅支持 true（全删），不支持数组形态',
+            );
+          }
           if (
             options?.children === true &&
             editor.children.some(

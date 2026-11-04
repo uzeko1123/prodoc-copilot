@@ -1,6 +1,6 @@
 'use client';
 
-import type { Discussion } from '@/api/gen/models';
+import type { Discussion, User } from '@/api/gen/models';
 import { useDebounce } from '@/hooks/shadcn/use-debounce';
 import { formatDate } from '@/lib/format-date';
 import {
@@ -36,6 +36,7 @@ export interface ResolvedDiscussion extends TDiscussion {
 
 export interface ResolvedSuggestion extends TResolvedSuggestion {
   comments: TComment[];
+  user?: User;
   path: Path;
   createdByAI?: boolean;
 }
@@ -296,7 +297,8 @@ const toResolvedSuggestion = ({
   createdByAI ||= suggestionData.createdByAI === true;
 
   const keyId = getSuggestionKey(id);
-  const comments = discussionsById.get(id)?.comments ?? [];
+  const discussion = discussionsById.get(id);
+  const comments = discussion?.comments ?? [];
   const createdAt = new Date(suggestionData.createdAt);
   const suggestionId = keyId2SuggestionId(id);
 
@@ -311,6 +313,7 @@ const toResolvedSuggestion = ({
       suggestionId,
       type: 'update',
       userId: suggestionData.userId,
+      user: discussion?.user,
       path,
       createdByAI,
     };
@@ -326,6 +329,7 @@ const toResolvedSuggestion = ({
       text,
       type: 'replace',
       userId: suggestionData.userId,
+      user: discussion?.user,
       path,
       createdByAI,
     };
@@ -340,6 +344,7 @@ const toResolvedSuggestion = ({
       suggestionId,
       type: 'insert',
       userId: suggestionData.userId,
+      user: discussion?.user,
       path,
       createdByAI,
     };
@@ -354,6 +359,7 @@ const toResolvedSuggestion = ({
       text,
       type: 'remove',
       userId: suggestionData.userId,
+      user: discussion?.user,
       path,
       createdByAI,
     };
@@ -517,11 +523,13 @@ export function toTDiscussion(discussion: Discussion): TDiscussion {
       discussionId: discussion.key,
       isEdited: comment.is_edited,
       userId: String(comment.user.pk),
+      user: comment.user,
     })),
     createdAt: new Date(discussion.created_at),
     documentContent: discussion.document_content,
     isResolved: discussion.is_resolved ?? false,
     userId: String(discussion.user.pk),
+    user: discussion.user,
   };
 }
 

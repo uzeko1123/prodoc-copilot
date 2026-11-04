@@ -101,7 +101,9 @@ export function TaskList({ role }: { role: Role }) {
           size="sm"
           className="ml-auto"
           value={stage}
-          onValueChange={(value) => setStage(value as StageEnum | 'all')}
+          onValueChange={(value) =>
+            setStage((value || 'all') as StageEnum | 'all')
+          }
         >
           <ToggleGroupItem value="all">全部</ToggleGroupItem>
           {role === 'creator' && (

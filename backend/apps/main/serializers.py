@@ -95,16 +95,16 @@ class CommentSerializer(serializers.ModelSerializer):
             "key",
             "discussion",
             "content_rich",
-            "created_by_ai",
             "is_edited",
+            "created_by_ai",
             "user",
             "created_at",
             "updated_at",
         )
         read_only_fields = (
             "id",
-            "created_by_ai",
             "is_edited",
+            "created_by_ai",
             "created_at",
             "updated_at",
         )

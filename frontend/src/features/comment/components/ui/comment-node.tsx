@@ -27,17 +27,24 @@ export function CommentLeaf(props: PlateLeafProps<TCommentText>) {
   const isHover = hoverId === currentId;
 
   const { taskId } = useParams({ from: '/workbench/$taskId/' });
-  const { data: task } = useMainTasksRetrieve(taskId);
-  const documentId = task?.document ?? '';
 
-  const { data: discussions } = useMainDiscussionsList(
+  const { data: documentId = '' } = useMainTasksRetrieve(taskId, {
+    query: { select: (task) => task?.document ?? '' },
+  });
+
+  const { data: isResolved = false } = useMainDiscussionsList(
     { document: documentId },
-    { query: { enabled: !!documentId } },
+    {
+      query: {
+        enabled: !!documentId,
+        select: (discussions) =>
+          discussions.some(
+            (discussion) =>
+              discussion.key === currentId && !!discussion.is_resolved,
+          ),
+      },
+    },
   );
-
-  const isResolved =
-    discussions?.find((discussion) => discussion.key === currentId)
-      ?.is_resolved ?? false;
 
   return (
     <PlateLeaf

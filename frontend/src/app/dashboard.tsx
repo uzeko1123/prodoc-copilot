@@ -10,7 +10,7 @@ import { createFileRoute, Outlet } from '@tanstack/react-router';
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: ({ cause }) => {
     if (cause === 'preload') return;
-    void queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
+    return queryClient.query(getAuthUserRetrieveQueryOptions()).catch(noop);
   },
   component: DashboardPage,
 });
