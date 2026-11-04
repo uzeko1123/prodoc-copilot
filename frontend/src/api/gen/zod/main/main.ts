@@ -5,8 +5,339 @@
  */
 import * as zod from 'zod';
 
+export const MainChatMessagesListQueryParams = zod.object({
+  chat: zod.uuid().optional(),
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
+  search: zod.string().optional().describe('搜索关键词。'),
+});
+
+export const mainChatMessagesListResponseKeyMax = 64;
+
+export const MainChatMessagesListResponseItem = zod.object({
+  id: zod.uuid(),
+  key: zod.string().max(mainChatMessagesListResponseKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+export const MainChatMessagesListResponse = zod.array(
+  MainChatMessagesListResponseItem,
+);
+
+export const mainChatMessagesCreateBodyKeyMax = 64;
+
+export const MainChatMessagesCreateBody = zod.object({
+  key: zod.string().min(1).max(mainChatMessagesCreateBodyKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+});
+
+export const mainChatMessagesCreateResponseKeyMax = 64;
+
+export const MainChatMessagesCreateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.string().max(mainChatMessagesCreateResponseKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatMessagesRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 chat message 的 UUID 字符串。'),
+});
+
+export const mainChatMessagesRetrieveResponseKeyMax = 64;
+
+export const MainChatMessagesRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.string().max(mainChatMessagesRetrieveResponseKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatMessagesUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 chat message 的 UUID 字符串。'),
+});
+
+export const mainChatMessagesUpdateBodyKeyMax = 64;
+
+export const MainChatMessagesUpdateBody = zod.object({
+  key: zod.string().min(1).max(mainChatMessagesUpdateBodyKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+});
+
+export const mainChatMessagesUpdateResponseKeyMax = 64;
+
+export const MainChatMessagesUpdateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.string().max(mainChatMessagesUpdateResponseKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatMessagesPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 chat message 的 UUID 字符串。'),
+});
+
+export const mainChatMessagesPartialUpdateBodyKeyMax = 64;
+
+export const MainChatMessagesPartialUpdateBody = zod.object({
+  key: zod
+    .string()
+    .min(1)
+    .max(mainChatMessagesPartialUpdateBodyKeyMax)
+    .optional(),
+  chat: zod.uuid().optional(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .optional()
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown().optional(),
+  metadata: zod.unknown().optional(),
+});
+
+export const mainChatMessagesPartialUpdateResponseKeyMax = 64;
+
+export const MainChatMessagesPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  key: zod.string().max(mainChatMessagesPartialUpdateResponseKeyMax),
+  chat: zod.uuid(),
+  role: zod
+    .enum(['user', 'assistant'])
+    .describe('* `user` - User\n* `assistant` - Assistant'),
+  parts: zod.unknown(),
+  metadata: zod.unknown(),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatMessagesDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 chat message 的 UUID 字符串。'),
+});
+
+export const MainChatMessagesDestroyResponse = zod.void();
+
+export const MainChatsListQueryParams = zod.object({
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
+  search: zod.string().optional().describe('搜索关键词。'),
+  task: zod.uuid().optional(),
+});
+
+export const mainChatsListResponseNameMax = 255;
+
+export const mainChatsListResponseUserOneUsernameMax = 150;
+
+export const mainChatsListResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
+export const MainChatsListResponseItem = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsListResponseNameMax).optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainChatsListResponseUserOneUsernameMax)
+      .regex(mainChatsListResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+export const MainChatsListResponse = zod.array(MainChatsListResponseItem);
+
+export const mainChatsCreateBodyNameMax = 255;
+
+export const MainChatsCreateBody = zod.object({
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsCreateBodyNameMax).optional(),
+});
+
+export const mainChatsCreateResponseNameMax = 255;
+
+export const mainChatsCreateResponseUserOneUsernameMax = 150;
+
+export const mainChatsCreateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
+export const MainChatsCreateResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsCreateResponseNameMax).optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainChatsCreateResponseUserOneUsernameMax)
+      .regex(mainChatsCreateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatsRetrieveParams = zod.object({
+  id: zod.uuid().describe('标识此 chat 的 UUID 字符串。'),
+});
+
+export const mainChatsRetrieveResponseNameMax = 255;
+
+export const mainChatsRetrieveResponseUserOneUsernameMax = 150;
+
+export const mainChatsRetrieveResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
+export const MainChatsRetrieveResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsRetrieveResponseNameMax).optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainChatsRetrieveResponseUserOneUsernameMax)
+      .regex(mainChatsRetrieveResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatsUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 chat 的 UUID 字符串。'),
+});
+
+export const mainChatsUpdateBodyNameMax = 255;
+
+export const MainChatsUpdateBody = zod.object({
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsUpdateBodyNameMax).optional(),
+});
+
+export const mainChatsUpdateResponseNameMax = 255;
+
+export const mainChatsUpdateResponseUserOneUsernameMax = 150;
+
+export const mainChatsUpdateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
+export const MainChatsUpdateResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsUpdateResponseNameMax).optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainChatsUpdateResponseUserOneUsernameMax)
+      .regex(mainChatsUpdateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatsPartialUpdateParams = zod.object({
+  id: zod.uuid().describe('标识此 chat 的 UUID 字符串。'),
+});
+
+export const mainChatsPartialUpdateBodyNameMax = 255;
+
+export const MainChatsPartialUpdateBody = zod.object({
+  task: zod.uuid().optional(),
+  name: zod.string().max(mainChatsPartialUpdateBodyNameMax).optional(),
+});
+
+export const mainChatsPartialUpdateResponseNameMax = 255;
+
+export const mainChatsPartialUpdateResponseUserOneUsernameMax = 150;
+
+export const mainChatsPartialUpdateResponseUserOneUsernameRegExp = new RegExp(
+  '^[\\w.@+-]+$',
+);
+
+export const MainChatsPartialUpdateResponse = zod.object({
+  id: zod.uuid(),
+  task: zod.uuid(),
+  name: zod.string().max(mainChatsPartialUpdateResponseNameMax).optional(),
+  user: zod.object({
+    pk: zod.int(),
+    username: zod
+      .string()
+      .max(mainChatsPartialUpdateResponseUserOneUsernameMax)
+      .regex(mainChatsPartialUpdateResponseUserOneUsernameRegExp)
+      .describe(
+        '必填；长度为150个字符或以下；只能包含字母、数字、特殊字符“@”、“.”、“-”和“_”。',
+      ),
+    full_name: zod.string(),
+    avatar: zod.url(),
+  }),
+  created_at: zod.iso.datetime({ offset: true }),
+  updated_at: zod.iso.datetime({ offset: true }),
+});
+
+export const MainChatsDestroyParams = zod.object({
+  id: zod.uuid().describe('标识此 chat 的 UUID 字符串。'),
+});
+
+export const MainChatsDestroyResponse = zod.void();
+
 export const MainCommentsListQueryParams = zod.object({
   discussion: zod.uuid().optional(),
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
+  search: zod.string().optional().describe('搜索关键词。'),
 });
 
 export const mainCommentsListResponseUserOneUsernameMax = 150;
@@ -192,6 +523,8 @@ export const MainCommentsDestroyResponse = zod.void();
 
 export const MainDiscussionsListQueryParams = zod.object({
   document: zod.uuid().optional(),
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
+  search: zod.string().optional().describe('搜索关键词。'),
 });
 
 export const mainDiscussionsListResponseCommentsItemUserOneUsernameMax = 150;
@@ -642,6 +975,8 @@ export const MainDiscussionsDestroyParams = zod.object({
 export const MainDiscussionsDestroyResponse = zod.void();
 
 export const MainDocumentsListQueryParams = zod.object({
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
+  search: zod.string().optional().describe('搜索关键词。'),
   task: zod.uuid().optional(),
 });
 
@@ -746,6 +1081,7 @@ export const MainDocumentsDestroyParams = zod.object({
 export const MainDocumentsDestroyResponse = zod.void();
 
 export const MainGuidesListQueryParams = zod.object({
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
   search: zod.string().optional().describe('搜索关键词。'),
 });
 
@@ -843,6 +1179,7 @@ export const MainTasksListQueryParams = zod.object({
   creator: zod.int().optional(),
   ordering: zod.string().optional().describe('用于排序结果的字段。'),
   reviewer: zod.int().optional(),
+  search: zod.string().optional().describe('搜索关键词。'),
   stage: zod
     .enum(['editing', 'final', 'review', 'revision'])
     .optional()
@@ -1599,6 +1936,7 @@ export const MainTasksSubmitCreateResponse = zod.object({
 });
 
 export const MainTemplatesListQueryParams = zod.object({
+  ordering: zod.string().optional().describe('用于排序结果的字段。'),
   search: zod.string().optional().describe('搜索关键词。'),
 });
 

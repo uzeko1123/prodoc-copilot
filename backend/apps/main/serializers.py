@@ -5,6 +5,8 @@ from rest_framework import serializers
 from apps.auth.serializers import UserSerializer
 
 from .models import (
+    Chat,
+    ChatMessage,
     Comment,
     Discussion,
     DiscussionGuideClause,
@@ -172,3 +174,32 @@ class DiscussionSerializer(serializers.ModelSerializer):
         validated_data.pop("document", None)
         validated_data.pop("guide_clauses", None)
         return super().update(instance, validated_data)
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Chat
+        fields = ("id", "task", "name", "user", "created_at", "updated_at")
+        read_only_fields = ("id", "created_at", "updated_at")
+
+    def update(self, instance, validated_data):
+        validated_data.pop("task", None)
+        return super().update(instance, validated_data)
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = (
+            "id",
+            "key",
+            "chat",
+            "role",
+            "parts",
+            "metadata",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("id", "created_at", "updated_at")

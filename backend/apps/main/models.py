@@ -11,6 +11,12 @@ class Template(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("created_at",)
+
 
 class Guide(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -18,6 +24,12 @@ class Guide(models.Model):
     value = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("created_at",)
 
 
 class Task(models.Model):
@@ -61,6 +73,12 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ("created_at",)
+
 
 class Document(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -69,6 +87,12 @@ class Document(models.Model):
     value = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title or f"{self.task}"
+
+    class Meta:
+        ordering = ("created_at",)
 
 
 class Discussion(models.Model):
@@ -85,7 +109,11 @@ class Discussion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.document}-{self.key}"
+
     class Meta:
+        ordering = ("created_at",)
         constraints = (
             models.UniqueConstraint(
                 fields=("document", "key"),
@@ -109,6 +137,9 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.discussion}-{self.user}"
+
     class Meta:
         ordering = ("created_at",)
 
@@ -128,10 +159,55 @@ class DiscussionGuideClause(models.Model):
     block_id = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.discussion}-{self.guide}-{self.block_id}"
+
     class Meta:
+        ordering = ("created_at",)
         constraints = (
             models.UniqueConstraint(
                 fields=("discussion", "guide", "block_id"),
                 name="unique_discussion_guide_clause",
             ),
+        )
+
+
+class Chat(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="chat")
+    name = models.CharField(max_length=255, blank=True, default="")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="chat"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name or f"{self.task}-{self.user}"
+
+    class Meta:
+        ordering = ("created_at",)
+
+
+class ChatMessage(models.Model):
+    class Role(models.TextChoices):
+        USER = "user"
+        ASSISTANT = "assistant"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=64)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages")
+    role = models.CharField(max_length=15, choices=Role.choices)
+    parts = models.JSONField()
+    metadata = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.chat}-{self.role}-{self.key}"
+
+    class Meta:
+        ordering = ("created_at",)
+        constraints = (
+            models.UniqueConstraint(fields=("chat", "key"), name="unique_chat_message"),
         )

@@ -13,6 +13,10 @@ export type MainTasksListParams = {
   ordering?: string;
   reviewer?: number;
   /**
+   * 搜索关键词。
+   */
+  search?: string;
+  /**
    * * `editing` - Editing
    * * `review` - Review
    * * `revision` - Revision

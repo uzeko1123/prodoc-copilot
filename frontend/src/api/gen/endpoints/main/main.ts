@@ -21,6 +21,10 @@ import type {
 import { customInstance } from '../../../mutator/custom-instance';
 import type { BodyType, ErrorType } from '../../../mutator/custom-instance';
 import type {
+  Chat,
+  ChatMessage,
+  ChatMessageRequest,
+  ChatRequest,
   Comment,
   CommentRequest,
   Discussion,
@@ -29,12 +33,16 @@ import type {
   DocumentRequest,
   Guide,
   GuideRequest,
+  MainChatMessagesListParams,
+  MainChatsListParams,
   MainCommentsListParams,
   MainDiscussionsListParams,
   MainDocumentsListParams,
   MainGuidesListParams,
   MainTasksListParams,
   MainTemplatesListParams,
+  PatchedChatMessageRequest,
+  PatchedChatRequest,
   PatchedCommentRequest,
   PatchedDiscussionRequest,
   PatchedDocumentRequest,
@@ -68,6 +76,1333 @@ const withQueryKey = <T extends object, K>(
   return result;
 };
 
+export const mainChatMessagesList = (
+  params?: MainChatMessagesListParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ChatMessage[]>(
+    { url: `/api/main/chat-messages/`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getMainChatMessagesListQueryKey = (
+  params?: MainChatMessagesListParams,
+) => {
+  return [`/api/main/chat-messages/`, ...(params ? [params] : [])] as const;
+};
+
+export const getMainChatMessagesListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainChatMessagesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatMessagesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getMainChatMessagesListQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainChatMessagesList>>
+  > = ({ signal }) => mainChatMessagesList(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainChatMessagesList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainChatMessagesListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatMessagesList>>
+>;
+export type MainChatMessagesListQueryError = ErrorType<unknown>;
+
+export function useMainChatMessagesList<
+  TData = Awaited<ReturnType<typeof mainChatMessagesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params: undefined | MainChatMessagesListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatMessagesList>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatMessagesList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatMessagesList<
+  TData = Awaited<ReturnType<typeof mainChatMessagesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatMessagesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesList>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatMessagesList>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatMessagesList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatMessagesList<
+  TData = Awaited<ReturnType<typeof mainChatMessagesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatMessagesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainChatMessagesList<
+  TData = Awaited<ReturnType<typeof mainChatMessagesList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatMessagesListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesList>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainChatMessagesListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainChatMessagesCreate = (
+  chatMessageRequest: BodyType<ChatMessageRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ChatMessage>(
+    {
+      url: `/api/main/chat-messages/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: chatMessageRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainChatMessagesCreateMutationKey = () =>
+  ['mainChatMessagesCreate'] as const;
+
+export const getMainChatMessagesCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatMessagesCreate>>,
+    TError,
+    MainChatMessagesCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatMessagesCreate>>,
+  TError,
+  MainChatMessagesCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatMessagesCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatMessagesCreate>>,
+    MainChatMessagesCreateMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mainChatMessagesCreate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatMessagesCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatMessagesCreate>>
+>;
+export type MainChatMessagesCreateMutationBody = BodyType<ChatMessageRequest>;
+export type MainChatMessagesCreateMutationError = ErrorType<unknown>;
+export type MainChatMessagesCreateMutationVariables = {
+  data: BodyType<ChatMessageRequest>;
+};
+
+export const useMainChatMessagesCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatMessagesCreate>>,
+      TError,
+      MainChatMessagesCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatMessagesCreate>>,
+  TError,
+  MainChatMessagesCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainChatMessagesCreateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainChatMessagesRetrieve = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ChatMessage>(
+    { url: `/api/main/chat-messages/${id}/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainChatMessagesRetrieveQueryKey = (id: string) => {
+  return [`/api/main/chat-messages/${id}/`] as const;
+};
+
+export const getMainChatMessagesRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getMainChatMessagesRetrieveQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainChatMessagesRetrieve>>
+  > = ({ signal }) => mainChatMessagesRetrieve(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainChatMessagesRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatMessagesRetrieve>>
+>;
+export type MainChatMessagesRetrieveQueryError = ErrorType<unknown>;
+
+export function useMainChatMessagesRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatMessagesRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatMessagesRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatMessagesRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatMessagesRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainChatMessagesRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatMessagesRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainChatMessagesRetrieveQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainChatMessagesUpdate = (
+  id: string,
+  chatMessageRequest: BodyType<ChatMessageRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ChatMessage>(
+    {
+      url: `/api/main/chat-messages/${id}/`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: chatMessageRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainChatMessagesUpdateMutationKey = () =>
+  ['mainChatMessagesUpdate'] as const;
+
+export const getMainChatMessagesUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatMessagesUpdate>>,
+    TError,
+    MainChatMessagesUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatMessagesUpdate>>,
+  TError,
+  MainChatMessagesUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatMessagesUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatMessagesUpdate>>,
+    MainChatMessagesUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainChatMessagesUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatMessagesUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatMessagesUpdate>>
+>;
+export type MainChatMessagesUpdateMutationBody = BodyType<ChatMessageRequest>;
+export type MainChatMessagesUpdateMutationError = ErrorType<unknown>;
+export type MainChatMessagesUpdateMutationVariables = {
+  id: string;
+  data: BodyType<ChatMessageRequest>;
+};
+
+export const useMainChatMessagesUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatMessagesUpdate>>,
+      TError,
+      MainChatMessagesUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatMessagesUpdate>>,
+  TError,
+  MainChatMessagesUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainChatMessagesUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainChatMessagesPartialUpdate = (
+  id: string,
+  patchedChatMessageRequest?: BodyType<PatchedChatMessageRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<ChatMessage>(
+    {
+      url: `/api/main/chat-messages/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedChatMessageRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainChatMessagesPartialUpdateMutationKey = () =>
+  ['mainChatMessagesPartialUpdate'] as const;
+
+export const getMainChatMessagesPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatMessagesPartialUpdate>>,
+    TError,
+    MainChatMessagesPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatMessagesPartialUpdate>>,
+  TError,
+  MainChatMessagesPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatMessagesPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatMessagesPartialUpdate>>,
+    MainChatMessagesPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainChatMessagesPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatMessagesPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatMessagesPartialUpdate>>
+>;
+export type MainChatMessagesPartialUpdateMutationBody =
+  BodyType<PatchedChatMessageRequest> | undefined;
+export type MainChatMessagesPartialUpdateMutationError = ErrorType<unknown>;
+export type MainChatMessagesPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedChatMessageRequest>;
+};
+
+export const useMainChatMessagesPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatMessagesPartialUpdate>>,
+      TError,
+      MainChatMessagesPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatMessagesPartialUpdate>>,
+  TError,
+  MainChatMessagesPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainChatMessagesPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainChatMessagesDestroy = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/main/chat-messages/${id}/`, method: 'DELETE', signal },
+    options,
+  );
+};
+
+export const getMainChatMessagesDestroyMutationKey = () =>
+  ['mainChatMessagesDestroy'] as const;
+
+export const getMainChatMessagesDestroyMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatMessagesDestroy>>,
+    TError,
+    MainChatMessagesDestroyMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatMessagesDestroy>>,
+  TError,
+  MainChatMessagesDestroyMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatMessagesDestroyMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatMessagesDestroy>>,
+    MainChatMessagesDestroyMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainChatMessagesDestroy(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatMessagesDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatMessagesDestroy>>
+>;
+
+export type MainChatMessagesDestroyMutationError = ErrorType<unknown>;
+export type MainChatMessagesDestroyMutationVariables = { id: string };
+
+export const useMainChatMessagesDestroy = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatMessagesDestroy>>,
+      TError,
+      MainChatMessagesDestroyMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatMessagesDestroy>>,
+  TError,
+  MainChatMessagesDestroyMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainChatMessagesDestroyMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainChatsList = (
+  params?: MainChatsListParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Chat[]>(
+    { url: `/api/main/chats/`, method: 'GET', params, signal },
+    options,
+  );
+};
+
+export const getMainChatsListQueryKey = (params?: MainChatsListParams) => {
+  return [`/api/main/chats/`, ...(params ? [params] : [])] as const;
+};
+
+export const getMainChatsListQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainChatsList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainChatsList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainChatsListQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof mainChatsList>>> = ({
+    signal,
+  }) => mainChatsList(params, requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainChatsList>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainChatsListQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatsList>>
+>;
+export type MainChatsListQueryError = ErrorType<unknown>;
+
+export function useMainChatsList<
+  TData = Awaited<ReturnType<typeof mainChatsList>>,
+  TError = ErrorType<unknown>,
+>(
+  params: undefined | MainChatsListParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainChatsList>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatsList>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatsList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatsList<
+  TData = Awaited<ReturnType<typeof mainChatsList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainChatsList>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatsList>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatsList>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatsList<
+  TData = Awaited<ReturnType<typeof mainChatsList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainChatsList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainChatsList<
+  TData = Awaited<ReturnType<typeof mainChatsList>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: MainChatsListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof mainChatsList>>, TError, TData>
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainChatsListQueryOptions(params, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainChatsCreate = (
+  chatRequest: BodyType<ChatRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Chat>(
+    {
+      url: `/api/main/chats/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: chatRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainChatsCreateMutationKey = () => ['mainChatsCreate'] as const;
+
+export const getMainChatsCreateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatsCreate>>,
+    TError,
+    MainChatsCreateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatsCreate>>,
+  TError,
+  MainChatsCreateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatsCreateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatsCreate>>,
+    MainChatsCreateMutationVariables
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return mainChatsCreate(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatsCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatsCreate>>
+>;
+export type MainChatsCreateMutationBody = BodyType<ChatRequest>;
+export type MainChatsCreateMutationError = ErrorType<unknown>;
+export type MainChatsCreateMutationVariables = { data: BodyType<ChatRequest> };
+
+export const useMainChatsCreate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatsCreate>>,
+      TError,
+      MainChatsCreateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatsCreate>>,
+  TError,
+  MainChatsCreateMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainChatsCreateMutationOptions(options), queryClient);
+};
+export const mainChatsRetrieve = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Chat>(
+    { url: `/api/main/chats/${id}/`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMainChatsRetrieveQueryKey = (id: string) => {
+  return [`/api/main/chats/${id}/`] as const;
+};
+
+export const getMainChatsRetrieveQueryOptions = <
+  TData = Awaited<ReturnType<typeof mainChatsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatsRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMainChatsRetrieveQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof mainChatsRetrieve>>
+  > = ({ signal }) => mainChatsRetrieve(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof mainChatsRetrieve>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type MainChatsRetrieveQueryResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatsRetrieve>>
+>;
+export type MainChatsRetrieveQueryError = ErrorType<unknown>;
+
+export function useMainChatsRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatsRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatsRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatsRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatsRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatsRetrieve>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof mainChatsRetrieve>>,
+          TError,
+          Awaited<ReturnType<typeof mainChatsRetrieve>>
+        >,
+        'initialData'
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useMainChatsRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatsRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+};
+
+export function useMainChatsRetrieve<
+  TData = Awaited<ReturnType<typeof mainChatsRetrieve>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof mainChatsRetrieve>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>;
+} {
+  const queryOptions = getMainChatsRetrieveQueryOptions(id, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export const mainChatsUpdate = (
+  id: string,
+  chatRequest: BodyType<ChatRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Chat>(
+    {
+      url: `/api/main/chats/${id}/`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: chatRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainChatsUpdateMutationKey = () => ['mainChatsUpdate'] as const;
+
+export const getMainChatsUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatsUpdate>>,
+    TError,
+    MainChatsUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatsUpdate>>,
+  TError,
+  MainChatsUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatsUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatsUpdate>>,
+    MainChatsUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainChatsUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatsUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatsUpdate>>
+>;
+export type MainChatsUpdateMutationBody = BodyType<ChatRequest>;
+export type MainChatsUpdateMutationError = ErrorType<unknown>;
+export type MainChatsUpdateMutationVariables = {
+  id: string;
+  data: BodyType<ChatRequest>;
+};
+
+export const useMainChatsUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatsUpdate>>,
+      TError,
+      MainChatsUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatsUpdate>>,
+  TError,
+  MainChatsUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainChatsUpdateMutationOptions(options), queryClient);
+};
+export const mainChatsPartialUpdate = (
+  id: string,
+  patchedChatRequest?: BodyType<PatchedChatRequest>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Chat>(
+    {
+      url: `/api/main/chats/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedChatRequest,
+      signal,
+    },
+    options,
+  );
+};
+
+export const getMainChatsPartialUpdateMutationKey = () =>
+  ['mainChatsPartialUpdate'] as const;
+
+export const getMainChatsPartialUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatsPartialUpdate>>,
+    TError,
+    MainChatsPartialUpdateMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatsPartialUpdate>>,
+  TError,
+  MainChatsPartialUpdateMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatsPartialUpdateMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatsPartialUpdate>>,
+    MainChatsPartialUpdateMutationVariables
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return mainChatsPartialUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatsPartialUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatsPartialUpdate>>
+>;
+export type MainChatsPartialUpdateMutationBody =
+  BodyType<PatchedChatRequest> | undefined;
+export type MainChatsPartialUpdateMutationError = ErrorType<unknown>;
+export type MainChatsPartialUpdateMutationVariables = {
+  id: string;
+  data?: BodyType<PatchedChatRequest>;
+};
+
+export const useMainChatsPartialUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatsPartialUpdate>>,
+      TError,
+      MainChatsPartialUpdateMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatsPartialUpdate>>,
+  TError,
+  MainChatsPartialUpdateMutationVariables,
+  TContext
+> => {
+  return useMutation(
+    getMainChatsPartialUpdateMutationOptions(options),
+    queryClient,
+  );
+};
+export const mainChatsDestroy = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<void>(
+    { url: `/api/main/chats/${id}/`, method: 'DELETE', signal },
+    options,
+  );
+};
+
+export const getMainChatsDestroyMutationKey = () =>
+  ['mainChatsDestroy'] as const;
+
+export const getMainChatsDestroyMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof mainChatsDestroy>>,
+    TError,
+    MainChatsDestroyMutationVariables,
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof mainChatsDestroy>>,
+  TError,
+  MainChatsDestroyMutationVariables,
+  TContext
+> => {
+  const mutationKey = getMainChatsDestroyMutationKey();
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof mainChatsDestroy>>,
+    MainChatsDestroyMutationVariables
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return mainChatsDestroy(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MainChatsDestroyMutationResult = NonNullable<
+  Awaited<ReturnType<typeof mainChatsDestroy>>
+>;
+
+export type MainChatsDestroyMutationError = ErrorType<unknown>;
+export type MainChatsDestroyMutationVariables = { id: string };
+
+export const useMainChatsDestroy = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof mainChatsDestroy>>,
+      TError,
+      MainChatsDestroyMutationVariables,
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+  queryClient?: QueryClient,
+): UseMutationResult<
+  Awaited<ReturnType<typeof mainChatsDestroy>>,
+  TError,
+  MainChatsDestroyMutationVariables,
+  TContext
+> => {
+  return useMutation(getMainChatsDestroyMutationOptions(options), queryClient);
+};
 export const mainCommentsList = (
   params?: MainCommentsListParams,
   options?: SecondParameter<typeof customInstance>,

@@ -1,6 +1,6 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-from .models import Comment, Discussion, Document, Task
+from .models import Chat, ChatMessage, Comment, Discussion, Document, Task
 
 
 def is_task_member(user, task: Task):
@@ -52,3 +52,13 @@ class CommentPermission(BasePermission):
         if request.method in SAFE_METHODS:
             return is_task_member(request.user, obj.discussion.document.task)
         return obj.user_id == request.user.id
+
+
+class ChatPermission(BasePermission):
+    def has_object_permission(self, request, view, obj: Chat):
+        return obj.user_id == request.user.id
+
+
+class ChatMessagePermission(BasePermission):
+    def has_object_permission(self, request, view, obj: ChatMessage):
+        return obj.chat.user_id == request.user.id

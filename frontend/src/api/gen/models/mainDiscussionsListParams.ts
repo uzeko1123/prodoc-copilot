@@ -6,4 +6,12 @@
 
 export type MainDiscussionsListParams = {
   document?: string;
+  /**
+   * 用于排序结果的字段。
+   */
+  ordering?: string;
+  /**
+   * 搜索关键词。
+   */
+  search?: string;
 };

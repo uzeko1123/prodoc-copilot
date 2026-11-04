@@ -1,30 +1,63 @@
 from django.contrib import admin
 
-from .models import Comment, Discussion, Document, Guide, Task, Template
+from .models import (
+    Chat,
+    ChatMessage,
+    Comment,
+    Discussion,
+    Document,
+    Guide,
+    Task,
+    Template,
+)
+
+
+@admin.register(Template)
+class TemplateAdmin(admin.ModelAdmin):
+    list_display = ("name", "updated_at")
+    list_filter = ()
+    search_fields = ("name",)
+    ordering = ("-updated_at",)
+
+
+@admin.register(Guide)
+class GuideAdmin(admin.ModelAdmin):
+    list_display = ("name", "updated_at")
+    list_filter = ()
+    search_fields = ("name",)
+    ordering = ("-updated_at",)
 
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ("name", "stage", "creator", "reviewer", "updated_at")
-    list_filter = ("stage",)
-    search_fields = ("name", "creator__username", "reviewer__username")
+    list_display = (
+        "name",
+        "template",
+        "guide",
+        "stage",
+        "creator",
+        "reviewer",
+        "updated_at",
+    )
+    list_filter = ("template", "guide", "stage", "creator", "reviewer")
+    search_fields = ("name",)
     ordering = ("-updated_at",)
 
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ("task", "title", "updated_at")
-    search_fields = ("title", "task__name")
+    list_filter = ("task",)
+    search_fields = ("title",)
     ordering = ("-updated_at",)
-    readonly_fields = ("value",)
 
 
 @admin.register(Discussion)
 class DiscussionAdmin(admin.ModelAdmin):
-    list_display = ("document", "is_resolved", "user", "created_at", "key")
-    list_filter = ("is_resolved",)
-    search_fields = ("document__task__name",)
-    ordering = ("-created_at",)
+    list_display = ("document", "is_resolved", "user", "updated_at", "key")
+    list_filter = ("document", "is_resolved", "user")
+    search_fields = ()
+    ordering = ("-updated_at",)
 
 
 @admin.register(Comment)
@@ -34,25 +67,25 @@ class CommentAdmin(admin.ModelAdmin):
         "is_edited",
         "created_by_ai",
         "user",
-        "created_at",
+        "updated_at",
         "key",
     )
-    search_fields = ("discussion__document__task__name",)
-    ordering = ("-created_at",)
-    readonly_fields = ("content_rich",)
+    list_filter = ("discussion", "is_edited", "created_by_ai", "user")
+    search_fields = ()
+    ordering = ("-updated_at",)
 
 
-@admin.register(Template)
-class TemplateAdmin(admin.ModelAdmin):
-    list_display = ("name", "updated_at")
+@admin.register(Chat)
+class ChatAdmin(admin.ModelAdmin):
+    list_display = ("task", "name", "user", "updated_at")
+    list_filter = ("task", "user")
     search_fields = ("name",)
     ordering = ("-updated_at",)
-    # readonly_fields = ("value",)
 
 
-@admin.register(Guide)
-class GuideAdmin(admin.ModelAdmin):
-    list_display = ("name", "updated_at")
-    search_fields = ("name",)
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ("chat", "role", "updated_at", "key")
+    list_filter = ("chat", "role")
+    search_fields = ()
     ordering = ("-updated_at",)
-    # readonly_fields = ("value",)

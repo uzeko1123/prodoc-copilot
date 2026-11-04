@@ -12,8 +12,19 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Comment, Discussion, Document, Guide, Task, Template
+from .models import (
+    Chat,
+    ChatMessage,
+    Comment,
+    Discussion,
+    Document,
+    Guide,
+    Task,
+    Template,
+)
 from .permissions import (
+    ChatMessagePermission,
+    ChatPermission,
     CommentPermission,
     DiscussionPermission,
     DocumentPermission,
@@ -23,6 +34,8 @@ from .permissions import (
     is_task_member,
 )
 from .serializers import (
+    ChatMessageSerializer,
+    ChatSerializer,
     CommentSerializer,
     DiscussionSerializer,
     DocumentSerializer,
@@ -48,28 +61,35 @@ def ensure_task_stage_user(user, task: Task) -> None:
 
 
 class TemplateViewSet(ModelViewSet):
-    queryset = Template.objects.all().order_by("name")
+    queryset = Template.objects.all()
     serializer_class = TemplateSerializer
     permission_classes = (IsStaffOrReadOnly,)
-    filter_backends = (SearchFilter,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ()
     search_fields = ("name",)
+    ordering_fields = ("name", "created_at", "updated_at")
+    ordering = ("name",)
 
 
 class GuideViewSet(ModelViewSet):
-    queryset = Guide.objects.all().order_by("name")
+    queryset = Guide.objects.all()
     serializer_class = GuideSerializer
     permission_classes = (IsStaffOrReadOnly,)
-    filter_backends = (SearchFilter,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ()
     search_fields = ("name",)
+    ordering_fields = ("name", "created_at", "updated_at")
+    ordering = ("name",)
 
 
 class TaskViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = (IsAuthenticated, TaskPermission)
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ("creator", "reviewer", "stage")
-    ordering_fields = ("updated_at", "created_at")
+    search_fields = ("name",)
+    ordering_fields = ("name", "created_at", "updated_at")
     ordering = ("-updated_at",)
 
     def get_queryset(self):
@@ -132,8 +152,11 @@ class DocumentViewSet(ModelViewSet):
     queryset = Document.objects.select_related("task")
     serializer_class = DocumentSerializer
     permission_classes = (IsAuthenticated, DocumentPermission)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ("task",)
+    search_fields = ("title",)
+    ordering_fields = ("title", "created_at", "updated_at")
+    ordering = ("-updated_at",)
 
     def get_queryset(self):
         return Document.objects.filter(
@@ -141,14 +164,14 @@ class DocumentViewSet(ModelViewSet):
         ).select_related("task")
 
     def perform_create(self, serializer):
-        raise MethodNotAllowed("POST")
+        raise MethodNotAllowed(self.request.method)
 
     def perform_update(self, serializer):
         ensure_task_stage_user(self.request.user, serializer.instance.task)
         serializer.save()
 
     def perform_destroy(self, instance):
-        raise MethodNotAllowed("DELETE")
+        raise MethodNotAllowed(self.request.method)
 
 
 class CommentViewSet(ModelViewSet):
@@ -157,8 +180,11 @@ class CommentViewSet(ModelViewSet):
     )
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated, CommentPermission)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ("discussion",)
+    search_fields = ()
+    ordering_fields = ("created_at", "updated_at")
+    ordering = ("created_at",)
 
     def get_queryset(self):
         return Comment.objects.filter(
@@ -204,8 +230,11 @@ class DiscussionViewSet(ModelViewSet):
     ).prefetch_related("guide_clauses", "comments__user__profile")
     serializer_class = DiscussionSerializer
     permission_classes = (IsAuthenticated, DiscussionPermission)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ("document",)
+    search_fields = ()
+    ordering_fields = ("created_at", "updated_at")
+    ordering = ("created_at",)
 
     def get_queryset(self):
         return (
@@ -236,3 +265,57 @@ class DiscussionViewSet(ModelViewSet):
             ):
                 return
             instance.delete()
+
+
+class ChatViewSet(ModelViewSet):
+    queryset = Chat.objects.select_related("task", "user__profile")
+    serializer_class = ChatSerializer
+    permission_classes = (IsAuthenticated, ChatPermission)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ("task",)
+    search_fields = ("name",)
+    ordering_fields = ("name", "created_at", "updated_at")
+    ordering = ("-updated_at",)
+
+    def get_queryset(self):
+        return Chat.objects.filter(
+            Q(task__creator=self.request.user) | Q(task__reviewer=self.request.user),
+            user=self.request.user,
+        ).select_related("task", "user__profile")
+
+    def perform_create(self, serializer):
+        task = serializer.validated_data["task"]
+        ensure_task_member(self.request.user, task)
+        serializer.save(user=self.request.user)
+
+
+class ChatMessageViewSet(ModelViewSet):
+    queryset = ChatMessage.objects.select_related("chat__task")
+    serializer_class = ChatMessageSerializer
+    permission_classes = (IsAuthenticated, ChatMessagePermission)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_fields = ("chat",)
+    search_fields = ()
+    ordering_fields = ("created_at", "updated_at")
+    ordering = ("created_at",)
+
+    def get_queryset(self):
+        return ChatMessage.objects.filter(
+            Q(chat__task__creator=self.request.user)
+            | Q(chat__task__reviewer=self.request.user),
+            chat__user=self.request.user,
+        ).select_related("chat__task")
+
+    def perform_create(self, serializer):
+        chat = serializer.validated_data["chat"]
+        ensure_task_member(self.request.user, chat.task)
+        if chat.user_id != self.request.user.id:
+            raise NotFound
+        serializer.save()
+        chat.save(update_fields=("updated_at",))
+
+    def perform_update(self, serializer):
+        raise MethodNotAllowed(self.request.method)
+
+    def perform_destroy(self, instance):
+        raise MethodNotAllowed(self.request.method)
