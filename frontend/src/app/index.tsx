@@ -1302,13 +1302,9 @@ function FeatureChecklist({
   );
 }
 
-/** 品牌标：与侧边栏 / favicon 一致的 PencilSparkles 图标 */
+/** 品牌标：与侧边栏一致的图标（public/icon.svg） */
 function BrandMark() {
-  return (
-    <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-lg">
-      <PencilSparklesIcon aria-hidden="true" className="size-4" />
-    </span>
-  );
+  return <img src="/icon.svg" alt="" aria-hidden="true" className="size-8" />;
 }
 
 /* ─────────────────────────── 页面区块 ─────────────────────────── */

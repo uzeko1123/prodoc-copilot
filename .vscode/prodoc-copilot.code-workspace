@@ -9,6 +9,9 @@
     {
       "path": "../frontend",
     },
+    {
+      "path": "../desktop",
+    },
   ],
   "settings": {
     "files.eol": "\n",

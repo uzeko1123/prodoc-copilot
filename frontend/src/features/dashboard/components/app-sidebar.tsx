@@ -22,7 +22,6 @@ import {
   LayoutDashboardIcon,
   PaletteIcon,
   PencilIcon,
-  PencilSparklesIcon,
   ScaleIcon,
 } from 'lucide-react';
 import * as React from 'react';
@@ -39,9 +38,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               href="/"
               className="flex items-center gap-2 self-center p-1.5 font-bold"
             >
-              <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-                <PencilSparklesIcon className="size-3.5" />
-              </div>
+              <img src="/icon.svg" alt="" className="size-6" />
               ProDoc Copilot
             </a>
           </SidebarMenuItem>
